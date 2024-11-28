@@ -12,6 +12,20 @@ import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
 import { SponsorshipStats } from "@/components/Sponsorship/SponsorshipStats";
 import { DashboardStats } from "@/types/dashboard";
 
+interface RawDashboardStats {
+  children: {
+    total: number;
+    sponsored: number;
+    available: number;
+  };
+  sponsors: number;
+  donations: {
+    total: number;
+    people_helped: number;
+  };
+  cities: number;
+}
+
 const Dashboard = () => {
   const queryClient = useQueryClient();
 
@@ -31,20 +45,23 @@ const Dashboard = () => {
         return count + needs.filter(need => need.is_urgent).length;
       }, 0) || 0;
 
+      // Cast the raw data to our expected type
+      const rawStats = rawData as RawDashboardStats;
+
       // Ensure we have a properly typed object
       const typedStats: DashboardStats = {
         children: {
-          total: rawData?.children?.total || 0,
-          sponsored: rawData?.children?.sponsored || 0,
-          available: rawData?.children?.available || 0,
+          total: rawStats.children?.total || 0,
+          sponsored: rawStats.children?.sponsored || 0,
+          available: rawStats.children?.available || 0,
           urgent_needs: urgentNeedsCount
         },
-        sponsors: rawData?.sponsors || 0,
+        sponsors: rawStats.sponsors || 0,
         donations: {
-          total: rawData?.donations?.total || 0,
-          people_helped: rawData?.donations?.people_helped || 0
+          total: rawStats.donations?.total || 0,
+          people_helped: rawStats.donations?.people_helped || 0
         },
-        cities: rawData?.cities || 0
+        cities: rawStats.cities || 0
       };
 
       return typedStats;
