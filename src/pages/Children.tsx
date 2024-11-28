@@ -96,7 +96,7 @@ const Children = () => {
         </div>
         <Button 
           className="bg-primary hover:bg-primary/90"
-          onClick={() => navigate('/add-child')}
+          onClick={() => navigate('/children/add')}
         >
           <Plus className="w-4 h-4 mr-2" />
           Ajouter un enfant
