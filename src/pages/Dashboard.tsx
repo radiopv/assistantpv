@@ -7,13 +7,15 @@ import { ErrorAlert } from "@/components/ErrorAlert";
 import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
 import { SponsorshipStats } from "@/components/Sponsorship/SponsorshipStats";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Need, convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
 import { NeedsList } from "@/components/Needs/NeedsList";
 import { AddNeedDialog } from "@/components/Needs/AddNeedDialog";
 import { DashboardStats } from "@/types/dashboard";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Dashboard = () => {
+  const queryClient = useQueryClient();
   const [selectedChild, setSelectedChild] = useState<any | null>(null);
   const [newNeed, setNewNeed] = useState<Need>({ 
     category: "", 
@@ -51,6 +53,32 @@ const Dashboard = () => {
       }));
     }
   });
+
+  // Souscription aux changements en temps réel
+  useEffect(() => {
+    const channel = supabase
+      .channel('children-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'children'
+        },
+        (payload) => {
+          // Invalider le cache pour forcer un rafraîchissement
+          queryClient.invalidateQueries({ queryKey: ['children'] });
+          
+          // Notification visuelle du changement
+          toast.success("Les besoins ont été mis à jour");
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const handleAddNeed = async () => {
     if (!selectedChild) return;
