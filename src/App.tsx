@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import Donations from "./pages/Donations";
 import Login from "./pages/auth/Login";
+import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
