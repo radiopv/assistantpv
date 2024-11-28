@@ -25,15 +25,15 @@ const Login = () => {
       if (error) throw error;
 
       if (data.user) {
-        const { data: sponsorData, error: sponsorError } = await supabase
-          .from('sponsors')
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
           .select('role')
           .eq('id', data.user.id)
           .single();
 
-        if (sponsorError) throw sponsorError;
+        if (profileError) throw profileError;
 
-        if (sponsorData.role !== 'assistant') {
+        if (profileData.role !== 'assistant') {
           throw new Error("Accès non autorisé");
         }
 
@@ -44,9 +44,18 @@ const Login = () => {
         navigate("/");
       }
     } catch (error: any) {
+      let message = "Une erreur est survenue";
+      if (error.message.includes("Email login is disabled")) {
+        message = "La connexion par email n'est pas activée. Veuillez contacter l'administrateur.";
+      } else if (error.message === "Accès non autorisé") {
+        message = "Vous n'avez pas les droits d'accès nécessaires";
+      } else if (error.message.includes("Invalid login credentials")) {
+        message = "Email ou mot de passe incorrect";
+      }
+      
       toast({
         title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue",
+        description: message,
         variant: "destructive",
       });
     } finally {
