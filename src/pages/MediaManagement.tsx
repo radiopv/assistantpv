@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Pencil, Image } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface MediaItem {
@@ -24,7 +24,7 @@ const MediaManagement = () => {
     queryKey: ['unified-media'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('unified_media_browser')
+        .from('unified_media_browser' as 'album_media')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -36,7 +36,7 @@ const MediaManagement = () => {
   const handleDelete = async (item: MediaItem) => {
     try {
       const { error } = await supabase
-        .from(item.source_table)
+        .from(item.source_table as any)
         .delete()
         .eq('id', item.id);
 
