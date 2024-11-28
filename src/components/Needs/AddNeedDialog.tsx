@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { Need } from "@/types/needs";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface AddNeedDialogProps {
   children: any[];
@@ -76,14 +77,12 @@ export const AddNeedDialog = ({
           />
 
           <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
+            <Checkbox
               id="urgent"
               checked={newNeed.is_urgent}
-              onChange={(e) => onNeedChange({ is_urgent: e.target.checked })}
-              className="rounded border-gray-300"
+              onCheckedChange={(checked) => onNeedChange({ is_urgent: checked as boolean })}
             />
-            <label htmlFor="urgent">Urgent</label>
+            <label htmlFor="urgent" className="text-sm text-gray-600">Besoin urgent</label>
           </div>
 
           <Button onClick={onAddNeed} disabled={!selectedChild || !newNeed.category || !newNeed.description}>
