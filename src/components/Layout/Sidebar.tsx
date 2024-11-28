@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Users, Gift, Home, Menu, X, LogOut, Heart, Settings, AlertCircle } from "lucide-react";
+import { Users, Gift, Home, Menu, X, LogOut, Heart, Settings, Image, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -22,16 +22,18 @@ const Sidebar = () => {
 
   // Add admin links if user has admin role
   if (user?.role === 'admin') {
-    links.push({ 
-      icon: Settings, 
-      label: "Permissions", 
-      path: "/admin/permissions" 
-    });
+    links.push(
+      { icon: Settings, label: "Permissions", path: "/admin/permissions" },
+      { icon: Image, label: "Gestion Media", path: "/admin/media" }
+    );
   }
 
   const isActivePath = (path: string) => {
     if (path === '/') {
       return location.pathname === '/';
+    }
+    if (path === '/children') {
+      return location.pathname === '/children' || location.pathname.startsWith('/children/') && !location.pathname.includes('/needs');
     }
     return location.pathname.startsWith(path);
   };

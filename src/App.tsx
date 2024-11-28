@@ -12,6 +12,7 @@ import ChildProfile from "./pages/ChildProfile";
 import ChildrenNeeds from "./pages/ChildrenNeeds";
 import Donations from "./pages/Donations";
 import Sponsorships from "./pages/Sponsorships";
+import MediaManagement from "./pages/MediaManagement";
 import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 
@@ -74,6 +75,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredPermission="manage_permissions">
                     <AdminPermissions />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="admin/media" 
+                element={
+                  <ProtectedRoute requiredPermission="manage_permissions">
+                    <MediaManagement />
                   </ProtectedRoute>
                 } 
               />
