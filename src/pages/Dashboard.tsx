@@ -46,7 +46,7 @@ const Dashboard = () => {
       }, 0) || 0;
 
       // Cast the raw data to our expected type
-      const rawStats = rawData as RawDashboardStats;
+      const rawStats = rawData as unknown as RawDashboardStats;
 
       // Ensure we have a properly typed object
       const typedStats: DashboardStats = {
