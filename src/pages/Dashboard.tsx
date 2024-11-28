@@ -26,7 +26,8 @@ const Dashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data as DashboardStats;
+      // First cast to unknown, then to our specific type
+      return (data as unknown) as DashboardStats;
     }
   });
 
