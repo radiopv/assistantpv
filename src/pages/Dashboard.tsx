@@ -1,23 +1,71 @@
 import { Card } from "@/components/ui/card";
 import { Users, Gift, AlertTriangle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorAlert } from "@/components/ErrorAlert";
 
 const Dashboard = () => {
-  const stats = [
+  const { data: stats, isLoading, error, refetch } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_dashboard_statistics');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <ErrorAlert 
+          message="Une erreur est survenue lors du chargement des statistiques" 
+          retry={() => refetch()}
+        />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-96 mt-2" />
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-6">
+              <div className="flex items-center gap-4">
+                <Skeleton className="h-12 w-12 rounded-lg" />
+                <div>
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-6 w-16 mt-1" />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const dashboardStats = [
     {
       label: "Enfants",
-      value: "24",
+      value: stats?.children?.total || "0",
       icon: Users,
       color: "bg-primary",
     },
     {
       label: "Dons",
-      value: "156",
+      value: stats?.donations?.total || "0",
       icon: Gift,
       color: "bg-secondary",
     },
     {
       label: "Besoins Urgents",
-      value: "3",
+      value: stats?.children?.urgent_needs || "0",
       icon: AlertTriangle,
       color: "bg-accent",
     },
@@ -33,7 +81,7 @@ const Dashboard = () => {
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {stats.map(({ label, value, icon: Icon, color }) => (
+        {dashboardStats.map(({ label, value, icon: Icon, color }) => (
           <Card key={label} className="p-6">
             <div className="flex items-center gap-4">
               <div className={`${color} p-3 rounded-lg`}>

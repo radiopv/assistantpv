@@ -4,28 +4,86 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorAlert } from "@/components/ErrorAlert";
+
+interface Child {
+  id: string;
+  name: string;
+  age: number;
+  city: string;
+  status: string;
+  photo_url: string;
+}
 
 const Children = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const children = [
-    {
-      id: 1,
-      name: "Maria Rodriguez",
-      age: 8,
-      city: "La Havane",
-      status: "Disponible",
-      imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
-    },
-    {
-      id: 2,
-      name: "Carlos Hernandez",
-      age: 10,
-      city: "Santiago de Cuba",
-      status: "Parrainé",
-      imageUrl: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-    },
-  ];
+  const { data: children, isLoading, error, refetch } = useQuery({
+    queryKey: ['children'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('children')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Child[];
+    }
+  });
+
+  const filteredChildren = children?.filter(child => 
+    child.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    child.city.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <ErrorAlert 
+          message="Une erreur est survenue lors du chargement des enfants" 
+          retry={() => refetch()}
+        />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-96 mt-2" />
+          </div>
+          <Skeleton className="h-10 w-40" />
+        </div>
+
+        <Card className="p-6">
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <Skeleton className="h-10 flex-1" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="h-48 w-full" />
+                <div className="p-4 space-y-4">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -58,10 +116,10 @@ const Children = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {children.map((child) => (
+          {filteredChildren?.map((child) => (
             <Card key={child.id} className="overflow-hidden">
               <img
-                src={child.imageUrl}
+                src={child.photo_url || "/placeholder.svg"}
                 alt={child.name}
                 className="w-full h-48 object-cover"
               />
