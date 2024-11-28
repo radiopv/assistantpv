@@ -1,37 +1,33 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
-  session: Session | null;
-  user: User | null;
+  session: any;
   loading: boolean;
-  signOut: () => Promise<void>;
   isAssistant: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
-  user: null,
   loading: true,
-  signOut: async () => {},
   isAssistant: false,
+  login: async () => {},
+  logout: async () => {},
 });
 
+export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Get initial session
+    // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
       checkAssistantRole(session?.user?.id);
     });
 
@@ -40,74 +36,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setUser(session?.user ?? null);
       checkAssistantRole(session?.user?.id);
-      setLoading(false);
-
-      // Redirect based on auth state
-      if (!session) {
-        navigate("/login");
-      }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const checkAssistantRole = async (userId: string | undefined) => {
     if (!userId) {
       setIsAssistant(false);
+      setLoading(false);
       return;
     }
 
     try {
       const { data, error } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', userId);
+        .from("sponsors")
+        .select("role")
+        .eq("id", userId)
+        .single();
 
-      if (error) {
-        console.error('Error checking assistant role:', error);
-        setIsAssistant(false);
-        return;
-      }
-
-      // Check if any results were returned and if the first result has role 'assistant'
-      setIsAssistant(data && data.length > 0 && data[0].role === 'assistant');
+      if (error) throw error;
+      setIsAssistant(data?.role === "assistant");
     } catch (error) {
-      console.error('Error checking assistant role:', error);
+      console.error("Error checking assistant role:", error);
       setIsAssistant(false);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !",
-      });
-      navigate("/login");
-    } catch (error) {
-      console.error("Error signing out:", error);
-      toast({
-        title: "Erreur lors de la déconnexion",
-        description: "Veuillez réessayer",
-        variant: "destructive",
-      });
-    }
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+  };
+
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signOut, isAssistant }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ session, loading, isAssistant, login, logout }}>
+      {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
