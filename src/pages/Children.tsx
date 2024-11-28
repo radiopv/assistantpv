@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +20,7 @@ interface Child {
 }
 
 const Children = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: children, isLoading, error, refetch } = useQuery({
@@ -139,7 +141,11 @@ const Children = () => {
                     {child.status}
                   </span>
                 </div>
-                <Button className="w-full mt-4" variant="outline">
+                <Button 
+                  className="w-full mt-4" 
+                  variant="outline"
+                  onClick={() => navigate(`/children/${child.id}`)}
+                >
                   Voir le profil
                 </Button>
               </div>

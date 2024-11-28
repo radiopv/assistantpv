@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
+import ChildProfile from "./pages/ChildProfile";
 import Donations from "./pages/Donations";
 import Login from "./pages/auth/Login";
 
@@ -48,6 +49,7 @@ const App = () => (
             >
               <Route path="/" element={<Dashboard />} />
               <Route path="/children" element={<Children />} />
+              <Route path="/children/:id" element={<ChildProfile />} />
               <Route path="/donations" element={<Donations />} />
             </Route>
           </Routes>
