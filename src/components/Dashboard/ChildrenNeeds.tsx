@@ -2,15 +2,15 @@ import { useState } from "react";
 import { Need } from "@/types/needs";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Plus, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 interface ChildrenNeedsProps {
   children: any[];
@@ -18,13 +18,26 @@ interface ChildrenNeedsProps {
   onNeedsUpdate: () => void;
 }
 
+const NEED_CATEGORIES = [
+  { value: "education", label: "Éducation" },
+  { value: "jouet", label: "Jouet" },
+  { value: "vetement", label: "Vêtement" },
+  { value: "nourriture", label: "Nourriture" },
+  { value: "medicament", label: "Médicament" },
+  { value: "hygiene", label: "Hygiène" },
+  { value: "autre", label: "Autre" }
+];
+
 export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: ChildrenNeedsProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [selectedChild, setSelectedChild] = useState<any | null>(null);
   const [newNeed, setNewNeed] = useState<Need>({ 
     category: "", 
     description: "", 
     is_urgent: false 
   });
+
+  const sortedChildren = [...children].sort((a, b) => a.name.localeCompare(b.name));
 
   const handleAddNeed = async () => {
     if (!selectedChild) return;
@@ -43,6 +56,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: ChildrenNe
     toast.success("Besoin ajouté avec succès");
     setNewNeed({ category: "", description: "", is_urgent: false });
     setSelectedChild(null);
+    setIsOpen(false);
     onNeedsUpdate();
   };
 
@@ -70,83 +84,80 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: ChildrenNe
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-4">
         <h2 className="text-2xl font-semibold">Besoins des Enfants</h2>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="bg-primary hover:bg-primary/90">
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full md:w-auto">
+          <CollapsibleTrigger asChild>
+            <Button className="w-full md:w-auto bg-primary hover:bg-primary/90">
               <Plus className="w-4 h-4 mr-2" />
               Ajouter un besoin
+              <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
             </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Ajouter un besoin</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Select
-                value={selectedChild?.id || ""}
-                onValueChange={(value) => {
-                  const child = children?.find(c => c.id === value);
-                  setSelectedChild(child || null);
-                }}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Sélectionner un enfant" />
-                </SelectTrigger>
-                <SelectContent>
-                  {children?.map((child) => (
-                    <SelectItem key={child.id} value={child.id}>
-                      {child.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4 space-y-4 bg-white p-4 rounded-lg border shadow-lg">
+            <Select
+              value={selectedChild?.id || ""}
+              onValueChange={(value) => {
+                const child = children?.find(c => c.id === value);
+                setSelectedChild(child || null);
+              }}
+            >
+              <SelectTrigger className="bg-white">
+                <SelectValue placeholder="Sélectionner un enfant" />
+              </SelectTrigger>
+              <SelectContent>
+                {sortedChildren?.map((child) => (
+                  <SelectItem key={child.id} value={child.id}>
+                    {child.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-              <Select
-                value={newNeed.category}
-                onValueChange={(value) => setNewNeed({ ...newNeed, category: value })}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="Catégorie du besoin" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="education">Éducation</SelectItem>
-                  <SelectItem value="jouet">Jouet</SelectItem>
-                  <SelectItem value="vetement">Vêtement</SelectItem>
-                  <SelectItem value="nourriture">Nourriture</SelectItem>
-                  <SelectItem value="medicament">Médicament</SelectItem>
-                  <SelectItem value="hygiene">Hygiène</SelectItem>
-                  <SelectItem value="autre">Autre</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Input
-                placeholder="Description du besoin"
-                value={newNeed.description}
-                onChange={(e) => setNewNeed({ ...newNeed, description: e.target.value })}
-                className="bg-white"
-              />
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="urgent"
-                  checked={newNeed.is_urgent}
-                  onCheckedChange={(checked) => setNewNeed({ ...newNeed, is_urgent: checked as boolean })}
-                />
-                <label htmlFor="urgent" className="text-sm text-gray-600">Besoin urgent</label>
-              </div>
-
-              <Button 
-                onClick={handleAddNeed} 
-                disabled={!selectedChild || !newNeed.category || !newNeed.description}
-                className="w-full"
-              >
-                Ajouter
-              </Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {NEED_CATEGORIES.map((category) => (
+                <div key={category.value} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={category.value}
+                    checked={newNeed.category === category.value}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setNewNeed({ ...newNeed, category: category.value });
+                      }
+                    }}
+                  />
+                  <label htmlFor={category.value} className="text-sm text-gray-600">
+                    {category.label}
+                  </label>
+                </div>
+              ))}
             </div>
-          </DialogContent>
-        </Dialog>
+
+            <Input
+              placeholder="Description du besoin"
+              value={newNeed.description}
+              onChange={(e) => setNewNeed({ ...newNeed, description: e.target.value })}
+              className="bg-white"
+            />
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="urgent"
+                checked={newNeed.is_urgent}
+                onCheckedChange={(checked) => setNewNeed({ ...newNeed, is_urgent: checked as boolean })}
+              />
+              <label htmlFor="urgent" className="text-sm text-gray-600">Besoin urgent</label>
+            </div>
+
+            <Button 
+              onClick={handleAddNeed} 
+              disabled={!selectedChild || !newNeed.category || !newNeed.description}
+              className="w-full"
+            >
+              Ajouter
+            </Button>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -162,7 +173,9 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: ChildrenNe
                   }`}
                 >
                   <div className="space-y-2">
-                    <div className="font-medium">{need.category}</div>
+                    <div className="font-medium">
+                      {NEED_CATEGORIES.find(cat => cat.value === need.category)?.label || need.category}
+                    </div>
                     <div className="text-sm text-gray-600">{need.description}</div>
                   </div>
                 </div>
