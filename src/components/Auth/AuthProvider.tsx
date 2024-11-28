@@ -59,19 +59,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
-    const { data, error } = await supabase
-      .from('sponsors')
-      .select('role')
-      .eq('id', userId)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', userId);
 
-    if (error) {
+      if (error) {
+        console.error('Error checking assistant role:', error);
+        setIsAssistant(false);
+        return;
+      }
+
+      // Check if any results were returned and if the first result has role 'assistant'
+      setIsAssistant(data && data.length > 0 && data[0].role === 'assistant');
+    } catch (error) {
       console.error('Error checking assistant role:', error);
       setIsAssistant(false);
-      return;
     }
-
-    setIsAssistant(data?.role === 'assistant');
   };
 
   const signOut = async () => {
