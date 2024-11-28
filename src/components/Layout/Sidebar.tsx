@@ -10,7 +10,7 @@ const Sidebar = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(!isMobile);
-  const { logout } = useAuth();
+  const { signOut } = useAuth();
 
   const links = [
     { icon: Home, label: "Dashboard", path: "/" },
@@ -69,7 +69,7 @@ const Sidebar = () => {
             <Button 
               variant="ghost" 
               className="w-full justify-start" 
-              onClick={logout}
+              onClick={signOut}
             >
               <LogOut className="mr-2 h-4 w-4" />
               Déconnexion
