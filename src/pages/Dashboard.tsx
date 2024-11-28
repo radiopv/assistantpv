@@ -10,6 +10,7 @@ import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
 import { ChildrenNeeds } from "@/components/Dashboard/ChildrenNeeds";
 import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
 import { SponsorshipStats } from "@/components/Sponsorship/SponsorshipStats";
+import { DashboardStats } from "@/types/dashboard";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();
@@ -19,7 +20,7 @@ const Dashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data as unknown as DashboardStats;
+      return data as DashboardStats;
     },
     retry: 1,
     meta: {
