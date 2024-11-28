@@ -5,6 +5,8 @@ import { Need } from "@/types/needs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface NeedsListProps {
   childId: string;
@@ -17,7 +19,7 @@ interface NeedsListProps {
 export const NeedsList = ({ 
   childId, 
   childName, 
-  needs, 
+  needs = [], 
   onToggleUrgent, 
   onDeleteNeed 
 }: NeedsListProps) => {
@@ -34,10 +36,52 @@ export const NeedsList = ({
   ];
 
   const handleCategoryClick = (category: string) => {
-    if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter(c => c !== category));
-    } else {
-      setSelectedCategories([...selectedCategories, category]);
+    setSelectedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleToggleUrgent = async (needIndex: number) => {
+    try {
+      const updatedNeeds = [...needs];
+      updatedNeeds[needIndex] = {
+        ...updatedNeeds[needIndex],
+        is_urgent: !updatedNeeds[needIndex].is_urgent
+      };
+
+      const { error } = await supabase
+        .from('children')
+        .update({ needs: updatedNeeds })
+        .eq('id', childId);
+
+      if (error) throw error;
+      
+      await onToggleUrgent(childId, needIndex);
+      toast.success("Statut urgent mis à jour");
+    } catch (error) {
+      console.error('Error toggling urgent status:', error);
+      toast.error("Erreur lors de la mise à jour du statut urgent");
+    }
+  };
+
+  const handleDeleteNeed = async (needIndex: number) => {
+    try {
+      const updatedNeeds = needs.filter((_, index) => index !== needIndex);
+      
+      const { error } = await supabase
+        .from('children')
+        .update({ needs: updatedNeeds })
+        .eq('id', childId);
+
+      if (error) throw error;
+      
+      await onDeleteNeed(childId, needIndex);
+      toast.success("Besoin supprimé");
+    } catch (error) {
+      console.error('Error deleting need:', error);
+      toast.error("Erreur lors de la suppression du besoin");
     }
   };
 
@@ -54,19 +98,16 @@ export const NeedsList = ({
     return labels[category] || category;
   };
 
-  const findNeedIndex = (category: string) => {
-    return needs.findIndex(need => need.category === category);
-  };
-
   return (
-    <Card className="p-6">
+    <Card className="p-4 md:p-6">
       <h3 className="text-lg font-semibold mb-4">{childName}</h3>
       <div className="space-y-4">
         <div className="flex flex-wrap gap-2">
           {allCategories.map((category) => (
             <Badge 
               key={category}
-              className={`cursor-pointer transition-colors duration-200 ${
+              variant="outline"
+              className={`cursor-pointer transition-colors duration-200 text-sm md:text-base ${
                 selectedCategories.includes(category) 
                   ? 'bg-red-500 text-white hover:bg-red-600' 
                   : 'bg-green-500 text-white hover:bg-green-600'
@@ -79,7 +120,7 @@ export const NeedsList = ({
         </div>
         <div className="space-y-3">
           {selectedCategories.map((category) => {
-            const needIndex = findNeedIndex(category);
+            const needIndex = needs.findIndex(need => need.category === category);
             const isUrgent = needIndex !== -1 ? needs[needIndex].is_urgent : false;
             
             return (
@@ -99,7 +140,7 @@ export const NeedsList = ({
                       checked={isUrgent}
                       onCheckedChange={() => {
                         if (needIndex !== -1) {
-                          onToggleUrgent(childId, needIndex);
+                          handleToggleUrgent(needIndex);
                         }
                       }}
                     />
@@ -117,8 +158,8 @@ export const NeedsList = ({
                   className="ml-2 text-red-600 hover:text-red-800 hover:bg-red-50"
                   onClick={() => {
                     if (needIndex !== -1) {
-                      onDeleteNeed(childId, needIndex);
-                      setSelectedCategories(selectedCategories.filter(c => c !== category));
+                      handleDeleteNeed(needIndex);
+                      setSelectedCategories(prev => prev.filter(c => c !== category));
                     }
                   }}
                 >

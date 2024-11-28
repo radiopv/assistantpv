@@ -3,6 +3,8 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "./DonationCategorySelect";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DonationItem {
   category_id: string;
@@ -12,6 +14,19 @@ interface DonationItem {
 interface Donor {
   name: string;
   is_anonymous: boolean;
+}
+
+interface DonationPhoto {
+  id: number;
+  url: string;
+  title?: string;
+}
+
+interface DonationVideo {
+  id: string;
+  url: string;
+  title?: string;
+  thumbnail_url?: string;
 }
 
 interface DonationCardProps {
@@ -30,6 +45,32 @@ interface DonationCardProps {
 }
 
 export const DonationCard = ({ donation }: DonationCardProps) => {
+  const { data: donationPhotos } = useQuery({
+    queryKey: ['donation-photos', donation.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('donation_photos')
+        .select('*')
+        .eq('donation_id', donation.id);
+      
+      if (error) throw error;
+      return data as DonationPhoto[];
+    }
+  });
+
+  const { data: donationVideos } = useQuery({
+    queryKey: ['donation-videos', donation.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('donation_videos')
+        .select('*')
+        .eq('donation_id', donation.id);
+      
+      if (error) throw error;
+      return data as DonationVideo[];
+    }
+  });
+
   const getCategoryName = (categoryId: string) => {
     const category = CATEGORIES.find(cat => cat.id.toString() === categoryId);
     return category ? category.name : `Catégorie ${categoryId}`;
@@ -90,18 +131,46 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
           </div>
         </div>
 
-        {/* Grille des photos */}
-        {donation.photos && donation.photos.length > 0 && (
+        {/* Photos from donation_photos table */}
+        {donationPhotos && donationPhotos.length > 0 && (
           <div>
             <p className="text-gray-500 mb-2">Photos</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-              {donation.photos.map((photo, index) => (
+              {donationPhotos.map((photo) => (
                 <img
-                  key={index}
-                  src={photo}
-                  alt={`Photo ${index + 1}`}
+                  key={photo.id}
+                  src={photo.url}
+                  alt={photo.title || `Photo ${photo.id}`}
                   className="h-24 w-full object-cover rounded-md"
                 />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Videos from donation_videos table */}
+        {donationVideos && donationVideos.length > 0 && (
+          <div>
+            <p className="text-gray-500 mb-2">Vidéos</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {donationVideos.map((video) => (
+                <div key={video.id} className="relative">
+                  {video.thumbnail_url ? (
+                    <img
+                      src={video.thumbnail_url}
+                      alt={video.title || `Vidéo ${video.id}`}
+                      className="h-24 w-full object-cover rounded-md cursor-pointer"
+                      onClick={() => window.open(video.url, '_blank')}
+                    />
+                  ) : (
+                    <div 
+                      className="h-24 w-full bg-gray-200 rounded-md flex items-center justify-center cursor-pointer"
+                      onClick={() => window.open(video.url, '_blank')}
+                    >
+                      <span className="text-sm text-gray-600">Voir la vidéo</span>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

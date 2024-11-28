@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Users, Gift, Home, Menu, X, LogOut, Heart } from "lucide-react";
+import { Users, Gift, Home, Menu, X, LogOut, Heart, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -10,7 +10,7 @@ const Sidebar = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(!isMobile);
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
   const links = [
     { icon: Home, label: "Dashboard", path: "/" },
@@ -18,6 +18,15 @@ const Sidebar = () => {
     { icon: Heart, label: "Parrainages", path: "/sponsorships" },
     { icon: Gift, label: "Dons", path: "/donations" },
   ];
+
+  // Add admin links if user has admin role
+  if (user?.role === 'admin') {
+    links.push({ 
+      icon: Settings, 
+      label: "Permissions", 
+      path: "/admin/permissions" 
+    });
+  }
 
   return (
     <>
@@ -57,6 +66,7 @@ const Sidebar = () => {
                         ? "bg-primary text-white hover:bg-primary/90"
                         : "text-gray-700"
                     )}
+                    onClick={() => isMobile && setIsOpen(false)}
                   >
                     <Icon size={20} />
                     <span>{label}</span>
