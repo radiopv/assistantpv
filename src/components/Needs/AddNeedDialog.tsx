@@ -23,6 +23,10 @@ export const AddNeedDialog = ({
   onNeedChange,
   onAddNeed
 }: AddNeedDialogProps) => {
+  const sortedChildren = [...children].sort((a, b) => 
+    (a.name as string).localeCompare(b.name as string)
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -44,7 +48,7 @@ export const AddNeedDialog = ({
               <SelectValue placeholder="Sélectionner un enfant" />
             </SelectTrigger>
             <SelectContent>
-              {children?.map((child) => (
+              {sortedChildren?.map((child) => (
                 <SelectItem key={child.id} value={child.id}>
                   {child.name}
                 </SelectItem>

@@ -6,7 +6,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface NeedsListProps {
   childId: string;
@@ -24,7 +23,6 @@ export const NeedsList = ({
   onDeleteNeed 
 }: NeedsListProps) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [comment, setComment] = useState("");
 
   const getCategoryLabel = (category: string) => {
     const labels: Record<string, string> = {
@@ -79,54 +77,52 @@ export const NeedsList = ({
         </div>
 
         <div className="space-y-3">
-          {needs.map((need, index) => (
-            <div 
-              key={`${need.category}-${index}`}
-              className="flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center gap-2">
-                  <Badge className="bg-red-500 text-white">
-                    {getCategoryLabel(need.category)}
-                  </Badge>
-                  <Input
-                    value={need.description}
-                    onChange={(e) => {
-                      const updatedNeeds = [...needs];
-                      updatedNeeds[index] = {
-                        ...need,
-                        description: e.target.value
-                      };
-                      // Update needs in parent component
-                    }}
-                    placeholder="Ajouter un commentaire..."
-                    className="flex-1"
-                  />
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`urgent-${need.category}`}
-                    checked={need.is_urgent}
-                    onCheckedChange={() => onToggleUrgent(childId, index)}
-                  />
-                  <label 
-                    htmlFor={`urgent-${need.category}`}
-                    className="text-sm text-gray-600 cursor-pointer"
-                  >
-                    Marquer comme urgent
-                  </label>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="ml-2 text-red-600 hover:text-red-800 hover:bg-red-50"
-                onClick={() => onDeleteNeed(childId, index)}
+          {needs.map((need, index) => {
+            const categoryLabel = typeof need.category === 'string' ? need.category : '';
+            return (
+              <div 
+                key={`${categoryLabel}-${index}`}
+                className="flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-          ))}
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-red-500 text-white">
+                      {getCategoryLabel(categoryLabel)}
+                    </Badge>
+                    <Input
+                      value={need.description}
+                      onChange={(e) => {
+                        // Update description functionality can be added here
+                      }}
+                      placeholder="Ajouter un commentaire..."
+                      className="flex-1"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`urgent-${need.category}`}
+                      checked={need.is_urgent}
+                      onCheckedChange={() => onToggleUrgent(childId, index)}
+                    />
+                    <label 
+                      htmlFor={`urgent-${need.category}`}
+                      className="text-sm text-gray-600 cursor-pointer"
+                    >
+                      Marquer comme urgent
+                    </label>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-2 text-red-600 hover:text-red-800 hover:bg-red-50"
+                  onClick={() => onDeleteNeed(childId, index)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            );
+          })}
         </div>
       </div>
     </Card>

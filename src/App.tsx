@@ -54,20 +54,12 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route
-              element={
-                <ProtectedRoute>
-                  <MainLayout />
-                </ProtectedRoute>
-              }
-            >
+            <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
-              <Route path="children">
-                <Route index element={<Children />} />
-                <Route path="needs" element={<ChildrenNeeds />} />
-                <Route path="add" element={<AddChild />} />
-                <Route path=":id" element={<ChildProfile />} />
-              </Route>
+              <Route path="children" element={<Children />} />
+              <Route path="children/needs" element={<ChildrenNeeds />} />
+              <Route path="children/add" element={<AddChild />} />
+              <Route path="children/:id" element={<ChildProfile />} />
               <Route path="donations" element={<Donations />} />
               <Route path="sponsorships" element={<Sponsorships />} />
               <Route 
