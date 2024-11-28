@@ -24,12 +24,23 @@ const MediaManagement = () => {
     queryKey: ['unified-media'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('unified_media_browser' as 'album_media')
+        .from('unified_media_browser')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as MediaItem[];
+      
+      // Transform the data to match MediaItem interface
+      return (data as any[]).map(item => ({
+        id: item.id,
+        url: item.url,
+        thumbnail_url: item.thumbnail_url,
+        source_table: item.source_table,
+        type: item.type,
+        title: item.title,
+        description: item.description,
+        category: item.category || 'uncategorized'
+      })) as MediaItem[];
     }
   });
 
