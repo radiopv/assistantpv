@@ -67,7 +67,7 @@ export const ChildrenNeeds = ({ children, onNeedsUpdate }: ChildrenNeedsProps) =
                   setSelectedChild(child || null);
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Sélectionner un enfant" />
                 </SelectTrigger>
                 <SelectContent>
@@ -83,7 +83,7 @@ export const ChildrenNeeds = ({ children, onNeedsUpdate }: ChildrenNeedsProps) =
                 value={newNeed.category}
                 onValueChange={(value) => setNewNeed({ ...newNeed, category: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-white">
                   <SelectValue placeholder="Catégorie du besoin" />
                 </SelectTrigger>
                 <SelectContent>
@@ -101,6 +101,7 @@ export const ChildrenNeeds = ({ children, onNeedsUpdate }: ChildrenNeedsProps) =
                 placeholder="Description du besoin"
                 value={newNeed.description}
                 onChange={(e) => setNewNeed({ ...newNeed, description: e.target.value })}
+                className="bg-white"
               />
 
               <div className="flex items-center space-x-2">
@@ -136,11 +137,9 @@ export const ChildrenNeeds = ({ children, onNeedsUpdate }: ChildrenNeedsProps) =
                     need.is_urgent ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
                   }`}
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <div className="font-medium">{need.category}</div>
-                      <div className="text-sm text-gray-600">{need.description}</div>
-                    </div>
+                  <div className="space-y-2">
+                    <div className="font-medium">{need.category}</div>
+                    <div className="text-sm text-gray-600">{need.description}</div>
                   </div>
                 </div>
               ))}
