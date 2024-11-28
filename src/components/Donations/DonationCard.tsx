@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { CATEGORIES } from "./DonationCategorySelect";
 
 interface DonationItem {
   category_id: string;
@@ -29,6 +30,11 @@ interface DonationCardProps {
 }
 
 export const DonationCard = ({ donation }: DonationCardProps) => {
+  const getCategoryName = (categoryId: string) => {
+    const category = CATEGORIES.find(cat => cat.id.toString() === categoryId);
+    return category ? category.name : `Catégorie ${categoryId}`;
+  };
+
   return (
     <Card key={donation.id} className="p-4">
       <div className="space-y-4">
@@ -67,7 +73,7 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
             <div className="font-medium">
               {donation.items?.map((item: DonationItem, index: number) => (
                 <span key={index} className="block">
-                  {item.quantity}x Catégorie {item.category_id}
+                  {item.quantity}x {getCategoryName(item.category_id)}
                 </span>
               ))}
             </div>

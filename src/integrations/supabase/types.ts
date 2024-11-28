@@ -406,6 +406,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "donation_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "donation_items_with_categories"
+            referencedColumns: ["category_id"]
+          },
+          {
             foreignKeyName: "donation_items_donation_id_fkey"
             columns: ["donation_id"]
             isOneToOne: false
@@ -1581,6 +1588,25 @@ export type Database = {
       }
     }
     Views: {
+      donation_items_with_categories: {
+        Row: {
+          category_id: string | null
+          category_name: string | null
+          description: string | null
+          donation_id: string | null
+          id: string | null
+          quantity: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donation_items_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       donation_statistics: {
         Row: {
           completed_donations: number | null

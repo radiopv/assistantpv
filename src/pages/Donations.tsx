@@ -22,12 +22,12 @@ const Donations = () => {
       
       if (donationsError) throw donationsError;
 
-      // Fetch donation items for each donation
+      // Fetch donation items with categories for each donation
       const donationsWithItems = await Promise.all(
         donationsData.map(async (donation) => {
           const { data: items } = await supabase
-            .from('donation_items')
-            .select('category_id, quantity')
+            .from('donation_items_with_categories')
+            .select('*')
             .eq('donation_id', donation.id);
 
           const { data: donors } = await supabase
