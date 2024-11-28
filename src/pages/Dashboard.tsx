@@ -31,13 +31,23 @@ const Dashboard = () => {
         return count + needs.filter(need => need.is_urgent).length;
       }, 0) || 0;
 
-      return {
-        ...rawData,
+      // Ensure we have a properly typed object
+      const typedStats: DashboardStats = {
         children: {
-          ...(rawData?.children || {}),
+          total: rawData?.children?.total || 0,
+          sponsored: rawData?.children?.sponsored || 0,
+          available: rawData?.children?.available || 0,
           urgent_needs: urgentNeedsCount
-        }
-      } as DashboardStats;
+        },
+        sponsors: rawData?.sponsors || 0,
+        donations: {
+          total: rawData?.donations?.total || 0,
+          people_helped: rawData?.donations?.people_helped || 0
+        },
+        cities: rawData?.cities || 0
+      };
+
+      return typedStats;
     },
     retry: 1,
     meta: {
