@@ -23,12 +23,6 @@ interface DashboardStats {
   cities: number;
 }
 
-interface CityStats {
-  city: string;
-  donations: number;
-  people_helped: number;
-}
-
 const Dashboard = () => {
   const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ['dashboard-stats'],
@@ -50,27 +44,7 @@ const Dashboard = () => {
     }
   });
 
-  const { data: cityStats, isLoading: cityStatsLoading, error: cityStatsError } = useQuery({
-    queryKey: ['city-stats'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_city_donation_stats');
-      if (error) {
-        console.error('Error fetching city stats:', error);
-        throw new Error(error.message);
-      }
-      return data as CityStats[];
-    },
-    retry: 1,
-    meta: {
-      errorMessage: "Erreur lors du chargement des statistiques par ville",
-      onError: (error: Error) => {
-        console.error('Query error:', error);
-        toast.error("Erreur lors du chargement des statistiques par ville");
-      }
-    }
-  });
-
-  if (statsError || cityStatsError) {
+  if (statsError) {
     return (
       <div className="space-y-6">
         <ErrorAlert 
@@ -83,9 +57,7 @@ const Dashboard = () => {
     );
   }
 
-  const isLoading = statsLoading || cityStatsLoading;
-
-  if (isLoading) {
+  if (statsLoading) {
     return (
       <div className="space-y-6">
         <div>
@@ -161,27 +133,6 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {cityStats && cityStats.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold">Statistiques par Ville</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {cityStats.map((cityStat) => (
-              <Card key={cityStat.city} className="p-4">
-                <h3 className="font-semibold text-lg">{cityStat.city}</h3>
-                <div className="mt-2 space-y-1">
-                  <p className="text-sm text-gray-600">
-                    Donations: <span className="font-medium">{cityStat.donations}</span>
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Personnes aidées: <span className="font-medium">{cityStat.people_helped}</span>
-                  </p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="space-y-6">
         <h2 className="text-2xl font-semibold">Gestion des Parrainages</h2>
         <SponsorshipStats />
@@ -190,3 +141,5 @@ const Dashboard = () => {
     </div>
   );
 };
+
+export default Dashboard;
