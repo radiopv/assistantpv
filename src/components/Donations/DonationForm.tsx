@@ -16,7 +16,7 @@ interface DonationFormProps {
 }
 
 export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [quantity, setQuantity] = useState("");
   const [city, setCity] = useState("");
   const [assistantName, setAssistantName] = useState("Assistant");
@@ -90,7 +90,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         .from('donation_items')
         .insert({
           donation_id: donation.id,
-          category_id: selectedCategory.toString(),
+          category_id: selectedCategory,
           quantity: parseInt(quantity),
         });
 
