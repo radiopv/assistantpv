@@ -2,19 +2,8 @@ import { Card } from "@/components/ui/card";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { CATEGORIES } from "./DonationCategorySelect";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-
-interface DonationItem {
-  category_id: string;
-  quantity: number;
-}
-
-interface Donor {
-  name: string;
-  is_anonymous: boolean;
-}
 
 interface DonationPhoto {
   id: number;
@@ -37,10 +26,7 @@ interface DonationCardProps {
     people_helped: number;
     donation_date: string;
     status: string;
-    photos: string[] | null;
     comments: string | null;
-    items?: DonationItem[];
-    donors?: Donor[];
   };
 }
 
@@ -71,11 +57,6 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
     }
   });
 
-  const getCategoryName = (categoryId: string) => {
-    const category = CATEGORIES.find(cat => cat.id.toString() === categoryId);
-    return category ? category.name : `Catégorie ${categoryId}`;
-  };
-
   return (
     <Card key={donation.id} className="p-4">
       <div className="space-y-4">
@@ -100,7 +81,7 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
         </div>
 
         {/* Grille des détails */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-gray-500">Ville</p>
             <p className="font-medium">{donation.city}</p>
@@ -108,26 +89,6 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
           <div>
             <p className="text-gray-500">Personnes aidées</p>
             <p className="font-medium">{donation.people_helped}</p>
-          </div>
-          <div>
-            <p className="text-gray-500">Articles</p>
-            <div className="font-medium">
-              {donation.items?.map((item: DonationItem, index: number) => (
-                <span key={index} className="block">
-                  {item.quantity}x {getCategoryName(item.category_id)}
-                </span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="text-gray-500">Donateurs</p>
-            <div className="font-medium">
-              {donation.donors?.map((donor: Donor, index: number) => (
-                <span key={index} className="block">
-                  {donor.is_anonymous ? "Donateur anonyme" : donor.name}
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 

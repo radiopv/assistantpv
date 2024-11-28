@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 
 interface NeedsListProps {
   childId: string;
@@ -24,6 +25,7 @@ export const NeedsList = ({
   onDeleteNeed 
 }: NeedsListProps) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [photos, setPhotos] = useState<FileList | null>(null);
 
   const allCategories = [
     'education',
@@ -45,19 +47,6 @@ export const NeedsList = ({
 
   const handleToggleUrgent = async (needIndex: number) => {
     try {
-      const updatedNeeds = [...needs];
-      updatedNeeds[needIndex] = {
-        ...updatedNeeds[needIndex],
-        is_urgent: !updatedNeeds[needIndex].is_urgent
-      };
-
-      const { error } = await supabase
-        .from('children')
-        .update({ needs: updatedNeeds })
-        .eq('id', childId);
-
-      if (error) throw error;
-      
       await onToggleUrgent(childId, needIndex);
       toast.success("Statut urgent mis à jour");
     } catch (error) {
@@ -68,20 +57,33 @@ export const NeedsList = ({
 
   const handleDeleteNeed = async (needIndex: number) => {
     try {
-      const updatedNeeds = needs.filter((_, index) => index !== needIndex);
-      
-      const { error } = await supabase
-        .from('children')
-        .update({ needs: updatedNeeds })
-        .eq('id', childId);
-
-      if (error) throw error;
-      
       await onDeleteNeed(childId, needIndex);
       toast.success("Besoin supprimé");
     } catch (error) {
       console.error('Error deleting need:', error);
       toast.error("Erreur lors de la suppression du besoin");
+    }
+  };
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
+
+    try {
+      const file = files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${childId}/${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('needs-photos')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      toast.success("Photo ajoutée avec succès");
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      toast.error("Erreur lors de l'upload de la photo");
     }
   };
 
@@ -118,6 +120,7 @@ export const NeedsList = ({
             </Badge>
           ))}
         </div>
+
         <div className="space-y-3">
           {selectedCategories.map((category) => {
             const needIndex = needs.findIndex(need => need.category === category);
@@ -150,6 +153,14 @@ export const NeedsList = ({
                     >
                       Marquer comme urgent
                     </label>
+                  </div>
+                  <div className="mt-2">
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="w-full"
+                    />
                   </div>
                 </div>
                 <Button
