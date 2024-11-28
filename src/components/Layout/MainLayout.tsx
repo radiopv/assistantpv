@@ -1,7 +1,14 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const MainLayout = () => {
+  const { user } = useAuth();
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Sidebar />

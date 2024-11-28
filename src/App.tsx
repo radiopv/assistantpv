@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./components/Auth/AuthProvider";
+import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
@@ -14,10 +14,16 @@ import { supabase } from "@/integrations/supabase/client";
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const session = supabase.auth.getSession();
+  const { session, loading } = useAuth();
+  
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
+  
   if (!session) {
     return <Navigate to="/login" />;
   }
+
   return <>{children}</>;
 };
 

@@ -4,18 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { session } = useAuth();
 
   useEffect(() => {
-    // Check if user is already logged in
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate("/");
-      }
-    });
-  }, [navigate]);
+    if (session) {
+      navigate("/");
+    }
+  }, [session, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Users, Gift, Home, Menu, X } from "lucide-react";
+import { Users, Gift, Home, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const Sidebar = () => {
   const location = useLocation();
   const isMobile = useIsMobile();
   const [isOpen, setIsOpen] = useState(!isMobile);
+  const { signOut } = useAuth();
 
   const links = [
     { icon: Home, label: "Dashboard", path: "/" },
@@ -63,7 +65,15 @@ const Sidebar = () => {
             </ul>
           </nav>
           
-          <div className="mt-auto pt-4 border-t border-gray-200">
+          <div className="mt-auto pt-4 border-t border-gray-200 space-y-4">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start" 
+              onClick={signOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Déconnexion
+            </Button>
             <p className="text-sm text-gray-600 text-center">
               © 2024 TousPourCuba
             </p>
