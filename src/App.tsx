@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import AddChild from "./pages/AddChild";
 import ChildProfile from "./pages/ChildProfile";
+import ChildrenNeeds from "./pages/ChildrenNeeds";
 import Donations from "./pages/Donations";
 import Sponsorships from "./pages/Sponsorships";
 import Login from "./pages/auth/Login";
@@ -54,6 +55,7 @@ const App = () => (
             >
               <Route path="/" element={<Dashboard />} />
               <Route path="/children" element={<Children />} />
+              <Route path="/children/needs" element={<ChildrenNeeds />} />
               <Route path="/children/add" element={<AddChild />} />
               <Route path="/children/:id" element={<ChildProfile />} />
               <Route path="/donations" element={<Donations />} />
