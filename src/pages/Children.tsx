@@ -9,6 +9,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Child {
   id: string;
@@ -17,11 +24,15 @@ interface Child {
   city: string;
   status: string;
   photo_url: string;
+  gender: string;
 }
 
 const Children = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [selectedGender, setSelectedGender] = useState<string>("");
+  const [selectedAge, setSelectedAge] = useState<string>("");
 
   const { data: children, isLoading, error, refetch } = useQuery({
     queryKey: ['children'],
@@ -36,10 +47,18 @@ const Children = () => {
     }
   });
 
-  const filteredChildren = children?.filter(child => 
-    child.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    child.city.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredChildren = children?.filter(child => {
+    const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         child.city.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCity = !selectedCity || child.city === selectedCity;
+    const matchesGender = !selectedGender || child.gender === selectedGender;
+    const matchesAge = !selectedAge || child.age === parseInt(selectedAge);
+
+    return matchesSearch && matchesCity && matchesGender && matchesAge;
+  });
+
+  const uniqueCities = [...new Set(children?.map(child => child.city) || [])];
+  const uniqueAges = [...new Set(children?.map(child => child.age) || [])].sort((a, b) => a - b);
 
   if (error) {
     return (
@@ -114,10 +133,46 @@ const Children = () => {
               className="pl-10"
             />
           </div>
-          <Button variant="outline">
-            <Filter className="w-4 h-4 mr-2" />
-            Filtres
-          </Button>
+          <div className="flex gap-2 flex-wrap md:flex-nowrap">
+            <Select value={selectedCity} onValueChange={setSelectedCity}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Ville" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Toutes les villes</SelectItem>
+                {uniqueCities.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedGender} onValueChange={setSelectedGender}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Genre" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Tous</SelectItem>
+                <SelectItem value="M">Masculin</SelectItem>
+                <SelectItem value="F">Féminin</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedAge} onValueChange={setSelectedAge}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Âge" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Tous les âges</SelectItem>
+                {uniqueAges.map((age) => (
+                  <SelectItem key={age} value={age.toString()}>
+                    {age} ans
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
