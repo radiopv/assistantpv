@@ -108,19 +108,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         if (donorError) throw donorError;
       }
 
-      if (photoUrls.length > 0) {
-        const photoRecords = photoUrls.map(url => ({
-          donation_id: donation.id,
-          url: url,
-        }));
-
-        const { error: photoError } = await supabase
-          .from('donation_photos')
-          .insert(photoRecords);
-
-        if (photoError) throw photoError;
-      }
-
       toast({
         title: "Don enregistré",
         description: "Le don a été enregistré avec succès.",
