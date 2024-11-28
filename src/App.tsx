@@ -9,18 +9,21 @@ import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import Donations from "./pages/Donations";
 import Login from "./pages/auth/Login";
-import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { session, loading } = useAuth();
+  const { session, loading, isAssistant } = useAuth();
   
   if (loading) {
     return <div>Chargement...</div>;
   }
   
   if (!session) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!isAssistant) {
     return <Navigate to="/login" />;
   }
 

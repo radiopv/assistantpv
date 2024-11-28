@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  isAssistant: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,12 +17,14 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   signOut: async () => {},
+  isAssistant: false,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      setLoading(false);
+      checkAssistantRole(session?.user?.id);
     });
 
     // Listen for auth changes
@@ -38,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      checkAssistantRole(session?.user?.id);
       setLoading(false);
 
       // Redirect based on auth state
@@ -48,6 +52,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const checkAssistantRole = async (userId: string | undefined) => {
+    if (!userId) {
+      setIsAssistant(false);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('sponsors')
+      .select('role')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      console.error('Error checking assistant role:', error);
+      setIsAssistant(false);
+      return;
+    }
+
+    setIsAssistant(data?.role === 'assistant');
+  };
 
   const signOut = async () => {
     try {
@@ -68,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signOut }}>
+    <AuthContext.Provider value={{ session, user, loading, signOut, isAssistant }}>
       {!loading && children}
     </AuthContext.Provider>
   );
