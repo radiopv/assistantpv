@@ -6,15 +6,28 @@ export interface Need {
   is_urgent: boolean;
 }
 
-export const convertJsonToNeeds = (jsonNeeds: Json): Need[] => {
+export interface NeedJson {
+  category: string;
+  description: string;
+  is_urgent: boolean;
+}
+
+export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
   if (!Array.isArray(jsonNeeds)) return [];
-  return jsonNeeds.map(need => ({
-    category: String(need?.category || ''),
-    description: String(need?.description || ''),
-    is_urgent: Boolean(need?.is_urgent || false)
-  }));
+  return jsonNeeds.map(need => {
+    const needObj = need as NeedJson;
+    return {
+      category: String(needObj?.category || ''),
+      description: String(needObj?.description || ''),
+      is_urgent: Boolean(needObj?.is_urgent || false)
+    };
+  });
 };
 
 export const convertNeedsToJson = (needs: Need[]): Json => {
-  return needs as unknown as Json;
+  return needs.map(need => ({
+    category: need.category,
+    description: need.description,
+    is_urgent: need.is_urgent
+  })) as unknown as Json;
 };
