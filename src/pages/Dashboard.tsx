@@ -33,7 +33,7 @@ const Dashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data as DashboardStats;
+      return data as unknown as DashboardStats;
     }
   });
 

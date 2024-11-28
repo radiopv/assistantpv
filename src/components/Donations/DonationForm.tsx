@@ -80,7 +80,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       const { data: donation, error: donationError } = await supabase
         .from('donations')
         .insert({
-          assistant_name: "Assistant", // You might want to get this from the current user
+          assistant_name: "Assistant",
           city: city,
           people_helped: parseInt(quantity),
           donation_date: new Date().toISOString(),
@@ -93,12 +93,12 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
       if (donationError) throw donationError;
 
-      // 3. Create donation items
+      // 3. Create donation items - Fix: Convert selectedCategory to string
       const { error: itemError } = await supabase
         .from('donation_items')
         .insert({
           donation_id: donation.id,
-          category_id: selectedCategory,
+          category_id: selectedCategory.toString(),
           quantity: parseInt(quantity),
         });
 
