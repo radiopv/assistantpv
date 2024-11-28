@@ -17,6 +17,7 @@ const Login = () => {
     setLoading(true);
 
     try {
+      // Vérifier les identifiants dans la table sponsors
       const { data: sponsor, error } = await supabase
         .from('sponsors')
         .select('*')
