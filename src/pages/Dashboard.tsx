@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Json } from "@/integrations/supabase/types";
 
 interface DashboardStats {
   children: {
@@ -40,9 +41,28 @@ interface Child {
   needs: Need[];
 }
 
+interface SupabaseChild {
+  id: string;
+  name: string;
+  needs: Json;
+}
+
+const convertJsonToNeeds = (jsonNeeds: Json): Need[] => {
+  if (!Array.isArray(jsonNeeds)) return [];
+  return jsonNeeds.map(need => ({
+    category: String(need?.category || ''),
+    description: String(need?.description || ''),
+    is_urgent: Boolean(need?.is_urgent || false)
+  }));
+};
+
 const Dashboard = () => {
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
-  const [newNeed, setNewNeed] = useState({ category: "", description: "", is_urgent: false });
+  const [newNeed, setNewNeed] = useState<Need>({ 
+    category: "", 
+    description: "", 
+    is_urgent: false 
+  });
 
   const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ['dashboard-stats'],
@@ -71,7 +91,11 @@ const Dashboard = () => {
         .from('children')
         .select('id, name, needs');
       if (error) throw error;
-      return data as Child[];
+      
+      return (data as SupabaseChild[]).map(child => ({
+        ...child,
+        needs: convertJsonToNeeds(child.needs)
+      }));
     }
   });
 
@@ -199,6 +223,8 @@ const Dashboard = () => {
       color: "bg-blue-500",
     },
   ];
+
+  // ... keep existing code (render JSX)
 
   return (
     <div className="space-y-6">
