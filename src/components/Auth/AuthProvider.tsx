@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      checkAssistantRole(session?.user?.id);
+      checkAssistantRole(session?.user?.email);
     });
 
     // Listen for auth changes
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
-      checkAssistantRole(session?.user?.id);
+      checkAssistantRole(session?.user?.email);
       setLoading(false);
 
       // Redirect based on auth state
@@ -53,17 +53,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const checkAssistantRole = async (userId: string | undefined) => {
-    if (!userId) {
+  const checkAssistantRole = async (email: string | undefined) => {
+    if (!email) {
       setIsAssistant(false);
       return;
     }
 
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('sponsors')
         .select('role')
-        .eq('id', userId);
+        .eq('email', email)
+        .single();
 
       if (error) {
         console.error('Error checking assistant role:', error);
@@ -71,8 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      // Check if any results were returned and if the first result has role 'assistant'
-      setIsAssistant(data && data.length > 0 && data[0].role === 'assistant');
+      setIsAssistant(['assistant', 'admin'].includes(data.role));
     } catch (error) {
       console.error('Error checking assistant role:', error);
       setIsAssistant(false);
