@@ -17,41 +17,36 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Vérifier les identifiants dans la table sponsors
-      const { data: sponsors, error: sponsorsError } = await supabase
+      const { data: sponsor, error } = await supabase
         .from('sponsors')
-        .select('id, role, password_hash')
+        .select('*')
         .eq('email', email)
         .single();
 
-      if (sponsorsError) throw sponsorsError;
+      if (error) throw error;
 
-      if (!sponsors) {
+      if (!sponsor) {
         throw new Error("Email ou mot de passe incorrect");
       }
 
       // Vérifier le rôle
-      if (!['assistant', 'admin'].includes(sponsors.role)) {
+      if (!['assistant', 'admin'].includes(sponsor.role)) {
         throw new Error("Accès non autorisé");
       }
 
       // Vérifier le mot de passe
-      if (sponsors.password_hash !== password) {
+      if (sponsor.password_hash !== password) {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      // Créer une session Supabase pour maintenir l'authentification
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
+      // Stocker les informations de l'utilisateur
+      localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
         title: "Connexion réussie",
         description: "Bienvenue dans votre espace assistant",
       });
+      
       navigate("/");
 
     } catch (error: any) {

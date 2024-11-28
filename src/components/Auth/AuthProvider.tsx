@@ -1,19 +1,16 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
-  session: Session | null;
-  user: User | null;
+  user: any | null;
   loading: boolean;
   signOut: () => Promise<void>;
   isAssistant: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  session: null,
   user: null,
   loading: true,
   signOut: async () => {},
@@ -21,64 +18,40 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      checkAssistantRole(session?.user?.email);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      checkAssistantRole(session?.user?.email);
-      setLoading(false);
-
-      if (!session) {
+    const checkAuth = async () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
+        } else {
+          setUser(null);
+          navigate("/login");
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error);
+        setUser(null);
         navigate("/login");
+      } finally {
+        setLoading(false);
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
+    checkAuth();
   }, [navigate]);
-
-  const checkAssistantRole = async (email: string | undefined) => {
-    if (!email) {
-      setIsAssistant(false);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('sponsors')
-        .select('role')
-        .eq('email', email)
-        .single();
-
-      if (error) {
-        console.error('Error checking assistant role:', error);
-        setIsAssistant(false);
-        return;
-      }
-
-      setIsAssistant(['assistant', 'admin'].includes(data.role));
-    } catch (error) {
-      console.error('Error checking assistant role:', error);
-      setIsAssistant(false);
-    }
-  };
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      localStorage.removeItem('user');
+      setUser(null);
+      setIsAssistant(false);
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
@@ -95,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signOut, isAssistant }}>
+    <AuthContext.Provider value={{ user, loading, signOut, isAssistant }}>
       {!loading && children}
     </AuthContext.Provider>
   );
