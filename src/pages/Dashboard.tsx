@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
 import { SponsorshipStats } from "@/components/Sponsorship/SponsorshipStats";
+import { toast } from "sonner";
 
 interface DashboardStats {
   children: {
@@ -33,8 +34,16 @@ const Dashboard = () => {
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
-      if (error) throw error;
-      return data as unknown as DashboardStats;
+      if (error) {
+        console.error('Error fetching dashboard stats:', error);
+        throw new Error(error.message);
+      }
+      return data as DashboardStats;
+    },
+    retry: 1,
+    onError: (error) => {
+      console.error('Query error:', error);
+      toast.error("Erreur lors du chargement des statistiques");
     }
   });
 
@@ -42,8 +51,16 @@ const Dashboard = () => {
     queryKey: ['city-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_city_donation_stats');
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching city stats:', error);
+        throw new Error(error.message);
+      }
       return data as CityStats[];
+    },
+    retry: 1,
+    onError: (error) => {
+      console.error('Query error:', error);
+      toast.error("Erreur lors du chargement des statistiques par ville");
     }
   });
 
@@ -52,7 +69,9 @@ const Dashboard = () => {
       <div className="space-y-6">
         <ErrorAlert 
           message="Une erreur est survenue lors du chargement des statistiques" 
-          retry={() => refetchStats()}
+          retry={() => {
+            refetchStats();
+          }}
         />
       </div>
     );
