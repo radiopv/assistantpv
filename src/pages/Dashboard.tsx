@@ -22,12 +22,6 @@ interface DashboardStats {
   cities: number;
 }
 
-interface CityStats {
-  city: string;
-  donations: number;
-  people_helped: number;
-}
-
 const Dashboard = () => {
   const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ['dashboard-stats'],
@@ -38,16 +32,7 @@ const Dashboard = () => {
     }
   });
 
-  const { data: cityStats, isLoading: cityStatsLoading, error: cityStatsError } = useQuery({
-    queryKey: ['city-stats'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_city_donation_stats');
-      if (error) throw error;
-      return data as CityStats[];
-    }
-  });
-
-  if (statsError || cityStatsError) {
+  if (statsError) {
     return (
       <div className="space-y-6">
         <ErrorAlert 
@@ -58,7 +43,7 @@ const Dashboard = () => {
     );
   }
 
-  const isLoading = statsLoading || cityStatsLoading;
+  const isLoading = statsLoading;
 
   if (isLoading) {
     return (
@@ -135,27 +120,6 @@ const Dashboard = () => {
           </Card>
         ))}
       </div>
-
-      {cityStats && cityStats.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold">Statistiques par Ville</h2>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {cityStats.map((cityStat) => (
-              <Card key={cityStat.city} className="p-4">
-                <h3 className="font-semibold text-lg">{cityStat.city}</h3>
-                <div className="mt-2 space-y-1">
-                  <p className="text-sm text-gray-600">
-                    Donations: <span className="font-medium">{cityStat.donations}</span>
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Personnes aidées: <span className="font-medium">{cityStat.people_helped}</span>
-                  </p>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="space-y-6">
         <h2 className="text-2xl font-semibold">Gestion des Parrainages</h2>
