@@ -33,7 +33,7 @@ const Login = () => {
 
         if (profileError) throw profileError;
 
-        if (profileData.role !== 'assistant') {
+        if (profileData?.role !== 'assistant') {
           throw new Error("Accès non autorisé");
         }
 
