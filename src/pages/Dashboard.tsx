@@ -38,16 +38,15 @@ const Dashboard = () => {
         console.error('Error fetching dashboard stats:', error);
         throw new Error(error.message);
       }
-      // Add type assertion to handle the conversion
-      return data as unknown as DashboardStats;
+      return data as DashboardStats;
     },
     retry: 1,
     meta: {
-      errorMessage: "Erreur lors du chargement des statistiques"
-    },
-    onError: (error) => {
-      console.error('Query error:', error);
-      toast.error("Erreur lors du chargement des statistiques");
+      errorMessage: "Erreur lors du chargement des statistiques",
+      onError: (error: Error) => {
+        console.error('Query error:', error);
+        toast.error("Erreur lors du chargement des statistiques");
+      }
     }
   });
 
@@ -63,11 +62,11 @@ const Dashboard = () => {
     },
     retry: 1,
     meta: {
-      errorMessage: "Erreur lors du chargement des statistiques par ville"
-    },
-    onError: (error) => {
-      console.error('Query error:', error);
-      toast.error("Erreur lors du chargement des statistiques par ville");
+      errorMessage: "Erreur lors du chargement des statistiques par ville",
+      onError: (error: Error) => {
+        console.error('Query error:', error);
+        toast.error("Erreur lors du chargement des statistiques par ville");
+      }
     }
   });
 
@@ -191,5 +190,3 @@ const Dashboard = () => {
     </div>
   );
 };
-
-export default Dashboard;
