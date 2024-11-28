@@ -1,21 +1,15 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { DollarSign, Shirt, Utensils, BookOpen, HeartPulse, Package, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-
-const CATEGORIES = [
-  { id: 1, name: 'Monétaire', icon: DollarSign },
-  { id: 2, name: 'Vêtements', icon: Shirt },
-  { id: 3, name: 'Nourriture', icon: Utensils },
-  { id: 4, name: 'Éducation', icon: BookOpen },
-  { id: 5, name: 'Médical', icon: HeartPulse },
-  { id: 6, name: 'Autre', icon: Package },
-];
+import { DonationCategorySelect } from "./DonationCategorySelect";
+import { DonationBasicInfo } from "./DonationBasicInfo";
+import { DonorInfo } from "./DonorInfo";
+import { PhotoUpload } from "./PhotoUpload";
 
 interface DonationFormProps {
   onDonationComplete?: () => void;
@@ -25,6 +19,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [quantity, setQuantity] = useState("");
   const [city, setCity] = useState("");
+  const [assistantName, setAssistantName] = useState("Assistant");
   const [comments, setComments] = useState("");
   const [donorName, setDonorName] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -70,17 +65,15 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
     try {
       setLoading(true);
 
-      // 1. Upload photos if any
       let photoUrls: string[] = [];
       if (photos && photos.length > 0) {
         photoUrls = await handlePhotoUpload(photos);
       }
 
-      // 2. Create the main donation
       const { data: donation, error: donationError } = await supabase
         .from('donations')
         .insert({
-          assistant_name: "Assistant",
+          assistant_name: assistantName,
           city: city,
           people_helped: parseInt(quantity),
           donation_date: new Date().toISOString(),
@@ -93,7 +86,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
       if (donationError) throw donationError;
 
-      // 3. Create donation items - Fix: Convert selectedCategory to string
       const { error: itemError } = await supabase
         .from('donation_items')
         .insert({
@@ -104,7 +96,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
       if (itemError) throw itemError;
 
-      // 4. Create donor if name provided
       if (donorName || isAnonymous) {
         const { error: donorError } = await supabase
           .from('donors')
@@ -117,7 +108,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         if (donorError) throw donorError;
       }
 
-      // 5. Create photo records if any
       if (photoUrls.length > 0) {
         const photoRecords = photoUrls.map(url => ({
           donation_id: donation.id,
@@ -136,7 +126,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         description: "Le don a été enregistré avec succès.",
       });
 
-      // Reset form
       setSelectedCategory(null);
       setQuantity("");
       setCity("");
@@ -163,47 +152,20 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <Label>Catégorie</Label>
-          <div className="grid grid-cols-3 gap-4 mt-2">
-            {CATEGORIES.map((category) => {
-              const Icon = category.icon;
-              return (
-                <Button
-                  key={category.id}
-                  type="button"
-                  variant={selectedCategory === category.id ? "default" : "outline"}
-                  className="h-24 flex flex-col items-center justify-center gap-2"
-                  onClick={() => setSelectedCategory(category.id)}
-                >
-                  <Icon className="w-6 h-6" />
-                  <span className="text-sm">{category.name}</span>
-                </Button>
-              );
-            })}
-          </div>
+          <DonationCategorySelect
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <Label htmlFor="city">Ville</Label>
-            <Input
-              id="city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="Ville où le don a été fait"
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="quantity">Nombre de personnes aidées</Label>
-            <Input
-              id="quantity"
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              min="1"
-            />
-          </div>
-        </div>
+        <DonationBasicInfo
+          city={city}
+          onCityChange={setCity}
+          quantity={quantity}
+          onQuantityChange={setQuantity}
+          assistantName={assistantName}
+          onAssistantNameChange={setAssistantName}
+        />
 
         <div>
           <Label htmlFor="comments">Commentaires</Label>
@@ -216,38 +178,14 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
           />
         </div>
 
-        <div className="space-y-4">
-          <Label>Information du donateur</Label>
-          <div className="flex items-center gap-4">
-            <Input
-              placeholder="Nom du donateur (optionnel)"
-              value={donorName}
-              onChange={(e) => setDonorName(e.target.value)}
-              disabled={isAnonymous}
-            />
-            <Button
-              type="button"
-              variant={isAnonymous ? "default" : "outline"}
-              onClick={() => setIsAnonymous(!isAnonymous)}
-            >
-              Anonyme
-            </Button>
-          </div>
-        </div>
+        <DonorInfo
+          donorName={donorName}
+          onDonorNameChange={setDonorName}
+          isAnonymous={isAnonymous}
+          onAnonymousChange={setIsAnonymous}
+        />
 
-        <div>
-          <Label htmlFor="photos">Photos</Label>
-          <div className="mt-2">
-            <Input
-              id="photos"
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={(e) => setPhotos(e.target.files)}
-              className="cursor-pointer"
-            />
-          </div>
-        </div>
+        <PhotoUpload onPhotosChange={setPhotos} />
 
         <Button 
           type="submit" 
