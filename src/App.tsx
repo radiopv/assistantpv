@@ -15,7 +15,14 @@ import Sponsorships from "./pages/Sponsorships";
 import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const ProtectedRoute = ({ children, requiredPermission }: { children: React.ReactNode, requiredPermission?: string }) => {
   const { session, loading, isAssistant, user } = useAuth();
@@ -53,21 +60,24 @@ const App = () => (
                 </ProtectedRoute>
               }
             >
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/children" element={<Children />} />
-              <Route path="/children/needs" element={<ChildrenNeeds />} />
-              <Route path="/children/add" element={<AddChild />} />
-              <Route path="/children/:id" element={<ChildProfile />} />
-              <Route path="/donations" element={<Donations />} />
-              <Route path="/sponsorships" element={<Sponsorships />} />
+              <Route index element={<Dashboard />} />
+              <Route path="children">
+                <Route index element={<Children />} />
+                <Route path="needs" element={<ChildrenNeeds />} />
+                <Route path="add" element={<AddChild />} />
+                <Route path=":id" element={<ChildProfile />} />
+              </Route>
+              <Route path="donations" element={<Donations />} />
+              <Route path="sponsorships" element={<Sponsorships />} />
               <Route 
-                path="/admin/permissions" 
+                path="admin/permissions" 
                 element={
                   <ProtectedRoute requiredPermission="manage_permissions">
                     <AdminPermissions />
                   </ProtectedRoute>
                 } 
               />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
         </AuthProvider>
