@@ -17,15 +17,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading, isAssistant } = useAuth();
   
   if (loading) {
-    return <div>Chargement...</div>;
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="text-gray-600">Chargement...</div>
+    </div>;
   }
   
-  if (!session) {
-    return <Navigate to="/login" />;
-  }
-
-  if (!isAssistant) {
-    return <Navigate to="/login" />;
+  if (!session || !isAssistant) {
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
