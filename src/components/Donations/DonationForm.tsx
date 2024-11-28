@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { DonationCategorySelect } from "./DonationCategorySelect";
 import { DonationBasicInfo } from "./DonationBasicInfo";
 import { DonorInfo } from "./DonorInfo";
 import { PhotoUpload } from "./PhotoUpload";
+import { DonationSubmitButton } from "./DonationSubmitButton";
 
 interface DonationFormProps {
   onDonationComplete?: () => void;
@@ -95,7 +94,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
       if (donationError) throw donationError;
 
-      // Insert donation items for each selected category
       const donationItems = selectedCategories.map(categoryId => ({
         donation_id: donation.id,
         category_id: categoryId,
@@ -186,20 +184,10 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
         <PhotoUpload onPhotosChange={setPhotos} />
 
-        <Button 
-          type="submit" 
-          disabled={selectedCategories.length === 0 || !quantity || !city || loading}
-          className="w-full"
-        >
-          {loading ? (
-            <>
-              <Upload className="mr-2 h-4 w-4 animate-spin" />
-              Enregistrement...
-            </>
-          ) : (
-            "Enregistrer le don"
-          )}
-        </Button>
+        <DonationSubmitButton 
+          loading={loading}
+          disabled={selectedCategories.length === 0 || !quantity || !city}
+        />
       </form>
     </Card>
   );
