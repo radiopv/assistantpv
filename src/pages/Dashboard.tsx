@@ -45,11 +45,9 @@ const Dashboard = () => {
     meta: {
       errorMessage: "Erreur lors du chargement des statistiques"
     },
-    onSettled: (_, error) => {
-      if (error) {
-        console.error('Query error:', error);
-        toast.error("Erreur lors du chargement des statistiques");
-      }
+    onError: (error) => {
+      console.error('Query error:', error);
+      toast.error("Erreur lors du chargement des statistiques");
     }
   });
 
@@ -67,11 +65,9 @@ const Dashboard = () => {
     meta: {
       errorMessage: "Erreur lors du chargement des statistiques par ville"
     },
-    onSettled: (_, error) => {
-      if (error) {
-        console.error('Query error:', error);
-        toast.error("Erreur lors du chargement des statistiques par ville");
-      }
+    onError: (error) => {
+      console.error('Query error:', error);
+      toast.error("Erreur lors du chargement des statistiques par ville");
     }
   });
 
