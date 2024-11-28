@@ -57,6 +57,7 @@ const App = () => (
             <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
               <Route path="children" element={<Children />} />
+              <Route path="children2" element={<Children />} /> {/* Nouvelle route */}
               <Route path="children/needs" element={<ChildrenNeeds />} />
               <Route path="children/add" element={<AddChild />} />
               <Route path="children/:id" element={<ChildProfile />} />

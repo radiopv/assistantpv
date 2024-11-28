@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   const links = [
     { icon: Home, label: "Dashboard", path: "/" },
-    { icon: Users, label: "Enfants", path: "/children" },
+    { icon: Users, label: "Enfants", path: "/children2" }, // Mise à jour du chemin
     { icon: AlertCircle, label: "Besoins", path: "/children/needs" },
     { icon: Heart, label: "Parrainages", path: "/sponsorships" },
     { icon: Gift, label: "Dons", path: "/donations" },
