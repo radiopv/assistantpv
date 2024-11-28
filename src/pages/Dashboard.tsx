@@ -5,13 +5,28 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
 
+interface DashboardStats {
+  children: {
+    total: number;
+    sponsored: number;
+    available: number;
+    urgent_needs: number;
+  };
+  sponsors: number;
+  donations: {
+    total: number;
+    people_helped: number;
+  };
+  cities: number;
+}
+
 const Dashboard = () => {
   const { data: stats, isLoading, error, refetch } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data;
+      return data as DashboardStats;
     }
   });
 
