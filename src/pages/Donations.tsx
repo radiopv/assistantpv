@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { cn } from "@/lib/utils";
+import { DonationForm } from "@/components/Donations/DonationForm";
+import { useState } from "react";
 
 interface Donation {
   id: string;
@@ -17,6 +19,8 @@ interface Donation {
 }
 
 const Donations = () => {
+  const [showForm, setShowForm] = useState(false);
+  
   const { data: donations, isLoading, error, refetch } = useQuery({
     queryKey: ['donations'],
     queryFn: async () => {
@@ -70,11 +74,21 @@ const Donations = () => {
           <h1 className="text-3xl font-bold text-gray-900">Dons</h1>
           <p className="text-gray-600 mt-2">Gérez les dons et leur distribution</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button 
+          className="bg-primary hover:bg-primary/90"
+          onClick={() => setShowForm(!showForm)}
+        >
           <Plus className="w-4 h-4 mr-2" />
-          Ajouter un don
+          {showForm ? "Fermer" : "Ajouter un don"}
         </Button>
       </div>
+
+      {showForm && (
+        <DonationForm onDonationComplete={() => {
+          setShowForm(false);
+          refetch();
+        }} />
+      )}
 
       <Card className="p-6">
         {donations && donations.length > 0 ? (

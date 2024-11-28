@@ -9,6 +9,8 @@ import { ArrowLeft, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
+import { AlbumMediaUpload } from "@/components/AlbumMedia/AlbumMediaUpload";
+import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 
 const ChildProfile = () => {
   const { id } = useParams();
@@ -122,60 +124,70 @@ const ChildProfile = () => {
         </Button>
       </div>
 
-      <Card className="p-6">
-        <div className="grid gap-6">
-          <div className="aspect-video relative rounded-lg overflow-hidden">
-            <img
-              src={child.photo_url || "/placeholder.svg"}
-              alt={child.name}
-              className="w-full h-full object-cover"
-            />
+      <div className="grid gap-6">
+        <Card className="p-6">
+          <div className="grid gap-6">
+            <div className="aspect-video relative rounded-lg overflow-hidden">
+              <img
+                src={child.photo_url || "/placeholder.svg"}
+                alt={child.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Nom</Label>
+                <Input
+                  id="name"
+                  value={child.name}
+                  onChange={(e) => editing && setChild({ ...child, name: e.target.value })}
+                  disabled={!editing}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="age">Âge</Label>
+                <Input
+                  id="age"
+                  type="number"
+                  value={child.age}
+                  onChange={(e) => editing && setChild({ ...child, age: parseInt(e.target.value) })}
+                  disabled={!editing}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="city">Ville</Label>
+                <Input
+                  id="city"
+                  value={child.city}
+                  onChange={(e) => editing && setChild({ ...child, city: e.target.value })}
+                  disabled={!editing}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="status">Statut</Label>
+                <Input
+                  id="status"
+                  value={child.status}
+                  onChange={(e) => editing && setChild({ ...child, status: e.target.value })}
+                  disabled={!editing}
+                />
+              </div>
+            </div>
           </div>
+        </Card>
 
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Nom</Label>
-              <Input
-                id="name"
-                value={child.name}
-                onChange={(e) => editing && setChild({ ...child, name: e.target.value })}
-                disabled={!editing}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="age">Âge</Label>
-              <Input
-                id="age"
-                type="number"
-                value={child.age}
-                onChange={(e) => editing && setChild({ ...child, age: parseInt(e.target.value) })}
-                disabled={!editing}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="city">Ville</Label>
-              <Input
-                id="city"
-                value={child.city}
-                onChange={(e) => editing && setChild({ ...child, city: e.target.value })}
-                disabled={!editing}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="status">Statut</Label>
-              <Input
-                id="status"
-                value={child.status}
-                onChange={(e) => editing && setChild({ ...child, status: e.target.value })}
-                disabled={!editing}
-              />
-            </div>
+        <Card className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Photos supplémentaires</h2>
+          <div className="space-y-6">
+            <AlbumMediaUpload childId={id!} onUploadComplete={loadChild} />
+            <AlbumMediaGrid childId={id!} />
           </div>
-        </div>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 };
