@@ -57,12 +57,17 @@ export const AddChildForm = () => {
         photoUrl = publicUrl;
       }
 
+      // Validation explicite du genre
+      if (!['M', 'F'].includes(formData.gender)) {
+        throw new Error("Le genre doit être 'M' ou 'F'");
+      }
+
       const { error } = await supabase
         .from('children')
         .insert({
           name: formData.name,
           age: parseInt(formData.age),
-          gender: formData.gender,
+          gender: formData.gender, // Maintenant validé pour être exactement 'M' ou 'F'
           birth_date: formData.birth_date,
           city: formData.city,
           status: "available",
