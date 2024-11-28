@@ -4,23 +4,23 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Category {
-  id: number;
+  id: string;
   name: string;
   icon: any;
 }
 
 export const CATEGORIES = [
-  { id: 1, name: 'Monétaire', icon: DollarSign },
-  { id: 2, name: 'Vêtements', icon: Shirt },
-  { id: 3, name: 'Nourriture', icon: Utensils },
-  { id: 4, name: 'Éducation', icon: BookOpen },
-  { id: 5, name: 'Médical', icon: HeartPulse },
-  { id: 6, name: 'Autre', icon: Package },
+  { id: "1", name: 'Monétaire', icon: DollarSign },
+  { id: "2", name: 'Vêtements', icon: Shirt },
+  { id: "3", name: 'Nourriture', icon: Utensils },
+  { id: "4", name: 'Éducation', icon: BookOpen },
+  { id: "5", name: 'Médical', icon: HeartPulse },
+  { id: "6", name: 'Autre', icon: Package },
 ];
 
 interface DonationCategorySelectProps {
-  selectedCategory: number | null;
-  onSelectCategory: (id: number) => void;
+  selectedCategory: string | null;
+  onSelectCategory: (id: string) => void;
 }
 
 export const DonationCategorySelect = ({ selectedCategory, onSelectCategory }: DonationCategorySelectProps) => {
