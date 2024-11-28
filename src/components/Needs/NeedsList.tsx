@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { Need } from "@/types/needs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 
 interface NeedsListProps {
   childId: string;
@@ -20,6 +21,8 @@ export const NeedsList = ({
   onToggleUrgent, 
   onDeleteNeed 
 }: NeedsListProps) => {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
   const allCategories = [
     'education',
     'jouet',
@@ -30,15 +33,23 @@ export const NeedsList = ({
     'autre'
   ];
 
+  const handleCategoryClick = (category: string) => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(selectedCategories.filter(c => c !== category));
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
+  };
+
   const getCategoryColor = (category: string, isActive: boolean = false) => {
     const colors: Record<string, string> = {
-      education: `${isActive ? 'bg-blue-500 text-white' : 'bg-blue-100 text-blue-800'} hover:bg-blue-200`,
-      jouet: `${isActive ? 'bg-purple-500 text-white' : 'bg-purple-100 text-purple-800'} hover:bg-purple-200`,
-      vetement: `${isActive ? 'bg-pink-500 text-white' : 'bg-pink-100 text-pink-800'} hover:bg-pink-200`,
-      nourriture: `${isActive ? 'bg-green-500 text-white' : 'bg-green-100 text-green-800'} hover:bg-green-200`,
-      medicament: `${isActive ? 'bg-red-500 text-white' : 'bg-red-100 text-red-800'} hover:bg-red-200`,
-      hygiene: `${isActive ? 'bg-yellow-500 text-white' : 'bg-yellow-100 text-yellow-800'} hover:bg-yellow-200`,
-      autre: `${isActive ? 'bg-gray-500 text-white' : 'bg-gray-100 text-gray-800'} hover:bg-gray-200`
+      education: isActive ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600',
+      jouet: isActive ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600',
+      vetement: isActive ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600',
+      nourriture: isActive ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600',
+      medicament: isActive ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600',
+      hygiene: isActive ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600',
+      autre: isActive ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-green-500 text-white hover:bg-green-600'
     };
     return colors[category] || colors.autre;
   };
@@ -56,10 +67,6 @@ export const NeedsList = ({
     return labels[category] || category;
   };
 
-  const isCategoryActive = (category: string) => {
-    return needs?.some(need => need.category === category);
-  };
-
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">{childName}</h3>
@@ -68,37 +75,37 @@ export const NeedsList = ({
           {allCategories.map((category) => (
             <Badge 
               key={category}
-              className={`cursor-pointer ${getCategoryColor(category, isCategoryActive(category))}`}
+              className={`cursor-pointer transition-colors duration-200 ${getCategoryColor(category, selectedCategories.includes(category))}`}
+              onClick={() => handleCategoryClick(category)}
             >
               {getCategoryLabel(category)}
             </Badge>
           ))}
         </div>
         <div className="space-y-3">
-          {needs?.map((need, index) => (
+          {selectedCategories.map((category, index) => (
             <div 
-              key={index} 
+              key={`${category}-${index}`}
               className="flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-2">
                   <Badge 
-                    className={`${getCategoryColor(need.category, true)}`}
+                    className={`${getCategoryColor(category, true)}`}
                   >
-                    {getCategoryLabel(need.category)}
+                    {getCategoryLabel(category)}
                   </Badge>
-                  {need.is_urgent && (
-                    <Badge variant="destructive" className="animate-pulse">
-                      Urgent
-                    </Badge>
-                  )}
                 </div>
-                <p className="text-sm text-gray-600">{need.description}</p>
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id={`urgent-${index}`}
-                    checked={need.is_urgent}
-                    onCheckedChange={() => onToggleUrgent(childId, index)}
+                    checked={needs.some(need => need.category === category && need.is_urgent)}
+                    onCheckedChange={() => {
+                      const needIndex = needs.findIndex(need => need.category === category);
+                      if (needIndex !== -1) {
+                        onToggleUrgent(childId, needIndex);
+                      }
+                    }}
                   />
                   <label 
                     htmlFor={`urgent-${index}`}
@@ -112,13 +119,18 @@ export const NeedsList = ({
                 variant="ghost"
                 size="sm"
                 className="ml-2 text-red-600 hover:text-red-800 hover:bg-red-50"
-                onClick={() => onDeleteNeed(childId, index)}
+                onClick={() => {
+                  const needIndex = needs.findIndex(need => need.category === category);
+                  if (needIndex !== -1) {
+                    onDeleteNeed(childId, needIndex);
+                  }
+                }}
               >
                 <X className="w-4 h-4" />
               </Button>
             </div>
           ))}
-          {(!needs || needs.length === 0) && (
+          {(!selectedCategories || selectedCategories.length === 0) && (
             <p className="text-gray-500 text-center py-2">Aucun besoin enregistré</p>
           )}
         </div>
