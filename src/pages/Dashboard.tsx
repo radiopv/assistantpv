@@ -1,9 +1,11 @@
 import { Card } from "@/components/ui/card";
-import { Users, Gift, AlertTriangle, MapPin, TrendingUp, Calendar } from "lucide-react";
+import { Users, Gift, AlertTriangle, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
+import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
+import { SponsorshipStats } from "@/components/Sponsorship/SponsorshipStats";
 
 interface DashboardStats {
   children: {
@@ -20,13 +22,6 @@ interface DashboardStats {
   cities: number;
 }
 
-interface DonationTrend {
-  month: string;
-  donations: number;
-  people_helped: number;
-  success_rate: number;
-}
-
 const Dashboard = () => {
   const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ['dashboard-stats'],
@@ -34,37 +29,6 @@ const Dashboard = () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
       return data as unknown as DashboardStats;
-    }
-  });
-
-  const { data: recentDonations, isLoading: donationsLoading } = useQuery({
-    queryKey: ['recent-donations'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('donations')
-        .select('*')
-        .order('donation_date', { ascending: false })
-        .limit(5);
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const { data: trends, isLoading: trendsLoading } = useQuery({
-    queryKey: ['donation-trends'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_monthly_donation_trends', { months_back: 6 });
-      if (error) throw error;
-      return data as DonationTrend[];
-    }
-  });
-
-  const { data: cityStats, isLoading: cityStatsLoading } = useQuery({
-    queryKey: ['city-donation-stats'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_city_donation_stats');
-      if (error) throw error;
-      return data;
     }
   });
 
@@ -79,7 +43,7 @@ const Dashboard = () => {
     );
   }
 
-  const isLoading = statsLoading || donationsLoading || trendsLoading || cityStatsLoading;
+  const isLoading = statsLoading;
 
   if (isLoading) {
     return (
@@ -157,74 +121,11 @@ const Dashboard = () => {
         ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Derniers Dons</h2>
-            <TrendingUp className="text-gray-400" />
-          </div>
-          <div className="space-y-4">
-            {recentDonations?.map((donation) => (
-              <div key={donation.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <Gift className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium">{donation.assistant_name}</p>
-                  <p className="text-sm text-gray-600">
-                    {donation.city} - {new Date(donation.donation_date).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {donation.people_helped} personnes aidées
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Statistiques par Ville</h2>
-            <MapPin className="text-gray-400" />
-          </div>
-          <div className="space-y-4">
-            {cityStats?.slice(0, 5).map((stat) => (
-              <div key={stat.city} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-gray-400" />
-                  <span className="font-medium">{stat.city}</span>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium">{stat.donations} dons</p>
-                  <p className="text-sm text-gray-600">{stat.people_helped} aidés</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
+      <div className="space-y-6">
+        <h2 className="text-2xl font-semibold">Gestion des Parrainages</h2>
+        <SponsorshipStats />
+        <SponsorshipList />
       </div>
-
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Tendances des 6 derniers mois</h2>
-          <Calendar className="text-gray-400" />
-        </div>
-        <div className="space-y-4">
-          {trends?.map((trend) => (
-            <div key={trend.month} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium">{trend.month}</p>
-                <p className="text-sm text-gray-600">{trend.donations} dons</p>
-              </div>
-              <div className="text-right">
-                <p className="font-medium">{trend.people_helped} personnes aidées</p>
-                <p className="text-sm text-gray-600">Taux de succès: {trend.success_rate}%</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
     </div>
   );
 };
