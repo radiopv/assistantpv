@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 
@@ -8,6 +7,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   isAssistant: boolean;
+  session: any | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -15,6 +15,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signOut: async () => {},
   isAssistant: false,
+  session: null,
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -68,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut, isAssistant }}>
+    <AuthContext.Provider value={{ user, loading, signOut, isAssistant, session: user }}>
       {!loading && children}
     </AuthContext.Provider>
   );
