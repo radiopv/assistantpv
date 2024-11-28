@@ -57,7 +57,7 @@ export const AddNeedDialog = ({
           </Select>
 
           <Select
-            value={newNeed.category}
+            value={String(newNeed.category || "")}
             onValueChange={(value) => onNeedChange({ category: value })}
           >
             <SelectTrigger>
