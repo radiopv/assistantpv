@@ -3,9 +3,9 @@ import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 const MainLayout = () => {
-  const { user } = useAuth();
+  const { session } = useAuth();
 
-  if (!user) {
+  if (!session) {
     return null;
   }
 
