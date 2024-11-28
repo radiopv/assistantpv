@@ -62,9 +62,14 @@ const AddChild = () => {
       const { error } = await supabase
         .from('children')
         .insert({
-          ...formData,
-          photo_url: photoUrl,
+          name: formData.name,
           age: parseInt(formData.age),
+          gender: formData.gender,
+          birth_date: formData.birth_date,
+          city: formData.city,
+          status: formData.status,
+          photo_url: photoUrl,
+          is_sponsored: false,
         });
 
       if (error) throw error;
@@ -76,10 +81,11 @@ const AddChild = () => {
 
       navigate('/children');
     } catch (error: any) {
+      console.error('Error adding child:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'ajout de l'enfant.",
+        description: error.message || "Une erreur est survenue lors de l'ajout de l'enfant.",
       });
     } finally {
       setLoading(false);
