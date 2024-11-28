@@ -1,56 +1,81 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { Upload } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PhotoUploadProps {
-  onPhotosChange: (files: FileList | null) => void;
+  donationId: string;
+  onUploadComplete?: () => void;
 }
 
-export const PhotoUpload = ({ onPhotosChange }: PhotoUploadProps) => {
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+export const PhotoUpload = ({ donationId, onUploadComplete }: PhotoUploadProps) => {
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    onPhotosChange(files);
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!event.target.files || event.target.files.length === 0) {
+        return;
+      }
+      setUploading(true);
 
-    if (files) {
-      const urls = Array.from(files).map(file => URL.createObjectURL(file));
-      setPreviewUrls(urls);
-    } else {
-      setPreviewUrls([]);
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${donationId}/${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('donation-photos')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('donation-photos')
+        .getPublicUrl(filePath);
+
+      const { error: dbError } = await supabase
+        .from('donation_photos')
+        .insert({
+          donation_id: donationId,
+          url: publicUrl,
+        });
+
+      if (dbError) throw dbError;
+
+      toast({
+        title: "Photo ajoutée",
+        description: "La photo a été ajoutée avec succès.",
+      });
+
+      onUploadComplete?.();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'upload.",
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
     <div className="space-y-4">
-      <div>
-        <Label htmlFor="photos">Photos</Label>
-        <Input
-          id="photos"
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-          className="cursor-pointer"
-        />
-      </div>
-
-      {previewUrls.length > 0 && (
-        <Card className="p-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {previewUrls.map((url, index) => (
-              <div key={index} className="aspect-square relative">
-                <img
-                  src={url}
-                  alt={`Preview ${index + 1}`}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
+      <Label htmlFor="photo">Ajouter une photo</Label>
+      <Input
+        id="photo"
+        type="file"
+        accept="image/*"
+        onChange={handleUpload}
+        disabled={uploading}
+      />
+      <Button disabled={uploading}>
+        <Upload className="w-4 h-4 mr-2" />
+        {uploading ? "Upload en cours..." : "Upload"}
+      </Button>
     </div>
   );
 };

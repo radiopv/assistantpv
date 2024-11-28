@@ -16,7 +16,7 @@ interface DonationFormProps {
 }
 
 export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [quantity, setQuantity] = useState("");
   const [city, setCity] = useState("");
   const [assistantName, setAssistantName] = useState("Assistant");
@@ -26,6 +26,15 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
   const [photos, setPhotos] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategories(prev => {
+      if (prev.includes(categoryId)) {
+        return prev.filter(id => id !== categoryId);
+      }
+      return [...prev, categoryId];
+    });
+  };
 
   const handlePhotoUpload = async (files: FileList) => {
     const uploadPromises = Array.from(files).map(async (file) => {
@@ -53,11 +62,11 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedCategory || !quantity || !city) {
+    if (selectedCategories.length === 0 || !quantity || !city) {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires.",
+        description: "Veuillez sélectionner au moins une catégorie et remplir tous les champs obligatoires.",
       });
       return;
     }
@@ -86,13 +95,16 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
       if (donationError) throw donationError;
 
+      // Insert donation items for each selected category
+      const donationItems = selectedCategories.map(categoryId => ({
+        donation_id: donation.id,
+        category_id: categoryId,
+        quantity: parseInt(quantity),
+      }));
+
       const { error: itemError } = await supabase
         .from('donation_items')
-        .insert({
-          donation_id: donation.id,
-          category_id: selectedCategory,
-          quantity: parseInt(quantity),
-        });
+        .insert(donationItems);
 
       if (itemError) throw itemError;
 
@@ -113,7 +125,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         description: "Le don a été enregistré avec succès.",
       });
 
-      setSelectedCategory(null);
+      setSelectedCategories([]);
       setQuantity("");
       setCity("");
       setComments("");
@@ -138,10 +150,10 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
     <Card className="p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <Label>Catégorie</Label>
+          <Label>Catégories</Label>
           <DonationCategorySelect
-            selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
+            selectedCategories={selectedCategories}
+            onSelectCategory={handleCategorySelect}
           />
         </div>
 
@@ -176,7 +188,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
 
         <Button 
           type="submit" 
-          disabled={!selectedCategory || !quantity || !city || loading}
+          disabled={selectedCategories.length === 0 || !quantity || !city || loading}
           className="w-full"
         >
           {loading ? (

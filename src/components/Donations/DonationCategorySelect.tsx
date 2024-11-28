@@ -19,11 +19,11 @@ export const CATEGORIES = [
 ];
 
 interface DonationCategorySelectProps {
-  selectedCategory: string | null;
+  selectedCategories: string[];
   onSelectCategory: (id: string) => void;
 }
 
-export const DonationCategorySelect = ({ selectedCategory, onSelectCategory }: DonationCategorySelectProps) => {
+export const DonationCategorySelect = ({ selectedCategories, onSelectCategory }: DonationCategorySelectProps) => {
   const { data: categories } = useQuery({
     queryKey: ['aid_categories'],
     queryFn: async () => {
@@ -45,19 +45,20 @@ export const DonationCategorySelect = ({ selectedCategory, onSelectCategory }: D
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4 mt-2">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-2">
       {categories?.map((category) => {
         const Icon = getIcon(category.name);
+        const isSelected = selectedCategories.includes(category.id);
         return (
           <Button
             key={category.id}
             type="button"
-            variant={selectedCategory === category.id ? "default" : "outline"}
+            variant={isSelected ? "default" : "outline"}
             className="h-24 flex flex-col items-center justify-center gap-2"
             onClick={() => onSelectCategory(category.id)}
           >
             <Icon className="w-6 h-6" />
-            <span className="text-sm">{category.name}</span>
+            <span className="text-sm text-center">{category.name}</span>
           </Button>
         );
       })}

@@ -1,9 +1,13 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Camera, Video } from "lucide-react";
+import { PhotoUpload } from "./PhotoUpload";
+import { useState } from "react";
 
 interface DonationPhoto {
   id: number;
@@ -31,7 +35,10 @@ interface DonationCardProps {
 }
 
 export const DonationCard = ({ donation }: DonationCardProps) => {
-  const { data: donationPhotos } = useQuery({
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [showVideoUpload, setShowVideoUpload] = useState(false);
+
+  const { data: donationPhotos, refetch: refetchPhotos } = useQuery({
     queryKey: ['donation-photos', donation.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -44,7 +51,7 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
     }
   });
 
-  const { data: donationVideos } = useQuery({
+  const { data: donationVideos, refetch: refetchVideos } = useQuery({
     queryKey: ['donation-videos', donation.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -56,6 +63,28 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
       return data as DonationVideo[];
     }
   });
+
+  const handlePhotoDelete = async (photoId: number) => {
+    const { error } = await supabase
+      .from('donation_photos')
+      .delete()
+      .eq('id', photoId);
+    
+    if (!error) {
+      refetchPhotos();
+    }
+  };
+
+  const handleVideoDelete = async (videoId: string) => {
+    const { error } = await supabase
+      .from('donation_videos')
+      .delete()
+      .eq('id', videoId);
+    
+    if (!error) {
+      refetchVideos();
+    }
+  };
 
   return (
     <Card key={donation.id} className="p-4">
@@ -92,30 +121,37 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
           </div>
         </div>
 
-        {/* Photos from donation_photos table */}
+        {/* Photos */}
         {donationPhotos && donationPhotos.length > 0 && (
           <div>
             <p className="text-gray-500 mb-2">Photos</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {donationPhotos.map((photo) => (
-                <img
-                  key={photo.id}
-                  src={photo.url}
-                  alt={photo.title || `Photo ${photo.id}`}
-                  className="h-24 w-full object-cover rounded-md"
-                />
+                <div key={photo.id} className="relative group">
+                  <img
+                    src={photo.url}
+                    alt={photo.title || `Photo ${photo.id}`}
+                    className="h-24 w-full object-cover rounded-md"
+                  />
+                  <button
+                    onClick={() => handlePhotoDelete(photo.id)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Videos from donation_videos table */}
+        {/* Videos */}
         {donationVideos && donationVideos.length > 0 && (
           <div>
             <p className="text-gray-500 mb-2">Vidéos</p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {donationVideos.map((video) => (
-                <div key={video.id} className="relative">
+                <div key={video.id} className="relative group">
                   {video.thumbnail_url ? (
                     <img
                       src={video.thumbnail_url}
@@ -131,6 +167,12 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
                       <span className="text-sm text-gray-600">Voir la vidéo</span>
                     </div>
                   )}
+                  <button
+                    onClick={() => handleVideoDelete(video.id)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
             </div>
@@ -143,6 +185,39 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
             <p className="text-gray-500">Commentaires</p>
             <p className="text-sm">{donation.comments}</p>
           </div>
+        )}
+
+        {/* Boutons d'ajout de média */}
+        <div className="flex gap-2 mt-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPhotoUpload(!showPhotoUpload)}
+            className="flex items-center gap-2"
+          >
+            <Camera className="w-4 h-4" />
+            {showPhotoUpload ? "Fermer" : "Ajouter des photos"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowVideoUpload(!showVideoUpload)}
+            className="flex items-center gap-2"
+          >
+            <Video className="w-4 h-4" />
+            {showVideoUpload ? "Fermer" : "Ajouter des vidéos"}
+          </Button>
+        </div>
+
+        {/* Formulaires d'upload */}
+        {showPhotoUpload && (
+          <PhotoUpload
+            donationId={donation.id}
+            onUploadComplete={() => {
+              refetchPhotos();
+              setShowPhotoUpload(false);
+            }}
+          />
         )}
       </div>
     </Card>
