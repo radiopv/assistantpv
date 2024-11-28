@@ -11,21 +11,7 @@ import { useState } from "react";
 import { Need, convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
 import { NeedsList } from "@/components/Needs/NeedsList";
 import { AddNeedDialog } from "@/components/Needs/AddNeedDialog";
-
-interface DashboardStats {
-  children: {
-    total: number;
-    sponsored: number;
-    available: number;
-    urgent_needs: number;
-  };
-  sponsors: number;
-  donations: {
-    total: number;
-    people_helped: number;
-  };
-  cities: number;
-}
+import { DashboardStats } from "@/types/dashboard";
 
 const Dashboard = () => {
   const [selectedChild, setSelectedChild] = useState<any | null>(null);
@@ -40,7 +26,7 @@ const Dashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data as DashboardStats;
+      return data as unknown as DashboardStats;
     },
     retry: 1,
     meta: {
