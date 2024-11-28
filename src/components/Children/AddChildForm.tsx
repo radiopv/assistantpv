@@ -60,9 +60,14 @@ export const AddChildForm = () => {
       const { error } = await supabase
         .from('children')
         .insert({
-          ...formData,
-          photo_url: photoUrl,
+          name: formData.name,
           age: parseInt(formData.age),
+          gender: formData.gender,
+          birth_date: formData.birth_date,
+          city: formData.city,
+          status: "available",
+          photo_url: photoUrl,
+          is_sponsored: false,
         });
 
       if (error) throw error;
@@ -74,10 +79,11 @@ export const AddChildForm = () => {
 
       navigate('/children');
     } catch (error: any) {
+      console.error('Error adding child:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'ajout de l'enfant.",
+        description: error.message || "Une erreur est survenue lors de l'ajout de l'enfant.",
       });
     } finally {
       setLoading(false);
@@ -115,6 +121,7 @@ export const AddChildForm = () => {
           <Select
             value={formData.gender}
             onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
+            required
           >
             <SelectTrigger>
               <SelectValue placeholder="Sélectionner le genre" />
@@ -161,9 +168,23 @@ export const AddChildForm = () => {
         </div>
       </div>
 
-      <Button type="submit" disabled={loading} className="w-full">
-        {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
-      </Button>
+      <div className="flex gap-4 pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => navigate('/children')}
+          className="w-full md:w-auto"
+        >
+          Annuler
+        </Button>
+        <Button 
+          type="submit" 
+          disabled={loading}
+          className="w-full md:w-auto"
+        >
+          {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
+        </Button>
+      </div>
     </form>
   );
 };
