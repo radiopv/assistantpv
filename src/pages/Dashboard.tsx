@@ -32,7 +32,8 @@ const Dashboard = () => {
         console.error('Error fetching dashboard stats:', error);
         throw new Error(error.message);
       }
-      return data as DashboardStats;
+      // First cast to unknown, then to DashboardStats to ensure type safety
+      return (data as unknown) as DashboardStats;
     },
     retry: 1,
     meta: {
