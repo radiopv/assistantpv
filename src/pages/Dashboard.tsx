@@ -18,9 +18,26 @@ const Dashboard = () => {
   const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_dashboard_statistics');
+      const { data: rawData, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data as DashboardStats;
+      
+      // Calculate urgent needs count from children data
+      const { data: childrenData } = await supabase
+        .from('children')
+        .select('needs');
+      
+      const urgentNeedsCount = childrenData?.reduce((count, child) => {
+        const needs = convertJsonToNeeds(child.needs);
+        return count + needs.filter(need => need.is_urgent).length;
+      }, 0) || 0;
+
+      return {
+        ...rawData,
+        children: {
+          ...(rawData?.children || {}),
+          urgent_needs: urgentNeedsCount
+        }
+      } as DashboardStats;
     },
     retry: 1,
     meta: {
@@ -59,6 +76,7 @@ const Dashboard = () => {
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ['children'] });
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
           toast.success("Les besoins ont été mis à jour");
         }
       )
@@ -102,7 +120,10 @@ const Dashboard = () => {
       
       <ChildrenNeeds 
         children={children || []} 
-        onNeedsUpdate={() => queryClient.invalidateQueries({ queryKey: ['children'] })}
+        onNeedsUpdate={() => {
+          queryClient.invalidateQueries({ queryKey: ['children'] });
+          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+        }}
       />
 
       <div className="space-y-6">
