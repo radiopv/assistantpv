@@ -9,6 +9,7 @@ import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import ChildProfile from "./pages/ChildProfile";
 import Donations from "./pages/Donations";
+import Sponsorships from "./pages/Sponsorships";
 import Login from "./pages/auth/Login";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/children" element={<Children />} />
               <Route path="/children/:id" element={<ChildProfile />} />
               <Route path="/donations" element={<Donations />} />
+              <Route path="/sponsorships" element={<Sponsorships />} />
             </Route>
           </Routes>
         </AuthProvider>

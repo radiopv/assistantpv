@@ -8,8 +8,6 @@ import { toast } from "sonner";
 import { convertJsonToNeeds } from "@/types/needs";
 import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
 import { ChildrenNeeds } from "@/components/Dashboard/ChildrenNeeds";
-import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
-import { SponsorshipStats } from "@/components/Sponsorship/SponsorshipStats";
 import { DashboardStats } from "@/types/dashboard";
 
 interface RawDashboardStats {
@@ -152,12 +150,6 @@ const Dashboard = () => {
           queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
         }}
       />
-
-      <div className="space-y-6">
-        <h2 className="text-2xl font-semibold">Gestion des Parrainages</h2>
-        <SponsorshipStats />
-        <SponsorshipList />
-      </div>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Users, Gift, Home, Menu, X, LogOut } from "lucide-react";
+import { Users, Gift, Home, Menu, X, LogOut, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -15,6 +15,7 @@ const Sidebar = () => {
   const links = [
     { icon: Home, label: "Dashboard", path: "/" },
     { icon: Users, label: "Enfants", path: "/children" },
+    { icon: Heart, label: "Parrainages", path: "/sponsorships" },
     { icon: Gift, label: "Dons", path: "/donations" },
   ];
 
