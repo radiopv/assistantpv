@@ -10,13 +10,15 @@ import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChildrenNeedsProps {
   children: any[];
+  isLoading: boolean;
   onNeedsUpdate: () => void;
 }
 
-export const ChildrenNeeds = ({ children, onNeedsUpdate }: ChildrenNeedsProps) => {
+export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: ChildrenNeedsProps) => {
   const [selectedChild, setSelectedChild] = useState<any | null>(null);
   const [newNeed, setNewNeed] = useState<Need>({ 
     category: "", 
@@ -43,6 +45,28 @@ export const ChildrenNeeds = ({ children, onNeedsUpdate }: ChildrenNeedsProps) =
     setSelectedChild(null);
     onNeedsUpdate();
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-10 w-40" />
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="p-4">
+              <Skeleton className="h-6 w-32 mb-4" />
+              <div className="space-y-4">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
