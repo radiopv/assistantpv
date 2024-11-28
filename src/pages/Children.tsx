@@ -94,7 +94,10 @@ const Children = () => {
           <h1 className="text-3xl font-bold text-gray-900">Enfants</h1>
           <p className="text-gray-600 mt-2">Gérez les enfants et leurs besoins</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90">
+        <Button 
+          className="bg-primary hover:bg-primary/90"
+          onClick={() => navigate('/add-child')}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Ajouter un enfant
         </Button>
