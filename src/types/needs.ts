@@ -15,7 +15,13 @@ export interface NeedJson {
 export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
   if (!Array.isArray(jsonNeeds)) return [];
   return jsonNeeds.map(need => {
-    const needObj = need as NeedJson;
+    if (typeof need !== 'object' || !need) return {
+      category: '',
+      description: '',
+      is_urgent: false
+    };
+    
+    const needObj = need as Record<string, unknown>;
     return {
       category: String(needObj?.category || ''),
       description: String(needObj?.description || ''),
@@ -25,9 +31,10 @@ export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
 };
 
 export const convertNeedsToJson = (needs: Need[]): Json => {
-  return needs.map(need => ({
+  const jsonNeeds = needs.map(need => ({
     category: need.category,
     description: need.description,
     is_urgent: need.is_urgent
-  })) as unknown as Json;
+  }));
+  return jsonNeeds as unknown as Json;
 };
