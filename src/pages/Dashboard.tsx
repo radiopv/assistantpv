@@ -38,12 +38,18 @@ const Dashboard = () => {
         console.error('Error fetching dashboard stats:', error);
         throw new Error(error.message);
       }
-      return data as DashboardStats;
+      // Add type assertion to handle the conversion
+      return data as unknown as DashboardStats;
     },
     retry: 1,
-    onError: (error) => {
-      console.error('Query error:', error);
-      toast.error("Erreur lors du chargement des statistiques");
+    meta: {
+      errorMessage: "Erreur lors du chargement des statistiques"
+    },
+    onSettled: (_, error) => {
+      if (error) {
+        console.error('Query error:', error);
+        toast.error("Erreur lors du chargement des statistiques");
+      }
     }
   });
 
@@ -58,9 +64,14 @@ const Dashboard = () => {
       return data as CityStats[];
     },
     retry: 1,
-    onError: (error) => {
-      console.error('Query error:', error);
-      toast.error("Erreur lors du chargement des statistiques par ville");
+    meta: {
+      errorMessage: "Erreur lors du chargement des statistiques par ville"
+    },
+    onSettled: (_, error) => {
+      if (error) {
+        console.error('Query error:', error);
+        toast.error("Erreur lors du chargement des statistiques par ville");
+      }
     }
   });
 
