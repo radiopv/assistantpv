@@ -1185,6 +1185,33 @@ export type Database = {
           },
         ]
       }
+      page_config: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          page_id: string
+          required_role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          page_id: string
+          required_role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          page_id?: string
+          required_role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       permissions: {
         Row: {
           category: string

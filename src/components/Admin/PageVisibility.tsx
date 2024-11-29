@@ -40,14 +40,14 @@ export const PageVisibility = () => {
 
   const fetchPageConfigs = async () => {
     try {
-      const { data, error } = await supabase
+      const { data: existingConfigs, error } = await supabase
         .from('page_config')
         .select('*');
       
       if (error) throw error;
       
       // If we have data, use it; otherwise use default pages
-      const configuredPages = data?.length ? data : defaultPages.map(page => ({
+      const configuredPages = existingConfigs?.length ? existingConfigs : defaultPages.map(page => ({
         id: page.id,
         page_id: page.id,
         is_visible: page.is_visible,
