@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import { FormFields } from "./FormFields";
+import { PersonalInfoFields } from "./PersonalInfoFields";
+import { ChildSelectionField } from "./ChildSelectionField";
+import { MotivationField } from "./MotivationField";
+import { TermsField } from "./TermsField";
 import { formSchema, type FormValues } from "./validation";
 
 export const SponsorshipRequestForm = () => {
@@ -62,7 +65,10 @@ export const SponsorshipRequestForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormFields form={form} />
+        <PersonalInfoFields form={form} />
+        <ChildSelectionField form={form} />
+        <MotivationField form={form} />
+        <TermsField form={form} />
 
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
