@@ -6,6 +6,7 @@ import { CUBAN_CITIES } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
+import { convertJsonToNeeds } from '@/types/needs';
 
 interface Child {
   id: string;
@@ -49,7 +50,14 @@ const Children = () => {
         .order('name');
 
       if (error) throw error;
-      setChildren(data || []);
+      
+      // Convert the needs JSON to the expected format for each child
+      const formattedChildren = (data || []).map(child => ({
+        ...child,
+        needs: convertJsonToNeeds(child.needs)
+      }));
+      
+      setChildren(formattedChildren);
     } catch (error) {
       console.error('Error fetching children:', error);
       toast.error('Erreur lors du chargement des enfants');
