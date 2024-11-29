@@ -48,7 +48,10 @@ export const PageVisibility = () => {
         .from('page_config')
         .select('*');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching page configurations:', error);
+        throw error;
+      }
       
       // If we have data, use it; otherwise use default pages
       const configuredPages = existingConfigs?.length ? existingConfigs : defaultPages.map(page => ({
@@ -84,7 +87,10 @@ export const PageVisibility = () => {
           onConflict: 'page_id'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating page configuration:', error);
+        throw error;
+      }
       
       setPages(pages.map(page => 
         page.page_id === pageId ? { ...page, [field]: value } : page
