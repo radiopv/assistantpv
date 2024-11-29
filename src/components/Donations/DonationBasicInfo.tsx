@@ -37,15 +37,15 @@ export const DonationBasicInfo = ({
   const { toast } = useToast();
 
   const { data: cities, refetch: refetchCities } = useQuery({
-    queryKey: ['cities'],
+    queryKey: ['locations'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('cities')
-        .select('name')
-        .order('name');
+        .from('locations')
+        .select('city_name')
+        .order('city_name');
       
       if (error) throw error;
-      return data.map(city => city.name);
+      return data.map(location => location.city_name);
     }
   });
 
@@ -61,8 +61,12 @@ export const DonationBasicInfo = ({
 
     try {
       const { error } = await supabase
-        .from('cities')
-        .insert({ name: newCity.trim() });
+        .from('locations')
+        .insert({ 
+          city_name: newCity.trim(),
+          latitude: 0, // Required fields in your schema
+          longitude: 0  // Required fields in your schema
+        });
 
       if (error) throw error;
 
