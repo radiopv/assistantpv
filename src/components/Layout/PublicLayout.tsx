@@ -51,4 +51,4 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default PublicLayout;
+export { PublicLayout };
