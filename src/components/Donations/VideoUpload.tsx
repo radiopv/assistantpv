@@ -6,13 +6,12 @@ import { useToast } from "@/components/ui/use-toast";
 import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-interface PhotoUploadProps {
+interface VideoUploadProps {
   donationId?: string;
   onUploadComplete?: () => void;
-  onPhotosChange?: (files: FileList | null) => void;
 }
 
-export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: PhotoUploadProps) => {
+export const VideoUpload = ({ donationId, onUploadComplete }: VideoUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
@@ -22,39 +21,34 @@ export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: Ph
         return;
       }
 
-      if (onPhotosChange) {
-        onPhotosChange(event.target.files);
-        return;
-      }
-
       setUploading(true);
-
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
       const filePath = `${donationId}/${Math.random()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('donation-photos')
+        .from('donation-videos')
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('donation-photos')
+        .from('donation-videos')
         .getPublicUrl(filePath);
 
       const { error: dbError } = await supabase
-        .from('donation_photos')
+        .from('donation_videos')
         .insert({
           donation_id: donationId,
           url: publicUrl,
+          mime_type: file.type
         });
 
       if (dbError) throw dbError;
 
       toast({
-        title: "Photo ajoutée",
-        description: "La photo a été ajoutée avec succès.",
+        title: "Vidéo ajoutée",
+        description: "La vidéo a été ajoutée avec succès.",
       });
 
       onUploadComplete?.();
@@ -71,11 +65,11 @@ export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: Ph
 
   return (
     <div className="space-y-4">
-      <Label htmlFor="photo">Ajouter une photo</Label>
+      <Label htmlFor="video">Ajouter une vidéo</Label>
       <Input
-        id="photo"
+        id="video"
         type="file"
-        accept="image/*"
+        accept="video/*"
         onChange={handleUpload}
         disabled={uploading}
       />

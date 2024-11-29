@@ -10,10 +10,10 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
       <Sidebar />
-      <main className="pl-0 md:pl-64 min-h-screen">
-        <div className="container py-8 px-4 md:px-8 animate-fade-in">
+      <main className="flex-1 w-full min-h-screen pl-0 md:pl-64 pt-16 md:pt-0">
+        <div className="container py-4 md:py-8 px-4 md:px-8 animate-fade-in">
           <Outlet />
         </div>
       </main>

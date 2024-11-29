@@ -1,0 +1,70 @@
+interface DonationMediaProps {
+  photos: any[];
+  videos: any[];
+  onPhotoDelete: (id: number) => void;
+  onVideoDelete: (id: string) => void;
+}
+
+export const DonationMedia = ({ photos, videos, onPhotoDelete, onVideoDelete }: DonationMediaProps) => {
+  if (!photos?.length && !videos?.length) return null;
+
+  return (
+    <div className="space-y-4">
+      {photos && photos.length > 0 && (
+        <div>
+          <p className="text-gray-500 mb-2">Photos</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {photos.map((photo) => (
+              <div key={photo.id} className="relative group">
+                <img
+                  src={photo.url}
+                  alt={photo.title || `Photo ${photo.id}`}
+                  className="h-24 w-full object-cover rounded-md"
+                />
+                <button
+                  onClick={() => onPhotoDelete(photo.id)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {videos && videos.length > 0 && (
+        <div>
+          <p className="text-gray-500 mb-2">Vidéos</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {videos.map((video) => (
+              <div key={video.id} className="relative group">
+                {video.thumbnail_url ? (
+                  <img
+                    src={video.thumbnail_url}
+                    alt={video.title || `Vidéo ${video.id}`}
+                    className="h-24 w-full object-cover rounded-md cursor-pointer"
+                    onClick={() => window.open(video.url, '_blank')}
+                  />
+                ) : (
+                  <div 
+                    className="h-24 w-full bg-gray-200 rounded-md flex items-center justify-center cursor-pointer"
+                    onClick={() => window.open(video.url, '_blank')}
+                  >
+                    <span className="text-sm text-gray-600">Voir la vidéo</span>
+                  </div>
+                )}
+                <button
+                  onClick={() => onVideoDelete(video.id)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

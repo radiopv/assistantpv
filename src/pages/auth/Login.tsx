@@ -17,39 +17,41 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data: sponsor, error } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('email', email)
+        .single();
 
       if (error) throw error;
 
-      if (data.user) {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
-        if (profileError) throw profileError;
-
-        if (profileData?.role !== 'assistant') {
-          throw new Error("Accès non autorisé");
-        }
-
-        toast({
-          title: "Connexion réussie",
-          description: "Bienvenue dans votre espace assistant",
-        });
-        navigate("/");
+      if (!sponsor) {
+        throw new Error("Email ou mot de passe incorrect");
       }
+
+      if (!['assistant', 'admin'].includes(sponsor.role)) {
+        throw new Error("Accès non autorisé");
+      }
+
+      if (sponsor.password_hash !== password) {
+        throw new Error("Email ou mot de passe incorrect");
+      }
+
+      localStorage.setItem('user', JSON.stringify(sponsor));
+
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue dans votre espace assistant",
+      });
+      
+      // Redirection immédiate après la connexion réussie
+      navigate("/", { replace: true });
+
     } catch (error: any) {
       let message = "Une erreur est survenue";
-      if (error.message.includes("Email login is disabled")) {
-        message = "La connexion par email n'est pas activée. Veuillez contacter l'administrateur.";
-      } else if (error.message === "Accès non autorisé") {
+      if (error.message === "Accès non autorisé") {
         message = "Vous n'avez pas les droits d'accès nécessaires";
-      } else if (error.message.includes("Invalid login credentials")) {
+      } else if (error.message === "Email ou mot de passe incorrect") {
         message = "Email ou mot de passe incorrect";
       }
       
