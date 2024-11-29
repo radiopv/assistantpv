@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   isAssistant: boolean;
+  isAdmin: boolean;
   session: any | null;
 }
 
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signOut: async () => {},
   isAssistant: false,
+  isAdmin: false,
   session: null,
 });
 
@@ -23,6 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,6 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           setUser(profile);
           setIsAssistant(['assistant', 'admin'].includes(profile.role));
+          setIsAdmin(profile.role === 'admin');
 
           // Only redirect if on login page
           if (location.pathname === '/login') {
@@ -63,8 +67,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         } else {
           setUser(null);
+          setIsAssistant(false);
+          setIsAdmin(false);
           // Ne redirige vers login que si on essaie d'accéder aux pages protégées
-          const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
+          const protectedPages = [
+            '/dashboard', 
+            '/sponsor-dashboard', 
+            '/children/add', 
+            '/donations', 
+            '/rewards', 
+            '/messages', 
+            '/media-management', 
+            '/sponsors-management', 
+            '/settings', 
+            '/urgent-needs', 
+            '/permissions',
+            '/children-needs'
+          ];
           if (protectedPages.includes(location.pathname)) {
             navigate('/login');
           }
@@ -72,6 +91,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } catch (error) {
         console.error('Error checking auth:', error);
         setUser(null);
+        setIsAssistant(false);
+        setIsAdmin(false);
       } finally {
         setLoading(false);
       }
@@ -95,6 +116,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(null);
       setIsAssistant(false);
+      setIsAdmin(false);
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
@@ -111,7 +133,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut, isAssistant, session: user }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      signOut, 
+      isAssistant, 
+      isAdmin, 
+      session: user 
+    }}>
       {!loading && children}
     </AuthContext.Provider>
   );
