@@ -8,7 +8,7 @@ import { ErrorAlert } from "@/components/ErrorAlert";
 import { DonationForm } from "@/components/Donations/DonationForm";
 import { DonationCard } from "@/components/Donations/DonationCard";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -164,7 +164,7 @@ const Donations = () => {
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="flex-1">
-              <Input
+              <SearchInput
                 placeholder="Rechercher par ville, assistant ou commentaires..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
