@@ -39,6 +39,10 @@ export const ImageCropDialog = ({ open, onClose, imageSrc, onCropComplete }: Ima
 
     if (!ctx) return;
 
+    // Set the canvas background to white
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.drawImage(
       imageRef,
       crop.x! * scaleX,
@@ -58,6 +62,10 @@ export const ImageCropDialog = ({ open, onClose, imageSrc, onCropComplete }: Ima
     }, 'image/jpeg', 1);
   };
 
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    setImageRef(e.currentTarget);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl">
@@ -73,8 +81,9 @@ export const ImageCropDialog = ({ open, onClose, imageSrc, onCropComplete }: Ima
           >
             <img
               src={imageSrc}
-              onLoad={(e) => setImageRef(e.currentTarget)}
+              onLoad={handleImageLoad}
               alt="À recadrer"
+              crossOrigin="anonymous"
             />
           </ReactCrop>
         </div>
