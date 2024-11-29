@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { HomeImages } from "@/components/Home/HomeImages";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -24,10 +25,10 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative h-[600px] bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1501286353178-1ec881214838)' }}>
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center text-white text-center">
+      {/* Hero Section with Dynamic Images */}
+      <section className="relative">
+        <HomeImages />
+        <div className="absolute inset-0 flex flex-col justify-center items-center text-white text-center z-10">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Changez une vie, parrainez un enfant</h1>
           <p className="text-xl md:text-2xl mb-8 max-w-2xl">
             Donnez de l'espoir et un avenir meilleur aux enfants cubains grâce à votre parrainage
