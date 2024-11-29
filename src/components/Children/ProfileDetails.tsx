@@ -5,6 +5,8 @@ import { ProfilePhotoUpload } from "./ProfilePhoto/ProfilePhotoUpload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 
 interface ProfileDetailsProps {
   child: any;
@@ -26,6 +28,8 @@ export const ProfileDetails = ({
   onChange,
   onPhotoUpdate 
 }: ProfileDetailsProps) => {
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  
   // Fetch cities from Supabase
   const { data: cities } = useQuery({
     queryKey: ['cities'],
@@ -52,10 +56,50 @@ export const ProfileDetails = ({
     onChange(field, value);
   };
 
+  const handlePhotoClick = () => {
+    if (editing && child.photo_url) {
+      setCropDialogOpen(true);
+    }
+  };
+
+  const handleCropComplete = async (croppedImageBlob: Blob) => {
+    try {
+      const fileExt = "jpg";
+      const filePath = `${child.id}/${Math.random()}.${fileExt}`;
+
+      if (child.photo_url) {
+        const oldPath = child.photo_url.split('/').pop();
+        if (oldPath) {
+          await supabase.storage
+            .from('children-photos')
+            .remove([oldPath]);
+        }
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from('children-photos')
+        .upload(filePath, croppedImageBlob);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('children-photos')
+        .getPublicUrl(filePath);
+
+      onPhotoUpdate(publicUrl);
+    } catch (error) {
+      console.error('Error updating photo:', error);
+    }
+    setCropDialogOpen(false);
+  };
+
   return (
     <Card className="p-6">
       <div className="grid gap-6">
-        <div className="aspect-video relative rounded-lg overflow-hidden">
+        <div 
+          className={`aspect-video relative rounded-lg overflow-hidden ${editing ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
+          onClick={handlePhotoClick}
+        >
           <img
             src={child.photo_url || "/placeholder.svg"}
             alt={child.name}
@@ -148,6 +192,13 @@ export const ProfileDetails = ({
           </div>
         </div>
       </div>
+
+      <ImageCropDialog
+        open={cropDialogOpen}
+        onClose={() => setCropDialogOpen(false)}
+        imageSrc={child.photo_url || ""}
+        onCropComplete={handleCropComplete}
+      />
     </Card>
   );
 };
