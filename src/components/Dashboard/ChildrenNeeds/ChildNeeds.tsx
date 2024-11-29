@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Need } from "@/types/needs";
 import { Badge } from "@/components/ui/badge";
-import { Trash2 } from "lucide-react";
+import { Trash2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ChildNeedsProps {
@@ -34,14 +34,17 @@ export const ChildNeeds = ({ child, needs, onDeleteNeed }: ChildNeedsProps) => {
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <Badge variant={need.is_urgent ? "destructive" : "default"}>
-                    {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                  </Badge>
-                  {need.is_urgent && (
-                    <Badge variant="outline" className="text-red-500 border-red-500">
-                      Urgent
+                <div className="flex items-center gap-2 flex-wrap">
+                  {need.categories?.map((category) => (
+                    <Badge key={category} variant={need.is_urgent ? "destructive" : "default"}>
+                      {NEED_CATEGORIES[category as keyof typeof NEED_CATEGORIES]}
                     </Badge>
+                  ))}
+                  {need.is_urgent && (
+                    <div className="flex items-center gap-1 text-red-500">
+                      <AlertTriangle className="h-4 w-4" />
+                      <span className="text-sm font-medium">Urgent</span>
+                    </div>
                   )}
                 </div>
                 {onDeleteNeed && (

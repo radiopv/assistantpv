@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Need } from "@/types/needs";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
 
 interface AddNeedFormProps {
   children: any[];
@@ -63,16 +64,24 @@ export const AddNeedForm = ({
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Détails du besoin</h3>
+        <h3 className="text-lg font-semibold">Détails des besoins</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {NEED_CATEGORIES.map((category) => (
             <div key={category.value} className="flex items-center space-x-2">
               <Checkbox
                 id={category.value}
-                checked={newNeed.category === category.value}
+                checked={newNeed.categories?.includes(category.value)}
                 onCheckedChange={(checked) => {
                   if (checked) {
-                    setNewNeed({ ...newNeed, category: category.value });
+                    setNewNeed({ 
+                      ...newNeed, 
+                      categories: [...(newNeed.categories || []), category.value] 
+                    });
+                  } else {
+                    setNewNeed({
+                      ...newNeed,
+                      categories: newNeed.categories?.filter(c => c !== category.value) || []
+                    });
                   }
                 }}
               />
@@ -101,7 +110,7 @@ export const AddNeedForm = ({
 
         <Button 
           onClick={onSubmit} 
-          disabled={selectedChildren.length === 0 || !newNeed.category || !newNeed.description}
+          disabled={selectedChildren.length === 0 || !newNeed.categories?.length || !newNeed.description}
           className="w-full"
         >
           Ajouter le besoin pour {selectedChildren.length} enfant{selectedChildren.length > 1 ? 's' : ''}
