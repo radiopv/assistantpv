@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { 
   Home, 
   Heart, 
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const PublicLayout = ({ children }: { children: React.ReactNode }) => {
+const PublicLayout = () => {
   const navLinks = [
     { to: "/", icon: Home, label: "Accueil" },
     { to: "/available-children", icon: Users, label: "Enfants à parrainer" },
@@ -76,7 +77,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        {children}
+        <Outlet />
       </main>
     </div>
   );
