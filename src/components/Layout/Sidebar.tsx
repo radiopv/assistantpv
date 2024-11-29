@@ -1,107 +1,149 @@
-import { NavLink } from "react-router-dom";
-import { useAuth } from "../Auth/AuthProvider";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Home,
-  Users,
-  Heart,
-  Gift,
-  UserCog,
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { 
+  LayoutDashboard, 
+  Users, 
+  Gift, 
+  MessageSquare,
   Settings,
   LogOut,
   Image,
-  MessageSquare,
+  Award,
+  Heart
 } from "lucide-react";
 
-export function Sidebar() {
+const Sidebar = () => {
   const { signOut, user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  const location = useLocation();
 
-  const links = [
-    { to: "/", icon: Home, label: "Tableau de bord", permission: "dashboard" },
-    { to: "/children", icon: Users, label: "Enfants", permission: "children" },
-    { to: "/sponsorships", icon: Heart, label: "Parrainages", permission: "sponsorships" },
-    { to: "/donations", icon: Gift, label: "Dons", permission: "donations" },
-    { to: "/messages", icon: MessageSquare, label: "Messages", permission: null },
+  const isAdmin = user?.role === 'admin';
+  const isAssistant = ['admin', 'assistant'].includes(user?.role || '');
+
+  const mainLinks = [
+    {
+      href: "/",
+      label: "Tableau de bord",
+      icon: LayoutDashboard,
+      show: user?.permissions?.dashboard || isAdmin,
+    },
+    {
+      href: "/children",
+      label: "Enfants",
+      icon: Users,
+      show: user?.permissions?.children || isAdmin,
+    },
+    {
+      href: "/sponsorships",
+      label: "Parrainages",
+      icon: Heart,
+      show: user?.permissions?.sponsorships || isAdmin,
+    },
+    {
+      href: "/donations",
+      label: "Dons",
+      icon: Gift,
+      show: user?.permissions?.donations || isAdmin,
+    },
+    {
+      href: "/messages",
+      label: "Messages",
+      icon: MessageSquare,
+      show: true,
+    },
+    {
+      href: "/rewards",
+      label: "Récompenses",
+      icon: Award,
+      show: true,
+    },
   ];
 
   const adminLinks = [
-    { to: "/admin/permissions", icon: Settings, label: "Permissions", requireAdmin: true },
-    { to: "/admin/media", icon: Image, label: "Médias", permission: "media" },
-    { to: "/admin/sponsors", icon: UserCog, label: "Parrains", requireAdmin: true },
+    {
+      href: "/admin/permissions",
+      label: "Permissions",
+      icon: Settings,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/media",
+      label: "Médias",
+      icon: Image,
+      show: user?.permissions?.media || isAdmin,
+    },
+    {
+      href: "/admin/sponsors",
+      label: "Parrains",
+      icon: Users,
+      show: isAdmin,
+    },
   ];
 
-  const canAccessLink = (link: any) => {
-    if (link.requireAdmin && !isAdmin) return false;
-    if (link.permission && !user?.permissions?.[link.permission] && !isAdmin) return false;
-    return true;
-  };
-
   return (
-    <div className="h-full bg-white border-r border-gray-200 w-64 py-4 flex flex-col">
-      <div className="flex-1">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">Navigation</h2>
-          <div className="space-y-1">
-            {links.map((link) =>
-              canAccessLink(link) ? (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  className={({ isActive }) =>
-                    cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
-                      isActive && "bg-gray-100 text-gray-900"
-                    )
-                  }
-                >
-                  <link.icon className="h-4 w-4" />
-                  {link.label}
-                </NavLink>
-              ) : null
-            )}
-          </div>
-        </div>
-
-        {(isAdmin || adminLinks.some(canAccessLink)) && (
+    <div className="flex h-full flex-col border-r bg-white">
+      <div className="p-6">
+        <Link to="/">
+          <h1 className="text-xl font-bold">Passion Varadero</h1>
+        </Link>
+      </div>
+      <ScrollArea className="flex-1">
+        <div className="space-y-4 py-4">
           <div className="px-3 py-2">
-            <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">Administration</h2>
             <div className="space-y-1">
-              {adminLinks.map((link) =>
-                canAccessLink(link) ? (
-                  <NavLink
-                    key={link.to}
-                    to={link.to}
-                    className={({ isActive }) =>
-                      cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
-                        isActive && "bg-gray-100 text-gray-900"
-                      )
-                    }
+              {mainLinks.filter(link => link.show).map((link) => (
+                <Link key={link.href} to={link.href}>
+                  <Button
+                    variant={location.pathname === link.href ? "secondary" : "ghost"}
+                    className={cn(
+                      "w-full justify-start",
+                      location.pathname === link.href && "bg-primary/10"
+                    )}
                   >
-                    <link.icon className="h-4 w-4" />
+                    <link.icon className="mr-2 h-4 w-4" />
                     {link.label}
-                  </NavLink>
-                ) : null
-              )}
+                  </Button>
+                </Link>
+              ))}
             </div>
           </div>
-        )}
-      </div>
-
-      <div className="px-3 py-2 border-t">
+          {(isAdmin || isAssistant) && (
+            <div className="px-3 py-2">
+              <h2 className="mb-2 px-4 text-lg font-semibold">Administration</h2>
+              <div className="space-y-1">
+                {adminLinks.filter(link => link.show).map((link) => (
+                  <Link key={link.href} to={link.href}>
+                    <Button
+                      variant={location.pathname === link.href ? "secondary" : "ghost"}
+                      className={cn(
+                        "w-full justify-start",
+                        location.pathname === link.href && "bg-primary/10"
+                      )}
+                    >
+                      <link.icon className="mr-2 h-4 w-4" />
+                      {link.label}
+                    </Button>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+      <div className="p-4 border-t">
         <Button
           variant="ghost"
-          className="w-full justify-start gap-3"
+          className="w-full justify-start"
           onClick={() => signOut()}
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="mr-2 h-4 w-4" />
           Déconnexion
         </Button>
       </div>
     </div>
   );
-}
+};
 
 export default Sidebar;
