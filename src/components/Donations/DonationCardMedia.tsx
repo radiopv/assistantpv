@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, Video } from "lucide-react";
+import { Camera, Video, X } from "lucide-react";
 import { PhotoUpload } from "./PhotoUpload";
 import { VideoUpload } from "./VideoUpload";
-import { DonationMedia } from "./DonationMedia";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,6 +38,30 @@ export const DonationCardMedia = ({
       setShowCropDialog(true);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleDeletePhoto = async (photoId: number) => {
+    try {
+      const { error } = await supabase
+        .from('donation_photos')
+        .delete()
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Photo supprimée",
+        description: "La photo a été supprimée avec succès.",
+      });
+
+      onPhotosUpdate();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression de la photo.",
+      });
+    }
   };
 
   const handleCropComplete = async (croppedImageBlob: Blob) => {
@@ -83,21 +106,67 @@ export const DonationCardMedia = ({
   };
 
   return (
-    <>
-      <DonationMedia
-        photos={photos}
-        videos={videos}
-        onPhotoDelete={async (photoId) => {
-          await supabase.from('donation_photos').delete().eq('id', photoId);
-          onPhotosUpdate();
-        }}
-        onVideoDelete={async (videoId) => {
-          await supabase.from('donation_videos').delete().eq('id', videoId);
-          onVideosUpdate();
-        }}
-      />
+    <div className="space-y-4">
+      {/* Photos Grid */}
+      {photos && photos.length > 0 && (
+        <div>
+          <p className="text-gray-500 mb-2">Photos</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {photos.map((photo) => (
+              <div key={photo.id} className="relative group aspect-square">
+                <img
+                  src={photo.url}
+                  alt="Photo du don"
+                  className="w-full h-full object-cover rounded-md"
+                />
+                <button
+                  onClick={() => handleDeletePhoto(photo.id)}
+                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div className="flex flex-wrap gap-2 mt-4">
+      {/* Videos Grid */}
+      {videos && videos.length > 0 && (
+        <div>
+          <p className="text-gray-500 mb-2">Vidéos</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            {videos.map((video) => (
+              <div key={video.id} className="relative group aspect-video">
+                {video.thumbnail_url ? (
+                  <img
+                    src={video.thumbnail_url}
+                    alt="Miniature vidéo"
+                    className="w-full h-full object-cover rounded-md cursor-pointer"
+                    onClick={() => window.open(video.url, '_blank')}
+                  />
+                ) : (
+                  <div 
+                    className="w-full h-full bg-gray-100 rounded-md flex items-center justify-center cursor-pointer"
+                    onClick={() => window.open(video.url, '_blank')}
+                  >
+                    <span className="text-sm text-gray-600">Voir la vidéo</span>
+                  </div>
+                )}
+                <button
+                  onClick={() => onVideosUpdate()}
+                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Upload Buttons */}
+      <div className="flex flex-wrap gap-2">
         <Button
           variant="outline"
           size="sm"
@@ -118,13 +187,12 @@ export const DonationCardMedia = ({
         </Button>
       </div>
 
+      {/* Upload Forms */}
       {showPhotoUpload && (
-        <div className="space-y-4">
-          <PhotoUpload
-            donationId={donationId}
-            onPhotosChange={handlePhotoSelect}
-          />
-        </div>
+        <PhotoUpload
+          donationId={donationId}
+          onPhotosChange={handlePhotoSelect}
+        />
       )}
 
       {showVideoUpload && (
@@ -137,12 +205,13 @@ export const DonationCardMedia = ({
         />
       )}
 
+      {/* Image Crop Dialog */}
       <ImageCropDialog
         open={showCropDialog}
         onClose={() => setShowCropDialog(false)}
         imageSrc={selectedImage}
         onCropComplete={handleCropComplete}
       />
-    </>
+    </div>
   );
 };
