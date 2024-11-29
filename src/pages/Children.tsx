@@ -67,27 +67,6 @@ const Children = () => {
     });
   }, [children, searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus]);
 
-  const checkDuplicates = (childId: string) => {
-    if (!children) return;
-    
-    const currentChild = children.find(c => c.id === childId);
-    if (!currentChild) return;
-    
-    const potentialDuplicates = children.filter(c => 
-      c.id !== childId && (
-        c.name.toLowerCase() === currentChild.name.toLowerCase() ||
-        c.age === currentChild.age
-      )
-    );
-
-    if (potentialDuplicates.length > 0) {
-      toast.warning("Attention : Profils similaires détectés", {
-        description: "Il existe des profils avec le même nom ou le même âge.",
-        duration: 5000,
-      });
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -125,10 +104,7 @@ const Children = () => {
           <Card 
             key={child.id} 
             className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => {
-              checkDuplicates(child.id);
-              navigate(`/children/${child.id}`);
-            }}
+            onClick={() => navigate(`/children/${child.id}`)}
           >
             <div className="aspect-square relative mb-4 rounded-lg overflow-hidden">
               {child.photo_url ? (
