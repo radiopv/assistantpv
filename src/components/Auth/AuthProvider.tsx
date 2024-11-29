@@ -1,7 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { createContext, useContext, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuthState } from "@/hooks/useAuthState";
+import { useAuthRedirect } from "@/hooks/useAuthRedirect";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 interface AuthContextType {
   user: any | null;
@@ -24,98 +26,48 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAssistant, setIsAssistant] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isSponsor, setIsSponsor] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { state, actions } = useAuthState();
+  const { handleRedirect, redirectToLogin } = useAuthRedirect();
 
-  const handleRedirect = (role: string) => {
-    const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
-    const isProtectedPage = protectedPages.includes(location.pathname);
-
-    if (location.pathname === '/login' || isProtectedPage) {
-      switch (role) {
-        case 'admin':
-          navigate('/dashboard');
-          break;
-        case 'sponsor':
-          navigate('/sponsor-dashboard');
-          break;
-        case 'assistant':
-          navigate('/dashboard');
-          break;
-        default:
-          navigate('/');
+  const checkAuth = async () => {
+    try {
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        actions.handleError(sessionError, 'Session error:');
+        return;
       }
+
+      if (!session?.user) {
+        actions.resetState();
+        redirectToLogin();
+        return;
+      }
+
+      const { data: sponsor, error: sponsorError } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (sponsorError) {
+        actions.handleError(sponsorError, 'Error fetching sponsor:');
+        return;
+      }
+
+      if (sponsor) {
+        actions.updateState(sponsor);
+        handleRedirect(sponsor.role);
+      } else {
+        actions.resetState();
+        redirectToLogin();
+      }
+    } catch (error) {
+      actions.handleError(error, 'Error checking auth:');
     }
   };
 
-  const resetAuthState = () => {
-    setUser(null);
-    setIsAdmin(false);
-    setIsAssistant(false);
-    setIsSponsor(false);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          resetAuthState();
-          return;
-        }
-
-        if (!session?.user) {
-          resetAuthState();
-          const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
-          if (protectedPages.includes(location.pathname)) {
-            navigate('/login');
-          }
-          return;
-        }
-
-        const { data: sponsor, error: sponsorError } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-
-        if (sponsorError) {
-          console.error('Error fetching sponsor:', sponsorError);
-          resetAuthState();
-          if (location.pathname !== '/login') {
-            navigate('/login');
-          }
-          return;
-        }
-
-        if (sponsor) {
-          setUser(sponsor);
-          setIsAdmin(sponsor.role === 'admin');
-          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-          setIsSponsor(sponsor.role === 'sponsor');
-          handleRedirect(sponsor.role);
-        } else {
-          resetAuthState();
-          if (location.pathname !== '/login') {
-            navigate('/login');
-          }
-        }
-      } catch (error) {
-        console.error('Error checking auth:', error);
-        resetAuthState();
-      } finally {
-        setLoading(false);
-      }
-    };
-
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -127,14 +79,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .single();
 
         if (!error && sponsor) {
-          setUser(sponsor);
-          setIsAdmin(sponsor.role === 'admin');
-          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-          setIsSponsor(sponsor.role === 'sponsor');
+          actions.updateState(sponsor);
           handleRedirect(sponsor.role);
         } else {
-          resetAuthState();
-          navigate('/login');
+          actions.resetState();
+          redirectToLogin();
           toast({
             title: "Erreur d'authentification",
             description: "Votre compte n'a pas les permissions nécessaires.",
@@ -142,25 +91,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           });
         }
       } else if (event === 'SIGNED_OUT') {
-        resetAuthState();
-        navigate('/login');
+        actions.resetState();
+        redirectToLogin();
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, location.pathname]);
+  }, []);
 
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      resetAuthState();
+      actions.resetState();
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
       });
-      navigate("/login");
+      redirectToLogin();
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
@@ -171,24 +120,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        <div className="ml-4 text-gray-600">Chargement en cours...</div>
-      </div>
-    );
+  if (state.loading) {
+    return <LoadingSpinner message="Chargement en cours..." />;
   }
 
   return (
     <AuthContext.Provider value={{ 
-      user, 
-      loading, 
-      signOut, 
-      isAssistant, 
-      isAdmin, 
-      isSponsor, 
-      session: user 
+      ...state, 
+      signOut,
+      session: state.user 
     }}>
       {children}
     </AuthContext.Provider>
