@@ -15,6 +15,7 @@ import Sponsorships from "./pages/Sponsorships";
 import MediaManagement from "./pages/MediaManagement";
 import SponsorsManagement from "./pages/SponsorsManagement";
 import Messages from "./pages/Messages";
+import Rewards from "./pages/Rewards";
 import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 
@@ -73,6 +74,7 @@ const App = () => (
               <Route path="donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
               <Route path="sponsorships" element={<ProtectedRoute requiredPermission="sponsorships"><Sponsorships /></ProtectedRoute>} />
               <Route path="messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
               <Route path="admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
               <Route path="admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
               <Route path="admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />

@@ -80,6 +80,42 @@ export type Database = {
           },
         ]
       }
+      badges: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          points: number | null
+          requirements: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          points?: number | null
+          requirements?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          points?: number | null
+          requirements?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       birthday_reminders: {
         Row: {
           child_id: string | null
@@ -1297,6 +1333,36 @@ export type Database = {
           },
         ]
       }
+      sponsor_levels: {
+        Row: {
+          benefits: Json | null
+          created_at: string | null
+          description: string | null
+          id: string
+          min_points: number
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          benefits?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          min_points: number
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          benefits?: Json | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          min_points?: number
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       sponsor_memories: {
         Row: {
           child_id: string | null
@@ -1347,6 +1413,7 @@ export type Database = {
           address: string | null
           city: string | null
           created_at: string | null
+          current_level_id: string | null
           email: string | null
           facebook_url: string | null
           force_password_change: boolean | null
@@ -1362,12 +1429,14 @@ export type Database = {
           privacy_settings: Json | null
           role: string | null
           show_name_publicly: boolean | null
+          total_points: number | null
           updated_at: string | null
         }
         Insert: {
           address?: string | null
           city?: string | null
           created_at?: string | null
+          current_level_id?: string | null
           email?: string | null
           facebook_url?: string | null
           force_password_change?: boolean | null
@@ -1383,12 +1452,14 @@ export type Database = {
           privacy_settings?: Json | null
           role?: string | null
           show_name_publicly?: boolean | null
+          total_points?: number | null
           updated_at?: string | null
         }
         Update: {
           address?: string | null
           city?: string | null
           created_at?: string | null
+          current_level_id?: string | null
           email?: string | null
           facebook_url?: string | null
           force_password_change?: boolean | null
@@ -1404,9 +1475,18 @@ export type Database = {
           privacy_settings?: Json | null
           role?: string | null
           show_name_publicly?: boolean | null
+          total_points?: number | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sponsors_current_level_id_fkey"
+            columns: ["current_level_id"]
+            isOneToOne: false
+            referencedRelation: "sponsor_levels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sponsorship_audit_logs: {
         Row: {
@@ -1693,6 +1773,54 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          badge_id: string | null
+          created_at: string | null
+          earned_at: string | null
+          id: string
+          metadata: Json | null
+          points: number | null
+          sponsor_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          badge_id?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          badge_id?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -1786,6 +1914,12 @@ export type Database = {
       }
       auto_fix_links: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      check_and_award_badges: {
+        Args: {
+          sponsor_uuid: string
+        }
         Returns: undefined
       }
       check_link: {
@@ -2069,6 +2203,12 @@ export type Database = {
           p_termination_date: string
           p_termination_reason: string
           p_termination_comment: string
+        }
+        Returns: undefined
+      }
+      update_sponsor_points: {
+        Args: {
+          sponsor_uuid: string
         }
         Returns: undefined
       }
