@@ -4,9 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
+import { toast } from "sonner";
 
 const Children = () => {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedGender, setSelectedGender] = useState("");
+  const [selectedAge, setSelectedAge] = useState("");
 
   const { data: children, isLoading } = useQuery({
     queryKey: ['children'],
@@ -14,12 +21,61 @@ const Children = () => {
       const { data, error } = await supabase
         .from('children')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('name', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        toast.error("Erreur lors du chargement des enfants");
+        throw error;
+      }
       return data;
     }
   });
+
+  const cities = useMemo(() => {
+    if (!children) return [];
+    const uniqueCities = [...new Set(children.map(child => child.city))];
+    return uniqueCities.filter(Boolean).sort();
+  }, [children]);
+
+  const ages = useMemo(() => {
+    if (!children) return [];
+    const uniqueAges = [...new Set(children.map(child => child.age))];
+    return uniqueAges.filter(Boolean).sort((a, b) => a - b);
+  }, [children]);
+
+  const filteredChildren = useMemo(() => {
+    if (!children) return [];
+    
+    return children.filter(child => {
+      const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCity = !selectedCity || child.city === selectedCity;
+      const matchesGender = !selectedGender || child.gender === selectedGender;
+      const matchesAge = !selectedAge || child.age === parseInt(selectedAge);
+      
+      return matchesSearch && matchesCity && matchesGender && matchesAge;
+    });
+  }, [children, searchTerm, selectedCity, selectedGender, selectedAge]);
+
+  const checkDuplicates = (childId: string) => {
+    if (!children) return;
+    
+    const currentChild = children.find(c => c.id === childId);
+    if (!currentChild) return;
+    
+    const potentialDuplicates = children.filter(c => 
+      c.id !== childId && (
+        c.name.toLowerCase() === currentChild.name.toLowerCase() ||
+        (c.age === currentChild.age && c.gender === currentChild.gender && c.city === currentChild.city)
+      )
+    );
+
+    if (potentialDuplicates.length > 0) {
+      toast.warning("Attention : Profils similaires détectés", {
+        description: "Il existe des profils avec des informations similaires.",
+        duration: 5000,
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -38,10 +94,29 @@ const Children = () => {
         </Button>
       </div>
 
+      <ChildrenFilters
+        searchTerm={searchTerm}
+        selectedCity={selectedCity}
+        selectedGender={selectedGender}
+        selectedAge={selectedAge}
+        onSearchChange={setSearchTerm}
+        onCityChange={setSelectedCity}
+        onGenderChange={setSelectedGender}
+        onAgeChange={setSelectedAge}
+        cities={cities}
+        ages={ages}
+      />
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {children?.map((child) => (
-          <Card key={child.id} className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
-                onClick={() => navigate(`/children/${child.id}`)}>
+        {filteredChildren.map((child) => (
+          <Card 
+            key={child.id} 
+            className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => {
+              checkDuplicates(child.id);
+              navigate(`/children/${child.id}`);
+            }}
+          >
             <div className="aspect-square relative mb-4 rounded-lg overflow-hidden">
               {child.photo_url ? (
                 <img 
