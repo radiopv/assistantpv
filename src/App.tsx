@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
+import PublicLayout from "./components/Layout/PublicLayout";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
@@ -55,14 +56,6 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   }
 
   return <>{children}</>;
-};
-
-const PublicLayout = () => {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Outlet />
-    </div>
-  );
 };
 
 const App = () => (
