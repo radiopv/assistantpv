@@ -65,29 +65,31 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
     const file = e.target.files[0];
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `${sponsor.id}/${fileName}`;
 
     try {
       // Si une photo existe déjà, on la supprime
       if (formData.photo_url) {
-        const oldPath = formData.photo_url.split('/').pop();
-        if (oldPath) {
+        const oldPhotoPath = formData.photo_url.split('/').pop();
+        if (oldPhotoPath) {
           await supabase.storage
             .from('sponsor-photos')
-            .remove([oldPath]);
+            .remove([`${sponsor.id}/${oldPhotoPath}`]);
         }
       }
 
-      const { error: uploadError } = await supabase.storage
+      // Upload de la nouvelle photo
+      const { error: uploadError, data } = await supabase.storage
         .from('sponsor-photos')
-        .upload(filePath, file);
+        .upload(`${sponsor.id}/${fileName}`, file);
 
       if (uploadError) throw uploadError;
 
+      // Récupération de l'URL publique
       const { data: { publicUrl } } = supabase.storage
         .from('sponsor-photos')
-        .getPublicUrl(filePath);
+        .getPublicUrl(`${sponsor.id}/${fileName}`);
 
+      // Mise à jour du formData avec la nouvelle URL
       setFormData(prev => ({
         ...prev,
         photo_url: publicUrl
@@ -102,7 +104,7 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Impossible de mettre à jour la photo",
+        description: "Impossible de mettre à jour la photo. Veuillez réessayer.",
       });
     }
   };
