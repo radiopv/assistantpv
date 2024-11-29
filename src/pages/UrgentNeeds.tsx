@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 
 const UrgentNeeds = () => {
@@ -10,10 +10,12 @@ const UrgentNeeds = () => {
       <div className="grid gap-6">
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Besoins Urgents</AlertTitle>
-          <AlertDescription>
-            Cette page affichera les besoins urgents des enfants qui nécessitent une attention immédiate.
-          </AlertDescription>
+          <div>
+            <h4 className="font-medium">Besoins Urgents</h4>
+            <p className="text-sm">
+              Cette page affichera les besoins urgents des enfants qui nécessitent une attention immédiate.
+            </p>
+          </div>
         </Alert>
 
         <Card>
