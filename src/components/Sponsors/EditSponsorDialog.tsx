@@ -1,13 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { PhotoUploadField } from "@/components/Children/FormFields/PhotoUploadField";
+import { SponsorFormFields } from "./SponsorFormFields";
+import { ErrorAlert } from "../ErrorAlert";
 
 interface EditSponsorDialogProps {
   sponsor: any;
@@ -16,9 +13,29 @@ interface EditSponsorDialogProps {
 }
 
 export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogProps) => {
-  const [formData, setFormData] = useState(sponsor);
+  const [formData, setFormData] = useState<any>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (sponsor) {
+      setFormData({
+        id: sponsor.id,
+        name: sponsor.name || '',
+        email: sponsor.email || '',
+        phone: sponsor.phone || '',
+        city: sponsor.city || '',
+        address: sponsor.address || '',
+        facebook_url: sponsor.facebook_url || '',
+        is_active: sponsor.is_active || false,
+        is_anonymous: sponsor.is_anonymous || false,
+        role: sponsor.role || '',
+        photo_url: sponsor.photo_url || '',
+        show_name_publicly: sponsor.show_name_publicly || false
+      });
+    }
+  }, [sponsor]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target;
@@ -75,17 +92,14 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
       }));
     } catch (error) {
       console.error('Error updating photo:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de mettre à jour la photo",
-      });
+      setError("Impossible de mettre à jour la photo");
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
 
     try {
       const { error } = await supabase
@@ -114,17 +128,13 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
       onClose();
     } catch (error) {
       console.error('Error updating sponsor:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de mettre à jour les informations",
-      });
+      setError("Impossible de mettre à jour les informations");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (!sponsor) return null;
+  if (!sponsor || !formData) return null;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -133,114 +143,16 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
           <DialogTitle>Modifier le parrain</DialogTitle>
         </DialogHeader>
 
+        {error && <ErrorAlert message={error} />}
+
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nom</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email || ''}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone</Label>
-              <Input
-                id="phone"
-                value={formData.phone || ''}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="city">Ville</Label>
-              <Input
-                id="city"
-                value={formData.city || ''}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="address">Adresse</Label>
-              <Input
-                id="address"
-                value={formData.address || ''}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="facebook_url">Facebook URL</Label>
-              <Input
-                id="facebook_url"
-                value={formData.facebook_url || ''}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="role">Rôle</Label>
-              <Select
-                value={formData.role}
-                onValueChange={(value) => handleSelectChange('role', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionner un rôle" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="admin">Admin</SelectItem>
-                  <SelectItem value="assistant">Assistant</SelectItem>
-                  <SelectItem value="sponsor">Parrain</SelectItem>
-                  <SelectItem value="visitor">Visiteur</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <PhotoUploadField handlePhotoChange={handlePhotoChange} />
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="is_active">Actif</Label>
-              <Switch
-                id="is_active"
-                checked={formData.is_active}
-                onCheckedChange={(checked) => handleSwitchChange('is_active', checked)}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="is_anonymous">Anonyme</Label>
-              <Switch
-                id="is_anonymous"
-                checked={formData.is_anonymous}
-                onCheckedChange={(checked) => handleSwitchChange('is_anonymous', checked)}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="show_name_publicly">Afficher le nom publiquement</Label>
-              <Switch
-                id="show_name_publicly"
-                checked={formData.show_name_publicly}
-                onCheckedChange={(checked) => handleSwitchChange('show_name_publicly', checked)}
-              />
-            </div>
-          </div>
+          <SponsorFormFields
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleSwitchChange={handleSwitchChange}
+            handleSelectChange={handleSelectChange}
+            handlePhotoChange={handlePhotoChange}
+          />
 
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
