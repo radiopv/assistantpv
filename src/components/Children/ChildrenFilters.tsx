@@ -44,7 +44,7 @@ export const ChildrenFilters = ({
             <SelectValue placeholder="Ville" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Toutes les villes</SelectItem>
+            <SelectItem value="all">Toutes les villes</SelectItem>
             {cities.map((city) => (
               <SelectItem key={city} value={city}>
                 {city}
@@ -58,7 +58,7 @@ export const ChildrenFilters = ({
             <SelectValue placeholder="Genre" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Tous</SelectItem>
+            <SelectItem value="all">Tous</SelectItem>
             <SelectItem value="M">Masculin</SelectItem>
             <SelectItem value="F">Féminin</SelectItem>
           </SelectContent>
@@ -69,7 +69,7 @@ export const ChildrenFilters = ({
             <SelectValue placeholder="Âge" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Tous les âges</SelectItem>
+            <SelectItem value="all">Tous les âges</SelectItem>
             {ages.map((age) => (
               <SelectItem key={age} value={age.toString()}>
                 {age} ans

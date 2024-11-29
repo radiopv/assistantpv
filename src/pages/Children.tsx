@@ -11,9 +11,9 @@ import { toast } from "sonner";
 const Children = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-  const [selectedGender, setSelectedGender] = useState("");
-  const [selectedAge, setSelectedAge] = useState("");
+  const [selectedCity, setSelectedCity] = useState("all");
+  const [selectedGender, setSelectedGender] = useState("all");
+  const [selectedAge, setSelectedAge] = useState("all");
 
   const { data: children, isLoading } = useQuery({
     queryKey: ['children'],
@@ -48,9 +48,9 @@ const Children = () => {
     
     return children.filter(child => {
       const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCity = !selectedCity || child.city === selectedCity;
-      const matchesGender = !selectedGender || child.gender === selectedGender;
-      const matchesAge = !selectedAge || child.age === parseInt(selectedAge);
+      const matchesCity = selectedCity === "all" || child.city === selectedCity;
+      const matchesGender = selectedGender === "all" || child.gender === selectedGender;
+      const matchesAge = selectedAge === "all" || child.age === parseInt(selectedAge);
       
       return matchesSearch && matchesCity && matchesGender && matchesAge;
     });
