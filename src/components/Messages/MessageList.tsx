@@ -7,6 +7,11 @@ import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
+interface Sender {
+  name: string;
+  role: string;
+}
+
 interface Message {
   id: string;
   subject: string;
@@ -15,10 +20,7 @@ interface Message {
   recipient_id: string;
   created_at: string;
   is_read: boolean;
-  sender?: {
-    name: string;
-    role: string;
-  };
+  sender?: Sender;
 }
 
 export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Message) => void }) => {
@@ -41,21 +43,22 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
         return;
       }
 
-      // Transform the data to match the Message interface
-      const transformedMessages = (data as Message[])?.map(msg => ({
+      const transformedMessages = (data as any[])?.map(msg => ({
         ...msg,
-        sender: {
-          name: msg.sender?.name || "Unknown",
-          role: msg.sender?.role || "unknown"
+        sender: msg.sender ? {
+          name: msg.sender.name || "Unknown",
+          role: msg.sender.role || "unknown"
+        } : {
+          name: "Unknown",
+          role: "unknown"
         }
-      })) || [];
+      }));
 
       setMessages(transformedMessages);
     };
 
     fetchMessages();
 
-    // Subscribe to new messages
     const subscription = supabase
       .channel("messages_channel")
       .on(
@@ -71,12 +74,11 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
             const newMessage = {
               ...(payload.new as Message),
               sender: {
-                name: "Loading...", // This will be updated on the next fetch
+                name: "Loading...",
                 role: "unknown"
               }
             };
             setMessages((prev) => [newMessage, ...prev]);
-            // Fetch the complete message data to get the sender info
             fetchMessages();
           }
         }
