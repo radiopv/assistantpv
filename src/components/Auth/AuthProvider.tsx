@@ -58,45 +58,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAdmin(false);
     setIsAssistant(false);
     setIsSponsor(false);
+    setLoading(false);
   };
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (session?.user) {
-          const { data: sponsor, error } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          resetAuthState();
+          return;
+        }
 
-          if (error) {
-            console.error('Error fetching sponsor:', error);
-            resetAuthState();
-            if (location.pathname !== '/login') {
-              navigate('/login');
-            }
-            return;
-          }
-
-          if (sponsor) {
-            setUser(sponsor);
-            setIsAdmin(sponsor.role === 'admin');
-            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-            setIsSponsor(sponsor.role === 'sponsor');
-            handleRedirect(sponsor.role);
-          } else {
-            resetAuthState();
-            if (location.pathname !== '/login') {
-              navigate('/login');
-            }
-          }
-        } else {
+        if (!session?.user) {
           resetAuthState();
           const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
           if (protectedPages.includes(location.pathname)) {
+            navigate('/login');
+          }
+          return;
+        }
+
+        const { data: sponsor, error: sponsorError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (sponsorError) {
+          console.error('Error fetching sponsor:', sponsorError);
+          resetAuthState();
+          if (location.pathname !== '/login') {
+            navigate('/login');
+          }
+          return;
+        }
+
+        if (sponsor) {
+          setUser(sponsor);
+          setIsAdmin(sponsor.role === 'admin');
+          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+          setIsSponsor(sponsor.role === 'sponsor');
+          handleRedirect(sponsor.role);
+        } else {
+          resetAuthState();
+          if (location.pathname !== '/login') {
             navigate('/login');
           }
         }
@@ -127,6 +135,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           resetAuthState();
           navigate('/login');
+          toast({
+            title: "Erreur d'authentification",
+            description: "Votre compte n'a pas les permissions nécessaires.",
+            variant: "destructive",
+          });
         }
       } else if (event === 'SIGNED_OUT') {
         resetAuthState();
@@ -162,6 +175,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="ml-4 text-gray-600">Chargement en cours...</div>
       </div>
     );
   }
