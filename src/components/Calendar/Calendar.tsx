@@ -26,7 +26,14 @@ export const Calendar = () => {
         .order("visit_date", { ascending: true });
 
       if (error) throw error;
-      return data as Event[];
+      
+      // Map the scheduled visits to Event interface
+      return (data || []).map((visit): Event => ({
+        id: visit.id,
+        title: `Visite programmée`,
+        date: visit.visit_date,
+        description: visit.notes || undefined
+      }));
     },
     enabled: !!user?.id,
   });
