@@ -75,7 +75,7 @@ export const AddChildForm = () => {
       }
 
       // Validation explicite du genre
-      if (!formData.gender || !['M', 'F'].includes(formData.gender)) {
+      if (!formData.gender || !['M', 'F'].includes(formData.gender.toUpperCase())) {
         throw new Error("Le genre doit être 'M' ou 'F'");
       }
 
@@ -88,7 +88,7 @@ export const AddChildForm = () => {
         .from('children')
         .insert({
           name: formData.name,
-          gender: formData.gender,
+          gender: formData.gender.toUpperCase(),
           birth_date: formData.birth_date,
           age: age,
           city: formData.city,
