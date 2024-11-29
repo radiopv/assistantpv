@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { ProfilePhotoUpload } from "./ProfilePhotoUpload";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface ProfilePhotoSectionProps {
   child: any;
@@ -11,9 +12,12 @@ interface ProfilePhotoSectionProps {
 
 export const ProfilePhotoSection = ({ child, editing, onPhotoUpdate }: ProfilePhotoSectionProps) => {
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const { user } = useAuth();
+  const isStaff = user?.role === 'admin' || user?.role === 'assistant';
+  const isSponsor = user?.role === 'sponsor';
 
   const handlePhotoClick = () => {
-    if (editing && child.photo_url) {
+    if (editing && child.photo_url && isStaff) {
       setCropDialogOpen(true);
     }
   };
@@ -52,7 +56,7 @@ export const ProfilePhotoSection = ({ child, editing, onPhotoUpdate }: ProfilePh
   return (
     <>
       <div 
-        className={`aspect-video relative rounded-lg overflow-hidden ${editing ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
+        className={`aspect-video relative rounded-lg overflow-hidden ${editing && isStaff ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
         onClick={handlePhotoClick}
       >
         <img
@@ -63,7 +67,15 @@ export const ProfilePhotoSection = ({ child, editing, onPhotoUpdate }: ProfilePh
         />
       </div>
 
-      {editing && (
+      {(editing && isStaff) && (
+        <ProfilePhotoUpload
+          childId={child.id}
+          currentPhotoUrl={child.photo_url}
+          onUploadComplete={onPhotoUpdate}
+        />
+      )}
+
+      {(isSponsor && child.is_sponsored) && (
         <ProfilePhotoUpload
           childId={child.id}
           currentPhotoUrl={child.photo_url}

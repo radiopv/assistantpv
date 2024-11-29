@@ -7,9 +7,13 @@ import { Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { toast } from "sonner";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const Children = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isStaff = user?.role === 'admin' || user?.role === 'assistant';
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
@@ -79,9 +83,11 @@ const Children = () => {
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Liste des enfants</h1>
-        <Button onClick={() => navigate('/children/add')}>
-          Ajouter un enfant
-        </Button>
+        {isStaff && (
+          <Button onClick={() => navigate('/children/add')}>
+            Ajouter un enfant
+          </Button>
+        )}
       </div>
 
       <ChildrenFilters
