@@ -6,8 +6,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface Permission {
   page: string;
@@ -73,6 +83,7 @@ export const AdminPermissions = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("pages");
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -109,6 +120,23 @@ export const AdminPermissions = () => {
     } catch (error) {
       console.error('Error updating permissions:', error);
       toast.error("Erreur lors de la mise à jour des permissions");
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('sponsors')
+        .delete()
+        .eq('id', userId);
+
+      if (error) throw error;
+      toast.success("Utilisateur supprimé avec succès");
+      setUserToDelete(null);
+      await fetchUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast.error("Erreur lors de la suppression de l'utilisateur");
     }
   };
 
@@ -150,13 +178,21 @@ export const AdminPermissions = () => {
                   <h3 className="font-semibold">{user.name}</h3>
                   <p className="text-sm text-gray-600">{user.email}</p>
                 </div>
-                <div className="flex gap-2 mt-2 md:mt-0">
+                <div className="flex gap-2 mt-2 md:mt-0 items-center">
                   <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                     {user.role}
                   </Badge>
                   <Badge variant={user.is_active ? 'default' : 'destructive'}>
                     {user.is_active ? 'Actif' : 'Inactif'}
                   </Badge>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                    onClick={() => setUserToDelete(user.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
                 </div>
               </div>
 
@@ -179,6 +215,26 @@ export const AdminPermissions = () => {
           ))}
         </div>
       </Tabs>
+
+      <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => userToDelete && deleteUser(userToDelete)}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
