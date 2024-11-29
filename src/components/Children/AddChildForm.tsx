@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { differenceInYears, parseISO } from "date-fns";
-import { BasicInfoFields } from "./FormFields/BasicInfoFields";
-import { PhotoUploadField } from "./FormFields/PhotoUploadField";
 
 export const AddChildForm = () => {
   const navigate = useNavigate();
@@ -14,20 +14,16 @@ export const AddChildForm = () => {
   const [photo, setPhoto] = useState<File | null>(null);
   const [formData, setFormData] = useState({
     name: "",
+    age: "",
     gender: "",
     birth_date: "",
     city: "",
     status: "available",
   });
 
-  const calculateAge = (birthDate: string) => {
-    if (!birthDate) return null;
-    return differenceInYears(new Date(), parseISO(birthDate));
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value.trim() }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,32 +32,8 @@ export const AddChildForm = () => {
     }
   };
 
-  const validateForm = () => {
-    const errors = [];
-    if (!formData.name.trim()) errors.push("Le nom est requis");
-    if (!formData.gender) errors.push("Le genre est requis");
-    if (!["M", "F"].includes(formData.gender)) {
-      errors.push("Le genre doit être 'M' ou 'F'");
-    }
-    if (!formData.birth_date) errors.push("La date de naissance est requise");
-    if (!formData.city.trim()) errors.push("La ville est requise");
-    
-    return errors;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const validationErrors = validateForm();
-    if (validationErrors.length > 0) {
-      toast({
-        variant: "destructive",
-        title: "Erreur de validation",
-        description: validationErrors.join(", "),
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
@@ -85,23 +57,12 @@ export const AddChildForm = () => {
         photoUrl = publicUrl;
       }
 
-      const age = calculateAge(formData.birth_date);
-      if (age === null) {
-        throw new Error("La date de naissance est invalide");
-      }
-
       const { error } = await supabase
         .from('children')
         .insert({
-          name: formData.name.trim(),
-          gender: formData.gender,
-          birth_date: formData.birth_date,
-          age: age,
-          city: formData.city.trim(),
-          status: "available",
+          ...formData,
           photo_url: photoUrl,
-          is_sponsored: false,
-          needs: []
+          age: parseInt(formData.age),
         });
 
       if (error) throw error;
@@ -113,11 +74,10 @@ export const AddChildForm = () => {
 
       navigate('/children');
     } catch (error: any) {
-      console.error('Error adding child:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'ajout de l'enfant",
+        description: "Une erreur est survenue lors de l'ajout de l'enfant.",
       });
     } finally {
       setLoading(false);
@@ -127,31 +87,83 @@ export const AddChildForm = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
-        <BasicInfoFields 
-          formData={formData}
-          handleChange={handleChange}
-          setFormData={setFormData}
-        />
-        <PhotoUploadField handlePhotoChange={handlePhotoChange} />
+        <div>
+          <Label htmlFor="name">Nom</Label>
+          <Input
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="age">Âge</Label>
+          <Input
+            id="age"
+            name="age"
+            type="number"
+            value={formData.age}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="gender">Genre</Label>
+          <Select
+            value={formData.gender}
+            onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionner le genre" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="M">Masculin</SelectItem>
+              <SelectItem value="F">Féminin</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <Label htmlFor="birth_date">Date de naissance</Label>
+          <Input
+            id="birth_date"
+            name="birth_date"
+            type="date"
+            value={formData.birth_date}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="city">Ville</Label>
+          <Input
+            id="city"
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="photo">Photo</Label>
+          <Input
+            id="photo"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="cursor-pointer"
+          />
+        </div>
       </div>
 
-      <div className="flex gap-4 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => navigate('/children')}
-          className="w-full md:w-auto"
-        >
-          Annuler
-        </Button>
-        <Button 
-          type="submit" 
-          disabled={loading}
-          className="w-full md:w-auto"
-        >
-          {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
-        </Button>
-      </div>
+      <Button type="submit" disabled={loading} className="w-full">
+        {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
+      </Button>
     </form>
   );
 };

@@ -7,11 +7,20 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Camera, Video } from "lucide-react";
 import { PhotoUpload } from "./PhotoUpload";
-import { VideoUpload } from "./VideoUpload";
-import { DonationHeader } from "./DonationHeader";
-import { DonationDetails } from "./DonationDetails";
-import { DonationMedia } from "./DonationMedia";
 import { useState } from "react";
+
+interface DonationPhoto {
+  id: number;
+  url: string;
+  title?: string;
+}
+
+interface DonationVideo {
+  id: string;
+  url: string;
+  title?: string;
+  thumbnail_url?: string;
+}
 
 interface DonationCardProps {
   donation: {
@@ -38,7 +47,7 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
         .eq('donation_id', donation.id);
       
       if (error) throw error;
-      return data;
+      return data as DonationPhoto[];
     }
   });
 
@@ -51,28 +60,126 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
         .eq('donation_id', donation.id);
       
       if (error) throw error;
-      return data;
+      return data as DonationVideo[];
     }
   });
 
-  return (
-    <Card className="p-4">
-      <div className="space-y-4">
-        <DonationHeader donation={donation} />
-        <DonationDetails donation={donation} />
-        <DonationMedia 
-          photos={donationPhotos} 
-          videos={donationVideos}
-          onPhotoDelete={async (photoId) => {
-            await supabase.from('donation_photos').delete().eq('id', photoId);
-            refetchPhotos();
-          }}
-          onVideoDelete={async (videoId) => {
-            await supabase.from('donation_videos').delete().eq('id', videoId);
-            refetchVideos();
-          }}
-        />
+  const handlePhotoDelete = async (photoId: number) => {
+    const { error } = await supabase
+      .from('donation_photos')
+      .delete()
+      .eq('id', photoId);
+    
+    if (!error) {
+      refetchPhotos();
+    }
+  };
 
+  const handleVideoDelete = async (videoId: string) => {
+    const { error } = await supabase
+      .from('donation_videos')
+      .delete()
+      .eq('id', videoId);
+    
+    if (!error) {
+      refetchVideos();
+    }
+  };
+
+  return (
+    <Card key={donation.id} className="p-4">
+      <div className="space-y-4">
+        {/* En-tête avec statut */}
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-semibold">Don par {donation.assistant_name}</h3>
+            <p className="text-sm text-gray-600">
+              {format(new Date(donation.donation_date), 'dd MMMM yyyy', { locale: fr })}
+            </p>
+          </div>
+          <span
+            className={cn(
+              "px-2 py-1 rounded-full text-xs",
+              donation.status === "completed"
+                ? "bg-green-100 text-green-800"
+                : "bg-yellow-100 text-yellow-800"
+            )}
+          >
+            {donation.status === "completed" ? "Complété" : "En cours"}
+          </span>
+        </div>
+
+        {/* Grille des détails */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <p className="text-gray-500">Ville</p>
+            <p className="font-medium">{donation.city}</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Personnes aidées</p>
+            <p className="font-medium">{donation.people_helped}</p>
+          </div>
+        </div>
+
+        {/* Photos */}
+        {donationPhotos && donationPhotos.length > 0 && (
+          <div>
+            <p className="text-gray-500 mb-2">Photos</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {donationPhotos.map((photo) => (
+                <div key={photo.id} className="relative group">
+                  <img
+                    src={photo.url}
+                    alt={photo.title || `Photo ${photo.id}`}
+                    className="h-24 w-full object-cover rounded-md"
+                  />
+                  <button
+                    onClick={() => handlePhotoDelete(photo.id)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Videos */}
+        {donationVideos && donationVideos.length > 0 && (
+          <div>
+            <p className="text-gray-500 mb-2">Vidéos</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+              {donationVideos.map((video) => (
+                <div key={video.id} className="relative group">
+                  {video.thumbnail_url ? (
+                    <img
+                      src={video.thumbnail_url}
+                      alt={video.title || `Vidéo ${video.id}`}
+                      className="h-24 w-full object-cover rounded-md cursor-pointer"
+                      onClick={() => window.open(video.url, '_blank')}
+                    />
+                  ) : (
+                    <div 
+                      className="h-24 w-full bg-gray-200 rounded-md flex items-center justify-center cursor-pointer"
+                      onClick={() => window.open(video.url, '_blank')}
+                    >
+                      <span className="text-sm text-gray-600">Voir la vidéo</span>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => handleVideoDelete(video.id)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Commentaires */}
         {donation.comments && (
           <div>
             <p className="text-gray-500">Commentaires</p>
@@ -80,7 +187,8 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
           </div>
         )}
 
-        <div className="flex flex-wrap gap-2 mt-4">
+        {/* Boutons d'ajout de média */}
+        <div className="flex gap-2 mt-4">
           <Button
             variant="outline"
             size="sm"
@@ -101,22 +209,13 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
           </Button>
         </div>
 
+        {/* Formulaires d'upload */}
         {showPhotoUpload && (
           <PhotoUpload
             donationId={donation.id}
             onUploadComplete={() => {
               refetchPhotos();
               setShowPhotoUpload(false);
-            }}
-          />
-        )}
-
-        {showVideoUpload && (
-          <VideoUpload
-            donationId={donation.id}
-            onUploadComplete={() => {
-              refetchVideos();
-              setShowVideoUpload(false);
             }}
           />
         )}

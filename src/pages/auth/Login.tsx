@@ -17,6 +17,7 @@ const Login = () => {
     setLoading(true);
 
     try {
+      // Vérifier les identifiants dans la table sponsors
       const { data: sponsor, error } = await supabase
         .from('sponsors')
         .select('*')
@@ -29,14 +30,17 @@ const Login = () => {
         throw new Error("Email ou mot de passe incorrect");
       }
 
+      // Vérifier le rôle
       if (!['assistant', 'admin'].includes(sponsor.role)) {
         throw new Error("Accès non autorisé");
       }
 
+      // Vérifier le mot de passe
       if (sponsor.password_hash !== password) {
         throw new Error("Email ou mot de passe incorrect");
       }
 
+      // Stocker les informations de l'utilisateur
       localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
@@ -44,8 +48,7 @@ const Login = () => {
         description: "Bienvenue dans votre espace assistant",
       });
       
-      // Redirection immédiate après la connexion réussie
-      navigate("/", { replace: true });
+      navigate("/");
 
     } catch (error: any) {
       let message = "Une erreur est survenue";

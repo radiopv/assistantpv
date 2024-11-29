@@ -8,15 +8,18 @@ const AddChild = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate('/children')} className="md:hidden">
-          <ArrowLeft className="w-4 h-4" />
+        <Button variant="ghost" onClick={() => navigate('/children')}>
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Retour
         </Button>
-        <h1 className="text-2xl font-bold">Ajouter un enfant</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          Ajouter un enfant
+        </h1>
       </div>
 
-      <Card className="p-4 md:p-6">
+      <Card className="p-6">
         <AddChildForm />
       </Card>
     </div>

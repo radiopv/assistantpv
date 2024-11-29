@@ -1,201 +1,161 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { CUBAN_CITIES } from '@/lib/constants';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { Card } from '@/components/ui/card';
-import { convertJsonToNeeds } from '@/types/needs';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search, Plus, Filter } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorAlert } from "@/components/ErrorAlert";
 
 interface Child {
   id: string;
   name: string;
   age: number;
-  gender: string;
-  birth_date: string;
   city: string;
   status: string;
-  is_sponsored: boolean;
-  needs: any[];
-  photo_url?: string;
-  sponsorships?: any[];
+  photo_url: string;
 }
 
 const Children = () => {
-  const [children, setChildren] = useState<Child[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [cityFilter, setCityFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    fetchChildren();
-  }, []);
-
-  const fetchChildren = async () => {
-    try {
+  const { data: children, isLoading, error, refetch } = useQuery({
+    queryKey: ['children'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
-        .select(`
-          *,
-          sponsorships(
-            id,
-            status,
-            start_date,
-            sponsor:sponsors(*)
-          )
-        `)
-        .order('name');
-
-      if (error) throw error;
+        .select('*')
+        .order('created_at', { ascending: false });
       
-      // Convert the needs JSON to the expected format for each child
-      const formattedChildren = (data || []).map(child => ({
-        ...child,
-        needs: convertJsonToNeeds(child.needs)
-      }));
-      
-      setChildren(formattedChildren);
-    } catch (error) {
-      console.error('Error fetching children:', error);
-      toast.error('Erreur lors du chargement des enfants');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeleteChild = async (childId: string) => {
-    try {
-      const { error } = await supabase
-        .from('children')
-        .delete()
-        .eq('id', childId);
-
       if (error) throw error;
-
-      setChildren(children.filter(child => child.id !== childId));
-      toast.success('Enfant supprimé avec succès');
-    } catch (error) {
-      console.error('Error deleting child:', error);
-      toast.error('Erreur lors de la suppression');
+      return data as Child[];
     }
-  };
-
-  const filteredChildren = children.filter(child => {
-    const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         child.city.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCity = cityFilter === 'all' || child.city === cityFilter;
-    const matchesStatus = statusFilter === 'all' || child.status === statusFilter;
-    return matchesSearch && matchesCity && matchesStatus;
   });
 
-  if (loading) {
+  const filteredChildren = children?.filter(child => 
+    child.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    child.city.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (error) {
     return (
-      <div className="flex justify-center py-8">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+      <div className="space-y-6">
+        <ErrorAlert 
+          message="Une erreur est survenue lors du chargement des enfants" 
+          retry={() => refetch()}
+        />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-4 w-96 mt-2" />
+          </div>
+          <Skeleton className="h-10 w-40" />
+        </div>
+
+        <Card className="p-6">
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <Skeleton className="h-10 flex-1" />
+            <Skeleton className="h-10 w-32" />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="h-48 w-full" />
+                <div className="p-4 space-y-4">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">Gestion des Enfants</h1>
-          <Button
-            onClick={() => navigate('/children/add')}
-            className="inline-flex items-center"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Ajouter un Enfant
-          </Button>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Enfants</h1>
+          <p className="text-gray-600 mt-2">Gérez les enfants et leurs besoins</p>
         </div>
+        <Button 
+          className="bg-primary hover:bg-primary/90"
+          onClick={() => navigate('/add-child')}
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Ajouter un enfant
+        </Button>
       </div>
 
-      <Card className="p-6 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="relative">
-            <input
-              type="text"
+      <Card className="p-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Input
               placeholder="Rechercher un enfant..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
+              className="pl-10"
             />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
-
-          <div className="flex items-center space-x-2">
-            <Filter className="h-5 w-5 text-gray-400" />
-            <select
-              value={cityFilter}
-              onChange={(e) => setCityFilter(e.target.value)}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-            >
-              <option value="all">Toutes les villes</option>
-              {CUBAN_CITIES.map(city => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Filter className="h-5 w-5 text-gray-400" />
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-purple-500 focus:border-purple-500"
-            >
-              <option value="all">Tous les statuts</option>
-              <option value="available">Disponible</option>
-              <option value="sponsored">Parrainé</option>
-              <option value="pending">En attente</option>
-            </select>
-          </div>
+          <Button variant="outline">
+            <Filter className="w-4 h-4 mr-2" />
+            Filtres
+          </Button>
         </div>
-      </Card>
 
-      <div className="space-y-6">
-        {filteredChildren.map((child) => (
-          <Card key={child.id} className="p-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-medium">{child.name}</h3>
-                <p className="text-sm text-gray-500">
-                  {child.age} ans • {child.city} • {child.gender}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Status: {child.status}
-                </p>
-              </div>
-              <div className="flex space-x-2">
-                <Button
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredChildren?.map((child) => (
+            <Card key={child.id} className="overflow-hidden">
+              <img
+                src={child.photo_url || "/placeholder.svg"}
+                alt={child.name}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="font-semibold text-lg">{child.name}</h3>
+                <div className="mt-2 space-y-1 text-sm text-gray-600">
+                  <p>{child.age} ans</p>
+                  <p>{child.city}</p>
+                  <span
+                    className={cn(
+                      "inline-block px-2 py-1 rounded-full text-xs",
+                      child.status === "Disponible"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-blue-100 text-blue-800"
+                    )}
+                  >
+                    {child.status}
+                  </span>
+                </div>
+                <Button 
+                  className="w-full mt-4" 
                   variant="outline"
                   onClick={() => navigate(`/children/${child.id}`)}
                 >
-                  Modifier
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => handleDeleteChild(child.id)}
-                >
-                  Supprimer
+                  Voir le profil
                 </Button>
               </div>
-            </div>
-          </Card>
-        ))}
-
-        {filteredChildren.length === 0 && (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-500">Aucun enfant trouvé</p>
-          </div>
-        )}
-      </div>
+            </Card>
+          ))}
+        </div>
+      </Card>
     </div>
   );
 };

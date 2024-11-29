@@ -7,12 +7,11 @@ import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface PhotoUploadProps {
-  donationId?: string;
+  donationId: string;
   onUploadComplete?: () => void;
-  onPhotosChange?: (files: FileList | null) => void;
 }
 
-export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: PhotoUploadProps) => {
+export const PhotoUpload = ({ donationId, onUploadComplete }: PhotoUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
@@ -21,12 +20,6 @@ export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: Ph
       if (!event.target.files || event.target.files.length === 0) {
         return;
       }
-
-      if (onPhotosChange) {
-        onPhotosChange(event.target.files);
-        return;
-      }
-
       setUploading(true);
 
       const file = event.target.files[0];

@@ -1,20 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { 
-  Users, 
-  Gift, 
-  Home, 
-  Menu, 
-  X, 
-  LogOut, 
-  Heart, 
-  Settings, 
-  Image, 
-  AlertCircle,
-  UserPlus,
-  List
-} from "lucide-react";
+import { Users, Gift, Home, Menu, X, LogOut, Heart, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -27,53 +14,19 @@ const Sidebar = () => {
 
   const links = [
     { icon: Home, label: "Dashboard", path: "/" },
-    { 
-      icon: Users, 
-      label: "Liste des Enfants", 
-      path: "/children" 
-    },
-    { 
-      icon: UserPlus, 
-      label: "Ajouter un Enfant", 
-      path: "/children/add" 
-    },
-    { 
-      icon: AlertCircle, 
-      label: "Besoins des Enfants", 
-      path: "/children/needs" 
-    },
-    { 
-      icon: Heart, 
-      label: "Parrainages", 
-      path: "/sponsorships" 
-    },
-    { 
-      icon: Gift, 
-      label: "Dons", 
-      path: "/donations" 
-    },
+    { icon: Users, label: "Enfants", path: "/children" },
+    { icon: Heart, label: "Parrainages", path: "/sponsorships" },
+    { icon: Gift, label: "Dons", path: "/donations" },
   ];
 
   // Add admin links if user has admin role
   if (user?.role === 'admin') {
-    links.push(
-      { icon: Settings, label: "Permissions", path: "/admin/permissions" },
-      { icon: Image, label: "Gestion Media", path: "/admin/media" }
-    );
+    links.push({ 
+      icon: Settings, 
+      label: "Permissions", 
+      path: "/admin/permissions" 
+    });
   }
-
-  const isActivePath = (path: string) => {
-    if (path === '/') {
-      return location.pathname === '/';
-    }
-    if (path === '/children') {
-      return location.pathname === '/children' || 
-             location.pathname.startsWith('/children/') && 
-             !location.pathname.includes('/needs') &&
-             !location.pathname.includes('/add');
-    }
-    return location.pathname.startsWith(path);
-  };
 
   return (
     <>
@@ -109,7 +62,7 @@ const Sidebar = () => {
                     className={cn(
                       "flex items-center gap-3 px-4 py-2 rounded-lg transition-colors",
                       "hover:bg-gray-100",
-                      isActivePath(path)
+                      location.pathname === path
                         ? "bg-primary text-white hover:bg-primary/90"
                         : "text-gray-700"
                     )}

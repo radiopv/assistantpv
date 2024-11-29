@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { Need } from "@/types/needs";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface AddNeedDialogProps {
   children: any[];
@@ -23,10 +22,6 @@ export const AddNeedDialog = ({
   onNeedChange,
   onAddNeed
 }: AddNeedDialogProps) => {
-  const sortedChildren = [...children].sort((a, b) => 
-    (a.name as string).localeCompare(b.name as string)
-  );
-
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -48,7 +43,7 @@ export const AddNeedDialog = ({
               <SelectValue placeholder="Sélectionner un enfant" />
             </SelectTrigger>
             <SelectContent>
-              {sortedChildren?.map((child) => (
+              {children?.map((child) => (
                 <SelectItem key={child.id} value={child.id}>
                   {child.name}
                 </SelectItem>
@@ -57,8 +52,8 @@ export const AddNeedDialog = ({
           </Select>
 
           <Select
-            value={newNeed.categories?.[0] || ""}
-            onValueChange={(value) => onNeedChange({ categories: [value] })}
+            value={newNeed.category}
+            onValueChange={(value) => onNeedChange({ category: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Catégorie du besoin" />
@@ -81,15 +76,17 @@ export const AddNeedDialog = ({
           />
 
           <div className="flex items-center space-x-2">
-            <Checkbox
+            <input
+              type="checkbox"
               id="urgent"
               checked={newNeed.is_urgent}
-              onCheckedChange={(checked) => onNeedChange({ is_urgent: checked as boolean })}
+              onChange={(e) => onNeedChange({ is_urgent: e.target.checked })}
+              className="rounded border-gray-300"
             />
-            <label htmlFor="urgent" className="text-sm text-gray-600">Besoin urgent</label>
+            <label htmlFor="urgent">Urgent</label>
           </div>
 
-          <Button onClick={onAddNeed} disabled={!selectedChild || !newNeed.categories?.length || !newNeed.description}>
+          <Button onClick={onAddNeed} disabled={!selectedChild || !newNeed.category || !newNeed.description}>
             Ajouter
           </Button>
         </div>

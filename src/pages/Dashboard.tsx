@@ -145,7 +145,6 @@ const Dashboard = () => {
       
       <ChildrenNeeds 
         children={children || []} 
-        isLoading={childrenLoading}
         onNeedsUpdate={() => {
           queryClient.invalidateQueries({ queryKey: ['children'] });
           queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
