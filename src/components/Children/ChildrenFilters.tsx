@@ -59,12 +59,12 @@ export const ChildrenFilters = ({
 
         <Select value={selectedGender} onValueChange={onGenderChange}>
           <SelectTrigger className="w-[180px] bg-white">
-            <SelectValue placeholder="Genre" />
+            <SelectValue placeholder="Sexe" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="all">Tous</SelectItem>
-            <SelectItem value="M">Masculin</SelectItem>
-            <SelectItem value="F">Féminin</SelectItem>
+            <SelectItem value="all">Tous les sexes</SelectItem>
+            <SelectItem value="M">Garçon</SelectItem>
+            <SelectItem value="F">Fille</SelectItem>
           </SelectContent>
         </Select>
 
