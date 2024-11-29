@@ -14,6 +14,7 @@ import Donations from "./pages/Donations";
 import Sponsorships from "./pages/Sponsorships";
 import MediaManagement from "./pages/MediaManagement";
 import SponsorsManagement from "./pages/SponsorsManagement";
+import Messages from "./pages/Messages";
 import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 
@@ -26,11 +27,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const ProtectedRoute = ({ 
-  children, 
-  requiredPermission, 
-  requireAdmin 
-}: { 
+const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: { 
   children: React.ReactNode, 
   requiredPermission?: string,
   requireAdmin?: boolean 
@@ -47,7 +44,6 @@ const ProtectedRoute = ({
     return <Navigate to="/login" replace />;
   }
 
-  // Mise à jour pour utiliser le nouveau système de rôles
   if (requireAdmin && user?.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
@@ -76,30 +72,10 @@ const App = () => (
               <Route path="children/:id" element={<ProtectedRoute requiredPermission="children"><ChildProfile /></ProtectedRoute>} />
               <Route path="donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
               <Route path="sponsorships" element={<ProtectedRoute requiredPermission="sponsorships"><Sponsorships /></ProtectedRoute>} />
-              <Route 
-                path="admin/permissions" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <AdminPermissions />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/media" 
-                element={
-                  <ProtectedRoute requiredPermission="media">
-                    <MediaManagement />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="admin/sponsors" 
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <SponsorsManagement />
-                  </ProtectedRoute>
-                } 
-              />
+              <Route path="messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
+              <Route path="admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
+              <Route path="admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
