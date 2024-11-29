@@ -16,7 +16,16 @@ import {
   UserCog,
   Mail,
   AlertTriangle,
-  Lock
+  Lock,
+  FileText,
+  Share2,
+  BookOpen,
+  Image,
+  Video,
+  HelpCircle,
+  Star,
+  Calendar,
+  Newspaper
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -41,6 +50,9 @@ const Sidebar = () => {
     { to: "/sponsors-management", icon: UserCog, label: "Gestion parrains", permission: "manage_sponsors" },
     { to: "/messages", icon: Mail, label: "Messages", permission: "manage_messages" },
     { to: "/permissions", icon: Lock, label: "Permissions", permission: "manage_permissions" },
+    { to: "/homepage-manager", icon: Image, label: "Gestion accueil", permission: "manage_homepage" },
+    { to: "/testimonials-admin", icon: Star, label: "Témoignages", permission: "manage_testimonials" },
+    { to: "/faq-manager", icon: HelpCircle, label: "FAQ", permission: "manage_faq" },
     { to: "/settings", icon: Settings, label: "Paramètres", permission: "manage_settings" }
   ];
 
@@ -48,7 +60,11 @@ const Sidebar = () => {
     { to: "/sponsor-dashboard", icon: Home, label: "Mon tableau de bord", permission: "view_dashboard" },
     { to: "/messages", icon: MessageSquare, label: "Messages", permission: "view_messages" },
     { to: "/rewards", icon: Award, label: "Récompenses", permission: "view_rewards" },
-    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés", permission: "view_own_children" }
+    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés", permission: "view_own_children" },
+    { to: "/my-testimonials", icon: Star, label: "Mes témoignages", permission: "manage_own_testimonials" },
+    { to: "/my-memories", icon: Camera, label: "Mes souvenirs", permission: "manage_own_memories" },
+    { to: "/my-calendar", icon: Calendar, label: "Mon calendrier", permission: "view_calendar" },
+    { to: "/share", icon: Share2, label: "Partager", permission: "share_content" }
   ];
 
   const assistantLinks = [
@@ -58,7 +74,9 @@ const Sidebar = () => {
     { to: "/donations", icon: Gift, label: "Dons", permission: "manage_donations" },
     { to: "/messages", icon: MessageSquare, label: "Messages", permission: "view_messages" },
     { to: "/urgent-needs", icon: AlertTriangle, label: "Besoins urgents", permission: "view_urgent_needs" },
-    { to: "/media-management", icon: Camera, label: "Gestion médias", permission: "manage_media" }
+    { to: "/media-management", icon: Camera, label: "Gestion médias", permission: "manage_media" },
+    { to: "/reports", icon: FileText, label: "Rapports", permission: "view_reports" },
+    { to: "/news", icon: Newspaper, label: "Actualités", permission: "manage_news" }
   ];
 
   const renderLinks = (links: any[]) => {
