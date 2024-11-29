@@ -31,23 +31,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
-          // Mise à jour pour utiliser les nouveaux rôles
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
         } else {
           setUser(null);
-          navigate("/login");
         }
       } catch (error) {
         console.error('Error checking auth:', error);
         setUser(null);
-        navigate("/login");
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
-  }, [navigate]);
+  }, []);
 
   const signOut = async () => {
     try {
@@ -58,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         title: "Déconnexion réussie",
         description: "À bientôt !",
       });
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
