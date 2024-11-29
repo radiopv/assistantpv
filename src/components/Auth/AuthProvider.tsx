@@ -53,26 +53,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const resetAuthState = () => {
+    setUser(null);
+    setIsAdmin(false);
+    setIsAssistant(false);
+    setIsSponsor(false);
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: session } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (session?.session?.user) {
-          const { data: sponsors, error } = await supabase
+        if (session?.user) {
+          const { data: sponsor, error } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', session.session.user.id)
+            .eq('id', session.user.id)
             .single();
 
-          if (error) throw error;
-          
-          if (sponsors) {
-            setUser(sponsors);
-            setIsAdmin(sponsors.role === 'admin');
-            setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
-            setIsSponsor(sponsors.role === 'sponsor');
-            handleRedirect(sponsors.role);
+          if (error) {
+            console.error('Error fetching sponsor:', error);
+            resetAuthState();
+            if (location.pathname !== '/login') {
+              navigate('/login');
+            }
+            return;
+          }
+
+          if (sponsor) {
+            setUser(sponsor);
+            setIsAdmin(sponsor.role === 'admin');
+            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+            setIsSponsor(sponsor.role === 'sponsor');
+            handleRedirect(sponsor.role);
           } else {
             resetAuthState();
             if (location.pathname !== '/login') {
@@ -98,18 +112,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        const { data: sponsors, error } = await supabase
+        const { data: sponsor, error } = await supabase
           .from('sponsors')
           .select('*')
           .eq('id', session.user.id)
           .single();
 
-        if (!error && sponsors) {
-          setUser(sponsors);
-          setIsAdmin(sponsors.role === 'admin');
-          setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
-          setIsSponsor(sponsors.role === 'sponsor');
-          handleRedirect(sponsors.role);
+        if (!error && sponsor) {
+          setUser(sponsor);
+          setIsAdmin(sponsor.role === 'admin');
+          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+          setIsSponsor(sponsor.role === 'sponsor');
+          handleRedirect(sponsor.role);
+        } else {
+          resetAuthState();
+          navigate('/login');
         }
       } else if (event === 'SIGNED_OUT') {
         resetAuthState();
@@ -121,13 +138,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       subscription.unsubscribe();
     };
   }, [navigate, location.pathname]);
-
-  const resetAuthState = () => {
-    setUser(null);
-    setIsAdmin(false);
-    setIsAssistant(false);
-    setIsSponsor(false);
-  };
 
   const signOut = async () => {
     try {
