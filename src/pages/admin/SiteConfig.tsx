@@ -18,7 +18,7 @@ const SiteConfig = () => {
   const handleSave = async () => {
     try {
       const { error } = await supabase
-        .from('site_config')
+        .from("site_config")
         .upsert({
           site_name: config.siteName,
           primary_color: config.primaryColor,
