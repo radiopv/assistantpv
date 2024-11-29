@@ -1,35 +1,36 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
-  user: any | null;
-  loading: boolean;
-  signOut: () => Promise<void>;
-  isAssistant: boolean;
+  user: any;
   isAdmin: boolean;
+  isAssistant: boolean;
   isSponsor: boolean;
-  session: any | null;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: true,
-  signOut: async () => {},
-  isAssistant: false,
   isAdmin: false,
+  isAssistant: false,
   isSponsor: false,
-  session: null,
+  loading: true,
 });
 
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAssistant, setIsAssistant] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAssistant, setIsAssistant] = useState(false);
   const [isSponsor, setIsSponsor] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { toast } = useToast();
   const location = useLocation();
 
   const handleRedirect = (role: string) => {
@@ -65,8 +66,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuth = async () => {
       try {
         const { data: session } = await supabase.auth.getSession();
-        
-        if (session?.session?.user) {
+
+        if (session.session) {
           const { data: sponsors, error } = await supabase
             .from('sponsors')
             .select('*')
@@ -81,7 +82,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
             setIsSponsor(sponsors.role === 'sponsor');
 
-            // Only redirect if on login or home page
             if (location.pathname === '/login' || location.pathname === '/') {
               handleRedirect(sponsors.role);
             }
@@ -91,7 +91,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsAssistant(false);
             setIsSponsor(false);
             
-            // Redirect to login for protected pages
             const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
             if (protectedPages.includes(location.pathname)) {
               navigate('/login');
@@ -103,7 +102,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAssistant(false);
           setIsSponsor(false);
           
-          // Redirect to login for protected pages
           const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
           if (protectedPages.includes(location.pathname)) {
             navigate('/login');
@@ -124,7 +122,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkAuth();
 
-    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         const { data: sponsors, error } = await supabase
@@ -154,47 +151,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [navigate, location.pathname]);
 
-  const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      setUser(null);
-      setIsAdmin(false);
-      setIsAssistant(false);
-      setIsSponsor(false);
-      toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !",
-      });
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out:", error);
-      toast({
-        title: "Erreur lors de la déconnexion",
-        description: "Veuillez réessayer",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      loading, 
-      signOut, 
-      isAssistant, 
-      isAdmin, 
-      isSponsor, 
-      session: user 
-    }}>
+    <AuthContext.Provider value={{ user, isAdmin, isAssistant, isSponsor, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
