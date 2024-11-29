@@ -2,12 +2,16 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
 import PublicLayout from "./components/Layout/PublicLayout";
 import Home from "./pages/Home";
 import Stories from "./pages/Stories";
+import PublicDonations from "./pages/PublicDonations";
+import PublicVideos from "./pages/PublicVideos";
+import PublicFAQ from "./pages/PublicFAQ";
+import PublicStats from "./pages/PublicStats";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import AddChild from "./pages/AddChild";
@@ -108,6 +112,10 @@ const App = () => (
             <Route element={<ConditionalLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/stories" element={<Stories />} />
+              <Route path="/donations" element={<PublicDonations />} />
+              <Route path="/videos" element={<PublicVideos />} />
+              <Route path="/faq" element={<PublicFAQ />} />
+              <Route path="/stats" element={<PublicStats />} />
               <Route path="/children" element={<Children />} />
               <Route path="/children/:id" element={<ChildProfile />} />
               <Route path="/sponsorships" element={<Sponsorships />} />

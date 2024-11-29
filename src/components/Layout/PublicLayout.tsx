@@ -7,6 +7,10 @@ import {
   Users, 
   Heart,
   BookOpen,
+  HandCoins,
+  Film,
+  HelpCircle,
+  ChartSquare,
   Menu,
 } from "lucide-react";
 import {
@@ -43,6 +47,26 @@ const PublicLayout = ({ children }: PublicLayoutProps) => {
       href: "/sponsorships",
       label: "Parrainages",
       icon: Heart,
+    },
+    {
+      href: "/donations",
+      label: "Dons",
+      icon: HandCoins,
+    },
+    {
+      href: "/videos",
+      label: "Vidéos",
+      icon: Film,
+    },
+    {
+      href: "/faq",
+      label: "FAQ",
+      icon: HelpCircle,
+    },
+    {
+      href: "/stats",
+      label: "Statistiques",
+      icon: ChartSquare,
     },
   ];
 
