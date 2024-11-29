@@ -406,13 +406,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "donation_items_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "donation_items_with_categories"
-            referencedColumns: ["category_id"]
-          },
-          {
             foreignKeyName: "donation_items_donation_id_fkey"
             columns: ["donation_id"]
             isOneToOne: false
@@ -686,39 +679,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      email_templates: {
-        Row: {
-          content: string
-          created_at: string | null
-          days_after_start: number | null
-          id: string
-          name: string
-          subject: string
-          template_type: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          days_after_start?: number | null
-          id?: string
-          name: string
-          subject: string
-          template_type?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          days_after_start?: number | null
-          id?: string
-          name?: string
-          subject?: string
-          template_type?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
       }
       home_images: {
         Row: {
@@ -1250,50 +1210,6 @@ export type Database = {
         }
         Relationships: []
       }
-      scheduled_visits: {
-        Row: {
-          created_at: string | null
-          id: string
-          notes: string | null
-          reminder_days_before: number | null
-          reminder_sent: boolean | null
-          sponsorship_id: string | null
-          status: string | null
-          updated_at: string | null
-          visit_date: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          reminder_days_before?: number | null
-          reminder_sent?: boolean | null
-          sponsorship_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-          visit_date: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          notes?: string | null
-          reminder_days_before?: number | null
-          reminder_sent?: boolean | null
-          sponsorship_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-          visit_date?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "scheduled_visits_sponsorship_id_fkey"
-            columns: ["sponsorship_id"]
-            isOneToOne: false
-            referencedRelation: "sponsorships"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       sponsor_memories: {
         Row: {
           child_id: string | null
@@ -1440,51 +1356,6 @@ export type Database = {
           },
           {
             foreignKeyName: "sponsorship_audit_logs_sponsorship_id_fkey"
-            columns: ["sponsorship_id"]
-            isOneToOne: false
-            referencedRelation: "sponsorships"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sponsorship_notes: {
-        Row: {
-          content: string
-          created_at: string | null
-          created_by: string | null
-          id: string
-          note_type: string | null
-          sponsorship_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          note_type?: string | null
-          sponsorship_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          note_type?: string | null
-          sponsorship_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsorship_notes_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_notes_sponsorship_id_fkey"
             columns: ["sponsorship_id"]
             isOneToOne: false
             referencedRelation: "sponsorships"
@@ -1710,25 +1581,6 @@ export type Database = {
       }
     }
     Views: {
-      donation_items_with_categories: {
-        Row: {
-          category_id: string | null
-          category_name: string | null
-          description: string | null
-          donation_id: string | null
-          id: string | null
-          quantity: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "donation_items_donation_id_fkey"
-            columns: ["donation_id"]
-            isOneToOne: false
-            referencedRelation: "donations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       donation_statistics: {
         Row: {
           completed_donations: number | null

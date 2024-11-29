@@ -9,27 +9,23 @@ import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import ChildProfile from "./pages/ChildProfile";
 import Donations from "./pages/Donations";
-import Sponsorships from "./pages/Sponsorships";
 import Login from "./pages/auth/Login";
-import { AdminPermissions } from "./components/Admin/AdminPermissions";
 
 const queryClient = new QueryClient();
 
-const ProtectedRoute = ({ children, requiredPermission }: { children: React.ReactNode, requiredPermission?: string }) => {
-  const { session, loading, isAssistant, user } = useAuth();
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { session, loading, isAssistant } = useAuth();
   
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <div className="text-gray-600">Chargement...</div>
-    </div>;
+    return <div>Chargement...</div>;
   }
   
-  if (!session || !isAssistant) {
-    return <Navigate to="/login" replace />;
+  if (!session) {
+    return <Navigate to="/login" />;
   }
 
-  if (requiredPermission && !user?.permissions?.[requiredPermission]) {
-    return <Navigate to="/" replace />;
+  if (!isAssistant) {
+    return <Navigate to="/login" />;
   }
 
   return <>{children}</>;
@@ -55,15 +51,6 @@ const App = () => (
               <Route path="/children" element={<Children />} />
               <Route path="/children/:id" element={<ChildProfile />} />
               <Route path="/donations" element={<Donations />} />
-              <Route path="/sponsorships" element={<Sponsorships />} />
-              <Route 
-                path="/admin/permissions" 
-                element={
-                  <ProtectedRoute requiredPermission="manage_permissions">
-                    <AdminPermissions />
-                  </ProtectedRoute>
-                } 
-              />
             </Route>
           </Routes>
         </AuthProvider>

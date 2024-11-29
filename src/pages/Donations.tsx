@@ -5,9 +5,18 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
+import { cn } from "@/lib/utils";
 import { DonationForm } from "@/components/Donations/DonationForm";
-import { DonationCard } from "@/components/Donations/DonationCard";
 import { useState } from "react";
+
+interface Donation {
+  id: string;
+  assistant_name: string;
+  city: string;
+  people_helped: number;
+  donation_date: string;
+  status: string;
+}
 
 const Donations = () => {
   const [showForm, setShowForm] = useState(false);
@@ -15,35 +24,13 @@ const Donations = () => {
   const { data: donations, isLoading, error, refetch } = useQuery({
     queryKey: ['donations'],
     queryFn: async () => {
-      const { data: donationsData, error: donationsError } = await supabase
+      const { data, error } = await supabase
         .from('donations')
         .select('*')
         .order('donation_date', { ascending: false });
       
-      if (donationsError) throw donationsError;
-
-      // Fetch donation items with categories for each donation
-      const donationsWithItems = await Promise.all(
-        donationsData.map(async (donation) => {
-          const { data: items } = await supabase
-            .from('donation_items_with_categories')
-            .select('*')
-            .eq('donation_id', donation.id);
-
-          const { data: donors } = await supabase
-            .from('donors')
-            .select('name, is_anonymous')
-            .eq('donation_id', donation.id);
-
-          return {
-            ...donation,
-            items: items || [],
-            donors: donors || []
-          };
-        })
-      );
-      
-      return donationsWithItems;
+      if (error) throw error;
+      return data as Donation[];
     }
   });
 
@@ -107,7 +94,29 @@ const Donations = () => {
         {donations && donations.length > 0 ? (
           <div className="space-y-4">
             {donations.map((donation) => (
-              <DonationCard key={donation.id} donation={donation} />
+              <Card key={donation.id} className="p-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold">Don par {donation.assistant_name}</h3>
+                    <p className="text-sm text-gray-600">
+                      {donation.city} - {new Date(donation.donation_date).toLocaleDateString()}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {donation.people_helped} personnes aidées
+                    </p>
+                  </div>
+                  <span
+                    className={cn(
+                      "px-2 py-1 rounded-full text-xs",
+                      donation.status === "completed"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    )}
+                  >
+                    {donation.status === "completed" ? "Complété" : "En cours"}
+                  </span>
+                </div>
+              </Card>
             ))}
           </div>
         ) : (
