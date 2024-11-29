@@ -39,8 +39,8 @@ export const BasicInfoFields = ({ formData, handleChange, setFormData }: BasicIn
             <SelectValue placeholder="Sélectionner le genre" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="M">Masculin</SelectItem>
-            <SelectItem value="F">Féminin</SelectItem>
+            <SelectItem value="male">Masculin</SelectItem>
+            <SelectItem value="female">Féminin</SelectItem>
           </SelectContent>
         </Select>
       </div>

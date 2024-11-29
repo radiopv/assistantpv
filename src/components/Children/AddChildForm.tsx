@@ -19,7 +19,7 @@ interface FormData {
   is_sponsored: boolean;
 }
 
-const ALLOWED_GENDERS = ['M', 'F'];
+const ALLOWED_GENDERS = ['male', 'female'];
 
 export const AddChildForm = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export const AddChildForm = () => {
 
   const validateForm = (): string | null => {
     if (!formData.name.trim()) return "Le nom est requis";
-    if (!ALLOWED_GENDERS.includes(formData.gender)) return "Le genre doit être 'M' ou 'F'";
+    if (!ALLOWED_GENDERS.includes(formData.gender)) return "Le genre doit être 'male' ou 'female'";
     if (!formData.birth_date) return "La date de naissance est requise";
     
     const age = calculateAge(formData.birth_date);
