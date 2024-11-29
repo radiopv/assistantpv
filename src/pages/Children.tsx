@@ -65,13 +65,13 @@ const Children = () => {
     const potentialDuplicates = children.filter(c => 
       c.id !== childId && (
         c.name.toLowerCase() === currentChild.name.toLowerCase() ||
-        (c.age === currentChild.age && c.gender === currentChild.gender && c.city === currentChild.city)
+        c.age === currentChild.age
       )
     );
 
     if (potentialDuplicates.length > 0) {
       toast.warning("Attention : Profils similaires détectés", {
-        description: "Il existe des profils avec des informations similaires.",
+        description: "Il existe des profils avec le même nom ou le même âge.",
         duration: 5000,
       });
     }
