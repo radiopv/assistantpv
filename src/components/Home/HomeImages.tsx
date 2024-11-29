@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface HomeImage {
   id: string;
   url: string;
-  position: string;
+  position: "hero" | "secondary" | "featured";
   is_mobile: boolean;
 }
 
@@ -24,7 +24,7 @@ export const HomeImages = () => {
 
   if (isLoading) return null;
 
-  const getImagesByPosition = (position: string) => 
+  const getImagesByPosition = (position: HomeImage['position']) => 
     images?.filter(img => img.position === position) || [];
 
   return (
