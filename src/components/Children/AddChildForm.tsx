@@ -74,7 +74,7 @@ export const AddChildForm = () => {
         photoUrl = publicUrl;
       }
 
-      const gender = formData.gender.toUpperCase();
+      const gender = formData.gender.toUpperCase().trim();
       if (!gender || !['M', 'F'].includes(gender)) {
         throw new Error("Le genre doit être 'M' ou 'F'");
       }
@@ -87,11 +87,11 @@ export const AddChildForm = () => {
       const { error } = await supabase
         .from('children')
         .insert({
-          name: formData.name,
+          name: formData.name.trim(),
           gender: gender,
           birth_date: formData.birth_date,
           age: age,
-          city: formData.city,
+          city: formData.city.trim(),
           status: "available",
           photo_url: photoUrl,
           is_sponsored: false,
