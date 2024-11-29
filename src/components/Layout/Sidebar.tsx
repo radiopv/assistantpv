@@ -25,7 +25,7 @@ const Sidebar = () => {
   const isAdmin = user?.role === 'admin';
   const isAssistant = ['admin', 'assistant'].includes(user?.role || '');
 
-  const mainLinks = [
+  const assistantLinks = [
     {
       href: "/dashboard",
       label: "Tableau de bord",
@@ -68,12 +68,6 @@ const Sidebar = () => {
       icon: MessageSquare,
       show: true,
     },
-    {
-      href: "/rewards",
-      label: "Récompenses",
-      icon: Award,
-      show: true,
-    },
   ];
 
   const adminLinks = [
@@ -95,6 +89,12 @@ const Sidebar = () => {
       icon: Users,
       show: isAdmin,
     },
+    {
+      href: "/rewards",
+      label: "Récompenses",
+      icon: Award,
+      show: isAdmin,
+    },
   ];
 
   return (
@@ -107,8 +107,9 @@ const Sidebar = () => {
       <ScrollArea className="flex-1">
         <div className="space-y-4 py-4">
           <div className="px-3 py-2">
+            <h2 className="mb-2 px-4 text-lg font-semibold">Assistant</h2>
             <div className="space-y-1">
-              {mainLinks.filter(link => link.show).map((link) => (
+              {assistantLinks.filter(link => link.show).map((link) => (
                 <Link key={link.href} to={link.href}>
                   <Button
                     variant={location.pathname === link.href ? "secondary" : "ghost"}
