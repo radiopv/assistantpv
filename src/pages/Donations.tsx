@@ -38,7 +38,7 @@ const DonationStats = ({ donations }: { donations: any[] }) => {
 const Donations = () => {
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [cityFilter, setCityFilter] = useState<string>("");
+  const [cityFilter, setCityFilter] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<string>("date");
   
@@ -82,7 +82,7 @@ const Donations = () => {
       donation.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
       donation.comments?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesCity = !cityFilter || donation.city === cityFilter;
+    const matchesCity = cityFilter === "all" || donation.city === cityFilter;
     
     return matchesSearch && matchesCity;
   });
@@ -177,7 +177,7 @@ const Donations = () => {
                 <SelectValue placeholder="Filtrer par ville" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Toutes les villes</SelectItem>
+                <SelectItem value="all">Toutes les villes</SelectItem>
                 {cities.map(city => (
                   <SelectItem key={city} value={city}>{city}</SelectItem>
                 ))}
