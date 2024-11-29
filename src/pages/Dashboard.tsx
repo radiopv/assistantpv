@@ -7,7 +7,7 @@ import { ErrorAlert } from "@/components/ErrorAlert";
 import { toast } from "sonner";
 import { convertJsonToNeeds } from "@/types/needs";
 import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
-import { ChildrenNeeds } from "@/components/Dashboard/ChildrenNeeds";
+import { DetailedStats } from "@/components/Dashboard/DetailedStats";
 import { DashboardStats } from "@/types/dashboard";
 
 interface RawDashboardStats {
@@ -33,7 +33,6 @@ const Dashboard = () => {
       const { data: rawData, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
       
-      // Calculate urgent needs count from children data
       const { data: childrenData } = await supabase
         .from('children')
         .select('needs');
@@ -43,10 +42,8 @@ const Dashboard = () => {
         return count + needs.filter(need => need.is_urgent).length;
       }, 0) || 0;
 
-      // Ensure we have a properly typed object by casting the raw data
       const rawStats = rawData as unknown as RawDashboardStats;
 
-      // Create a properly typed DashboardStats object
       const typedStats: DashboardStats = {
         children: {
           total: rawStats.children?.total || 0,
@@ -64,7 +61,6 @@ const Dashboard = () => {
 
       return typedStats;
     },
-    retry: 1,
     meta: {
       errorMessage: "Erreur lors du chargement des statistiques",
       onError: (error: Error) => {
@@ -74,24 +70,10 @@ const Dashboard = () => {
     }
   });
 
-  const { data: children, isLoading: childrenLoading } = useQuery({
-    queryKey: ['children'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('children')
-        .select('id, name, needs');
-      if (error) throw error;
-      return data.map(child => ({
-        ...child,
-        needs: convertJsonToNeeds(child.needs)
-      }));
-    }
-  });
-
   // Souscription aux changements en temps réel
   useEffect(() => {
     const channel = supabase
-      .channel('children-changes')
+      .channel('dashboard-changes')
       .on(
         'postgres_changes',
         {
@@ -100,9 +82,8 @@ const Dashboard = () => {
           table: 'children'
         },
         () => {
-          queryClient.invalidateQueries({ queryKey: ['children'] });
           queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-          toast.success("Les besoins ont été mis à jour");
+          toast.success("Les données ont été mises à jour");
         }
       )
       .subscribe();
@@ -123,7 +104,7 @@ const Dashboard = () => {
     );
   }
 
-  if (statsLoading || childrenLoading) {
+  if (statsLoading) {
     return (
       <div className="space-y-6">
         <div>
@@ -140,17 +121,9 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       <DashboardHeader stats={stats} />
-      
-      <ChildrenNeeds 
-        children={children || []} 
-        isLoading={childrenLoading}
-        onNeedsUpdate={() => {
-          queryClient.invalidateQueries({ queryKey: ['children'] });
-          queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-        }}
-      />
+      <DetailedStats />
     </div>
   );
 };

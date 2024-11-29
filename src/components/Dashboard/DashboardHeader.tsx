@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Users, Gift, AlertTriangle, MapPin } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard";
+import { NotificationBar } from "./NotificationBar";
 
 interface DashboardHeaderProps {
   stats: DashboardStats;
@@ -35,17 +36,20 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
   ];
 
   return (
-    <>
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
-        <p className="text-gray-600 mt-2">
-          Bienvenue dans votre espace assistant TousPourCuba
-        </p>
+    <div className="space-y-6">
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
+          <p className="text-gray-600 mt-2">
+            Bienvenue dans votre espace assistant TousPourCuba
+          </p>
+        </div>
+        <NotificationBar />
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
         {dashboardStats.map(({ label, value, icon: Icon, color }) => (
-          <Card key={label} className="p-6">
+          <Card key={label} className="p-6 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-4">
               <div className={`${color} p-3 rounded-lg`}>
                 <Icon className="w-6 h-6 text-white" />
@@ -58,6 +62,6 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
           </Card>
         ))}
       </div>
-    </>
+    </div>
   );
 };
