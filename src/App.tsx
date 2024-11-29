@@ -2,11 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
 import PublicLayout from "./components/Layout/PublicLayout";
 import Home from "./pages/Home";
+import Stories from "./pages/Stories";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import AddChild from "./pages/AddChild";
@@ -106,6 +107,7 @@ const App = () => (
             {/* Public/Conditional Routes */}
             <Route element={<ConditionalLayout />}>
               <Route path="/" element={<Home />} />
+              <Route path="/stories" element={<Stories />} />
               <Route path="/children" element={<Children />} />
               <Route path="/children/:id" element={<ChildProfile />} />
               <Route path="/sponsorships" element={<Sponsorships />} />

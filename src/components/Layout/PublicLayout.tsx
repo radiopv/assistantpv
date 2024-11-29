@@ -6,6 +6,7 @@ import {
   LayoutDashboard, 
   Users, 
   Heart,
+  BookOpen,
   Menu,
 } from "lucide-react";
 import {
@@ -32,6 +33,11 @@ const PublicLayout = ({ children }: PublicLayoutProps) => {
       href: "/children",
       label: "Enfants",
       icon: Users,
+    },
+    {
+      href: "/stories",
+      label: "Histoires",
+      icon: BookOpen,
     },
     {
       href: "/sponsorships",
