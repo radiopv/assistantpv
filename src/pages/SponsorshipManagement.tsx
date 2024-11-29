@@ -26,6 +26,11 @@ interface Child {
   } | null;
 }
 
+interface NeedJson {
+  category?: string;
+  is_urgent?: boolean;
+}
+
 const SponsorshipManagement = () => {
   const { data: children, isLoading } = useQuery({
     queryKey: ['children'],
@@ -53,15 +58,10 @@ const SponsorshipManagement = () => {
         // Transform needs from Json to typed array
         const needs = Array.isArray(child.needs) 
           ? child.needs.map(need => {
-              if (typeof need === 'object' && need !== null) {
-                return {
-                  category: String(need.category || ''),
-                  is_urgent: Boolean(need.is_urgent || false)
-                };
-              }
+              const needObj = need as NeedJson;
               return {
-                category: '',
-                is_urgent: false
+                category: String(needObj?.category || ''),
+                is_urgent: Boolean(needObj?.is_urgent || false)
               };
             })
           : [];
