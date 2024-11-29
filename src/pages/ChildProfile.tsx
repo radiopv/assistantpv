@@ -86,9 +86,8 @@ const ChildProfile = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setChild(prev => ({ ...prev, [id]: value }));
+  const handleChange = (field: string, value: string) => {
+    setChild(prev => ({ ...prev, [field]: value }));
   };
 
   const handlePhotoUpdate = (url: string) => {
