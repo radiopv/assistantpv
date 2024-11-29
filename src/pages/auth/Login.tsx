@@ -18,47 +18,63 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // First, authenticate with Supabase Auth
-      const { data: { session }, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      // First, check if the user exists and has the correct role
+      const { data: sponsor, error: sponsorError } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('email', email)
+        .single();
 
-      if (authError) {
+      if (sponsorError || !sponsor) {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      if (session) {
-        // Then check if user exists in sponsors table
-        const { data: sponsor, error: sponsorError } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-
-        if (sponsorError || !sponsor) {
-          // If user doesn't exist in sponsors table, sign them out
-          await supabase.auth.signOut();
-          throw new Error("Compte non trouvé dans la table sponsors");
-        }
-
-        if (!['assistant', 'admin', 'sponsor'].includes(sponsor.role)) {
-          await supabase.auth.signOut();
-          throw new Error("Accès non autorisé");
-        }
-
-        toast({
-          title: "Connexion réussie",
-          description: `Bienvenue dans votre espace ${sponsor.role}`,
-        });
+      // Verify if user has the correct role
+      if (!['assistant', 'admin', 'sponsor'].includes(sponsor.role)) {
+        throw new Error("Accès non autorisé");
       }
+
+      // Verify password
+      if (sponsor.password_hash !== password) {
+        throw new Error("Email ou mot de passe incorrect");
+      }
+
+      // Store user data
+      localStorage.setItem('user', JSON.stringify(sponsor));
+
+      toast({
+        title: "Connexion réussie",
+        description: `Bienvenue dans votre espace ${sponsor.role}`,
+      });
+      
+      // Redirect based on role
+      switch (sponsor.role) {
+        case 'admin':
+          navigate("/dashboard");
+          break;
+        case 'sponsor':
+          navigate("/sponsor-dashboard");
+          break;
+        case 'assistant':
+          navigate("/dashboard");
+          break;
+        default:
+          navigate("/");
+      }
+
     } catch (error: any) {
+      let message = "Une erreur est survenue";
+      if (error.message === "Accès non autorisé") {
+        message = "Vous n'avez pas les droits d'accès nécessaires";
+      } else if (error.message === "Email ou mot de passe incorrect") {
+        message = "Email ou mot de passe incorrect";
+      }
+      
       toast({
         title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue",
+        description: message,
         variant: "destructive",
       });
-      await supabase.auth.signOut();
     } finally {
       setLoading(false);
     }
@@ -88,7 +104,6 @@ const Login = () => {
               required
               placeholder="votre@email.com"
               className="w-full"
-              disabled={loading}
             />
           </div>
 
@@ -104,7 +119,6 @@ const Login = () => {
               required
               placeholder="••••••••"
               className="w-full"
-              disabled={loading}
             />
           </div>
 

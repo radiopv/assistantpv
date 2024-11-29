@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
+import { ProfileHeader } from "@/components/Children/ProfileHeader";
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { LoadingState } from "@/components/ChildProfile/LoadingState";
-import { ProfileHeader } from "@/components/ChildProfile/ProfileHeader";
-import { ProfileActions } from "@/components/ChildProfile/ProfileActions";
+import { Button } from "@/components/ui/button";
 
 const ChildProfile = () => {
   const { id } = useParams();
-  const { toast } = useToast();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [child, setChild] = useState<any>(null);
@@ -112,6 +112,46 @@ const ChildProfile = () => {
     setChild(prev => ({ ...prev, [field]: value }));
   };
 
+  const handlePhotoUpdate = (url: string) => {
+    setChild(prev => ({ ...prev, photo_url: url }));
+  };
+
+  // Si l'utilisateur n'est pas connecté, on affiche un bouton pour parrainer
+  if (!user) {
+    return (
+      <div className="space-y-6">
+        <ProfileHeader
+          name={child?.name || ''}
+          editing={false}
+          onBack={() => navigate('/children')}
+          onEdit={() => {}}
+          onSave={() => {}}
+          onDelete={() => {}}
+          showEditButtons={false}
+        />
+
+        <Card className="p-6">
+          <ProfileDetails
+            child={child}
+            editing={false}
+            onChange={() => {}}
+            onPhotoUpdate={() => {}}
+          />
+          
+          <div className="mt-6">
+            <Button 
+              className="w-full" 
+              size="lg"
+              onClick={() => navigate(`/become-sponsor?child=${id}`)}
+            >
+              Parrainer cet enfant
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   if (error) {
     return (
       <div className="space-y-6">
@@ -124,32 +164,44 @@ const ChildProfile = () => {
   }
 
   if (loading) {
-    return <LoadingState />;
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-10 w-10" />
+          <Skeleton className="h-8 w-64" />
+        </div>
+        <Card className="p-6">
+          <div className="space-y-6">
+            <Skeleton className="h-48 w-full" />
+            <div className="space-y-4">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-6">
-      <ProfileHeader name={child.name} />
-      
-      <Card className="p-6">
-        <ProfileDetails
-          child={child}
-          editing={editing}
-          onChange={handleChange}
-          onPhotoUpdate={(url) => handleChange('photo_url', url)}
-        />
-        
-        <div className="mt-6">
-          <ProfileActions
-            childId={id}
-            canEdit={canEdit}
-            editing={editing}
-            setEditing={setEditing}
-            handleUpdate={handleUpdate}
-            handleDelete={handleDelete}
-          />
-        </div>
-      </Card>
+      <ProfileHeader
+        name={child.name}
+        editing={editing}
+        onBack={() => navigate('/children')}
+        onEdit={() => setEditing(true)}
+        onSave={handleUpdate}
+        onDelete={handleDelete}
+        showEditButtons={canEdit}
+      />
+
+      <ProfileDetails
+        child={child}
+        editing={editing}
+        onChange={handleChange}
+        onPhotoUpdate={handlePhotoUpdate}
+      />
     </div>
   );
 };
