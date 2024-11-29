@@ -18,56 +18,41 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // First, check if the user exists and has the correct role
-      const { data: sponsor, error: sponsorError } = await supabase
-        .from('sponsors')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (sponsorError || !sponsor) {
-        throw new Error("Email ou mot de passe incorrect");
-      }
-
-      // Verify if user has the correct role
-      if (!['assistant', 'admin', 'sponsor'].includes(sponsor.role)) {
-        throw new Error("Accès non autorisé");
-      }
-
-      // Verify password
-      if (sponsor.password_hash !== password) {
-        throw new Error("Email ou mot de passe incorrect");
-      }
-
-      // Store user data
-      localStorage.setItem('user', JSON.stringify(sponsor));
-
-      toast({
-        title: "Connexion réussie",
-        description: `Bienvenue dans votre espace ${sponsor.role}`,
+      const { data: { session }, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
-      
-      // Redirect based on role
-      switch (sponsor.role) {
-        case 'admin':
-          navigate("/dashboard");
-          break;
-        case 'sponsor':
-          navigate("/sponsor-dashboard");
-          break;
-        case 'assistant':
-          navigate("/dashboard");
-          break;
-        default:
-          navigate("/");
-      }
 
+      if (authError) throw authError;
+
+      if (session) {
+        const { data: sponsor, error: sponsorError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (sponsorError || !sponsor) {
+          throw new Error("Compte non trouvé");
+        }
+
+        if (!['assistant', 'admin', 'sponsor'].includes(sponsor.role)) {
+          throw new Error("Accès non autorisé");
+        }
+
+        toast({
+          title: "Connexion réussie",
+          description: `Bienvenue dans votre espace ${sponsor.role}`,
+        });
+
+        // La redirection sera gérée par AuthProvider
+      }
     } catch (error: any) {
       let message = "Une erreur est survenue";
-      if (error.message === "Accès non autorisé") {
-        message = "Vous n'avez pas les droits d'accès nécessaires";
-      } else if (error.message === "Email ou mot de passe incorrect") {
+      if (error.message === "Invalid login credentials") {
         message = "Email ou mot de passe incorrect";
+      } else if (error.message === "Accès non autorisé") {
+        message = "Vous n'avez pas les droits d'accès nécessaires";
       }
       
       toast({
@@ -104,6 +89,7 @@ const Login = () => {
               required
               placeholder="votre@email.com"
               className="w-full"
+              disabled={loading}
             />
           </div>
 
@@ -119,6 +105,7 @@ const Login = () => {
               required
               placeholder="••••••••"
               className="w-full"
+              disabled={loading}
             />
           </div>
 

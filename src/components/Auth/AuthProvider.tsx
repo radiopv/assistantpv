@@ -33,18 +33,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   const handleRedirect = (role: string) => {
-    switch (role) {
-      case 'admin':
-        navigate('/dashboard');
-        break;
-      case 'sponsor':
-        navigate('/sponsor-dashboard');
-        break;
-      case 'assistant':
-        navigate('/dashboard');
-        break;
-      default:
-        navigate('/');
+    const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
+    const isProtectedPage = protectedPages.includes(location.pathname);
+
+    if (location.pathname === '/login' || isProtectedPage) {
+      switch (role) {
+        case 'admin':
+          navigate('/dashboard');
+          break;
+        case 'sponsor':
+          navigate('/sponsor-dashboard');
+          break;
+        case 'assistant':
+          navigate('/dashboard');
+          break;
+        default:
+          navigate('/');
+      }
     }
   };
 
@@ -57,41 +62,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const { data: sponsors, error } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', session.session.user.id);
+            .eq('id', session.session.user.id)
+            .single();
 
           if (error) throw error;
-
-          const sponsor = sponsors?.[0];
           
-          if (sponsor) {
-            setUser(sponsor);
-            setIsAdmin(sponsor.role === 'admin');
-            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-            setIsSponsor(sponsor.role === 'sponsor');
-
-            // Redirect based on role if on login or home page
-            if (location.pathname === '/login' || location.pathname === '/') {
-              handleRedirect(sponsor.role);
-            }
+          if (sponsors) {
+            setUser(sponsors);
+            setIsAdmin(sponsors.role === 'admin');
+            setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
+            setIsSponsor(sponsors.role === 'sponsor');
+            handleRedirect(sponsors.role);
           } else {
-            setUser(null);
-            setIsAdmin(false);
-            setIsAssistant(false);
-            setIsSponsor(false);
-            
-            // Redirect to login only for protected pages
-            const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
-            if (protectedPages.includes(location.pathname)) {
+            resetAuthState();
+            if (location.pathname !== '/login') {
               navigate('/login');
             }
           }
         } else {
-          setUser(null);
-          setIsAdmin(false);
-          setIsAssistant(false);
-          setIsSponsor(false);
-          
-          // Redirect to login only for protected pages
+          resetAuthState();
           const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
           if (protectedPages.includes(location.pathname)) {
             navigate('/login');
@@ -99,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (error) {
         console.error('Error checking auth:', error);
-        setUser(null);
+        resetAuthState();
       } finally {
         setLoading(false);
       }
@@ -107,17 +96,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkAuth();
 
-    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         const { data: sponsors, error } = await supabase
           .from('sponsors')
           .select('*')
-          .eq('id', session.user.id);
+          .eq('id', session.user.id)
+          .single();
 
-        if (!error && sponsors?.[0]) {
-          handleRedirect(sponsors[0].role);
+        if (!error && sponsors) {
+          setUser(sponsors);
+          setIsAdmin(sponsors.role === 'admin');
+          setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
+          setIsSponsor(sponsors.role === 'sponsor');
+          handleRedirect(sponsors.role);
         }
+      } else if (event === 'SIGNED_OUT') {
+        resetAuthState();
+        navigate('/login');
       }
     });
 
@@ -126,18 +122,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [navigate, location.pathname]);
 
+  const resetAuthState = () => {
+    setUser(null);
+    setIsAdmin(false);
+    setIsAssistant(false);
+    setIsSponsor(false);
+  };
+
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      setUser(null);
-      setIsAdmin(false);
-      setIsAssistant(false);
-      setIsSponsor(false);
+      resetAuthState();
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
       });
-      navigate("/");
+      navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
       toast({
@@ -147,6 +147,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={{ 
@@ -158,7 +166,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isSponsor, 
       session: user 
     }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
