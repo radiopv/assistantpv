@@ -85,6 +85,7 @@ export const DonationBasicInfo = ({
         title: "Erreur",
         description: "Erreur lors de l'ajout de la ville",
       });
+      console.error('Error adding city:', error);
     }
   };
 
