@@ -29,66 +29,73 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Fonction pour vérifier et mettre à jour le profil utilisateur
+  const updateUserProfile = async (email: string) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (error) {
+        console.error('Erreur lors de la récupération du profil:', error);
+        return null;
+      }
+
+      return profile;
+    } catch (error) {
+      console.error('Erreur:', error);
+      return null;
+    }
+  };
+
+  // Gestion des changements d'authentification
   const handleAuthChange = async (session: any) => {
     try {
       if (session?.user) {
-        // Récupérer le profil de l'utilisateur depuis la table sponsors
-        const { data: profile, error: profileError } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('email', session.user.email)
-          .single();
-
-        if (profileError) {
-          console.error('Error fetching profile:', profileError);
-          throw profileError;
-        }
+        const profile = await updateUserProfile(session.user.email);
 
         if (profile) {
           setUser(profile);
-          // Mettre à jour les états en fonction du rôle
           setIsAssistant(profile.role === 'assistant' || profile.role === 'admin');
           setIsAdmin(profile.role === 'admin');
 
-          // Redirection basée sur le rôle
+          // Redirection selon le rôle
           if (location.pathname === '/login') {
-            switch (profile.role) {
-              case 'admin':
-              case 'assistant':
-                navigate('/admin/dashboard');
-                break;
-              case 'sponsor':
-                navigate('/sponsor-dashboard');
-                break;
-              default:
-                navigate('/');
+            if (profile.role === 'admin' || profile.role === 'assistant') {
+              navigate('/admin/dashboard');
+              toast({
+                title: "Connexion réussie",
+                description: `Bienvenue dans l'espace administration`,
+              });
+            } else if (profile.role === 'sponsor') {
+              navigate('/sponsor-dashboard');
+              toast({
+                title: "Connexion réussie",
+                description: "Bienvenue dans votre espace parrain",
+              });
+            } else {
+              navigate('/');
+              toast({
+                title: "Connexion réussie",
+                description: "Bienvenue",
+              });
             }
           }
-
-          // Afficher un message de bienvenue
-          toast({
-            title: "Connexion réussie",
-            description: `Bienvenue ${profile.name || 'sur votre espace'}`,
-          });
         }
       } else {
+        // Réinitialisation des états si déconnecté
         setUser(null);
         setIsAssistant(false);
         setIsAdmin(false);
 
+        // Redirection vers login si sur une page protégée
         const protectedPages = [
-          '/admin/dashboard',
+          '/admin',
           '/sponsor-dashboard',
-          '/admin/children/add',
-          '/admin/donations',
           '/rewards',
-          '/messages',
-          '/admin/media-management',
-          '/admin/sponsors-management',
-          '/admin/settings',
-          '/admin/urgent-needs',
-          '/admin/permissions',
-          '/admin/children-needs'
+          '/messages'
         ];
 
         if (protectedPages.some(page => location.pathname.startsWith(page))) {
@@ -96,10 +103,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
     } catch (error) {
-      console.error('Error checking auth:', error);
+      console.error('Erreur de vérification auth:', error);
       toast({
         title: "Erreur d'authentification",
-        description: "Une erreur est survenue lors de la vérification de l'authentification",
+        description: "Une erreur est survenue, veuillez réessayer",
         variant: "destructive",
       });
     } finally {
@@ -107,23 +114,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Effet pour vérifier l'authentification initiale
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('email', user.email)
-            .single();
-          
+          const profile = await updateUserProfile(user.email);
           if (profile) {
             handleAuthChange({ user: profile });
           }
+        } else {
+          setLoading(false);
         }
       } catch (error) {
-        console.error('Error during initial auth check:', error);
+        console.error('Erreur lors de la vérification initiale:', error);
+        setLoading(false);
       }
     };
 
@@ -136,13 +142,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, location.pathname]);
+  }, []);
 
+  // Fonction de déconnexion
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      await supabase.auth.signOut();
       setUser(null);
       setIsAssistant(false);
       setIsAdmin(false);
@@ -152,9 +157,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       navigate("/");
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Erreur lors de la déconnexion:", error);
       toast({
-        title: "Erreur lors de la déconnexion",
+        title: "Erreur de déconnexion",
         description: "Veuillez réessayer",
         variant: "destructive",
       });
