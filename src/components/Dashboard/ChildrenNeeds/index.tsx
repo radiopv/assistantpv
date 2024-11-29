@@ -29,10 +29,24 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
       return;
     }
 
+    if (!newNeed.category || !newNeed.description) {
+      toast.error("Veuillez remplir tous les champs obligatoires");
+      return;
+    }
+
     try {
       // Mettre à jour chaque enfant sélectionné
       for (const child of selectedChildren) {
-        const updatedNeeds = [...(child.needs || []), newNeed];
+        const currentNeeds = Array.isArray(child.needs) ? child.needs : [];
+        const updatedNeeds = [
+          ...currentNeeds,
+          {
+            category: newNeed.category,
+            description: newNeed.description,
+            is_urgent: newNeed.is_urgent
+          }
+        ];
+
         const { error } = await supabase
           .from('children')
           .update({ needs: convertNeedsToJson(updatedNeeds) })
@@ -67,7 +81,8 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
       const child = children.find(c => c.id === childId);
       if (!child) return;
 
-      const updatedNeeds = child.needs.filter((_, index) => index !== needIndex);
+      const currentNeeds = Array.isArray(child.needs) ? child.needs : [];
+      const updatedNeeds = currentNeeds.filter((_, index) => index !== needIndex);
       
       const { error } = await supabase
         .from('children')
