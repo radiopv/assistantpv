@@ -15,7 +15,12 @@ import {
   Heart,
   ListChecks,
   Baby,
-  UserPlus
+  UserPlus,
+  Plane,
+  ChartBar,
+  HelpCircle,
+  Cog,
+  FileText
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -87,6 +92,36 @@ const Sidebar = () => {
       href: "/admin/sponsors",
       label: "Parrains",
       icon: Users,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/travels",
+      label: "Voyages",
+      icon: Plane,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/statistics",
+      label: "Statistiques",
+      icon: ChartBar,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/faq",
+      label: "FAQ",
+      icon: HelpCircle,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/site-config",
+      label: "Configuration",
+      icon: Cog,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/reports",
+      label: "Rapports",
+      icon: FileText,
       show: isAdmin,
     },
     {
