@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { UserPermissionCard } from "./UserPermissionCard";
 import { RolePermissions } from "./RolePermissions";
+import { PageVisibility } from "./PageVisibility";
 
 const pagePermissions = [
   { page: "dashboard", label: "Dashboard", description: "Accès au tableau de bord" },
@@ -123,6 +124,7 @@ export const AdminPermissions = () => {
         <TabsList>
           <TabsTrigger value="users">Utilisateurs</TabsTrigger>
           <TabsTrigger value="roles">Rôles</TabsTrigger>
+          <TabsTrigger value="pages">Visibilité des pages</TabsTrigger>
         </TabsList>
 
         {activeTab === "users" && (
@@ -143,6 +145,12 @@ export const AdminPermissions = () => {
         {activeTab === "roles" && (
           <div className="mt-6">
             <RolePermissions />
+          </div>
+        )}
+
+        {activeTab === "pages" && (
+          <div className="mt-6">
+            <PageVisibility />
           </div>
         )}
       </Tabs>
