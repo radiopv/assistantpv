@@ -1,14 +1,14 @@
 import { Json } from "@/integrations/supabase/types";
 
 export interface Need {
-  [key: string]: Json | undefined;
   categories: string[];
   description: string;
   is_urgent: boolean;
 }
 
 export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
-  if (!Array.isArray(jsonNeeds)) return [];
+  if (!jsonNeeds || !Array.isArray(jsonNeeds)) return [];
+  
   return jsonNeeds.map(need => ({
     categories: Array.isArray(need?.categories) ? need.categories.map(String) : [],
     description: String(need?.description || ""),
