@@ -13,7 +13,8 @@ import {
   Image, 
   AlertCircle,
   UserPlus,
-  List
+  List,
+  UserCog
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -58,7 +59,8 @@ const Sidebar = () => {
   if (user?.role === 'admin') {
     links.push(
       { icon: Settings, label: "Permissions", path: "/admin/permissions" },
-      { icon: Image, label: "Gestion Media", path: "/admin/media" }
+      { icon: Image, label: "Gestion Media", path: "/admin/media" },
+      { icon: UserCog, label: "Gestion Parrains", path: "/admin/sponsors" }
     );
   }
 
