@@ -37,7 +37,7 @@ export const PageVisibility = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (user?.role === 'admin') {
       fetchPageConfigs();
     }
   }, [user]);
@@ -69,8 +69,8 @@ export const PageVisibility = () => {
 
   const updatePageConfig = async (pageId: string, field: 'is_visible' | 'required_role', value: boolean | string) => {
     try {
-      if (!user) {
-        toast.error("Vous devez être connecté pour effectuer cette action");
+      if (!user || user.role !== 'admin') {
+        toast.error("Vous devez être administrateur pour effectuer cette action");
         return;
       }
 
@@ -101,8 +101,8 @@ export const PageVisibility = () => {
     return <div className="flex items-center justify-center p-8">Chargement...</div>;
   }
 
-  if (!user) {
-    return <div className="flex items-center justify-center p-8">Vous devez être connecté pour accéder à cette page</div>;
+  if (!user || user.role !== 'admin') {
+    return <div className="flex items-center justify-center p-8">Vous devez être administrateur pour accéder à cette page</div>;
   }
 
   return (
