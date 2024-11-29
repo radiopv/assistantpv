@@ -40,9 +40,7 @@ export type Database = {
           description: string | null
           featured_until: string | null
           id: string
-          is_approved: boolean | null
           is_featured: boolean | null
-          is_public: boolean | null
           title: string | null
           type: string
           updated_at: string | null
@@ -54,9 +52,7 @@ export type Database = {
           description?: string | null
           featured_until?: string | null
           id?: string
-          is_approved?: boolean | null
           is_featured?: boolean | null
-          is_public?: boolean | null
           title?: string | null
           type: string
           updated_at?: string | null
@@ -68,9 +64,7 @@ export type Database = {
           description?: string | null
           featured_until?: string | null
           id?: string
-          is_approved?: boolean | null
           is_featured?: boolean | null
-          is_public?: boolean | null
           title?: string | null
           type?: string
           updated_at?: string | null
