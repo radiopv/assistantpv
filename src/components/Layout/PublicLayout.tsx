@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sheet";
 
 const PublicLayout = () => {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
 
   const menuItems = [
     {
@@ -34,6 +34,8 @@ const PublicLayout = () => {
       icon: Heart,
     },
   ];
+
+  const isAdminOrAssistant = user?.role === 'admin' || user?.role === 'assistant';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -62,12 +64,14 @@ const PublicLayout = () => {
                   </Link>
                 ))}
                 {session ? (
-                  <Link to="/dashboard">
-                    <Button className="w-full">
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Dashboard
-                    </Button>
-                  </Link>
+                  isAdminOrAssistant ? (
+                    <Link to="/dashboard">
+                      <Button className="w-full">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        Administration
+                      </Button>
+                    </Link>
+                  ) : null
                 ) : (
                   <Link to="/login">
                     <Button className="w-full">Connexion</Button>
@@ -102,12 +106,14 @@ const PublicLayout = () => {
             </div>
             <div>
               {session ? (
-                <Link to="/dashboard">
-                  <Button>
-                    <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Button>
-                </Link>
+                isAdminOrAssistant ? (
+                  <Link to="/dashboard">
+                    <Button>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Administration
+                    </Button>
+                  </Link>
+                ) : null
               ) : (
                 <Link to="/login">
                   <Button>Connexion</Button>

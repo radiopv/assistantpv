@@ -29,11 +29,6 @@ const Login = () => {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      // Mise à jour pour utiliser les nouveaux rôles
-      if (!['assistant', 'admin'].includes(sponsor.role)) {
-        throw new Error("Accès non autorisé");
-      }
-
       if (sponsor.password_hash !== password) {
         throw new Error("Email ou mot de passe incorrect");
       }
@@ -42,16 +37,19 @@ const Login = () => {
 
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue dans votre espace assistant",
+        description: "Bienvenue dans votre espace",
       });
       
-      navigate("/", { replace: true });
+      // Redirection basée sur le rôle
+      if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
 
     } catch (error: any) {
       let message = "Une erreur est survenue";
-      if (error.message === "Accès non autorisé") {
-        message = "Vous n'avez pas les droits d'accès nécessaires";
-      } else if (error.message === "Email ou mot de passe incorrect") {
+      if (error.message === "Email ou mot de passe incorrect") {
         message = "Email ou mot de passe incorrect";
       }
       
@@ -69,8 +67,8 @@ const Login = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-6 space-y-6">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-primary">TousPourCuba</h1>
-          <p className="text-gray-600 mt-2">Espace Assistant</p>
+          <h1 className="text-2xl font-bold text-primary">Passion Varadero</h1>
+          <p className="text-gray-600 mt-2">Connexion</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">

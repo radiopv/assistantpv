@@ -40,7 +40,9 @@ export type Database = {
           description: string | null
           featured_until: string | null
           id: string
+          is_approved: boolean | null
           is_featured: boolean | null
+          is_public: boolean | null
           title: string | null
           type: string
           updated_at: string | null
@@ -52,7 +54,9 @@ export type Database = {
           description?: string | null
           featured_until?: string | null
           id?: string
+          is_approved?: boolean | null
           is_featured?: boolean | null
+          is_public?: boolean | null
           title?: string | null
           type: string
           updated_at?: string | null
@@ -64,7 +68,9 @@ export type Database = {
           description?: string | null
           featured_until?: string | null
           id?: string
+          is_approved?: boolean | null
           is_featured?: boolean | null
+          is_public?: boolean | null
           title?: string | null
           type?: string
           updated_at?: string | null
@@ -756,11 +762,45 @@ export type Database = {
         }
         Relationships: []
       }
+      faq: {
+        Row: {
+          answer: string
+          category: string | null
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          question: string
+          updated_at: string | null
+        }
+        Insert: {
+          answer: string
+          category?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          question: string
+          updated_at?: string | null
+        }
+        Update: {
+          answer?: string
+          category?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          question?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       home_images: {
         Row: {
           created_at: string | null
           id: string
           is_mobile: boolean | null
+          layout_position: string | null
           position: string
           updated_at: string | null
           url: string
@@ -769,6 +809,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
+          layout_position?: string | null
           position: string
           updated_at?: string | null
           url: string
@@ -777,9 +818,52 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
+          layout_position?: string | null
           position?: string
           updated_at?: string | null
           url?: string
+        }
+        Relationships: []
+      }
+      homepage_config: {
+        Row: {
+          button_link: string | null
+          button_text: string | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_visible: boolean | null
+          section_name: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+          section_name: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+          section_name?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1185,6 +1269,60 @@ export type Database = {
           },
         ]
       }
+      page_config: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          page_id: string
+          required_role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          page_id: string
+          required_role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          page_id?: string
+          required_role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      permissions: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
@@ -1249,6 +1387,38 @@ export type Database = {
             columns: ["sponsor_id"]
             isOneToOne: true
             referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      role_permissions: {
+        Row: {
+          created_at: string | null
+          id: string
+          permission_id: string | null
+          role: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          permission_id?: string | null
+          role: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          permission_id?: string | null
+          role?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
             referencedColumns: ["id"]
           },
         ]
@@ -1571,6 +1741,56 @@ export type Database = {
             columns: ["sponsorship_id"]
             isOneToOne: false
             referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsorship_requests: {
+        Row: {
+          child_id: string | null
+          created_at: string | null
+          email: string
+          facebook_url: string | null
+          full_name: string
+          id: string
+          motivation: string | null
+          phone: string | null
+          status: string
+          terms_accepted: boolean
+          updated_at: string | null
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string | null
+          email: string
+          facebook_url?: string | null
+          full_name: string
+          id?: string
+          motivation?: string | null
+          phone?: string | null
+          status?: string
+          terms_accepted?: boolean
+          updated_at?: string | null
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string | null
+          email?: string
+          facebook_url?: string | null
+          full_name?: string
+          id?: string
+          motivation?: string | null
+          phone?: string | null
+          status?: string
+          terms_accepted?: boolean
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
             referencedColumns: ["id"]
           },
         ]
@@ -1912,6 +2132,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      approve_sponsorship_request: {
+        Args: {
+          request_id: string
+          admin_id: string
+        }
+        Returns: undefined
+      }
       auto_fix_links: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2136,6 +2363,14 @@ export type Database = {
       }
       refresh_statistics: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      reject_sponsorship_request: {
+        Args: {
+          request_id: string
+          admin_id: string
+          rejection_reason?: string
+        }
         Returns: undefined
       }
       retry_failed_emails: {
