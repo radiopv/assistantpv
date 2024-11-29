@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface PageConfig {
   id: string;
@@ -33,10 +34,13 @@ const defaultPages = [
 export const PageVisibility = () => {
   const [pages, setPages] = useState<PageConfig[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchPageConfigs();
-  }, []);
+    if (user) {
+      fetchPageConfigs();
+    }
+  }, [user]);
 
   const fetchPageConfigs = async () => {
     try {
@@ -65,12 +69,19 @@ export const PageVisibility = () => {
 
   const updatePageConfig = async (pageId: string, field: 'is_visible' | 'required_role', value: boolean | string) => {
     try {
+      if (!user) {
+        toast.error("Vous devez être connecté pour effectuer cette action");
+        return;
+      }
+
       const { error } = await supabase
         .from('page_config')
         .upsert({
           page_id: pageId,
           [field]: value,
           updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'page_id'
         });
 
       if (error) throw error;
@@ -88,6 +99,10 @@ export const PageVisibility = () => {
 
   if (loading) {
     return <div className="flex items-center justify-center p-8">Chargement...</div>;
+  }
+
+  if (!user) {
+    return <div className="flex items-center justify-center p-8">Vous devez être connecté pour accéder à cette page</div>;
   }
 
   return (
