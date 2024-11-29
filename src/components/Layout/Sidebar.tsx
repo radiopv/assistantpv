@@ -1,7 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { useLogout } from "@/hooks/use-logout";
 import { 
   Home, 
   Users, 
@@ -28,8 +27,7 @@ import {
 } from "lucide-react";
 
 const Sidebar = () => {
-  const { user, isAssistant } = useAuth();
-  const { logout } = useLogout();
+  const { signOut, user, isAssistant } = useAuth();
 
   const isAdmin = user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor';
@@ -129,7 +127,7 @@ const Sidebar = () => {
         <Button
           variant="ghost"
           className="w-full justify-start text-gray-500 hover:text-gray-900"
-          onClick={logout}
+          onClick={() => signOut()}
         >
           <LogOut className="mr-2 h-4 w-4" />
           <span className="text-sm font-medium">Déconnexion</span>
