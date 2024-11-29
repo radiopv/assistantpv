@@ -18,61 +18,33 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // First, check if the user exists and has the correct role
-      const { data: sponsor, error: sponsorError } = await supabase
-        .from('sponsors')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (sponsorError || !sponsor) {
-        throw new Error("Email ou mot de passe incorrect");
-      }
-
-      // Verify if user has the correct role
-      if (!['assistant', 'admin', 'sponsor'].includes(sponsor.role)) {
-        throw new Error("Accès non autorisé");
-      }
-
-      // Verify password
-      if (sponsor.password_hash !== password) {
-        throw new Error("Email ou mot de passe incorrect");
-      }
-
-      // Store user data
-      localStorage.setItem('user', JSON.stringify(sponsor));
-
-      toast({
-        title: "Connexion réussie",
-        description: `Bienvenue dans votre espace ${sponsor.role}`,
+      const { data: { user }, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
-      
-      // Redirect based on role
-      switch (sponsor.role) {
-        case 'admin':
-          navigate("/dashboard");
-          break;
-        case 'sponsor':
-          navigate("/sponsor-dashboard");
-          break;
-        case 'assistant':
-          navigate("/dashboard");
-          break;
-        default:
-          navigate("/");
-      }
 
-    } catch (error: any) {
-      let message = "Une erreur est survenue";
-      if (error.message === "Accès non autorisé") {
-        message = "Vous n'avez pas les droits d'accès nécessaires";
-      } else if (error.message === "Email ou mot de passe incorrect") {
-        message = "Email ou mot de passe incorrect";
+      if (signInError) throw signInError;
+
+      if (user) {
+        const { data: sponsor, error: sponsorError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (sponsorError || !sponsor) {
+          throw new Error("Compte non trouvé");
+        }
+
+        toast({
+          title: "Connexion réussie",
+          description: `Bienvenue ${sponsor.name}`,
+        });
       }
-      
+    } catch (error: any) {
       toast({
         title: "Erreur de connexion",
-        description: message,
+        description: error.message || "Une erreur est survenue",
         variant: "destructive",
       });
     } finally {

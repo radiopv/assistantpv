@@ -33,53 +33,50 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   const handleRedirect = (role: string) => {
-    switch (role) {
-      case 'admin':
-        navigate('/dashboard');
-        break;
-      case 'sponsor':
-        navigate('/sponsor-dashboard');
-        break;
-      case 'assistant':
-        navigate('/dashboard');
-        break;
-      default:
-        navigate('/');
+    const protectedPages = ['/login'];
+    if (protectedPages.includes(location.pathname)) {
+      switch (role) {
+        case 'admin':
+          navigate('/dashboard');
+          break;
+        case 'sponsor':
+          navigate('/sponsor-dashboard');
+          break;
+        case 'assistant':
+          navigate('/dashboard');
+          break;
+        default:
+          navigate('/');
+      }
     }
   };
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: session } = await supabase.auth.getSession();
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (session?.session?.user) {
+        if (session?.user) {
           const { data: sponsors, error } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', session.session.user.id);
+            .eq('id', session.user.id)
+            .single();
 
           if (error) throw error;
-
-          const sponsor = sponsors?.[0];
           
-          if (sponsor) {
-            setUser(sponsor);
-            setIsAdmin(sponsor.role === 'admin');
-            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-            setIsSponsor(sponsor.role === 'sponsor');
-
-            // Redirect based on role if on login or home page
-            if (location.pathname === '/login' || location.pathname === '/') {
-              handleRedirect(sponsor.role);
-            }
+          if (sponsors) {
+            setUser(sponsors);
+            setIsAdmin(sponsors.role === 'admin');
+            setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
+            setIsSponsor(sponsors.role === 'sponsor');
+            handleRedirect(sponsors.role);
           } else {
             setUser(null);
             setIsAdmin(false);
             setIsAssistant(false);
             setIsSponsor(false);
             
-            // Redirect to login only for protected pages
             const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
             if (protectedPages.includes(location.pathname)) {
               navigate('/login');
@@ -91,7 +88,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAssistant(false);
           setIsSponsor(false);
           
-          // Redirect to login only for protected pages
           const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
           if (protectedPages.includes(location.pathname)) {
             navigate('/login');
@@ -107,17 +103,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkAuth();
 
-    // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session) {
         const { data: sponsors, error } = await supabase
           .from('sponsors')
           .select('*')
-          .eq('id', session.user.id);
+          .eq('id', session.user.id)
+          .single();
 
-        if (!error && sponsors?.[0]) {
-          handleRedirect(sponsors[0].role);
+        if (!error && sponsors) {
+          setUser(sponsors);
+          setIsAdmin(sponsors.role === 'admin');
+          setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
+          setIsSponsor(sponsors.role === 'sponsor');
+          handleRedirect(sponsors.role);
         }
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setIsAdmin(false);
+        setIsAssistant(false);
+        setIsSponsor(false);
+        navigate('/login');
       }
     });
 
