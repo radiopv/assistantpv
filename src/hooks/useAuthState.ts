@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { User } from '@supabase/supabase-js';
 import { toast } from "@/components/ui/use-toast";
 
 export interface AuthState {
@@ -8,29 +7,39 @@ export interface AuthState {
   isAssistant: boolean;
   isSponsor: boolean;
   loading: boolean;
+  session: any | null;
 }
 
 export const useAuthState = () => {
-  const [user, setUser] = useState<any | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isAssistant, setIsAssistant] = useState(false);
-  const [isSponsor, setIsSponsor] = useState(false);
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    loading: true,
+    isAdmin: false,
+    isAssistant: false,
+    isSponsor: false,
+    session: null
+  });
 
   const resetState = () => {
-    setUser(null);
-    setIsAdmin(false);
-    setIsAssistant(false);
-    setIsSponsor(false);
-    setLoading(false);
+    setState({
+      user: null,
+      loading: false,
+      isAdmin: false,
+      isAssistant: false,
+      isSponsor: false,
+      session: null
+    });
   };
 
   const updateState = (sponsor: any) => {
-    setUser(sponsor);
-    setIsAdmin(sponsor.role === 'admin');
-    setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-    setIsSponsor(sponsor.role === 'sponsor');
-    setLoading(false);
+    setState({
+      user: sponsor,
+      loading: false,
+      isAdmin: sponsor.role === 'admin',
+      isAssistant: ['assistant', 'admin'].includes(sponsor.role),
+      isSponsor: sponsor.role === 'sponsor',
+      session: sponsor
+    });
   };
 
   const handleError = (error: any, message: string) => {
@@ -44,7 +53,7 @@ export const useAuthState = () => {
   };
 
   return {
-    state: { user, loading, isAdmin, isAssistant, isSponsor },
-    actions: { resetState, updateState, handleError, setLoading }
+    state,
+    actions: { resetState, updateState, handleError, setState }
   };
 };
