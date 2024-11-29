@@ -33,19 +33,32 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
 
   const handleRedirect = (role: string) => {
+    let redirectPath = '/';
+    let welcomeMessage = 'Bienvenue';
+
     switch (role) {
       case 'admin':
-        navigate('/dashboard');
+        redirectPath = '/dashboard';
+        welcomeMessage = 'Bienvenue dans votre espace administrateur';
         break;
       case 'sponsor':
-        navigate('/sponsor-dashboard');
+        redirectPath = '/sponsor-dashboard';
+        welcomeMessage = 'Bienvenue dans votre espace parrain';
         break;
       case 'assistant':
-        navigate('/dashboard');
+        redirectPath = '/dashboard';
+        welcomeMessage = 'Bienvenue dans votre espace assistant';
         break;
       default:
-        navigate('/');
+        redirectPath = '/';
     }
+
+    toast({
+      title: welcomeMessage,
+      duration: 3000,
+    });
+
+    navigate(redirectPath);
   };
 
   useEffect(() => {
@@ -57,21 +70,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const { data: sponsors, error } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', session.session.user.id);
+            .eq('id', session.session.user.id)
+            .single();
 
           if (error) throw error;
-
-          const sponsor = sponsors?.[0];
           
-          if (sponsor) {
-            setUser(sponsor);
-            setIsAdmin(sponsor.role === 'admin');
-            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-            setIsSponsor(sponsor.role === 'sponsor');
+          if (sponsors) {
+            setUser(sponsors);
+            setIsAdmin(sponsors.role === 'admin');
+            setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
+            setIsSponsor(sponsors.role === 'sponsor');
 
-            // Redirect based on role if on login or home page
+            // Only redirect if on login or home page
             if (location.pathname === '/login' || location.pathname === '/') {
-              handleRedirect(sponsor.role);
+              handleRedirect(sponsors.role);
             }
           } else {
             setUser(null);
@@ -79,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsAssistant(false);
             setIsSponsor(false);
             
-            // Redirect to login only for protected pages
+            // Redirect to login for protected pages
             const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
             if (protectedPages.includes(location.pathname)) {
               navigate('/login');
@@ -91,7 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAssistant(false);
           setIsSponsor(false);
           
-          // Redirect to login only for protected pages
+          // Redirect to login for protected pages
           const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
           if (protectedPages.includes(location.pathname)) {
             navigate('/login');
@@ -100,6 +112,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         console.error('Error checking auth:', error);
         setUser(null);
+        toast({
+          title: "Erreur de connexion",
+          description: "Une erreur est survenue lors de la vérification de votre connexion",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
@@ -113,11 +130,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { data: sponsors, error } = await supabase
           .from('sponsors')
           .select('*')
-          .eq('id', session.user.id);
+          .eq('id', session.user.id)
+          .single();
 
-        if (!error && sponsors?.[0]) {
-          handleRedirect(sponsors[0].role);
+        if (!error && sponsors) {
+          setUser(sponsors);
+          setIsAdmin(sponsors.role === 'admin');
+          setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
+          setIsSponsor(sponsors.role === 'sponsor');
+          handleRedirect(sponsors.role);
         }
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setIsAdmin(false);
+        setIsAssistant(false);
+        setIsSponsor(false);
+        navigate('/login');
       }
     });
 
