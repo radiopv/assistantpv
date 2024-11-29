@@ -20,8 +20,11 @@ const SiteConfig = () => {
       const { error } = await supabase
         .from('site_config')
         .upsert({
-          ...config,
-          updated_at: new Date(),
+          site_name: config.siteName,
+          primary_color: config.primaryColor,
+          secondary_color: config.secondaryColor,
+          logo_url: config.logo,
+          updated_at: new Date().toISOString()
         });
 
       if (error) throw error;
