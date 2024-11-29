@@ -1,10 +1,10 @@
-import React from 'react';
+import { SocialShare } from "@/components/Share/SocialShare";
 
 const Share = () => {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Partager</h1>
-      {/* Contenu à implémenter */}
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Partager</h1>
+      <SocialShare />
     </div>
   );
 };

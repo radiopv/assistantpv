@@ -1,10 +1,10 @@
-import React from 'react';
+import { NewsList } from "@/components/News/NewsList";
 
 const News = () => {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Actualités</h1>
-      {/* Contenu à implémenter */}
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Actualités</h1>
+      <NewsList />
     </div>
   );
 };

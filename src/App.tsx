@@ -29,16 +29,15 @@ import Permissions from "@/pages/Permissions";
 import SponsorshipRequest from "@/pages/SponsorshipRequest";
 import PublicAvailableChildren from "@/pages/PublicAvailableChildren";
 import PublicSponsoredChildren from "@/pages/PublicSponsoredChildren";
-import HomepageManager from "@/pages/HomepageManager";
-import TestimonialsAdmin from "@/pages/TestimonialsAdmin";
-import FAQManager from "@/pages/FAQManager";
+import HomepageManagement from "@/pages/HomepageManagement";
+import TestimonialsManagement from "@/pages/TestimonialsManagement";
+import FAQManagement from "@/pages/FAQManagement";
 import MyTestimonials from "@/pages/MyTestimonials";
 import MyMemories from "@/pages/MyMemories";
 import MyCalendar from "@/pages/MyCalendar";
 import Share from "@/pages/Share";
 import Reports from "@/pages/Reports";
 import News from "@/pages/News";
-import MyChildren from "@/pages/MyChildren";
 
 const queryClient = new QueryClient();
 
@@ -74,16 +73,21 @@ const App = () => {
             <Route path="/settings" element={<MainLayout><Settings /></MainLayout>} />
             <Route path="/urgent-needs" element={<MainLayout><UrgentNeeds /></MainLayout>} />
             <Route path="/permissions" element={<MainLayout><Permissions /></MainLayout>} />
-            <Route path="/homepage-manager" element={<MainLayout><HomepageManager /></MainLayout>} />
-            <Route path="/testimonials-admin" element={<MainLayout><TestimonialsAdmin /></MainLayout>} />
-            <Route path="/faq-manager" element={<MainLayout><FAQManager /></MainLayout>} />
+            
+            {/* Admin routes */}
+            <Route path="/homepage-management" element={<MainLayout><HomepageManagement /></MainLayout>} />
+            <Route path="/testimonials-management" element={<MainLayout><TestimonialsManagement /></MainLayout>} />
+            <Route path="/faq-management" element={<MainLayout><FAQManagement /></MainLayout>} />
+            
+            {/* Sponsor routes */}
             <Route path="/my-testimonials" element={<MainLayout><MyTestimonials /></MainLayout>} />
             <Route path="/my-memories" element={<MainLayout><MyMemories /></MainLayout>} />
             <Route path="/my-calendar" element={<MainLayout><MyCalendar /></MainLayout>} />
             <Route path="/share" element={<MainLayout><Share /></MainLayout>} />
+            
+            {/* Assistant routes */}
             <Route path="/reports" element={<MainLayout><Reports /></MainLayout>} />
             <Route path="/news" element={<MainLayout><News /></MainLayout>} />
-            <Route path="/my-children" element={<MainLayout><MyChildren /></MainLayout>} />
 
             {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />

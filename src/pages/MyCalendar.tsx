@@ -1,10 +1,10 @@
-import React from 'react';
+import { Calendar } from "@/components/Calendar/Calendar";
 
 const MyCalendar = () => {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Mon calendrier</h1>
-      {/* Contenu à implémenter */}
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Mon calendrier</h1>
+      <Calendar />
     </div>
   );
 };

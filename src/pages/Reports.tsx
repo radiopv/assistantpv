@@ -1,10 +1,10 @@
-import React from 'react';
+import { ReportsList } from "@/components/Reports/ReportsList";
 
 const Reports = () => {
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Rapports</h1>
-      {/* Contenu à implémenter */}
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold">Rapports</h1>
+      <ReportsList />
     </div>
   );
 };
