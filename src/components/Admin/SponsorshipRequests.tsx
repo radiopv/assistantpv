@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { SponsorshipRequest } from "@/types/sponsorship";
 
 export const SponsorshipRequests = () => {
   const { user } = useAuth();
@@ -31,11 +32,10 @@ export const SponsorshipRequests = () => {
             age,
             city
           )
-        `)
-        .order("created_at", { ascending: false });
+        `);
 
       if (error) throw error;
-      return data;
+      return data as SponsorshipRequest[];
     },
   });
 

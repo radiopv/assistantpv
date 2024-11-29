@@ -23,10 +23,12 @@ const formSchema = z.object({
   termsAccepted: z.boolean().refine((val) => val === true, "Vous devez accepter les conditions"),
 });
 
+type FormValues = z.infer<typeof formSchema>;
+
 export const SponsorshipRequestForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       fullName: "",
@@ -53,7 +55,7 @@ export const SponsorshipRequestForm = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: FormValues) => {
     try {
       setIsSubmitting(true);
 
