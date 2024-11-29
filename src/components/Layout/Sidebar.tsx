@@ -20,56 +20,66 @@ import {
 } from "lucide-react";
 
 const Sidebar = () => {
-  const { signOut, user, isAssistant } = useAuth();
+  const { signOut, user } = useAuth();
 
   const isAdmin = user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor';
+  const isAssistant = user?.role === 'assistant';
+
+  const hasPermission = (permission: string) => {
+    if (!user?.permissions) return false;
+    return user.permissions[permission] === true;
+  };
 
   const adminLinks = [
-    { to: "/dashboard", icon: Home, label: "Tableau de bord" },
-    { to: "/children", icon: Users, label: "Enfants" },
-    { to: "/children/add", icon: Users, label: "Ajouter un enfant" },
-    { to: "/donations", icon: Gift, label: "Dons" },
-    { to: "/statistics", icon: BarChart, label: "Statistiques" },
-    { to: "/media-management", icon: Camera, label: "Gestion médias" },
-    { to: "/sponsors-management", icon: UserCog, label: "Gestion parrains" },
-    { to: "/messages", icon: Mail, label: "Messages" },
-    { to: "/permissions", icon: Lock, label: "Permissions" },
-    { to: "/settings", icon: Settings, label: "Paramètres" }
+    { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "view_dashboard" },
+    { to: "/children", icon: Users, label: "Enfants", permission: "manage_children" },
+    { to: "/children/add", icon: Users, label: "Ajouter un enfant", permission: "manage_children" },
+    { to: "/donations", icon: Gift, label: "Dons", permission: "manage_donations" },
+    { to: "/statistics", icon: BarChart, label: "Statistiques", permission: "view_analytics" },
+    { to: "/media-management", icon: Camera, label: "Gestion médias", permission: "manage_media" },
+    { to: "/sponsors-management", icon: UserCog, label: "Gestion parrains", permission: "manage_sponsors" },
+    { to: "/messages", icon: Mail, label: "Messages", permission: "manage_messages" },
+    { to: "/permissions", icon: Lock, label: "Permissions", permission: "manage_permissions" },
+    { to: "/settings", icon: Settings, label: "Paramètres", permission: "manage_settings" }
   ];
 
   const sponsorLinks = [
-    { to: "/sponsor-dashboard", icon: Home, label: "Mon tableau de bord" },
-    { to: "/messages", icon: MessageSquare, label: "Messages" },
-    { to: "/rewards", icon: Award, label: "Récompenses" },
-    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés" }
+    { to: "/sponsor-dashboard", icon: Home, label: "Mon tableau de bord", permission: "view_dashboard" },
+    { to: "/messages", icon: MessageSquare, label: "Messages", permission: "view_messages" },
+    { to: "/rewards", icon: Award, label: "Récompenses", permission: "view_rewards" },
+    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés", permission: "view_own_children" }
   ];
 
   const assistantLinks = [
-    { to: "/dashboard", icon: Home, label: "Tableau de bord" },
-    { to: "/children", icon: Users, label: "Enfants" },
-    { to: "/children/add", icon: Users, label: "Ajouter un enfant" },
-    { to: "/donations", icon: Gift, label: "Dons" },
-    { to: "/messages", icon: MessageSquare, label: "Messages" },
-    { to: "/urgent-needs", icon: AlertTriangle, label: "Besoins urgents" },
-    { to: "/media-management", icon: Camera, label: "Gestion médias" }
+    { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "view_dashboard" },
+    { to: "/children", icon: Users, label: "Enfants", permission: "manage_children" },
+    { to: "/children/add", icon: Users, label: "Ajouter un enfant", permission: "manage_children" },
+    { to: "/donations", icon: Gift, label: "Dons", permission: "manage_donations" },
+    { to: "/messages", icon: MessageSquare, label: "Messages", permission: "view_messages" },
+    { to: "/urgent-needs", icon: AlertTriangle, label: "Besoins urgents", permission: "view_urgent_needs" },
+    { to: "/media-management", icon: Camera, label: "Gestion médias", permission: "manage_media" }
   ];
 
-  const renderLinks = (links) => {
-    return links.map((link) => (
-      <NavLink
-        key={link.to}
-        to={link.to}
-        className={({ isActive }) =>
-          `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
-            isActive ? 'bg-gray-100 text-gray-900' : ''
-          }`
-        }
-      >
-        <link.icon className="h-4 w-4" />
-        {link.label}
-      </NavLink>
-    ));
+  const renderLinks = (links: any[]) => {
+    return links.map((link) => {
+      if (!hasPermission(link.permission)) return null;
+      
+      return (
+        <NavLink
+          key={link.to}
+          to={link.to}
+          className={({ isActive }) =>
+            `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+              isActive ? 'bg-gray-100 text-gray-900' : ''
+            }`
+          }
+        >
+          <link.icon className="h-4 w-4" />
+          {link.label}
+        </NavLink>
+      );
+    });
   };
 
   return (
@@ -88,7 +98,6 @@ const Sidebar = () => {
           </div>
         )}
         
-        {/* Show sponsor section for both sponsors and admins */}
         {(isSponsor || isAdmin) && (
           <div className="space-y-1">
             <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
