@@ -979,6 +979,7 @@ export type Database = {
       messages: {
         Row: {
           content: string
+          conversation_type: string | null
           created_at: string | null
           id: string
           is_archived: boolean | null
@@ -993,6 +994,7 @@ export type Database = {
         }
         Insert: {
           content: string
+          conversation_type?: string | null
           created_at?: string | null
           id?: string
           is_archived?: boolean | null
@@ -1007,6 +1009,7 @@ export type Database = {
         }
         Update: {
           content?: string
+          conversation_type?: string | null
           created_at?: string | null
           id?: string
           is_archived?: boolean | null

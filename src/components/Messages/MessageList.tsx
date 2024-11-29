@@ -41,12 +41,21 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
         return;
       }
 
-      setMessages(data || []);
+      // Transform the data to match the Message interface
+      const transformedMessages = data?.map(msg => ({
+        ...msg,
+        sender: {
+          name: msg.sender?.name || "Unknown",
+          role: msg.sender?.role || "unknown"
+        }
+      })) || [];
+
+      setMessages(transformedMessages);
     };
 
     fetchMessages();
 
-    // Abonnement aux nouveaux messages
+    // Subscribe to new messages
     const subscription = supabase
       .channel("messages_channel")
       .on(
@@ -59,7 +68,16 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
         },
         (payload) => {
           if (payload.eventType === "INSERT") {
-            setMessages((prev) => [payload.new as Message, ...prev]);
+            const newMessage = {
+              ...payload.new as Message,
+              sender: {
+                name: "Loading...", // This will be updated on the next fetch
+                role: "unknown"
+              }
+            };
+            setMessages((prev) => [newMessage, ...prev]);
+            // Fetch the complete message data to get the sender info
+            fetchMessages();
           }
         }
       )
