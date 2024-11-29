@@ -1,19 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-interface HomeImage {
-  id: string;
-  url: string;
-  position: "hero" | "secondary" | "featured";
-  layout_position: "left" | "right" | "mobile";
-  is_mobile: boolean;
-}
+import { HomeImage } from "@/types/homepage";
 
 export const HomeImages = () => {
   const isMobile = useIsMobile();
   
-  const { data: images, isLoading } = useQuery({
+  const { data: images, isLoading } = useQuery<HomeImage[]>({
     queryKey: ['home-images'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -22,7 +15,7 @@ export const HomeImages = () => {
         .order('position');
       
       if (error) throw error;
-      return data as HomeImage[];
+      return data;
     }
   });
 

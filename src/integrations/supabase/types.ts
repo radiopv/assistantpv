@@ -794,6 +794,7 @@ export type Database = {
           created_at: string | null
           id: string
           is_mobile: boolean | null
+          layout_position: string | null
           position: string
           updated_at: string | null
           url: string
@@ -802,6 +803,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
+          layout_position?: string | null
           position: string
           updated_at?: string | null
           url: string
@@ -810,9 +812,52 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
+          layout_position?: string | null
           position?: string
           updated_at?: string | null
           url?: string
+        }
+        Relationships: []
+      }
+      homepage_config: {
+        Row: {
+          button_link: string | null
+          button_text: string | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_visible: boolean | null
+          section_name: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+          section_name: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_visible?: boolean | null
+          section_name?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
