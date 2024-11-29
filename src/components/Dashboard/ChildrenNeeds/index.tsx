@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Need } from "@/types/needs";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, ChevronDown } from "lucide-react";
+import { Plus, ChevronDown, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
@@ -25,7 +24,10 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
   });
 
   const handleAddNeed = async () => {
-    if (selectedChildren.length === 0) return;
+    if (selectedChildren.length === 0) {
+      toast.error("Veuillez sélectionner au moins un enfant");
+      return;
+    }
 
     try {
       // Mettre à jour chaque enfant sélectionné
@@ -37,6 +39,16 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
           .eq('id', child.id);
 
         if (error) throw error;
+
+        // Notify sponsor if child is sponsored
+        if (child.sponsorships?.[0]?.sponsor) {
+          const sponsor = child.sponsorships[0].sponsor;
+          await sendNotification(sponsor.id, {
+            title: "Nouveau besoin",
+            content: `Un nouveau besoin a été ajouté pour ${child.name}: ${newNeed.category}${newNeed.is_urgent ? ' (URGENT)' : ''}`,
+            type: "need"
+          });
+        }
       }
 
       toast.success(`Besoin ajouté avec succès pour ${selectedChildren.length} enfant(s)`);
@@ -45,8 +57,30 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
       setIsOpen(false);
       onNeedsUpdate();
     } catch (error) {
-      toast.error("Erreur lors de l'ajout du besoin");
       console.error("Erreur:", error);
+      toast.error("Erreur lors de l'ajout du besoin");
+    }
+  };
+
+  const handleDeleteNeed = async (childId: string, needIndex: number) => {
+    try {
+      const child = children.find(c => c.id === childId);
+      if (!child) return;
+
+      const updatedNeeds = child.needs.filter((_, index) => index !== needIndex);
+      
+      const { error } = await supabase
+        .from('children')
+        .update({ needs: convertNeedsToJson(updatedNeeds) })
+        .eq('id', childId);
+
+      if (error) throw error;
+
+      toast.success("Besoin supprimé avec succès");
+      onNeedsUpdate();
+    } catch (error) {
+      console.error("Erreur:", error);
+      toast.error("Erreur lors de la suppression du besoin");
     }
   };
 
@@ -94,10 +128,39 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {sortedChildren?.map((child) => (
-          <ChildNeeds key={child.id} child={child} needs={child.needs || []} />
-        ))}
+        {sortedChildren.length > 0 ? (
+          sortedChildren.map((child) => (
+            <ChildNeeds 
+              key={child.id} 
+              child={child} 
+              needs={child.needs || []} 
+              onDeleteNeed={(needIndex) => handleDeleteNeed(child.id, needIndex)}
+            />
+          ))
+        ) : (
+          <div className="col-span-2 text-center py-12 bg-gray-50 rounded-lg">
+            <AlertTriangle className="mx-auto h-12 w-12 text-gray-400" />
+            <p className="mt-2 text-gray-500">Aucun enfant trouvé</p>
+          </div>
+        )}
       </div>
     </div>
   );
+};
+
+const sendNotification = async (sponsorId: string, notification: { title: string; content: string; type: string }) => {
+  try {
+    const { error } = await supabase
+      .from('notifications')
+      .insert({
+        recipient_id: sponsorId,
+        title: notification.title,
+        content: notification.content,
+        type: notification.type
+      });
+
+    if (error) throw error;
+  } catch (error) {
+    console.error("Erreur lors de l'envoi de la notification:", error);
+  }
 };
