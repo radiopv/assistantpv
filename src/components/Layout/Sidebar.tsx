@@ -77,27 +77,27 @@ const Sidebar = () => {
         key={link.to}
         to={link.to}
         className={({ isActive }) =>
-          `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
-            isActive ? 'bg-gray-100 text-gray-900' : ''
+          `flex items-center gap-3 px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+            isActive ? 'bg-gray-100 text-gray-900 rounded-lg' : ''
           }`
         }
       >
         <link.icon className="h-4 w-4" />
-        {link.label}
+        <span className="text-sm font-medium">{link.label}</span>
       </NavLink>
     ));
   };
 
   return (
-    <div className="h-full px-3 py-4 flex flex-col bg-white border-r">
-      <div className="mb-10 px-4">
-        <h1 className="text-2xl font-bold">Passion Varadero</h1>
+    <div className="h-full px-3 py-4 overflow-y-auto bg-white border-r">
+      <div className="mb-8 px-4">
+        <h1 className="text-xl font-bold text-gray-900">Passion Varadero</h1>
       </div>
       
-      <div className="flex-1 space-y-6">
+      <nav className="space-y-6">
         {isAdmin && (
           <div className="space-y-1">
-            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Administration
             </p>
             {renderLinks(adminLinks)}
@@ -106,7 +106,7 @@ const Sidebar = () => {
         
         {isSponsor && (
           <div className="space-y-1">
-            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Espace Parrain
             </p>
             {renderLinks(sponsorLinks)}
@@ -115,22 +115,22 @@ const Sidebar = () => {
         
         {isAssistant && !isAdmin && (
           <div className="space-y-1">
-            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Espace Assistant
             </p>
             {renderLinks(assistantLinks)}
           </div>
         )}
-      </div>
+      </nav>
 
-      <div className="border-t pt-4 mt-4">
+      <div className="border-t mt-6 pt-6">
         <Button
           variant="ghost"
-          className="w-full justify-start"
+          className="w-full justify-start text-gray-500 hover:text-gray-900"
           onClick={() => signOut()}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Déconnexion
+          <span className="text-sm font-medium">Déconnexion</span>
         </Button>
       </div>
     </div>
