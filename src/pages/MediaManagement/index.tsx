@@ -2,10 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { MediaGrid } from "./MediaGrid";
+import { MediaCard } from "./MediaCard";
+import { MediaDialog } from "./MediaDialog";
+import { useState } from "react";
 
 const MediaManagement = () => {
   const { toast } = useToast();
+  const [editingMedia, setEditingMedia] = useState<any>(null);
   
   const { data: mediaItems, isLoading, refetch } = useQuery({
     queryKey: ['unified-media'],
@@ -71,14 +74,33 @@ const MediaManagement = () => {
 
         {categories.map(category => (
           <TabsContent key={category} value={category}>
-            <MediaGrid 
-              media={mediaItems?.filter(item => (item.category || 'Non catégorisé') === category)}
-              onDelete={handleDelete}
-              category={category}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {mediaItems
+                ?.filter(item => (item.category || 'Non catégorisé') === category)
+                .map((item) => (
+                  <MediaCard
+                    key={item.id}
+                    item={item}
+                    onDelete={handleDelete}
+                    onEdit={() => setEditingMedia(item)}
+                  />
+                ))}
+            </div>
           </TabsContent>
         ))}
       </Tabs>
+
+      {editingMedia && (
+        <MediaDialog
+          open={!!editingMedia}
+          onClose={() => setEditingMedia(null)}
+          media={editingMedia}
+          onSave={() => {
+            refetch();
+            setEditingMedia(null);
+          }}
+        />
+      )}
     </div>
   );
 };

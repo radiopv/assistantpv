@@ -1,10 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Camera, Video, Edit } from "lucide-react";
 import { PhotoUpload } from "./PhotoUpload";
 import { VideoUpload } from "./VideoUpload";
@@ -12,11 +7,10 @@ import { DonationHeader } from "./DonationHeader";
 import { DonationDetails } from "./DonationDetails";
 import { DonationMedia } from "./DonationMedia";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
+import { DonationDialog } from "./DonationDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DonationCardProps {
   donation: {
@@ -34,7 +28,6 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [editedDonation, setEditedDonation] = useState(donation);
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [showCropDialog, setShowCropDialog] = useState(false);
   const { toast } = useToast();
@@ -65,7 +58,7 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
     }
   });
 
-  const handleSaveEdit = async () => {
+  const handleSaveEdit = async (editedDonation: any) => {
     try {
       const { error } = await supabase
         .from('donations')
@@ -73,6 +66,7 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
           city: editedDonation.city,
           people_helped: editedDonation.people_helped,
           assistant_name: editedDonation.assistant_name,
+          comments: editedDonation.comments
         })
         .eq('id', donation.id);
 
@@ -122,6 +116,14 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
         </div>
 
         <DonationDetails donation={donation} />
+        
+        {donation.comments && (
+          <div>
+            <p className="text-gray-500">Commentaires</p>
+            <p className="text-sm">{donation.comments}</p>
+          </div>
+        )}
+
         <DonationMedia 
           photos={donationPhotos} 
           videos={donationVideos}
@@ -134,13 +136,6 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
             refetchVideos();
           }}
         />
-
-        {donation.comments && (
-          <div>
-            <p className="text-gray-500">Commentaires</p>
-            <p className="text-sm">{donation.comments}</p>
-          </div>
-        )}
 
         <div className="flex flex-wrap gap-2 mt-4">
           <Button
@@ -165,12 +160,9 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
 
         {showPhotoUpload && (
           <div className="space-y-4">
-            <Label htmlFor="photo">Sélectionner une photo</Label>
-            <Input
-              id="photo"
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoSelect}
+            <PhotoUpload
+              donationId={donation.id}
+              onPhotosChange={handlePhotoSelect}
             />
           </div>
         )}
@@ -185,48 +177,12 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
           />
         )}
 
-        <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Modifier le don</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="city">Ville</Label>
-                <Input
-                  id="city"
-                  value={editedDonation.city}
-                  onChange={(e) => setEditedDonation({...editedDonation, city: e.target.value})}
-                />
-              </div>
-              <div>
-                <Label htmlFor="people_helped">Personnes aidées</Label>
-                <Input
-                  id="people_helped"
-                  type="number"
-                  value={editedDonation.people_helped}
-                  onChange={(e) => setEditedDonation({...editedDonation, people_helped: parseInt(e.target.value)})}
-                />
-              </div>
-              <div>
-                <Label htmlFor="assistant_name">Assistant</Label>
-                <Input
-                  id="assistant_name"
-                  value={editedDonation.assistant_name}
-                  onChange={(e) => setEditedDonation({...editedDonation, assistant_name: e.target.value})}
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setShowEditDialog(false)}>
-                  Annuler
-                </Button>
-                <Button onClick={handleSaveEdit}>
-                  Enregistrer
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <DonationDialog
+          open={showEditDialog}
+          onClose={() => setShowEditDialog(false)}
+          donation={donation}
+          onSave={handleSaveEdit}
+        />
 
         <ImageCropDialog
           open={showCropDialog}
