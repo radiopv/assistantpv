@@ -26,6 +26,7 @@ import SponsorsManagement from "@/pages/SponsorsManagement";
 import Settings from "@/pages/Settings";
 import UrgentNeeds from "@/pages/UrgentNeeds";
 import Permissions from "@/pages/Permissions";
+import SponsorshipRequest from "@/pages/SponsorshipRequest";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => {
             <Route path="/videos" element={<PublicLayout><PublicVideos /></PublicLayout>} />
             <Route path="/faq" element={<PublicLayout><PublicFAQ /></PublicLayout>} />
             <Route path="/stories" element={<PublicLayout><Stories /></PublicLayout>} />
+            <Route path="/become-sponsor" element={<PublicLayout><SponsorshipRequest /></PublicLayout>} />
 
             {/* Protected routes */}
             <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
