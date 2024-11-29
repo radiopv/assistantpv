@@ -60,43 +60,47 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   return <>{children}</>;
 };
 
+const AppRoutes = () => (
+  <Routes>
+    {/* Public Routes */}
+    <Route element={<PublicLayout />}>
+      <Route index element={<Home />} />
+      <Route path="/children" element={<Children />} />
+      <Route path="/children/:id" element={<ChildProfile />} />
+      <Route path="/sponsorships" element={<Sponsorships />} />
+    </Route>
+
+    {/* Auth Routes */}
+    <Route path="/login" element={<Login />} />
+
+    {/* Protected Routes */}
+    <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+      <Route path="/dashboard" element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
+      <Route path="/children/needs" element={<ProtectedRoute requiredPermission="children"><ChildrenNeeds /></ProtectedRoute>} />
+      <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
+      <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
+      <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+      <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
+      <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
+      <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
+      <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
+      <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
+      <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />
+    </Route>
+  </Routes>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            {/* Public Routes */}
-            <Route element={<PublicLayout />}>
-              <Route index element={<Home />} />
-              <Route path="/children" element={<Children />} />
-              <Route path="/children/:id" element={<ChildProfile />} />
-              <Route path="/sponsorships" element={<Sponsorships />} />
-            </Route>
-
-            {/* Auth Routes */}
-            <Route path="/login" element={<Login />} />
-
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-              <Route path="/dashboard" element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
-              <Route path="/children/needs" element={<ProtectedRoute requiredPermission="children"><ChildrenNeeds /></ProtectedRoute>} />
-              <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
-              <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
-              <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-              <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
-              <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
-              <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
-              <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
-              <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
-              <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />
-            </Route>
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <TooltipProvider>
+          <AppRoutes />
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
+      </AuthProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
