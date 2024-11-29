@@ -14,7 +14,6 @@ import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEn
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { DashboardStats } from "@/types/dashboard";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
   Users,
@@ -67,20 +66,6 @@ const Dashboard = () => {
     };
   }, [queryClient]);
 
-  const adminLinks = [
-    { to: "/admin/permissions", icon: Settings, label: "Gestion des permissions", color: "bg-purple-100" },
-    { to: "/admin/media", icon: Image, label: "Gestion des médias", color: "bg-blue-100" },
-    { to: "/admin/sponsors", icon: UserCog, label: "Gestion des parrains", color: "bg-green-100" },
-    { to: "/admin/donations", icon: Gift, label: "Gestion des dons", color: "bg-yellow-100" },
-  ];
-
-  const assistantLinks = [
-    { to: "/children", icon: Users, label: "Liste des enfants", color: "bg-blue-100" },
-    { to: "/children/add", icon: UserPlus, label: "Ajouter un enfant", color: "bg-green-100" },
-    { to: "/sponsorships", icon: Heart, label: "Parrainages", color: "bg-pink-100" },
-    { to: "/messages", icon: MessageSquare, label: "Messages", color: "bg-purple-100" },
-  ];
-
   if (statsError) {
     return (
       <div className="space-y-6">
@@ -122,6 +107,20 @@ const Dashboard = () => {
       ))}
     </div>
   );
+
+  const adminLinks = [
+    { to: "/admin/permissions", icon: Settings, label: "Gestion des permissions", color: "bg-purple-100" },
+    { to: "/admin/media", icon: Image, label: "Gestion des médias", color: "bg-blue-100" },
+    { to: "/admin/sponsors", icon: UserCog, label: "Gestion des parrains", color: "bg-green-100" },
+    { to: "/admin/donations", icon: Gift, label: "Gestion des dons", color: "bg-yellow-100" },
+  ];
+
+  const assistantLinks = [
+    { to: "/children", icon: Users, label: "Liste des enfants", color: "bg-blue-100" },
+    { to: "/children/add", icon: UserPlus, label: "Ajouter un enfant", color: "bg-green-100" },
+    { to: "/sponsorships", icon: Heart, label: "Parrainages", color: "bg-pink-100" },
+    { to: "/messages", icon: MessageSquare, label: "Messages", color: "bg-purple-100" },
+  ];
 
   return (
     <div className="space-y-8 animate-fade-in">
