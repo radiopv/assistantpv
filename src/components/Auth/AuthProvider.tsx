@@ -1,14 +1,12 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   user: any | null;
   loading: boolean;
   signOut: () => Promise<void>;
   isAssistant: boolean;
-  isAdmin: boolean;
   session: any | null;
 }
 
@@ -17,149 +15,54 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signOut: async () => {},
   isAssistant: false,
-  isAdmin: false,
   session: null,
 });
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Fonction pour vérifier et mettre à jour le profil utilisateur
-  const updateUserProfile = async (email: string) => {
-    try {
-      const { data: profile, error } = await supabase
-        .from('sponsors')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (error) {
-        console.error('Erreur lors de la récupération du profil:', error);
-        return null;
-      }
-
-      return profile;
-    } catch (error) {
-      console.error('Erreur:', error);
-      return null;
-    }
-  };
-
-  // Gestion des changements d'authentification
-  const handleAuthChange = async (session: any) => {
-    try {
-      if (session?.user) {
-        const profile = await updateUserProfile(session.user.email);
-
-        if (profile) {
-          setUser(profile);
-          setIsAssistant(profile.role === 'assistant' || profile.role === 'admin');
-          setIsAdmin(profile.role === 'admin');
-
-          // Redirection selon le rôle
-          if (location.pathname === '/login') {
-            if (profile.role === 'admin' || profile.role === 'assistant') {
-              navigate('/admin/dashboard');
-              toast({
-                title: "Connexion réussie",
-                description: `Bienvenue dans l'espace administration`,
-              });
-            } else if (profile.role === 'sponsor') {
-              navigate('/sponsor-dashboard');
-              toast({
-                title: "Connexion réussie",
-                description: "Bienvenue dans votre espace parrain",
-              });
-            } else {
-              navigate('/');
-              toast({
-                title: "Connexion réussie",
-                description: "Bienvenue",
-              });
-            }
-          }
-        }
-      } else {
-        // Réinitialisation des états si déconnecté
-        setUser(null);
-        setIsAssistant(false);
-        setIsAdmin(false);
-
-        // Redirection vers login si sur une page protégée
-        const protectedPages = [
-          '/admin',
-          '/sponsor-dashboard',
-          '/rewards',
-          '/messages'
-        ];
-
-        if (protectedPages.some(page => location.pathname.startsWith(page))) {
-          navigate('/login');
-        }
-      }
-    } catch (error) {
-      console.error('Erreur de vérification auth:', error);
-      toast({
-        title: "Erreur d'authentification",
-        description: "Une erreur est survenue, veuillez réessayer",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Effet pour vérifier l'authentification initiale
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const profile = await updateUserProfile(user.email);
-          if (profile) {
-            handleAuthChange({ user: profile });
-          }
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          // Mise à jour pour utiliser les nouveaux rôles
+          setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
         } else {
-          setLoading(false);
+          setUser(null);
+          navigate("/login");
         }
       } catch (error) {
-        console.error('Erreur lors de la vérification initiale:', error);
+        console.error('Error checking auth:', error);
+        setUser(null);
+        navigate("/login");
+      } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
+  }, [navigate]);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      handleAuthChange(session);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  // Fonction de déconnexion
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      localStorage.removeItem('user');
       setUser(null);
       setIsAssistant(false);
-      setIsAdmin(false);
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
       });
-      navigate("/");
+      navigate("/login");
     } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
+      console.error("Error signing out:", error);
       toast({
-        title: "Erreur de déconnexion",
+        title: "Erreur lors de la déconnexion",
         description: "Veuillez réessayer",
         variant: "destructive",
       });
@@ -167,14 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      loading, 
-      signOut, 
-      isAssistant, 
-      isAdmin, 
-      session: user 
-    }}>
+    <AuthContext.Provider value={{ user, loading, signOut, isAssistant, session: user }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -40,9 +40,7 @@ export type Database = {
           description: string | null
           featured_until: string | null
           id: string
-          is_approved: boolean | null
           is_featured: boolean | null
-          is_public: boolean | null
           title: string | null
           type: string
           updated_at: string | null
@@ -54,9 +52,7 @@ export type Database = {
           description?: string | null
           featured_until?: string | null
           id?: string
-          is_approved?: boolean | null
           is_featured?: boolean | null
-          is_public?: boolean | null
           title?: string | null
           type: string
           updated_at?: string | null
@@ -68,9 +64,7 @@ export type Database = {
           description?: string | null
           featured_until?: string | null
           id?: string
-          is_approved?: boolean | null
           is_featured?: boolean | null
-          is_public?: boolean | null
           title?: string | null
           type?: string
           updated_at?: string | null
@@ -85,42 +79,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      badges: {
-        Row: {
-          category: string | null
-          created_at: string | null
-          description: string | null
-          icon: string | null
-          id: string
-          name: string
-          points: number | null
-          requirements: Json | null
-          updated_at: string | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string | null
-          description?: string | null
-          icon?: string | null
-          id?: string
-          name: string
-          points?: number | null
-          requirements?: Json | null
-          updated_at?: string | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string | null
-          description?: string | null
-          icon?: string | null
-          id?: string
-          name?: string
-          points?: number | null
-          requirements?: Json | null
-          updated_at?: string | null
-        }
-        Relationships: []
       }
       birthday_reminders: {
         Row: {
@@ -762,45 +720,11 @@ export type Database = {
         }
         Relationships: []
       }
-      faq: {
-        Row: {
-          answer: string
-          category: string | null
-          created_at: string | null
-          display_order: number | null
-          id: string
-          is_active: boolean | null
-          question: string
-          updated_at: string | null
-        }
-        Insert: {
-          answer: string
-          category?: string | null
-          created_at?: string | null
-          display_order?: number | null
-          id?: string
-          is_active?: boolean | null
-          question: string
-          updated_at?: string | null
-        }
-        Update: {
-          answer?: string
-          category?: string | null
-          created_at?: string | null
-          display_order?: number | null
-          id?: string
-          is_active?: boolean | null
-          question?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       home_images: {
         Row: {
           created_at: string | null
           id: string
           is_mobile: boolean | null
-          layout_position: string | null
           position: string
           updated_at: string | null
           url: string
@@ -809,7 +733,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
-          layout_position?: string | null
           position: string
           updated_at?: string | null
           url: string
@@ -818,52 +741,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
-          layout_position?: string | null
           position?: string
           updated_at?: string | null
           url?: string
-        }
-        Relationships: []
-      }
-      homepage_config: {
-        Row: {
-          button_link: string | null
-          button_text: string | null
-          created_at: string | null
-          description: string | null
-          display_order: number | null
-          id: string
-          is_visible: boolean | null
-          section_name: string
-          subtitle: string | null
-          title: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          button_link?: string | null
-          button_text?: string | null
-          created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          id?: string
-          is_visible?: boolean | null
-          section_name: string
-          subtitle?: string | null
-          title?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          button_link?: string | null
-          button_text?: string | null
-          created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          id?: string
-          is_visible?: boolean | null
-          section_name?: string
-          subtitle?: string | null
-          title?: string | null
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1269,60 +1149,6 @@ export type Database = {
           },
         ]
       }
-      page_config: {
-        Row: {
-          created_at: string | null
-          id: string
-          is_visible: boolean | null
-          page_id: string
-          required_role: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          is_visible?: boolean | null
-          page_id: string
-          required_role?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          is_visible?: boolean | null
-          page_id?: string
-          required_role?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      permissions: {
-        Row: {
-          category: string
-          created_at: string | null
-          description: string | null
-          id: string
-          name: string
-          updated_at: string | null
-        }
-        Insert: {
-          category: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          updated_at?: string | null
-        }
-        Update: {
-          category?: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           id: string
@@ -1387,38 +1213,6 @@ export type Database = {
             columns: ["sponsor_id"]
             isOneToOne: true
             referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      role_permissions: {
-        Row: {
-          created_at: string | null
-          id: string
-          permission_id: string | null
-          role: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          permission_id?: string | null
-          role: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          permission_id?: string | null
-          role?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "role_permissions_permission_id_fkey"
-            columns: ["permission_id"]
-            isOneToOne: false
-            referencedRelation: "permissions"
             referencedColumns: ["id"]
           },
         ]
@@ -1503,36 +1297,6 @@ export type Database = {
           },
         ]
       }
-      sponsor_levels: {
-        Row: {
-          benefits: Json | null
-          created_at: string | null
-          description: string | null
-          id: string
-          min_points: number
-          name: string
-          updated_at: string | null
-        }
-        Insert: {
-          benefits?: Json | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          min_points: number
-          name: string
-          updated_at?: string | null
-        }
-        Update: {
-          benefits?: Json | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          min_points?: number
-          name?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       sponsor_memories: {
         Row: {
           child_id: string | null
@@ -1583,7 +1347,6 @@ export type Database = {
           address: string | null
           city: string | null
           created_at: string | null
-          current_level_id: string | null
           email: string | null
           facebook_url: string | null
           force_password_change: boolean | null
@@ -1599,14 +1362,12 @@ export type Database = {
           privacy_settings: Json | null
           role: string | null
           show_name_publicly: boolean | null
-          total_points: number | null
           updated_at: string | null
         }
         Insert: {
           address?: string | null
           city?: string | null
           created_at?: string | null
-          current_level_id?: string | null
           email?: string | null
           facebook_url?: string | null
           force_password_change?: boolean | null
@@ -1622,14 +1383,12 @@ export type Database = {
           privacy_settings?: Json | null
           role?: string | null
           show_name_publicly?: boolean | null
-          total_points?: number | null
           updated_at?: string | null
         }
         Update: {
           address?: string | null
           city?: string | null
           created_at?: string | null
-          current_level_id?: string | null
           email?: string | null
           facebook_url?: string | null
           force_password_change?: boolean | null
@@ -1645,18 +1404,9 @@ export type Database = {
           privacy_settings?: Json | null
           role?: string | null
           show_name_publicly?: boolean | null
-          total_points?: number | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "sponsors_current_level_id_fkey"
-            columns: ["current_level_id"]
-            isOneToOne: false
-            referencedRelation: "sponsor_levels"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       sponsorship_audit_logs: {
         Row: {
@@ -1741,56 +1491,6 @@ export type Database = {
             columns: ["sponsorship_id"]
             isOneToOne: false
             referencedRelation: "sponsorships"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sponsorship_requests: {
-        Row: {
-          child_id: string | null
-          created_at: string | null
-          email: string
-          facebook_url: string | null
-          full_name: string
-          id: string
-          motivation: string | null
-          phone: string | null
-          status: string
-          terms_accepted: boolean
-          updated_at: string | null
-        }
-        Insert: {
-          child_id?: string | null
-          created_at?: string | null
-          email: string
-          facebook_url?: string | null
-          full_name: string
-          id?: string
-          motivation?: string | null
-          phone?: string | null
-          status?: string
-          terms_accepted?: boolean
-          updated_at?: string | null
-        }
-        Update: {
-          child_id?: string | null
-          created_at?: string | null
-          email?: string
-          facebook_url?: string | null
-          full_name?: string
-          id?: string
-          motivation?: string | null
-          phone?: string | null
-          status?: string
-          terms_accepted?: boolean
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsorship_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
             referencedColumns: ["id"]
           },
         ]
@@ -1993,54 +1693,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_achievements: {
-        Row: {
-          badge_id: string | null
-          created_at: string | null
-          earned_at: string | null
-          id: string
-          metadata: Json | null
-          points: number | null
-          sponsor_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          badge_id?: string | null
-          created_at?: string | null
-          earned_at?: string | null
-          id?: string
-          metadata?: Json | null
-          points?: number | null
-          sponsor_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          badge_id?: string | null
-          created_at?: string | null
-          earned_at?: string | null
-          id?: string
-          metadata?: Json | null
-          points?: number | null
-          sponsor_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_achievements_badge_id_fkey"
-            columns: ["badge_id"]
-            isOneToOne: false
-            referencedRelation: "badges"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_achievements_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -2132,21 +1784,8 @@ export type Database = {
         }
         Returns: undefined
       }
-      approve_sponsorship_request: {
-        Args: {
-          request_id: string
-          admin_id: string
-        }
-        Returns: undefined
-      }
       auto_fix_links: {
         Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      check_and_award_badges: {
-        Args: {
-          sponsor_uuid: string
-        }
         Returns: undefined
       }
       check_link: {
@@ -2211,15 +1850,6 @@ export type Database = {
           name: string
           category: string
           display_order: number
-        }[]
-      }
-      get_assistant_performance_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          assistant_name: string
-          donations_count: number
-          people_helped: number
-          success_rate: number
         }[]
       }
       get_assistant_stats: {
@@ -2289,35 +1919,11 @@ export type Database = {
         }
         Returns: Json
       }
-      get_sponsorship_conversion_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_top_sponsorship_cities: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          city: string
-          active_sponsorships: number
-        }[]
-      }
       get_unread_messages_count: {
         Args: {
           user_uuid: string
         }
         Returns: number
-      }
-      get_urgent_needs_by_city: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          city: string
-          urgent_needs_count: number
-          total_needs: number
-          urgent_needs_ratio: number
-        }[]
-      }
-      get_user_engagement_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
       }
       get_user_permissions: {
         Args: {
@@ -2363,14 +1969,6 @@ export type Database = {
       }
       refresh_statistics: {
         Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      reject_sponsorship_request: {
-        Args: {
-          request_id: string
-          admin_id: string
-          rejection_reason?: string
-        }
         Returns: undefined
       }
       retry_failed_emails: {
@@ -2438,12 +2036,6 @@ export type Database = {
           p_termination_date: string
           p_termination_reason: string
           p_termination_comment: string
-        }
-        Returns: undefined
-      }
-      update_sponsor_points: {
-        Args: {
-          sponsor_uuid: string
         }
         Returns: undefined
       }
