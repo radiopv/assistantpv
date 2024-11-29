@@ -46,7 +46,7 @@ export const DonationCardHeader = ({
           <Edit className="w-4 h-4" />
           Modifier
         </Button>
-        {isAdmin && (
+        {isAdmin && onDelete && (
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button
