@@ -7,13 +7,17 @@ import {
   HelpCircle,
   BarChart,
   BookOpen,
-  LogIn
+  LogIn,
+  Users,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   const navLinks = [
     { to: "/", icon: Home, label: "Accueil" },
+    { to: "/available-children", icon: Users, label: "Enfants à parrainer" },
+    { to: "/sponsored-children", icon: Star, label: "Enfants parrainés" },
     { to: "/stories", icon: BookOpen, label: "Histoires" },
     { to: "/donations/public", icon: HandHeart, label: "Dons" },
     { to: "/videos", icon: Video, label: "Vidéos" },

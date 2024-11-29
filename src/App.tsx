@@ -27,6 +27,8 @@ import Settings from "@/pages/Settings";
 import UrgentNeeds from "@/pages/UrgentNeeds";
 import Permissions from "@/pages/Permissions";
 import SponsorshipRequest from "@/pages/SponsorshipRequest";
+import PublicAvailableChildren from "@/pages/PublicAvailableChildren";
+import PublicSponsoredChildren from "@/pages/PublicSponsoredChildren";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +47,8 @@ const App = () => {
             <Route path="/faq" element={<PublicLayout><PublicFAQ /></PublicLayout>} />
             <Route path="/stories" element={<PublicLayout><Stories /></PublicLayout>} />
             <Route path="/become-sponsor" element={<PublicLayout><SponsorshipRequest /></PublicLayout>} />
+            <Route path="/available-children" element={<PublicLayout><PublicAvailableChildren /></PublicLayout>} />
+            <Route path="/sponsored-children" element={<PublicLayout><PublicSponsoredChildren /></PublicLayout>} />
 
             {/* Protected routes */}
             <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
