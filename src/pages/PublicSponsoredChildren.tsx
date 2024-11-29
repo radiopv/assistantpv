@@ -4,12 +4,6 @@ import { Card } from "@/components/ui/card";
 import { Loader2, Heart } from "lucide-react";
 import { TestimonialCarousel } from "@/components/Testimonials/TestimonialCarousel";
 
-interface Sponsor {
-  name: string;
-  photo_url: string | null;
-  email?: string;
-}
-
 interface Child {
   id: string;
   name: string;
@@ -22,7 +16,6 @@ interface Child {
     is_urgent: boolean;
   }[];
   sponsor_name: string | null;
-  sponsor_photo_url: string | null;
 }
 
 const PublicSponsoredChildren = () => {
@@ -39,8 +32,7 @@ const PublicSponsoredChildren = () => {
           gender,
           photo_url,
           needs,
-          sponsor_name,
-          sponsor_photo_url
+          sponsor_name
         `)
         .eq('is_sponsored', true)
         .order('created_at', { ascending: false });
@@ -90,13 +82,6 @@ const PublicSponsoredChildren = () => {
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
                   <div className="flex items-center gap-3">
-                    {child.sponsor_photo_url && (
-                      <img
-                        src={child.sponsor_photo_url}
-                        alt={child.sponsor_name || 'Parrain'}
-                        className="w-10 h-10 rounded-full border-2 border-white"
-                      />
-                    )}
                     <div className="text-white">
                       <p className="font-medium">{child.name}</p>
                       <p className="text-sm opacity-90">

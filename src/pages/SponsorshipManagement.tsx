@@ -52,10 +52,18 @@ const SponsorshipManagement = () => {
         
         // Transform needs from Json to typed array
         const needs = Array.isArray(child.needs) 
-          ? child.needs.map(need => ({
-              category: String(need.category || ''),
-              is_urgent: Boolean(need.is_urgent || false)
-            }))
+          ? child.needs.map(need => {
+              if (typeof need === 'object' && need !== null) {
+                return {
+                  category: String(need.category || ''),
+                  is_urgent: Boolean(need.is_urgent || false)
+                };
+              }
+              return {
+                category: '',
+                is_urgent: false
+              };
+            })
           : [];
 
         return {
