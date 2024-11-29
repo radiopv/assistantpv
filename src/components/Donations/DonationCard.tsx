@@ -52,6 +52,66 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCa
     }
   });
 
+  const handleDelete = async () => {
+    try {
+      // Supprimer les photos associées
+      const { error: photosError } = await supabase
+        .from('donation_photos')
+        .delete()
+        .eq('donation_id', donation.id);
+
+      if (photosError) throw photosError;
+
+      // Supprimer les vidéos associées
+      const { error: videosError } = await supabase
+        .from('donation_videos')
+        .delete()
+        .eq('donation_id', donation.id);
+
+      if (videosError) throw videosError;
+
+      // Supprimer les items du don
+      const { error: itemsError } = await supabase
+        .from('donation_items')
+        .delete()
+        .eq('donation_id', donation.id);
+
+      if (itemsError) throw itemsError;
+
+      // Supprimer les donneurs associés
+      const { error: donorsError } = await supabase
+        .from('donors')
+        .delete()
+        .eq('donation_id', donation.id);
+
+      if (donorsError) throw donorsError;
+
+      // Finalement, supprimer le don
+      const { error: donationError } = await supabase
+        .from('donations')
+        .delete()
+        .eq('id', donation.id);
+
+      if (donationError) throw donationError;
+
+      toast({
+        title: "Don supprimé",
+        description: "Le don a été supprimé avec succès.",
+      });
+
+      if (onDelete) {
+        onDelete();
+      }
+    } catch (error) {
+      console.error('Error deleting donation:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression du don.",
+      });
+    }
+  };
+
   const handleSaveEdit = async (editedDonation: any) => {
     try {
       const { error } = await supabase
@@ -89,7 +149,7 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCa
           donation={donation}
           isAdmin={isAdmin}
           onEdit={() => setShowEditDialog(true)}
-          onDelete={onDelete}
+          onDelete={handleDelete}
         />
 
         <DonationDetails donation={donation} />
