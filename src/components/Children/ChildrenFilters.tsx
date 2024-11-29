@@ -35,15 +35,15 @@ export const ChildrenFilters = ({
           placeholder="Rechercher un enfant..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10"
+          className="pl-10 bg-white"
         />
       </div>
       <div className="flex gap-2 flex-wrap md:flex-nowrap">
         <Select value={selectedCity} onValueChange={onCityChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] bg-white">
             <SelectValue placeholder="Ville" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             <SelectItem value="all">Toutes les villes</SelectItem>
             {cities.map((city) => (
               <SelectItem key={city} value={city}>
@@ -54,10 +54,10 @@ export const ChildrenFilters = ({
         </Select>
 
         <Select value={selectedGender} onValueChange={onGenderChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] bg-white">
             <SelectValue placeholder="Genre" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             <SelectItem value="all">Tous</SelectItem>
             <SelectItem value="M">Masculin</SelectItem>
             <SelectItem value="F">Féminin</SelectItem>
@@ -65,10 +65,10 @@ export const ChildrenFilters = ({
         </Select>
 
         <Select value={selectedAge} onValueChange={onAgeChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] bg-white">
             <SelectValue placeholder="Âge" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white">
             <SelectItem value="all">Tous les âges</SelectItem>
             {ages.map((age) => (
               <SelectItem key={age} value={age.toString()}>
