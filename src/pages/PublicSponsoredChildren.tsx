@@ -4,6 +4,21 @@ import { Card } from "@/components/ui/card";
 import { Loader2, Heart } from "lucide-react";
 import { TestimonialCarousel } from "@/components/Testimonials/TestimonialCarousel";
 
+interface Sponsor {
+  name: string;
+  photo_url: string | null;
+}
+
+interface Child {
+  id: string;
+  name: string;
+  age: number;
+  city: string | null;
+  gender: 'male' | 'female';
+  photo_url: string | null;
+  sponsors: Sponsor | null;
+}
+
 const PublicSponsoredChildren = () => {
   const { data: children, isLoading } = useQuery({
     queryKey: ['sponsored-children'],
@@ -21,7 +36,7 @@ const PublicSponsoredChildren = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as Child[];
     }
   });
 
@@ -70,7 +85,7 @@ const PublicSponsoredChildren = () => {
                     <div className="text-white">
                       <p className="font-medium">{child.name}</p>
                       <p className="text-sm opacity-90">
-                        Parrainé{child.gender === 'F' ? 'e' : ''} par {child.sponsors?.name || 'Un parrain anonyme'}
+                        Parrainé{child.gender === 'female' ? 'e' : ''} par {child.sponsors?.name || 'Un parrain anonyme'}
                       </p>
                     </div>
                   </div>

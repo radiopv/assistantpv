@@ -23,7 +23,13 @@ const SponsorshipManagement = () => {
         .order('name');
 
       if (error) throw error;
-      return data;
+      
+      // Transform gender to match the expected type
+      return data?.map(child => ({
+        ...child,
+        gender: child.gender.toLowerCase() as 'male' | 'female',
+        sponsors: child.sponsors ? child.sponsors[0] : null // Take first sponsor if exists
+      }));
     }
   });
 
