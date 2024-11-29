@@ -9,6 +9,7 @@ import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { ProfileHeader } from "@/components/Children/ProfileHeader";
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const ChildProfile = () => {
   const { id } = useParams();
@@ -18,6 +19,10 @@ const ChildProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [child, setChild] = useState<any>(null);
   const [editing, setEditing] = useState(false);
+  const { user } = useAuth();
+  
+  // Check if user is admin or assistant
+  const canEdit = user?.role === 'admin' || user?.role === 'assistant';
 
   useEffect(() => {
     loadChild();
@@ -41,6 +46,15 @@ const ChildProfile = () => {
   };
 
   const handleUpdate = async () => {
+    if (!canEdit) {
+      toast({
+        variant: "destructive",
+        title: "Accès refusé",
+        description: "Vous n'avez pas les permissions nécessaires pour modifier ce profil.",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('children')
@@ -64,6 +78,15 @@ const ChildProfile = () => {
   };
 
   const handleDelete = async () => {
+    if (!canEdit) {
+      toast({
+        variant: "destructive",
+        title: "Accès refusé",
+        description: "Vous n'avez pas les permissions nécessaires pour supprimer ce profil.",
+      });
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('children')
@@ -132,9 +155,14 @@ const ChildProfile = () => {
         name={child.name}
         editing={editing}
         onBack={() => navigate('/children')}
-        onEdit={() => setEditing(true)}
+        onEdit={() => canEdit ? setEditing(true) : toast({
+          variant: "destructive",
+          title: "Accès refusé",
+          description: "Vous n'avez pas les permissions nécessaires pour modifier ce profil.",
+        })}
         onSave={handleUpdate}
         onDelete={handleDelete}
+        showEditButtons={canEdit}
       />
 
       <div className="grid gap-6">
@@ -145,16 +173,18 @@ const ChildProfile = () => {
           onPhotoUpdate={handlePhotoUpdate}
         />
 
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Photos de l'album parrain</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.
-          </p>
-          <div className="space-y-6">
-            <AlbumMediaUpload childId={id!} onUploadComplete={loadChild} />
-            <AlbumMediaGrid childId={id!} />
-          </div>
-        </Card>
+        {canEdit && (
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Photos de l'album parrain</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.
+            </p>
+            <div className="space-y-6">
+              <AlbumMediaUpload childId={id!} onUploadComplete={loadChild} />
+              <AlbumMediaGrid childId={id!} />
+            </div>
+          </Card>
+        )}
       </div>
     </div>
   );
