@@ -15,6 +15,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { UserPermissionCard } from "./UserPermissionCard";
+import { RolePermissions } from "./RolePermissions";
 
 const pagePermissions = [
   { page: "dashboard", label: "Dashboard", description: "Accès au tableau de bord" },
@@ -36,7 +37,7 @@ export const AdminPermissions = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("pages");
+  const [activeTab, setActiveTab] = useState("users");
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   useEffect(() => {
@@ -48,7 +49,7 @@ export const AdminPermissions = () => {
       const { data, error } = await supabase
         .from('sponsors')
         .select('*')
-        .in('role', ['admin', 'assistant'])
+        .in('role', ['admin', 'assistant', 'sponsor'])
         .order('role');
       
       if (error) throw error;
@@ -120,22 +121,30 @@ export const AdminPermissions = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="pages">Pages</TabsTrigger>
-          <TabsTrigger value="actions">Actions</TabsTrigger>
+          <TabsTrigger value="users">Utilisateurs</TabsTrigger>
+          <TabsTrigger value="roles">Rôles</TabsTrigger>
         </TabsList>
 
-        <div className="mt-6 grid gap-6">
-          {filteredUsers.map((user) => (
-            <UserPermissionCard
-              key={user.id}
-              user={user}
-              pagePermissions={pagePermissions}
-              actionPermissions={actionPermissions}
-              onUpdatePermissions={updateUserPermissions}
-              onDeleteUser={() => setUserToDelete(user.id)}
-            />
-          ))}
-        </div>
+        {activeTab === "users" && (
+          <div className="mt-6 grid gap-6">
+            {filteredUsers.map((user) => (
+              <UserPermissionCard
+                key={user.id}
+                user={user}
+                pagePermissions={pagePermissions}
+                actionPermissions={actionPermissions}
+                onUpdatePermissions={updateUserPermissions}
+                onDeleteUser={() => setUserToDelete(user.id)}
+              />
+            ))}
+          </div>
+        )}
+
+        {activeTab === "roles" && (
+          <div className="mt-6">
+            <RolePermissions />
+          </div>
+        )}
       </Tabs>
 
       <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>

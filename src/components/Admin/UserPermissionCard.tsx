@@ -20,7 +20,7 @@ export const UserPermissionCard = ({
   onUpdatePermissions,
   onDeleteUser,
 }: UserPermissionCardProps) => (
-  <Card key={user.id} className="p-6">
+  <Card className="p-6">
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
       <div>
         <h3 className="font-semibold">{user.name}</h3>
