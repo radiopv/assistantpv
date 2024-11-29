@@ -1,6 +1,6 @@
 import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
 import { SponsorshipStats } from "@/components/Sponsorship/SponsorshipStats";
-import { MainLayout } from "@/components/Layout/MainLayout";
+import MainLayout from "@/components/Layout/MainLayout";
 
 const Sponsorships = () => {
   return (
