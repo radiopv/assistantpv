@@ -32,31 +32,44 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const handleAuthChange = async (session: any) => {
     try {
       if (session?.user) {
+        // Récupérer le profil de l'utilisateur depuis la table sponsors
         const { data: profile, error: profileError } = await supabase
           .from('sponsors')
           .select('*')
           .eq('email', session.user.email)
           .single();
 
-        if (profileError) throw profileError;
+        if (profileError) {
+          console.error('Error fetching profile:', profileError);
+          throw profileError;
+        }
 
-        setUser(profile);
-        setIsAssistant(['assistant', 'admin'].includes(profile.role));
-        setIsAdmin(profile.role === 'admin');
+        if (profile) {
+          setUser(profile);
+          // Mettre à jour les états en fonction du rôle
+          setIsAssistant(profile.role === 'assistant' || profile.role === 'admin');
+          setIsAdmin(profile.role === 'admin');
 
-        // Redirection basée sur le rôle
-        if (location.pathname === '/login') {
-          switch (profile.role) {
-            case 'admin':
-            case 'assistant':
-              navigate('/admin/dashboard');
-              break;
-            case 'sponsor':
-              navigate('/sponsor-dashboard');
-              break;
-            default:
-              navigate('/');
+          // Redirection basée sur le rôle
+          if (location.pathname === '/login') {
+            switch (profile.role) {
+              case 'admin':
+              case 'assistant':
+                navigate('/admin/dashboard');
+                break;
+              case 'sponsor':
+                navigate('/sponsor-dashboard');
+                break;
+              default:
+                navigate('/');
+            }
           }
+
+          // Afficher un message de bienvenue
+          toast({
+            title: "Connexion réussie",
+            description: `Bienvenue ${profile.name || 'sur votre espace'}`,
+          });
         }
       } else {
         setUser(null);
