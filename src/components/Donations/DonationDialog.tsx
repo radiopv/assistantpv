@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 interface DonationDialogProps {
   open: boolean;
@@ -18,7 +19,7 @@ interface DonationDialogProps {
 }
 
 export const DonationDialog = ({ open, onClose, donation, onSave }: DonationDialogProps) => {
-  const [editedDonation, setEditedDonation] = React.useState(donation);
+  const [editedDonation, setEditedDonation] = useState(donation);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -58,6 +59,7 @@ export const DonationDialog = ({ open, onClose, donation, onSave }: DonationDial
               id="comments"
               value={editedDonation.comments || ''}
               onChange={(e) => setEditedDonation({...editedDonation, comments: e.target.value})}
+              className="min-h-[100px]"
             />
           </div>
           <div className="flex justify-end gap-2">

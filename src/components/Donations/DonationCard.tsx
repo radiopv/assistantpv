@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Camera, Video, Edit } from "lucide-react";
+import { Camera, Video, Edit, Trash2 } from "lucide-react";
 import { PhotoUpload } from "./PhotoUpload";
 import { VideoUpload } from "./VideoUpload";
 import { DonationHeader } from "./DonationHeader";
@@ -11,6 +11,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { DonationDialog } from "./DonationDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface DonationCardProps {
   donation: {
@@ -22,9 +24,11 @@ interface DonationCardProps {
     status: string;
     comments: string | null;
   };
+  onDelete?: () => void;
+  isAdmin?: boolean;
 }
 
-export const DonationCard = ({ donation }: DonationCardProps) => {
+export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCardProps) => {
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showVideoUpload, setShowVideoUpload] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -87,7 +91,7 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
     }
   };
 
-  const handlePhotoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files || event.target.files.length === 0) return;
     
     const file = event.target.files[0];
@@ -99,20 +103,74 @@ export const DonationCard = ({ donation }: DonationCardProps) => {
     reader.readAsDataURL(file);
   };
 
+  const handleDeleteDonation = async () => {
+    try {
+      const { error } = await supabase
+        .from('donations')
+        .delete()
+        .eq('id', donation.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Don supprimé",
+        description: "Le don a été supprimé avec succès.",
+      });
+
+      onDelete?.();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression du don.",
+      });
+    }
+  };
+
   return (
     <Card className="p-4">
       <div className="space-y-4">
         <div className="flex justify-between items-start">
           <DonationHeader donation={donation} />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowEditDialog(true)}
-            className="flex items-center gap-2"
-          >
-            <Edit className="w-4 h-4" />
-            Modifier
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowEditDialog(true)}
+              className="flex items-center gap-2"
+            >
+              <Edit className="w-4 h-4" />
+              Modifier
+            </Button>
+            {isAdmin && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Supprimer
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Cette action est irréversible. Le don et toutes les données associées seront définitivement supprimés.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Annuler</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeleteDonation}>
+                      Confirmer
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
         </div>
 
         <DonationDetails donation={donation} />
