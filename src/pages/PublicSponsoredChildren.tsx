@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Loader2, Heart } from "lucide-react";
 import { TestimonialCarousel } from "@/components/Testimonials/TestimonialCarousel";
+import { PublicMediaGrid } from "@/components/AlbumMedia/PublicMediaGrid";
 
 interface Child {
   id: string;
@@ -99,6 +100,10 @@ const PublicSponsoredChildren = () => {
                 <div className="mt-2 space-y-1 text-sm text-gray-600">
                   <p>{child.age} ans</p>
                   <p>{child.city}</p>
+                </div>
+                <div className="mt-4">
+                  <h3 className="font-semibold mb-2">Souvenirs partagés</h3>
+                  <PublicMediaGrid childId={child.id} />
                 </div>
               </div>
             </Card>
