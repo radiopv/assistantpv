@@ -14,6 +14,7 @@ const Children = () => {
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
   const [selectedAge, setSelectedAge] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const { data: children, isLoading } = useQuery({
     queryKey: ['children'],
@@ -43,6 +44,11 @@ const Children = () => {
     return uniqueAges.filter(Boolean).sort((a, b) => a - b);
   }, [children]);
 
+  const hasUrgentNeeds = (child: any) => {
+    if (!child.needs) return false;
+    return child.needs.some((need: any) => need.is_urgent);
+  };
+
   const filteredChildren = useMemo(() => {
     if (!children) return [];
     
@@ -51,10 +57,15 @@ const Children = () => {
       const matchesCity = selectedCity === "all" || child.city === selectedCity;
       const matchesGender = selectedGender === "all" || child.gender === selectedGender;
       const matchesAge = selectedAge === "all" || child.age === parseInt(selectedAge);
+      const matchesStatus = selectedStatus === "all" || 
+        (selectedStatus === "available" && !child.is_sponsored) ||
+        (selectedStatus === "sponsored" && child.is_sponsored) ||
+        (selectedStatus === "pending" && child.status === "pending") ||
+        (selectedStatus === "urgent" && hasUrgentNeeds(child));
       
-      return matchesSearch && matchesCity && matchesGender && matchesAge;
+      return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
     });
-  }, [children, searchTerm, selectedCity, selectedGender, selectedAge]);
+  }, [children, searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus]);
 
   const checkDuplicates = (childId: string) => {
     if (!children) return;
@@ -99,10 +110,12 @@ const Children = () => {
         selectedCity={selectedCity}
         selectedGender={selectedGender}
         selectedAge={selectedAge}
+        selectedStatus={selectedStatus}
         onSearchChange={setSearchTerm}
         onCityChange={setSelectedCity}
         onGenderChange={setSelectedGender}
         onAgeChange={setSelectedAge}
+        onStatusChange={setSelectedStatus}
         cities={cities}
         ages={ages}
       />
@@ -137,14 +150,21 @@ const Children = () => {
                 <p>Genre : {child.gender === 'M' ? 'Masculin' : 'Féminin'}</p>
                 <p>Ville : {child.city}</p>
               </div>
-              <div className="pt-2">
+              <div className="pt-2 flex flex-wrap gap-2">
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   child.is_sponsored 
                     ? 'bg-green-100 text-green-800' 
+                    : child.status === 'pending'
+                    ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-blue-100 text-blue-800'
                 }`}>
-                  {child.is_sponsored ? 'Parrainé' : 'Disponible'}
+                  {child.is_sponsored ? 'Parrainé' : child.status === 'pending' ? 'En attente' : 'Disponible'}
                 </span>
+                {hasUrgentNeeds(child) && (
+                  <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
+                    Besoins urgents
+                  </span>
+                )}
               </div>
             </div>
           </Card>

@@ -7,10 +7,12 @@ interface ChildrenFiltersProps {
   selectedCity: string;
   selectedGender: string;
   selectedAge: string;
+  selectedStatus: string;
   onSearchChange: (value: string) => void;
   onCityChange: (value: string) => void;
   onGenderChange: (value: string) => void;
   onAgeChange: (value: string) => void;
+  onStatusChange: (value: string) => void;
   cities: string[];
   ages: number[];
 }
@@ -20,10 +22,12 @@ export const ChildrenFilters = ({
   selectedCity,
   selectedGender,
   selectedAge,
+  selectedStatus,
   onSearchChange,
   onCityChange,
   onGenderChange,
   onAgeChange,
+  onStatusChange,
   cities,
   ages,
 }: ChildrenFiltersProps) => {
@@ -75,6 +79,19 @@ export const ChildrenFilters = ({
                 {age} ans
               </SelectItem>
             ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={selectedStatus} onValueChange={onStatusChange}>
+          <SelectTrigger className="w-[180px] bg-white">
+            <SelectValue placeholder="Statut" />
+          </SelectTrigger>
+          <SelectContent className="bg-white">
+            <SelectItem value="all">Tous les statuts</SelectItem>
+            <SelectItem value="available">Disponible</SelectItem>
+            <SelectItem value="sponsored">Parrainé</SelectItem>
+            <SelectItem value="pending">En attente</SelectItem>
+            <SelectItem value="urgent">Besoins urgents</SelectItem>
           </SelectContent>
         </Select>
       </div>
