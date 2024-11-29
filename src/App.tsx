@@ -20,6 +20,11 @@ import PublicFAQ from "@/pages/PublicFAQ";
 import Stories from "@/pages/Stories";
 import SponsorDashboard from "@/pages/SponsorDashboard";
 import Rewards from "@/pages/Rewards";
+import Messages from "@/pages/Messages";
+import MediaManagement from "@/pages/MediaManagement";
+import SponsorsManagement from "@/pages/SponsorsManagement";
+import Settings from "@/pages/Settings";
+import UrgentNeeds from "@/pages/UrgentNeeds";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +51,11 @@ const App = () => {
             <Route path="/children/add" element={<MainLayout><AddChild /></MainLayout>} />
             <Route path="/donations" element={<MainLayout><Donations /></MainLayout>} />
             <Route path="/rewards" element={<MainLayout><Rewards /></MainLayout>} />
+            <Route path="/messages" element={<MainLayout><Messages /></MainLayout>} />
+            <Route path="/media-management" element={<MainLayout><MediaManagement /></MainLayout>} />
+            <Route path="/sponsors-management" element={<MainLayout><SponsorsManagement /></MainLayout>} />
+            <Route path="/settings" element={<MainLayout><Settings /></MainLayout>} />
+            <Route path="/urgent-needs" element={<MainLayout><UrgentNeeds /></MainLayout>} />
 
             {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />

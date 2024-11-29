@@ -14,7 +14,12 @@ import {
   Heart,
   Video,
   HelpCircle,
-  BookOpen
+  BookOpen,
+  Camera,
+  Database,
+  UserCog,
+  Mail,
+  AlertTriangle
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -26,8 +31,12 @@ const Sidebar = () => {
   const adminLinks = [
     { to: "/dashboard", icon: Home, label: "Tableau de bord" },
     { to: "/children", icon: Users, label: "Enfants" },
+    { to: "/children/add", icon: Users, label: "Ajouter un enfant" },
     { to: "/donations", icon: Gift, label: "Dons" },
     { to: "/statistics", icon: BarChart, label: "Statistiques" },
+    { to: "/media-management", icon: Camera, label: "Gestion médias" },
+    { to: "/sponsors-management", icon: UserCog, label: "Gestion parrains" },
+    { to: "/messages", icon: Mail, label: "Messages" },
     { to: "/settings", icon: Settings, label: "Paramètres" }
   ];
 
@@ -41,7 +50,11 @@ const Sidebar = () => {
   const assistantLinks = [
     { to: "/dashboard", icon: Home, label: "Tableau de bord" },
     { to: "/children", icon: Users, label: "Enfants" },
-    { to: "/donations", icon: Gift, label: "Dons" }
+    { to: "/children/add", icon: Users, label: "Ajouter un enfant" },
+    { to: "/donations", icon: Gift, label: "Dons" },
+    { to: "/messages", icon: MessageSquare, label: "Messages" },
+    { to: "/urgent-needs", icon: AlertTriangle, label: "Besoins urgents" },
+    { to: "/media-management", icon: Camera, label: "Gestion médias" }
   ];
 
   const renderLinks = (links) => {
@@ -68,9 +81,32 @@ const Sidebar = () => {
       </div>
       
       <div className="flex-1 space-y-1">
-        {isAdmin && renderLinks(adminLinks)}
-        {isSponsor && renderLinks(sponsorLinks)}
-        {isAssistant && !isAdmin && renderLinks(assistantLinks)}
+        {isAdmin && (
+          <div className="space-y-1">
+            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Administration
+            </p>
+            {renderLinks(adminLinks)}
+          </div>
+        )}
+        
+        {isSponsor && (
+          <div className="space-y-1">
+            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Espace Parrain
+            </p>
+            {renderLinks(sponsorLinks)}
+          </div>
+        )}
+        
+        {isAssistant && !isAdmin && (
+          <div className="space-y-1">
+            <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Espace Assistant
+            </p>
+            {renderLinks(assistantLinks)}
+          </div>
+        )}
       </div>
 
       <div className="border-t pt-4 mt-4">
