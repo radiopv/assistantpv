@@ -34,8 +34,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(parsedUser);
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
 
-          // Redirect based on role if on login or root page
-          if (location.pathname === '/login' || location.pathname === '/') {
+          // Only redirect if on login page
+          if (location.pathname === '/login') {
             switch (parsedUser.role) {
               case 'admin':
                 navigate('/dashboard');
@@ -52,8 +52,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         } else {
           setUser(null);
-          // Redirect to login if not on a public page
-          const publicPages = ['/', '/login', '/donations/public', '/statistics', '/videos', '/faq', '/stories'];
+          // Redirect to login only if trying to access protected pages
+          const publicPages = ['/', '/login', '/donations/public', '/statistics', '/videos', '/faq', '/stories', '/become-sponsor'];
           if (!publicPages.includes(location.pathname)) {
             navigate('/login');
           }
