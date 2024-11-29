@@ -27,13 +27,26 @@ export const AddChildForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value.trim() }));
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setPhoto(e.target.files[0]);
     }
+  };
+
+  const validateForm = () => {
+    const errors = [];
+    if (!formData.name.trim()) errors.push("Le nom est requis");
+    if (!formData.gender) errors.push("Le genre est requis");
+    if (!["M", "F"].includes(formData.gender.toUpperCase())) {
+      errors.push("Le genre doit être 'M' ou 'F'");
+    }
+    if (!formData.birth_date) errors.push("La date de naissance est requise");
+    if (!formData.city.trim()) errors.push("La ville est requise");
+    
+    return errors;
   };
 
   const decodeError = (error: any): string => {
@@ -51,6 +64,17 @@ export const AddChildForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const validationErrors = validateForm();
+    if (validationErrors.length > 0) {
+      toast({
+        variant: "destructive",
+        title: "Erreur de validation",
+        description: validationErrors.join(", "),
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -74,11 +98,6 @@ export const AddChildForm = () => {
         photoUrl = publicUrl;
       }
 
-      const gender = formData.gender.toUpperCase().trim();
-      if (!gender || !['M', 'F'].includes(gender)) {
-        throw new Error("Le genre doit être 'M' ou 'F'");
-      }
-
       const age = calculateAge(formData.birth_date);
       if (age === null) {
         throw new Error("La date de naissance est invalide");
@@ -88,7 +107,7 @@ export const AddChildForm = () => {
         .from('children')
         .insert({
           name: formData.name.trim(),
-          gender: gender,
+          gender: formData.gender.toUpperCase().trim(),
           birth_date: formData.birth_date,
           age: age,
           city: formData.city.trim(),
