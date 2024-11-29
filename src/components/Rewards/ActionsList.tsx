@@ -5,7 +5,8 @@ import {
   MessageSquare, 
   Camera, 
   Heart, 
-  Users
+  Users,
+  Share2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -28,8 +29,8 @@ export const ActionsList = () => {
 
   const handleShareComplete = () => {
     toast({
-      title: "Action disponible",
-      description: "Cette action vous rapportera 25 points une fois complétée.",
+      title: "Partage réussi",
+      description: "Merci d'avoir partagé ! Vous avez gagné 25 points.",
     });
   };
 
@@ -39,7 +40,7 @@ export const ActionsList = () => {
       description: "Ajoutez une photo et complétez vos informations",
       points: 10,
       icon: <UserCircle className="w-5 h-5" />,
-      link: "/settings"
+      link: "/settings/profile"
     },
     {
       title: "Ajouter un témoignage",
@@ -53,27 +54,27 @@ export const ActionsList = () => {
       description: "Téléchargez une photo de votre filleul",
       points: 15,
       icon: <Camera className="w-5 h-5" />,
-      link: "/children"
+      link: "/sponsor-dashboard/photos"
     },
     {
       title: "Faire un don",
       description: "Soutenez un projet spécial",
       points: 30,
       icon: <Heart className="w-5 h-5" />,
-      link: "/donations"
+      link: "/donations/new"
     },
     {
       title: "Parrainer un autre enfant",
       description: "Étendez votre impact",
       points: 50,
       icon: <Users className="w-5 h-5" />,
-      link: "/available-children"
+      link: "/children/available"
     },
     {
       title: "Partager sur les réseaux",
       description: "Invitez d'autres à rejoindre l'aventure",
       points: 25,
-      icon: <UserCircle className="w-5 h-5" />,
+      icon: <Share2 className="w-5 h-5" />,
       link: "#",
       customButton: <SocialShare onShare={handleShareComplete} />
     }
