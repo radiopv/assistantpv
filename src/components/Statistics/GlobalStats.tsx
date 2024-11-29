@@ -4,8 +4,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Heart, GiftIcon, MapPin } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface Statistics {
+  children_stats: {
+    sponsored_count: number;
+  };
+  sponsor_stats: {
+    active_count: number;
+  };
+  donation_stats: {
+    total_count: number;
+  };
+  location_stats: {
+    city_count: number;
+  };
+}
+
 export const GlobalStats = () => {
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading } = useQuery<Statistics>({
     queryKey: ["global-stats"],
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_current_statistics");
