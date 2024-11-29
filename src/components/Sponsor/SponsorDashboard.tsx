@@ -45,20 +45,31 @@ export const SponsorDashboard = () => {
       const { data, error } = await supabase
         .from("sponsors")
         .select(`
-          *,
+          total_points,
           current_level:sponsor_levels(*),
           achievements:user_achievements(
-            badge:badges(*)
+            id,
+            earned_at,
+            badge:badges(
+              id,
+              name,
+              description,
+              points
+            )
           ),
           sponsorships(
-            child:children(*)
+            id,
+            start_date,
+            child:children(
+              name
+            )
           )
         `)
         .eq("id", user?.id)
         .single();
 
       if (error) throw error;
-      return data;
+      return data as SponsorData;
     },
     enabled: !!user?.id,
   });

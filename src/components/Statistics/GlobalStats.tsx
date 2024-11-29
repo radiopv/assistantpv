@@ -25,7 +25,7 @@ export const GlobalStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_current_statistics");
       if (error) throw error;
-      return data;
+      return data as Statistics;
     },
   });
 
