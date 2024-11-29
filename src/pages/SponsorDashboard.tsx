@@ -16,22 +16,26 @@ const SponsorDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Fetch sponsor's children
+  // Fetch sponsor's children through sponsorships
   const { data: sponsoredChildren, isLoading: isLoadingChildren } = useQuery({
     queryKey: ['sponsored-children', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('children')
-        .select('*')
-        .eq('sponsor_id', user?.id);
+      const { data: sponsorships, error: sponsorshipsError } = await supabase
+        .from('sponsorships')
+        .select(`
+          child:children(*)
+        `)
+        .eq('sponsor_id', user?.id)
+        .eq('status', 'active');
       
-      if (error) throw error;
-      return data || [];
+      if (sponsorshipsError) throw sponsorshipsError;
+      
+      // Extract children from sponsorships
+      return sponsorships?.map(s => s.child) || [];
     },
     enabled: !!user?.id
   });
 
-  // Fetch sponsor's achievements
   const { data: achievements, isLoading: isLoadingAchievements } = useQuery({
     queryKey: ['achievements', user?.id],
     queryFn: async () => {
