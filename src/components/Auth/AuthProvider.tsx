@@ -5,6 +5,8 @@ import { useAuthState } from "@/hooks/useAuthState";
 import { useAuthRedirect } from "@/hooks/useAuthRedirect";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
+type UserRole = "admin" | "assistant" | "sponsor";
+
 interface AuthContextType {
   user: any | null;
   loading: boolean;
@@ -56,8 +58,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (sponsor) {
-        actions.updateState(sponsor);
-        handleRedirect(sponsor.role);
+        const role = sponsor.role as UserRole;
+        if (role === "admin" || role === "assistant" || role === "sponsor") {
+          actions.updateState(sponsor);
+          handleRedirect(role);
+        } else {
+          actions.resetState();
+          redirectToLogin();
+          toast({
+            title: "Erreur d'authentification",
+            description: "Rôle utilisateur invalide",
+            variant: "destructive",
+          });
+        }
       } else {
         actions.resetState();
         redirectToLogin();
@@ -79,8 +92,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .single();
 
         if (!error && sponsor) {
-          actions.updateState(sponsor);
-          handleRedirect(sponsor.role);
+          const role = sponsor.role as UserRole;
+          if (role === "admin" || role === "assistant" || role === "sponsor") {
+            actions.updateState(sponsor);
+            handleRedirect(role);
+          } else {
+            actions.resetState();
+            redirectToLogin();
+            toast({
+              title: "Erreur d'authentification",
+              description: "Rôle utilisateur invalide",
+              variant: "destructive",
+            });
+          }
         } else {
           actions.resetState();
           redirectToLogin();
