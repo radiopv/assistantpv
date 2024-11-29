@@ -1,7 +1,7 @@
-import { Card } from "@/components/ui/card";
 import { Need } from "@/types/needs";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ChildNeedsProps {
