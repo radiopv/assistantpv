@@ -1,27 +1,14 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { AlbumMediaUpload } from "@/components/AlbumMedia/AlbumMediaUpload";
 import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ProfileHeader } from "@/components/Children/ProfileHeader";
+import { ProfileDetails } from "@/components/Children/ProfileDetails";
+import { Card } from "@/components/ui/card";
 
 const ChildProfile = () => {
   const { id } = useParams();
@@ -99,6 +86,15 @@ const ChildProfile = () => {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setChild(prev => ({ ...prev, [id]: value }));
+  };
+
+  const handlePhotoUpdate = (url: string) => {
+    setChild(prev => ({ ...prev, photo_url: url }));
+  };
+
   if (error) {
     return (
       <div className="space-y-6">
@@ -133,114 +129,28 @@ const ChildProfile = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => navigate('/children')}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Retour
-          </Button>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {child.name}
-          </h1>
-        </div>
-        <div className="flex gap-2">
-          <Button 
-            variant={editing ? "outline" : "default"}
-            onClick={() => editing ? handleUpdate() : setEditing(true)}
-          >
-            {editing ? (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                Enregistrer
-              </>
-            ) : (
-              "Modifier"
-            )}
-          </Button>
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash2 className="w-4 h-4 mr-2" />
-                Supprimer
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet enfant ?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Cette action est irréversible. Toutes les informations associées à cet enfant seront définitivement supprimées.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Supprimer
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
+      <ProfileHeader
+        name={child.name}
+        editing={editing}
+        onBack={() => navigate('/children')}
+        onEdit={() => setEditing(true)}
+        onSave={handleUpdate}
+        onDelete={handleDelete}
+      />
 
       <div className="grid gap-6">
-        <Card className="p-6">
-          <div className="grid gap-6">
-            <div className="aspect-video relative rounded-lg overflow-hidden">
-              <img
-                src={child.photo_url || "/placeholder.svg"}
-                alt={child.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Nom</Label>
-                <Input
-                  id="name"
-                  value={child.name}
-                  onChange={(e) => editing && setChild({ ...child, name: e.target.value })}
-                  disabled={!editing}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="age">Âge</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  value={child.age}
-                  onChange={(e) => editing && setChild({ ...child, age: parseInt(e.target.value) })}
-                  disabled={!editing}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="city">Ville</Label>
-                <Input
-                  id="city"
-                  value={child.city}
-                  onChange={(e) => editing && setChild({ ...child, city: e.target.value })}
-                  disabled={!editing}
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="status">Statut</Label>
-                <Input
-                  id="status"
-                  value={child.status}
-                  onChange={(e) => editing && setChild({ ...child, status: e.target.value })}
-                  disabled={!editing}
-                />
-              </div>
-            </div>
-          </div>
-        </Card>
+        <ProfileDetails
+          child={child}
+          editing={editing}
+          onChange={handleChange}
+          onPhotoUpdate={handlePhotoUpdate}
+        />
 
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Photos supplémentaires</h2>
+          <h2 className="text-xl font-semibold mb-4">Photos de l'album parrain</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.
+          </p>
           <div className="space-y-6">
             <AlbumMediaUpload childId={id!} onUploadComplete={loadChild} />
             <AlbumMediaGrid childId={id!} />
