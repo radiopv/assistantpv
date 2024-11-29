@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 
 const STATUS_OPTIONS = [
   { value: "available", label: "Disponible" },
@@ -16,6 +17,19 @@ interface ProfileFormFieldsProps {
   editing: boolean;
   onChange: (field: string, value: string) => void;
 }
+
+const formatAge = (birthDate: string) => {
+  const today = new Date();
+  const birth = parseISO(birthDate);
+  const years = differenceInYears(today, birth);
+  
+  if (years === 0) {
+    const months = differenceInMonths(today, birth);
+    return `${months} mois`;
+  }
+  
+  return `${years} ans`;
+};
 
 export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormFieldsProps) => {
   const { data: cities } = useQuery({
@@ -55,13 +69,22 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
       </div>
 
       <div className="grid gap-2">
+        <Label htmlFor="birth_date">Date de naissance</Label>
+        <Input
+          id="birth_date"
+          type="date"
+          value={child.birth_date}
+          onChange={handleInputChange}
+          disabled={!editing}
+        />
+      </div>
+
+      <div className="grid gap-2">
         <Label htmlFor="age">Âge</Label>
         <Input
           id="age"
-          type="number"
-          value={child.age}
-          onChange={handleInputChange}
-          disabled={!editing}
+          value={formatAge(child.birth_date)}
+          disabled
         />
       </div>
 

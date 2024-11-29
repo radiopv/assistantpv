@@ -1,12 +1,26 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 
 interface ChildrenListProps {
   children: any[];
   isLoading: boolean;
   onViewProfile: (id: string) => void;
 }
+
+const formatAge = (birthDate: string) => {
+  const today = new Date();
+  const birth = parseISO(birthDate);
+  const years = differenceInYears(today, birth);
+  
+  if (years === 0) {
+    const months = differenceInMonths(today, birth);
+    return `${months} mois`;
+  }
+  
+  return `${years} ans`;
+};
 
 export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenListProps) => {
   if (isLoading) {
@@ -39,7 +53,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
           <div className="p-4">
             <h3 className="font-semibold text-lg">{child.name}</h3>
             <div className="mt-2 space-y-1 text-sm text-gray-600">
-              <p>{child.age} ans</p>
+              <p>{formatAge(child.birth_date)}</p>
               <p>{child.city}</p>
               <span
                 className={`inline-block px-2 py-1 rounded-full text-xs ${
