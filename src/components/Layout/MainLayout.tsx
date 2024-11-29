@@ -6,8 +6,13 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 const MainLayout = () => {
   const { user, isAdmin, isAssistant } = useAuth();
 
+  // Redirect to login if not authenticated
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
   // Redirect to frontend if not admin or assistant
-  if (!user || (!isAdmin && !isAssistant)) {
+  if (!isAdmin && !isAssistant) {
     return <Navigate to="/" replace />;
   }
 

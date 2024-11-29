@@ -61,12 +61,6 @@ const App = () => {
 
             {/* Backend routes (admin + assistant) */}
             <Route path="/admin" element={<MainLayout />}>
-              {/* Admin routes */}
-              <Route path="permissions" element={<Permissions />} />
-              <Route path="sponsors-management" element={<SponsorsManagement />} />
-              <Route path="settings" element={<Settings />} />
-
-              {/* Assistant/Admin routes */}
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="children" element={<Children />} />
               <Route path="children/add" element={<AddChild />} />
@@ -74,7 +68,10 @@ const App = () => {
               <Route path="children/:id" element={<ChildProfile />} />
               <Route path="donations" element={<Donations />} />
               <Route path="media-management" element={<MediaManagement />} />
+              <Route path="sponsors-management" element={<SponsorsManagement />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="urgent-needs" element={<UrgentNeeds />} />
+              <Route path="permissions" element={<Permissions />} />
             </Route>
 
             {/* Catch-all route */}
