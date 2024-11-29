@@ -7,6 +7,7 @@ import { TestimonialCarousel } from "@/components/Testimonials/TestimonialCarous
 interface Sponsor {
   name: string;
   photo_url: string | null;
+  email?: string;
 }
 
 interface Child {
@@ -16,7 +17,12 @@ interface Child {
   city: string | null;
   gender: 'male' | 'female';
   photo_url: string | null;
-  sponsors: Sponsor | null;
+  needs?: {
+    category: string;
+    is_urgent: boolean;
+  }[];
+  sponsor_name: string | null;
+  sponsor_photo_url: string | null;
 }
 
 const PublicSponsoredChildren = () => {
@@ -26,17 +32,26 @@ const PublicSponsoredChildren = () => {
       const { data, error } = await supabase
         .from('children')
         .select(`
-          *,
-          sponsors (
-            name,
-            photo_url
-          )
+          id,
+          name,
+          age,
+          city,
+          gender,
+          photo_url,
+          needs,
+          sponsor_name,
+          sponsor_photo_url
         `)
         .eq('is_sponsored', true)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Child[];
+      
+      return data?.map(child => ({
+        ...child,
+        gender: child.gender.toLowerCase() as 'male' | 'female',
+        needs: Array.isArray(child.needs) ? child.needs : []
+      })) as Child[];
     }
   });
 
@@ -75,17 +90,17 @@ const PublicSponsoredChildren = () => {
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4">
                   <div className="flex items-center gap-3">
-                    {child.sponsors?.photo_url && (
+                    {child.sponsor_photo_url && (
                       <img
-                        src={child.sponsors.photo_url}
-                        alt={child.sponsors.name}
+                        src={child.sponsor_photo_url}
+                        alt={child.sponsor_name || 'Parrain'}
                         className="w-10 h-10 rounded-full border-2 border-white"
                       />
                     )}
                     <div className="text-white">
                       <p className="font-medium">{child.name}</p>
                       <p className="text-sm opacity-90">
-                        Parrainé{child.gender === 'female' ? 'e' : ''} par {child.sponsors?.name || 'Un parrain anonyme'}
+                        Parrainé{child.gender === 'female' ? 'e' : ''} par {child.sponsor_name || 'Un parrain anonyme'}
                       </p>
                     </div>
                   </div>
