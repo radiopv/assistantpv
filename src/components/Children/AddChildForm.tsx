@@ -74,8 +74,8 @@ export const AddChildForm = () => {
         photoUrl = publicUrl;
       }
 
-      // Validation explicite du genre
-      if (!formData.gender || !['M', 'F'].includes(formData.gender.toUpperCase())) {
+      const gender = formData.gender.toUpperCase();
+      if (!gender || !['M', 'F'].includes(gender)) {
         throw new Error("Le genre doit être 'M' ou 'F'");
       }
 
@@ -88,13 +88,14 @@ export const AddChildForm = () => {
         .from('children')
         .insert({
           name: formData.name,
-          gender: formData.gender.toUpperCase(),
+          gender: gender,
           birth_date: formData.birth_date,
           age: age,
           city: formData.city,
           status: "available",
           photo_url: photoUrl,
           is_sponsored: false,
+          needs: []
         });
 
       if (error) throw error;
