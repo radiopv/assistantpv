@@ -1,6 +1,7 @@
 import { Json } from "@/integrations/supabase/types";
 
 export interface Need {
+  [key: string]: any; // Add index signature to make it compatible with Json type
   categories: string[];
   description: string;
   is_urgent: boolean;
