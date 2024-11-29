@@ -31,7 +31,7 @@ export const BasicInfoFields = ({ formData, handleChange, setFormData }: BasicIn
         <Label htmlFor="gender">Genre</Label>
         <Select
           value={formData.gender}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
+          onValueChange={(value) => setFormData({ ...formData, gender: value })}
           required
         >
           <SelectTrigger>

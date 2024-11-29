@@ -94,7 +94,7 @@ export const AddChildForm = () => {
         .from('children')
         .insert({
           name: formData.name.trim(),
-          gender: formData.gender.toUpperCase(),
+          gender: formData.gender,
           birth_date: formData.birth_date,
           age: age,
           city: formData.city.trim(),
