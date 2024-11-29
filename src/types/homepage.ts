@@ -15,9 +15,9 @@ export interface HomepageConfig {
 export interface HomeImage {
   id: string;
   url: string;
-  position: "hero" | "secondary" | "featured";
-  layout_position: "left" | "right" | "mobile";
-  is_mobile: boolean;
-  created_at?: string;
-  updated_at?: string;
+  position: string;
+  layout_position: "left" | "right" | "mobile" | null;
+  is_mobile: boolean | null;
+  created_at?: string | null;
+  updated_at?: string | null;
 }

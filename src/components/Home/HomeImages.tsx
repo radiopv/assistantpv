@@ -19,16 +19,16 @@ export const HomeImages = () => {
     }
   });
 
-  if (isLoading) return null;
+  if (isLoading || !images) return null;
 
-  const getImagesByPosition = (position: HomeImage['position']) => 
-    images?.filter(img => img.position === position) || [];
+  const getImagesByPosition = (position: string) => 
+    images.filter(img => img.position === position) || [];
 
   const getLayoutImages = () => {
     if (isMobile) {
-      return images?.filter(img => img.layout_position === 'mobile') || [];
+      return images.filter(img => img.layout_position === 'mobile') || [];
     }
-    return images?.filter(img => img.layout_position === 'left' || img.layout_position === 'right')
+    return images.filter(img => img.layout_position === 'left' || img.layout_position === 'right')
       .sort((a, b) => a.layout_position === 'left' ? -1 : 1) || [];
   };
 
