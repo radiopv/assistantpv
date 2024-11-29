@@ -40,7 +40,6 @@ const Sidebar = () => {
   const adminLinks = [
     { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "view_dashboard" },
     { to: "/children", icon: Users, label: "Enfants", permission: "manage_children" },
-    { to: "/children/add", icon: Users, label: "Ajouter un enfant", permission: "manage_children" },
     { to: "/donations", icon: Gift, label: "Dons", permission: "manage_donations" },
     { to: "/statistics", icon: BarChart, label: "Statistiques", permission: "view_analytics" },
     { to: "/media-management", icon: Camera, label: "Gestion médias", permission: "manage_media" },
@@ -67,7 +66,6 @@ const Sidebar = () => {
   const assistantLinks = [
     { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "view_dashboard" },
     { to: "/children", icon: Users, label: "Enfants", permission: "manage_children" },
-    { to: "/children/add", icon: Users, label: "Ajouter un enfant", permission: "manage_children" },
     { to: "/donations", icon: Gift, label: "Dons", permission: "manage_donations" },
     { to: "/messages", icon: MessageSquare, label: "Messages", permission: "view_messages" },
     { to: "/urgent-needs", icon: AlertTriangle, label: "Besoins urgents", permission: "view_urgent_needs" },
