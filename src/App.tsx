@@ -30,10 +30,11 @@ const queryClient = new QueryClient({
   },
 });
 
-const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: { 
+const ProtectedRoute = ({ children, requiredPermission, requireAdmin, requireAssistant }: { 
   children: React.ReactNode, 
   requiredPermission?: string,
-  requireAdmin?: boolean 
+  requireAdmin?: boolean,
+  requireAssistant?: boolean
 }) => {
   const { session, loading, isAssistant, user } = useAuth();
   
@@ -48,6 +49,10 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   }
 
   if (requireAdmin && user?.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
+  if (requireAssistant && !['admin', 'assistant'].includes(user?.role || '')) {
     return <Navigate to="/" replace />;
   }
 
@@ -79,7 +84,7 @@ const App = () => (
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-              <Route path="/dashboard" element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute requireAssistant><Dashboard /></ProtectedRoute>} />
               <Route path="/children/needs" element={<ProtectedRoute requiredPermission="children"><ChildrenNeeds /></ProtectedRoute>} />
               <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
               <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />

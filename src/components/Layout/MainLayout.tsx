@@ -9,6 +9,11 @@ const MainLayout = () => {
     return null;
   }
 
+  const isAssistantOrAdmin = ['admin', 'assistant'].includes(user.role);
+  if (!isAssistantOrAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <div className="w-64 fixed h-full">
