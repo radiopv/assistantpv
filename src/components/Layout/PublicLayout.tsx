@@ -74,7 +74,7 @@ const PublicLayout = () => {
                   ) : null
                 ) : (
                   <Link to="/login">
-                    <Button className="w-full">Connexion</Button>
+                    <Button className="w-full">Administration</Button>
                   </Link>
                 )}
               </div>
@@ -116,7 +116,7 @@ const PublicLayout = () => {
                 ) : null
               ) : (
                 <Link to="/login">
-                  <Button>Connexion</Button>
+                  <Button>Administration</Button>
                 </Link>
               )}
             </div>

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { Label } from "@/components/ui/label";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -33,29 +34,22 @@ const Login = () => {
         throw new Error("Email ou mot de passe incorrect");
       }
 
+      if (!['admin', 'assistant'].includes(sponsor.role)) {
+        throw new Error("Accès non autorisé");
+      }
+
       localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue dans votre espace",
+        description: "Bienvenue dans l'espace administration",
       });
       
-      // Redirection basée sur le rôle
-      if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
-        navigate("/dashboard", { replace: true });
-      } else {
-        navigate("/", { replace: true });
-      }
-
+      navigate("/dashboard");
     } catch (error: any) {
-      let message = "Une erreur est survenue";
-      if (error.message === "Email ou mot de passe incorrect") {
-        message = "Email ou mot de passe incorrect";
-      }
-      
       toast({
         title: "Erreur de connexion",
-        description: message,
+        description: error.message || "Une erreur est survenue",
         variant: "destructive",
       });
     } finally {
@@ -64,18 +58,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md p-6 space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-primary">Passion Varadero</h1>
-          <p className="text-gray-600 mt-2">Connexion</p>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md p-8 space-y-6 bg-white">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Administration</h1>
+          <p className="text-gray-600">Connectez-vous pour accéder à l'espace administration</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">
-              Email
-            </label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
@@ -83,13 +75,12 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="votre@email.com"
+              className="w-full"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">
-              Mot de passe
-            </label>
+            <Label htmlFor="password">Mot de passe</Label>
             <Input
               id="password"
               type="password"
@@ -97,6 +88,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
+              className="w-full"
             />
           </div>
 
@@ -105,9 +97,13 @@ const Login = () => {
             className="w-full"
             disabled={loading}
           >
-            {loading ? "Connexion..." : "Se connecter"}
+            {loading ? "Connexion en cours..." : "Se connecter"}
           </Button>
         </form>
+
+        <p className="text-center text-sm text-gray-600">
+          Cette section est réservée aux administrateurs et assistants
+        </p>
       </Card>
     </div>
   );
