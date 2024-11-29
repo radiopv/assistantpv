@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/components/Auth/AuthProvider";
 import {
   Accordion,
   AccordionContent,
@@ -42,10 +43,13 @@ export const RolePermissions = () => {
   const [rolePermissions, setRolePermissions] = useState<RolePermission[]>([]);
   const [selectedRole, setSelectedRole] = useState('sponsor');
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchPermissions();
-  }, []);
+    if (user) {
+      fetchPermissions();
+    }
+  }, [user]);
 
   const fetchPermissions = async () => {
     try {
@@ -69,17 +73,29 @@ export const RolePermissions = () => {
 
   const updateRolePermission = async (permissionId: string, checked: boolean) => {
     try {
+      if (!user) {
+        toast.error("Vous devez être connecté pour effectuer cette action");
+        return;
+      }
+
       if (checked) {
         const { error } = await supabase
           .from('role_permissions')
-          .insert({ role: selectedRole, permission_id: permissionId });
+          .insert({ 
+            role: selectedRole, 
+            permission_id: permissionId,
+          })
+          .select();
         
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('role_permissions')
           .delete()
-          .match({ role: selectedRole, permission_id: permissionId });
+          .match({ 
+            role: selectedRole, 
+            permission_id: permissionId 
+          });
         
         if (error) throw error;
       }
