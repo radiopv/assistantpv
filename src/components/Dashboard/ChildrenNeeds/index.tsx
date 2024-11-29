@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Need } from "@/types/needs";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown, AlertTriangle } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
@@ -16,7 +17,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
   onNeedsUpdate: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedChildren, setSelectedChildren] = useState<any[]>([]);
+  const [selectedChild, setSelectedChild] = useState<any | null>(null);
   const [newNeed, setNewNeed] = useState<Need>({ 
     categories: [], 
     description: "", 
@@ -24,79 +25,45 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
   });
 
   const handleAddNeed = async () => {
-    if (selectedChildren.length === 0) {
-      toast.error("Veuillez sélectionner au moins un enfant");
-      return;
-    }
+    if (!selectedChild) return;
 
-    if (!newNeed.categories?.length || !newNeed.description) {
-      toast.error("Veuillez remplir tous les champs obligatoires");
-      return;
-    }
+    const updatedNeeds = [...(selectedChild.needs || []), newNeed];
+    const { error } = await supabase
+      .from('children')
+      .update({ needs: convertNeedsToJson(updatedNeeds) })
+      .eq('id', selectedChild.id);
 
-    try {
-      // Mettre à jour chaque enfant sélectionné
-      for (const child of selectedChildren) {
-        const currentNeeds = Array.isArray(child.needs) ? child.needs : [];
-        const updatedNeeds = [
-          ...currentNeeds,
-          {
-            categories: newNeed.categories,
-            description: newNeed.description,
-            is_urgent: newNeed.is_urgent
-          }
-        ];
-
-        const { error } = await supabase
-          .from('children')
-          .update({ needs: convertNeedsToJson(updatedNeeds) })
-          .eq('id', child.id);
-
-        if (error) throw error;
-
-        // Notify sponsor if child is sponsored
-        if (child.sponsorships?.[0]?.sponsor) {
-          const sponsor = child.sponsorships[0].sponsor;
-          await sendNotification(sponsor.id, {
-            title: "Nouveau besoin",
-            content: `Un nouveau besoin a été ajouté pour ${child.name}: ${newNeed.categories.join(', ')}${newNeed.is_urgent ? ' (URGENT)' : ''}`,
-            type: "need"
-          });
-        }
-      }
-
-      toast.success(`Besoin ajouté avec succès pour ${selectedChildren.length} enfant(s)`);
-      setNewNeed({ categories: [], description: "", is_urgent: false });
-      setSelectedChildren([]);
-      setIsOpen(false);
-      onNeedsUpdate();
-    } catch (error) {
-      console.error("Erreur:", error);
+    if (error) {
       toast.error("Erreur lors de l'ajout du besoin");
+      return;
     }
+
+    toast.success("Besoin ajouté avec succès");
+    setNewNeed({ categories: [], description: "", is_urgent: false });
+    setSelectedChild(null);
+    setIsOpen(false);
+    onNeedsUpdate();
   };
 
   const handleDeleteNeed = async (childId: string, needIndex: number) => {
-    try {
-      const child = children.find(c => c.id === childId);
-      if (!child) return;
+    const child = children.find(c => c.id === childId);
+    if (!child) return;
 
-      const currentNeeds = Array.isArray(child.needs) ? child.needs : [];
-      const updatedNeeds = currentNeeds.filter((_, index) => index !== needIndex);
-      
-      const { error } = await supabase
-        .from('children')
-        .update({ needs: convertNeedsToJson(updatedNeeds) })
-        .eq('id', childId);
+    const updatedNeeds = [...(child.needs || [])];
+    updatedNeeds.splice(needIndex, 1);
 
-      if (error) throw error;
+    const { error } = await supabase
+      .from('children')
+      .update({ needs: convertNeedsToJson(updatedNeeds) })
+      .eq('id', childId);
 
-      toast.success("Besoin supprimé avec succès");
-      onNeedsUpdate();
-    } catch (error) {
-      console.error("Erreur:", error);
+    if (error) {
       toast.error("Erreur lors de la suppression du besoin");
+      return;
     }
+
+    toast.success("Besoin supprimé avec succès");
+    onNeedsUpdate();
   };
 
   if (isLoading) {
@@ -130,52 +97,47 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-4">
-            <AddNeedForm
-              children={children}
-              selectedChildren={selectedChildren}
-              newNeed={newNeed}
-              setSelectedChildren={setSelectedChildren}
-              setNewNeed={setNewNeed}
-              onSubmit={handleAddNeed}
-            />
+            <Select
+              value={selectedChild?.id || ""}
+              onValueChange={(value) => {
+                const child = children?.find(c => c.id === value);
+                setSelectedChild(child || null);
+              }}
+            >
+              <SelectTrigger className="bg-white mb-4">
+                <SelectValue placeholder="Sélectionner un enfant" />
+              </SelectTrigger>
+              <SelectContent>
+                {sortedChildren?.map((child) => (
+                  <SelectItem key={child.id} value={child.id}>
+                    {child.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {selectedChild && (
+              <AddNeedForm
+                selectedChild={selectedChild}
+                newNeed={newNeed}
+                setNewNeed={setNewNeed}
+                onSubmit={handleAddNeed}
+              />
+            )}
           </CollapsibleContent>
         </Collapsible>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {sortedChildren.length > 0 ? (
-          sortedChildren.map((child) => (
-            <ChildNeeds 
-              key={child.id} 
-              child={child} 
-              needs={child.needs || []} 
-              onDeleteNeed={(needIndex) => handleDeleteNeed(child.id, needIndex)}
-            />
-          ))
-        ) : (
-          <div className="col-span-2 text-center py-12 bg-gray-50 rounded-lg">
-            <AlertTriangle className="mx-auto h-12 w-12 text-gray-400" />
-            <p className="mt-2 text-gray-500">Aucun enfant trouvé</p>
-          </div>
-        )}
+        {sortedChildren?.map((child) => (
+          <ChildNeeds 
+            key={child.id} 
+            child={child} 
+            needs={child.needs || []}
+            onDeleteNeed={(index) => handleDeleteNeed(child.id, index)}
+          />
+        ))}
       </div>
     </div>
   );
-};
-
-const sendNotification = async (sponsorId: string, notification: { title: string; content: string; type: string }) => {
-  try {
-    const { error } = await supabase
-      .from('notifications')
-      .insert({
-        recipient_id: sponsorId,
-        title: notification.title,
-        content: notification.content,
-        type: notification.type
-      });
-
-    if (error) throw error;
-  } catch (error) {
-    console.error("Erreur lors de l'envoi de la notification:", error);
-  }
 };
