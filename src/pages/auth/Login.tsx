@@ -29,6 +29,7 @@ const Login = () => {
         throw new Error("Email ou mot de passe incorrect");
       }
 
+      // Mise à jour pour utiliser les nouveaux rôles
       if (!['assistant', 'admin'].includes(sponsor.role)) {
         throw new Error("Accès non autorisé");
       }
@@ -44,7 +45,6 @@ const Login = () => {
         description: "Bienvenue dans votre espace assistant",
       });
       
-      // Redirection immédiate après la connexion réussie
       navigate("/", { replace: true });
 
     } catch (error: any) {

@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
+          // Mise à jour pour utiliser les nouveaux rôles
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
         } else {
           setUser(null);

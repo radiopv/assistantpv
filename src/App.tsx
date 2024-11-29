@@ -47,6 +47,7 @@ const ProtectedRoute = ({
     return <Navigate to="/login" replace />;
   }
 
+  // Mise à jour pour utiliser le nouveau système de rôles
   if (requireAdmin && user?.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
