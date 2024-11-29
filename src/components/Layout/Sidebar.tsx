@@ -10,11 +10,7 @@ import {
   Award,
   MessageSquare,
   BarChart,
-  FileText,
   Heart,
-  Video,
-  HelpCircle,
-  BookOpen,
   Camera,
   Database,
   UserCog,
@@ -82,7 +78,7 @@ const Sidebar = () => {
         <h1 className="text-2xl font-bold">Passion Varadero</h1>
       </div>
       
-      <div className="flex-1 space-y-1">
+      <div className="flex-1 space-y-6">
         {isAdmin && (
           <div className="space-y-1">
             <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -92,7 +88,8 @@ const Sidebar = () => {
           </div>
         )}
         
-        {isSponsor && (
+        {/* Show sponsor section for both sponsors and admins */}
+        {(isSponsor || isAdmin) && (
           <div className="space-y-1">
             <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Espace Parrain
