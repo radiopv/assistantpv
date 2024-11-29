@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
 import Home from "./pages/Home";
@@ -57,10 +57,10 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   return <>{children}</>;
 };
 
-const PublicLayout = ({ children }: { children: React.ReactNode }) => {
+const PublicLayout = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      {children}
+      <Outlet />
     </div>
   );
 };
