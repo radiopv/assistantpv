@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
-import { Progress } from "@/components/ui/progress";
 import { UserEngagementStats as UserEngagementStatsType } from "@/types/dashboard";
 
 export const UserEngagementStats = () => {
@@ -22,32 +21,26 @@ export const UserEngagementStats = () => {
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Engagement des Utilisateurs</h3>
-      <div className="space-y-6">
-        <div>
-          <div className="flex justify-between mb-2">
-            <span>Taux d'activité des parrains</span>
-            <span className="font-bold">{stats?.activity_rate}%</span>
-          </div>
-          <Progress value={stats?.activity_rate} className="h-2" />
+      <div className="space-y-4">
+        <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
+          <span>Taux d'activité</span>
+          <span className="font-bold">{stats?.activity_rate}%</span>
         </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 bg-primary/5 rounded">
-            <div className="text-sm text-gray-500">Parrains actifs</div>
-            <div className="text-2xl font-bold">{stats?.active_sponsors}</div>
-          </div>
-          <div className="p-4 bg-primary/5 rounded">
-            <div className="text-sm text-gray-500">Parrains inactifs</div>
-            <div className="text-2xl font-bold">{stats?.inactive_sponsors}</div>
-          </div>
-          <div className="p-4 bg-primary/5 rounded">
-            <div className="text-sm text-gray-500">Assistants</div>
-            <div className="text-2xl font-bold">{stats?.total_assistants}</div>
-          </div>
-          <div className="p-4 bg-primary/5 rounded">
-            <div className="text-sm text-gray-500">Villes couvertes</div>
-            <div className="text-2xl font-bold">{stats?.cities_coverage}</div>
-          </div>
+        <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
+          <span>Parrains actifs</span>
+          <span className="font-bold">{stats?.active_sponsors}</span>
+        </div>
+        <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
+          <span>Parrains inactifs</span>
+          <span className="font-bold">{stats?.inactive_sponsors}</span>
+        </div>
+        <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
+          <span>Assistants</span>
+          <span className="font-bold">{stats?.total_assistants}</span>
+        </div>
+        <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
+          <span>Couverture des villes</span>
+          <span className="font-bold">{stats?.cities_coverage}</span>
         </div>
       </div>
     </Card>
