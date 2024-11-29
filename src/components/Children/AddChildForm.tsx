@@ -75,7 +75,7 @@ export const AddChildForm = () => {
       }
 
       // Validation explicite du genre
-      if (!['M', 'F'].includes(formData.gender)) {
+      if (!formData.gender || !['M', 'F'].includes(formData.gender)) {
         throw new Error("Le genre doit être 'M' ou 'F'");
       }
 
