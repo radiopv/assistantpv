@@ -8,11 +8,19 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface PhotoUploadProps {
   donationId?: string;
+  sponsorId?: string;
+  bucketName?: string;
   onUploadComplete?: () => void;
   onPhotosChange?: (files: FileList | null) => void;
 }
 
-export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: PhotoUploadProps) => {
+export const PhotoUpload = ({ 
+  donationId, 
+  sponsorId,
+  bucketName = 'donation-photos',
+  onUploadComplete, 
+  onPhotosChange 
+}: PhotoUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
@@ -31,26 +39,35 @@ export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: Ph
 
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
-      const filePath = `${donationId}/${Math.random()}.${fileExt}`;
+      const filePath = `${sponsorId || donationId}/${Math.random()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('donation-photos')
+        .from(bucketName)
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('donation-photos')
+        .from(bucketName)
         .getPublicUrl(filePath);
 
-      const { error: dbError } = await supabase
-        .from('donation_photos')
-        .insert({
-          donation_id: donationId,
-          url: publicUrl,
-        });
+      if (sponsorId) {
+        const { error: updateError } = await supabase
+          .from('sponsors')
+          .update({ photo_url: publicUrl })
+          .eq('id', sponsorId);
 
-      if (dbError) throw dbError;
+        if (updateError) throw updateError;
+      } else if (donationId) {
+        const { error: dbError } = await supabase
+          .from('donation_photos')
+          .insert({
+            donation_id: donationId,
+            url: publicUrl,
+          });
+
+        if (dbError) throw dbError;
+      }
 
       toast({
         title: "Photo ajoutée",
@@ -64,6 +81,7 @@ export const PhotoUpload = ({ donationId, onUploadComplete, onPhotosChange }: Ph
         title: "Erreur",
         description: "Une erreur est survenue lors de l'upload.",
       });
+      console.error("Upload error:", error);
     } finally {
       setUploading(false);
     }

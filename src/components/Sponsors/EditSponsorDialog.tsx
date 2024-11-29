@@ -67,7 +67,6 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
     const fileName = `${Math.random()}.${fileExt}`;
 
     try {
-      // Si une photo existe déjà, on la supprime
       if (formData.photo_url) {
         const oldPhotoPath = formData.photo_url.split('/').pop();
         if (oldPhotoPath) {
@@ -77,23 +76,27 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
         }
       }
 
-      // Upload de la nouvelle photo
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('sponsor-photos')
         .upload(`${sponsor.id}/${fileName}`, file);
 
       if (uploadError) throw uploadError;
 
-      // Récupération de l'URL publique
       const { data: { publicUrl } } = supabase.storage
         .from('sponsor-photos')
         .getPublicUrl(`${sponsor.id}/${fileName}`);
 
-      // Mise à jour du formData avec la nouvelle URL
       setFormData(prev => ({
         ...prev,
         photo_url: publicUrl
       }));
+
+      const { error: updateError } = await supabase
+        .from('sponsors')
+        .update({ photo_url: publicUrl })
+        .eq('id', sponsor.id);
+
+      if (updateError) throw updateError;
 
       toast({
         title: "Photo mise à jour",
