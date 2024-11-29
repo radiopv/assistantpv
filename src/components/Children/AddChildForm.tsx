@@ -27,15 +27,7 @@ export const AddChildForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'gender') {
-      // Convert gender to uppercase and ensure it's either 'M' or 'F'
-      const normalizedGender = value.toUpperCase().trim();
-      if (normalizedGender === 'M' || normalizedGender === 'F' || value === '') {
-        setFormData(prev => ({ ...prev, [name]: normalizedGender }));
-      }
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value.trim() }));
-    }
+    setFormData(prev => ({ ...prev, [name]: value.trim() }));
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,19 +47,6 @@ export const AddChildForm = () => {
     if (!formData.city.trim()) errors.push("La ville est requise");
     
     return errors;
-  };
-
-  const decodeError = (error: any): string => {
-    if (error.message.includes("children_gender_check")) {
-      return "Le genre doit être 'M' ou 'F'";
-    }
-    if (error.message.includes("violates foreign key constraint")) {
-      return "Erreur de référence : une des valeurs n'existe pas dans la base de données";
-    }
-    if (error.message.includes("violates not-null constraint")) {
-      return "Tous les champs obligatoires doivent être remplis";
-    }
-    return error.message || "Une erreur inconnue est survenue";
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,7 +94,7 @@ export const AddChildForm = () => {
         .from('children')
         .insert({
           name: formData.name.trim(),
-          gender: formData.gender,
+          gender: formData.gender.toUpperCase(),
           birth_date: formData.birth_date,
           age: age,
           city: formData.city.trim(),
@@ -138,7 +117,7 @@ export const AddChildForm = () => {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: decodeError(error),
+        description: error.message || "Une erreur est survenue lors de l'ajout de l'enfant",
       });
     } finally {
       setLoading(false);
