@@ -83,6 +83,7 @@ export const AdminPermissions = () => {
       const { data, error } = await supabase
         .from('sponsors')
         .select('*')
+        .in('role', ['admin', 'assistant'])
         .order('role');
       
       if (error) throw error;
@@ -153,7 +154,7 @@ export const AdminPermissions = () => {
                   <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
                     {user.role}
                   </Badge>
-                  <Badge variant={user.is_active ? 'success' : 'destructive'}>
+                  <Badge variant={user.is_active ? 'default' : 'destructive'}>
                     {user.is_active ? 'Actif' : 'Inactif'}
                   </Badge>
                 </div>
