@@ -64,9 +64,11 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
     
     const file = e.target.files[0];
     const fileExt = file.name.split('.').pop();
-    const filePath = `${sponsor.id}/${Math.random()}.${fileExt}`;
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `${sponsor.id}/${fileName}`;
 
     try {
+      // Si une photo existe déjà, on la supprime
       if (formData.photo_url) {
         const oldPath = formData.photo_url.split('/').pop();
         if (oldPath) {
@@ -90,9 +92,18 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
         ...prev,
         photo_url: publicUrl
       }));
+
+      toast({
+        title: "Photo mise à jour",
+        description: "La photo a été mise à jour avec succès",
+      });
     } catch (error) {
       console.error('Error updating photo:', error);
-      setError("Impossible de mettre à jour la photo");
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de mettre à jour la photo",
+      });
     }
   };
 
