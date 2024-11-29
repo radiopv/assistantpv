@@ -7,6 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { AddNeedForm } from "./AddNeedForm";
 import { ChildNeedsList } from "./ChildNeedsList";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 
 interface ChildrenNeedsProps {
   children: any[];
@@ -22,6 +23,45 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: ChildrenNe
     description: "", 
     is_urgent: false 
   });
+
+  const handleAddNeed = async () => {
+    if (!selectedChild || !newNeed.categories.length || !newNeed.description) return;
+
+    const updatedNeeds = [...(selectedChild.needs || []), newNeed];
+    
+    const { error } = await supabase
+      .from('children')
+      .update({ needs: updatedNeeds })
+      .eq('id', selectedChild.id);
+
+    if (error) {
+      console.error('Error updating needs:', error);
+      return;
+    }
+
+    setNewNeed({ categories: [], description: "", is_urgent: false });
+    setIsOpen(false);
+    onNeedsUpdate();
+  };
+
+  const handleDeleteNeed = async (childId: string, needIndex: number) => {
+    const child = children.find(c => c.id === childId);
+    if (!child) return;
+
+    const updatedNeeds = child.needs.filter((_: any, i: number) => i !== needIndex);
+    
+    const { error } = await supabase
+      .from('children')
+      .update({ needs: updatedNeeds })
+      .eq('id', childId);
+
+    if (error) {
+      console.error('Error deleting need:', error);
+      return;
+    }
+
+    onNeedsUpdate();
+  };
 
   if (isLoading) {
     return (
