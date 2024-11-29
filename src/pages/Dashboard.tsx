@@ -85,7 +85,6 @@ const Dashboard = () => {
       <DashboardHeader stats={stats} />
       <DetailedStats />
       
-      {/* Nouvelles statistiques avancées */}
       <div className="space-y-8">
         {isAdmin && (
           <>
