@@ -11,7 +11,7 @@ export const UserEngagementStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');
       if (error) throw error;
-      return data;
+      return data as UserEngagementStatsType;
     }
   });
 
