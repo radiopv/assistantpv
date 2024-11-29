@@ -5,10 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const STATUS_OPTIONS = [
-  { value: "Disponible", label: "Disponible" },
-  { value: "Parrainé", label: "Parrainé" },
-  { value: "En attente", label: "En attente" },
-  { value: "Besoins urgents", label: "Besoins urgents" }
+  { value: "available", label: "Disponible" },
+  { value: "sponsored", label: "Parrainé" },
+  { value: "pending", label: "En attente" },
+  { value: "urgent", label: "Besoins urgents" }
 ];
 
 interface ProfileFormFieldsProps {
@@ -96,11 +96,14 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
         <Label htmlFor="status">Statut</Label>
         {editing ? (
           <Select
+            defaultValue={child.status}
             value={child.status}
             onValueChange={(value) => handleSelectChange("status", value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un statut" />
+              <SelectValue placeholder="Sélectionner un statut">
+                {STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {STATUS_OPTIONS.map((status) => (
@@ -113,7 +116,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
         ) : (
           <Input
             id="status"
-            value={child.status}
+            value={STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
             disabled
           />
         )}
