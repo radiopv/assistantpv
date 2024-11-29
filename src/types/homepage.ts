@@ -16,7 +16,7 @@ export interface HomeImage {
   id: string;
   url: string;
   position: string;
-  layout_position: "left" | "right" | "mobile" | null;
+  layout_position: string | null;
   is_mobile: boolean | null;
   created_at?: string | null;
   updated_at?: string | null;
