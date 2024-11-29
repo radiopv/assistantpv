@@ -31,7 +31,6 @@ const ChildrenNeedsPage = () => {
             )
           )
         `)
-        .eq('status', 'sponsored')
         .order('name');
       
       if (error) throw error;

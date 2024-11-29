@@ -18,7 +18,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChildren, setSelectedChildren] = useState<any[]>([]);
   const [newNeed, setNewNeed] = useState<Need>({ 
-    category: "", 
+    categories: [], 
     description: "", 
     is_urgent: false 
   });
@@ -29,7 +29,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
       return;
     }
 
-    if (!newNeed.category || !newNeed.description) {
+    if (!newNeed.categories?.length || !newNeed.description) {
       toast.error("Veuillez remplir tous les champs obligatoires");
       return;
     }
@@ -41,7 +41,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
         const updatedNeeds = [
           ...currentNeeds,
           {
-            category: newNeed.category,
+            categories: newNeed.categories,
             description: newNeed.description,
             is_urgent: newNeed.is_urgent
           }
@@ -59,14 +59,14 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
           const sponsor = child.sponsorships[0].sponsor;
           await sendNotification(sponsor.id, {
             title: "Nouveau besoin",
-            content: `Un nouveau besoin a été ajouté pour ${child.name}: ${newNeed.category}${newNeed.is_urgent ? ' (URGENT)' : ''}`,
+            content: `Un nouveau besoin a été ajouté pour ${child.name}: ${newNeed.categories.join(', ')}${newNeed.is_urgent ? ' (URGENT)' : ''}`,
             type: "need"
           });
         }
       }
 
       toast.success(`Besoin ajouté avec succès pour ${selectedChildren.length} enfant(s)`);
-      setNewNeed({ category: "", description: "", is_urgent: false });
+      setNewNeed({ categories: [], description: "", is_urgent: false });
       setSelectedChildren([]);
       setIsOpen(false);
       onNeedsUpdate();
