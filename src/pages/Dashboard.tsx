@@ -12,7 +12,7 @@ import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantSt
 import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { DashboardStats, DashboardResponse } from "@/types/dashboard";
+import { DashboardStats } from "@/types/dashboard";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();
@@ -24,7 +24,7 @@ const Dashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data as DashboardStats;
+      return data as unknown as DashboardStats;
     },
     meta: {
       errorMessage: "Erreur lors du chargement des statistiques",

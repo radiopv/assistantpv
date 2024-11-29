@@ -19,7 +19,7 @@ export const SponsorshipStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
       if (error) throw error;
-      return data as SponsorshipConversionStats;
+      return data as unknown as SponsorshipConversionStats;
     }
   });
 
@@ -28,7 +28,7 @@ export const SponsorshipStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_top_sponsorship_cities');
       if (error) throw error;
-      return data as TopCityStats[];
+      return data as unknown as TopCityStats[];
     }
   });
 
