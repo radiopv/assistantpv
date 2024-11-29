@@ -12,7 +12,10 @@ import {
   LogOut,
   Image,
   Award,
-  Heart
+  Heart,
+  ListChecks,
+  Baby,
+  UserPlus
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -24,7 +27,7 @@ const Sidebar = () => {
 
   const mainLinks = [
     {
-      href: "/",
+      href: "/dashboard",
       label: "Tableau de bord",
       icon: LayoutDashboard,
       show: user?.permissions?.dashboard || isAdmin,
@@ -32,8 +35,20 @@ const Sidebar = () => {
     {
       href: "/children",
       label: "Enfants",
-      icon: Users,
+      icon: Baby,
       show: user?.permissions?.children || isAdmin,
+    },
+    {
+      href: "/children/needs",
+      label: "Besoins",
+      icon: ListChecks,
+      show: user?.permissions?.children || isAdmin,
+    },
+    {
+      href: "/children/add",
+      label: "Ajouter un enfant",
+      icon: UserPlus,
+      show: user?.permissions?.edit_children || isAdmin,
     },
     {
       href: "/sponsorships",
