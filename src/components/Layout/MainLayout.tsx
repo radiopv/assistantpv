@@ -5,23 +5,13 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface MainLayoutProps {
   children?: ReactNode;
-  requireAdmin?: boolean;
-  requireAssistant?: boolean;
 }
 
-const MainLayout = ({ children, requireAdmin, requireAssistant }: MainLayoutProps) => {
+const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, isAdmin, isAssistant } = useAuth();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Vérification des permissions
-  if (requireAdmin && !isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (requireAssistant && !isAssistant && !isAdmin) {
+  // Redirect to frontend if not admin or assistant
+  if (!user || (!isAdmin && !isAssistant)) {
     return <Navigate to="/" replace />;
   }
 
