@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Need } from "@/types/needs";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -9,7 +8,7 @@ import { convertNeedsToJson } from "@/types/needs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AddNeedForm } from "./AddNeedForm";
-import { ChildNeeds } from "./ChildNeeds";
+import { NeedCard } from "./NeedCard";
 
 export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: { 
   children: any[];
@@ -28,7 +27,6 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
     if (selectedChildren.length === 0) return;
 
     try {
-      // Mettre à jour chaque enfant sélectionné
       for (const child of selectedChildren) {
         const updatedNeeds = [...(child.needs || []), newNeed];
         const { error } = await supabase
@@ -95,7 +93,17 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
 
       <div className="grid gap-6 md:grid-cols-2">
         {sortedChildren?.map((child) => (
-          <ChildNeeds key={child.id} child={child} needs={child.needs || []} />
+          <div key={child.id} className="space-y-4">
+            <h3 className="font-semibold text-lg">{child.name}</h3>
+            <div className="space-y-3">
+              {(child.needs || []).map((need: Need, index: number) => (
+                <NeedCard key={index} need={need} index={index} />
+              ))}
+              {(child.needs || []).length === 0 && (
+                <p className="text-sm text-gray-500 italic">Aucun besoin enregistré</p>
+              )}
+            </div>
+          </div>
         ))}
       </div>
     </div>
