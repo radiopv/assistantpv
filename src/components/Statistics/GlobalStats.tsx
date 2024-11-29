@@ -25,7 +25,8 @@ export const GlobalStats = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc("get_current_statistics");
       if (error) throw error;
-      return data as Statistics;
+      // Cast the response to unknown first, then to Statistics to ensure type safety
+      return (data as unknown) as Statistics;
     },
   });
 
