@@ -48,15 +48,13 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
 };
 
 const App = () => {
-  // Move QueryClient initialization inside component
   const [queryClient] = React.useState(() => new QueryClient({
     defaultOptions: {
       queries: {
         retry: 1,
         refetchOnWindowFocus: false,
-        // Add error handling
-        onError: (error) => {
-          console.error('Query error:', error);
+        meta: {
+          errorMessage: "Une erreur est survenue",
         }
       },
     },

@@ -19,7 +19,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
+  const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
       const { data: rawData, error } = await supabase.rpc('get_dashboard_statistics');
@@ -27,11 +27,7 @@ const Dashboard = () => {
       return rawData as DashboardStats;
     },
     meta: {
-      errorMessage: "Erreur lors du chargement des statistiques",
-      onError: (error: Error) => {
-        console.error('Query error:', error);
-        toast.error("Erreur lors du chargement des statistiques");
-      }
+      errorMessage: "Erreur lors du chargement des statistiques"
     }
   });
 
