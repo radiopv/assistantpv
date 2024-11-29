@@ -1,10 +1,10 @@
-import { TestimonialsList } from "@/components/Testimonials/TestimonialsList";
+import React from 'react';
 
 const MyTestimonials = () => {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Mes témoignages</h1>
-      <TestimonialsList />
+    <div className="container mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Mes témoignages</h1>
+      {/* Contenu à implémenter */}
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import { MemoriesList } from "@/components/Memories/MemoriesList";
+import React from 'react';
 
 const MyMemories = () => {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Mes souvenirs</h1>
-      <MemoriesList />
+    <div className="container mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Mes souvenirs</h1>
+      {/* Contenu à implémenter */}
     </div>
   );
 };
