@@ -1,8 +1,13 @@
+import { ReactNode } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
-const MainLayout = () => {
+interface MainLayoutProps {
+  children?: ReactNode;
+}
+
+const MainLayout = ({ children }: MainLayoutProps) => {
   const { user } = useAuth();
 
   if (!user) {
@@ -21,7 +26,7 @@ const MainLayout = () => {
       </div>
       <main className="flex-1 ml-64 p-8">
         <div className="container mx-auto animate-fade-in">
-          <Outlet />
+          {children || <Outlet />}
         </div>
       </main>
     </div>

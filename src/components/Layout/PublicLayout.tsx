@@ -13,8 +13,13 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { ReactNode } from "react";
 
-const PublicLayout = () => {
+interface PublicLayoutProps {
+  children?: ReactNode;
+}
+
+const PublicLayout = ({ children }: PublicLayoutProps) => {
   const { session } = useAuth();
 
   const menuItems = [
@@ -120,7 +125,7 @@ const PublicLayout = () => {
 
       {/* Main Content */}
       <div className="pt-20 lg:pt-16">
-        <Outlet />
+        {children || <Outlet />}
       </div>
     </div>
   );
