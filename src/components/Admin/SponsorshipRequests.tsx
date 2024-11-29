@@ -32,7 +32,8 @@ export const SponsorshipRequests = () => {
             age,
             city
           )
-        `);
+        `)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data as SponsorshipRequest[];
