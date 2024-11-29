@@ -7,19 +7,6 @@ import { DonationDialog } from "./DonationDialog";
 import { DonationDetails } from "./DonationDetails";
 import { DonationCardHeader } from "./DonationCardHeader";
 import { DonationCardMedia } from "./DonationCardMedia";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 
 interface DonationCardProps {
   donation: {
@@ -73,7 +60,8 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCa
           city: editedDonation.city,
           people_helped: editedDonation.people_helped,
           assistant_name: editedDonation.assistant_name,
-          comments: editedDonation.comments
+          comments: editedDonation.comments,
+          status: editedDonation.status
         })
         .eq('id', donation.id);
 
@@ -94,30 +82,6 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCa
     }
   };
 
-  const handleDeleteDonation = async () => {
-    try {
-      const { error } = await supabase
-        .from('donations')
-        .delete()
-        .eq('id', donation.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Don supprimé",
-        description: "Le don a été supprimé avec succès.",
-      });
-
-      onDelete?.();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression du don.",
-      });
-    }
-  };
-
   return (
     <Card className="p-4">
       <div className="space-y-4">
@@ -125,7 +89,7 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCa
           donation={donation}
           isAdmin={isAdmin}
           onEdit={() => setShowEditDialog(true)}
-          onDelete={handleDeleteDonation}
+          onDelete={onDelete}
         />
 
         <DonationDetails donation={donation} />
