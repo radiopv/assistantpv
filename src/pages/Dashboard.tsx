@@ -43,10 +43,10 @@ const Dashboard = () => {
         return count + needs.filter(need => need.is_urgent).length;
       }, 0) || 0;
 
-      // Cast the raw data to our expected type
+      // Ensure we have a properly typed object by casting the raw data
       const rawStats = rawData as unknown as RawDashboardStats;
 
-      // Ensure we have a properly typed object
+      // Create a properly typed DashboardStats object
       const typedStats: DashboardStats = {
         children: {
           total: rawStats.children?.total || 0,
