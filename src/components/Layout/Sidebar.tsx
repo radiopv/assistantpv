@@ -1,138 +1,121 @@
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { Button } from "@/components/ui/button";
 import { 
-  LayoutDashboard, 
+  Home, 
   Users, 
   Gift, 
-  MessageSquare,
+  LogOut, 
   Settings,
-  LogOut,
-  Image,
   Award,
-  Heart
+  MessageSquare,
+  BarChart
 } from "lucide-react";
 
-const Sidebar = () => {
-  const { signOut, user } = useAuth();
-  const location = useLocation();
+export const Sidebar = () => {
+  const { signOut, user, isAssistant } = useAuth();
 
   const isAdmin = user?.role === 'admin';
-  const isAssistant = ['admin', 'assistant'].includes(user?.role || '');
-
-  const mainLinks = [
-    {
-      href: "/",
-      label: "Tableau de bord",
-      icon: LayoutDashboard,
-      show: user?.permissions?.dashboard || isAdmin,
-    },
-    {
-      href: "/children",
-      label: "Enfants",
-      icon: Users,
-      show: user?.permissions?.children || isAdmin,
-    },
-    {
-      href: "/sponsorships",
-      label: "Parrainages",
-      icon: Heart,
-      show: user?.permissions?.sponsorships || isAdmin,
-    },
-    {
-      href: "/donations",
-      label: "Dons",
-      icon: Gift,
-      show: user?.permissions?.donations || isAdmin,
-    },
-    {
-      href: "/messages",
-      label: "Messages",
-      icon: MessageSquare,
-      show: true,
-    },
-    {
-      href: "/rewards",
-      label: "Récompenses",
-      icon: Award,
-      show: true,
-    },
-  ];
-
-  const adminLinks = [
-    {
-      href: "/admin/permissions",
-      label: "Permissions",
-      icon: Settings,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/media",
-      label: "Médias",
-      icon: Image,
-      show: user?.permissions?.media || isAdmin,
-    },
-    {
-      href: "/admin/sponsors",
-      label: "Parrains",
-      icon: Users,
-      show: isAdmin,
-    },
-  ];
+  const isSponsor = user?.role === 'sponsor';
 
   return (
-    <div className="flex h-full flex-col border-r bg-white">
-      <div className="p-6">
-        <Link to="/">
-          <h1 className="text-xl font-bold">Passion Varadero</h1>
-        </Link>
+    <div className="h-full px-3 py-4 flex flex-col bg-white border-r">
+      <div className="mb-10 px-4">
+        <h1 className="text-2xl font-bold">Passion Varadero</h1>
       </div>
-      <ScrollArea className="flex-1">
-        <div className="space-y-4 py-4">
-          <div className="px-3 py-2">
-            <div className="space-y-1">
-              {mainLinks.filter(link => link.show).map((link) => (
-                <Link key={link.href} to={link.href}>
-                  <Button
-                    variant={location.pathname === link.href ? "secondary" : "ghost"}
-                    className={cn(
-                      "w-full justify-start",
-                      location.pathname === link.href && "bg-primary/10"
-                    )}
-                  >
-                    <link.icon className="mr-2 h-4 w-4" />
-                    {link.label}
-                  </Button>
-                </Link>
-              ))}
-            </div>
-          </div>
-          {(isAdmin || isAssistant) && (
-            <div className="px-3 py-2">
-              <h2 className="mb-2 px-4 text-lg font-semibold">Administration</h2>
-              <div className="space-y-1">
-                {adminLinks.filter(link => link.show).map((link) => (
-                  <Link key={link.href} to={link.href}>
-                    <Button
-                      variant={location.pathname === link.href ? "secondary" : "ghost"}
-                      className={cn(
-                        "w-full justify-start",
-                        location.pathname === link.href && "bg-primary/10"
-                      )}
-                    >
-                      <link.icon className="mr-2 h-4 w-4" />
-                      {link.label}
-                    </Button>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
-      <div className="p-4 border-t">
+      
+      <div className="flex-1 space-y-1">
+        {/* Admin/Assistant Links */}
+        {(isAdmin || isAssistant) && (
+          <>
+            <NavLink
+              to="/dashboard"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+                  isActive ? 'bg-gray-100 text-gray-900' : ''
+                }`
+              }
+            >
+              <Home className="h-4 w-4" />
+              Tableau de bord
+            </NavLink>
+            <NavLink
+              to="/children"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+                  isActive ? 'bg-gray-100 text-gray-900' : ''
+                }`
+              }
+            >
+              <Users className="h-4 w-4" />
+              Enfants
+            </NavLink>
+            <NavLink
+              to="/donations"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+                  isActive ? 'bg-gray-100 text-gray-900' : ''
+                }`
+              }
+            >
+              <Gift className="h-4 w-4" />
+              Dons
+            </NavLink>
+          </>
+        )}
+
+        {/* Sponsor Links */}
+        {isSponsor && (
+          <>
+            <NavLink
+              to="/sponsor-dashboard"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+                  isActive ? 'bg-gray-100 text-gray-900' : ''
+                }`
+              }
+            >
+              <Home className="h-4 w-4" />
+              Mon tableau de bord
+            </NavLink>
+            <NavLink
+              to="/messages"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+                  isActive ? 'bg-gray-100 text-gray-900' : ''
+                }`
+              }
+            >
+              <MessageSquare className="h-4 w-4" />
+              Messages
+            </NavLink>
+            <NavLink
+              to="/rewards"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+                  isActive ? 'bg-gray-100 text-gray-900' : ''
+                }`
+              }
+            >
+              <Award className="h-4 w-4" />
+              Récompenses
+            </NavLink>
+            <NavLink
+              to="/statistics"
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+                  isActive ? 'bg-gray-100 text-gray-900' : ''
+                }`
+              }
+            >
+              <BarChart className="h-4 w-4" />
+              Statistiques
+            </NavLink>
+          </>
+        )}
+      </div>
+
+      <div className="border-t pt-4 mt-4">
         <Button
           variant="ghost"
           className="w-full justify-start"
@@ -145,5 +128,3 @@ const Sidebar = () => {
     </div>
   );
 };
-
-export default Sidebar;
