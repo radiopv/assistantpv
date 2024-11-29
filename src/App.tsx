@@ -68,7 +68,7 @@ const App = () => (
           <Routes>
             {/* Public Routes */}
             <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
+              <Route index element={<Home />} />
               <Route path="/children" element={<Children />} />
               <Route path="/children/:id" element={<ChildProfile />} />
               <Route path="/sponsorships" element={<Sponsorships />} />
