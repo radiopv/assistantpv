@@ -52,9 +52,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         } else {
           setUser(null);
-          // Redirect to login only if trying to access protected pages
-          const publicPages = ['/', '/login', '/donations/public', '/statistics', '/videos', '/faq', '/stories', '/become-sponsor'];
-          if (!publicPages.includes(location.pathname)) {
+          // Ne redirige vers login que si on essaie d'accéder aux pages protégées
+          const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
+          if (protectedPages.includes(location.pathname)) {
             navigate('/login');
           }
         }
