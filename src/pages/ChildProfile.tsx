@@ -5,12 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { AlbumMediaUpload } from "@/components/AlbumMedia/AlbumMediaUpload";
 import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const ChildProfile = () => {
   const { id } = useParams();
@@ -65,6 +76,29 @@ const ChildProfile = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('children')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Enfant supprimé",
+        description: "L'enfant a été supprimé avec succès.",
+      });
+      navigate('/children');
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression de l'enfant.",
+      });
+    }
+  };
+
   if (error) {
     return (
       <div className="space-y-6">
@@ -109,19 +143,44 @@ const ChildProfile = () => {
             {child.name}
           </h1>
         </div>
-        <Button 
-          variant={editing ? "outline" : "default"}
-          onClick={() => editing ? handleUpdate() : setEditing(true)}
-        >
-          {editing ? (
-            <>
-              <Save className="w-4 h-4 mr-2" />
-              Enregistrer
-            </>
-          ) : (
-            "Modifier"
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant={editing ? "outline" : "default"}
+            onClick={() => editing ? handleUpdate() : setEditing(true)}
+          >
+            {editing ? (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Enregistrer
+              </>
+            ) : (
+              "Modifier"
+            )}
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">
+                <Trash2 className="w-4 h-4 mr-2" />
+                Supprimer
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet enfant ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette action est irréversible. Toutes les informations associées à cet enfant seront définitivement supprimées.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Supprimer
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
       <div className="grid gap-6">
