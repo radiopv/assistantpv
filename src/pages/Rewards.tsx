@@ -71,17 +71,24 @@ const Rewards = () => {
       <div>
         <h2 className="text-2xl font-bold mb-4">Niveau et Progression</h2>
         <div className="grid gap-4 md:grid-cols-2">
-          {levels?.map(level => (
-            <LevelCard
-              key={level.id}
-              name={level.name}
-              description={level.description}
-              currentPoints={userPoints}
-              requiredPoints={level.min_points}
-              benefits={level.benefits?.features || []}
-              isCurrent={level.id === currentLevel?.id}
-            />
-          ))}
+          {levels?.map(level => {
+            // Parse the benefits from the JSON structure
+            const benefitsArray = level.benefits && typeof level.benefits === 'object' 
+              ? (level.benefits as { features?: string[] }).features || []
+              : [];
+
+            return (
+              <LevelCard
+                key={level.id}
+                name={level.name}
+                description={level.description}
+                currentPoints={userPoints}
+                requiredPoints={level.min_points}
+                benefits={benefitsArray}
+                isCurrent={level.id === currentLevel?.id}
+              />
+            );
+          })}
         </div>
       </div>
 
