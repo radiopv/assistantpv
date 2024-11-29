@@ -35,31 +35,50 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: sponsor } = await supabase
-          .from('sponsors')
-          .select('*')
-          .single();
+        const { data: session } = await supabase.auth.getSession();
+        
+        if (session?.session?.user) {
+          const { data: sponsors, error } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('id', session.session.user.id);
 
-        if (sponsor) {
-          setUser(sponsor);
-          setIsAdmin(sponsor.role === 'admin');
-          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-          setIsSponsor(sponsor.role === 'sponsor');
+          if (error) throw error;
 
-          // Only redirect if on login page
-          if (location.pathname === '/login') {
-            switch (sponsor.role) {
-              case 'admin':
-                navigate('/dashboard');
-                break;
-              case 'sponsor':
-                navigate('/sponsor-dashboard');
-                break;
-              case 'assistant':
-                navigate('/dashboard');
-                break;
-              default:
-                navigate('/');
+          const sponsor = sponsors?.[0];
+          
+          if (sponsor) {
+            setUser(sponsor);
+            setIsAdmin(sponsor.role === 'admin');
+            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+            setIsSponsor(sponsor.role === 'sponsor');
+
+            // Only redirect if on login page
+            if (location.pathname === '/login') {
+              switch (sponsor.role) {
+                case 'admin':
+                  navigate('/dashboard');
+                  break;
+                case 'sponsor':
+                  navigate('/sponsor-dashboard');
+                  break;
+                case 'assistant':
+                  navigate('/dashboard');
+                  break;
+                default:
+                  navigate('/');
+              }
+            }
+          } else {
+            setUser(null);
+            setIsAdmin(false);
+            setIsAssistant(false);
+            setIsSponsor(false);
+            
+            // Redirect to login only for protected pages
+            const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
+            if (protectedPages.includes(location.pathname)) {
+              navigate('/login');
             }
           }
         } else {
