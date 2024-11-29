@@ -32,6 +32,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleRedirect = (role: string) => {
+    switch (role) {
+      case 'admin':
+        navigate('/dashboard');
+        break;
+      case 'sponsor':
+        navigate('/sponsor-dashboard');
+        break;
+      case 'assistant':
+        navigate('/dashboard');
+        break;
+      default:
+        navigate('/');
+    }
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -53,21 +69,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
             setIsSponsor(sponsor.role === 'sponsor');
 
-            // Only redirect if on login page
-            if (location.pathname === '/login') {
-              switch (sponsor.role) {
-                case 'admin':
-                  navigate('/dashboard');
-                  break;
-                case 'sponsor':
-                  navigate('/sponsor-dashboard');
-                  break;
-                case 'assistant':
-                  navigate('/dashboard');
-                  break;
-                default:
-                  navigate('/');
-              }
+            // Redirect based on role if on login or home page
+            if (location.pathname === '/login' || location.pathname === '/') {
+              handleRedirect(sponsor.role);
             }
           } else {
             setUser(null);
@@ -102,6 +106,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        const { data: sponsors, error } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id);
+
+        if (!error && sponsors?.[0]) {
+          handleRedirect(sponsors[0].role);
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate, location.pathname]);
 
   const signOut = async () => {
