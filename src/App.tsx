@@ -26,7 +26,15 @@ const queryClient = new QueryClient({
   },
 });
 
-const ProtectedRoute = ({ children, requiredPermission }: { children: React.ReactNode, requiredPermission?: string }) => {
+const ProtectedRoute = ({ 
+  children, 
+  requiredPermission, 
+  requireAdmin 
+}: { 
+  children: React.ReactNode, 
+  requiredPermission?: string,
+  requireAdmin?: boolean 
+}) => {
   const { session, loading, isAssistant, user } = useAuth();
   
   if (loading) {
@@ -39,7 +47,11 @@ const ProtectedRoute = ({ children, requiredPermission }: { children: React.Reac
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredPermission && !user?.permissions?.[requiredPermission]) {
+  if (requireAdmin && user?.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
+  if (requiredPermission && !user?.permissions?.[requiredPermission] && user?.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
@@ -56,17 +68,17 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-              <Route index element={<Dashboard />} />
-              <Route path="children" element={<Children />} />
-              <Route path="children/needs" element={<ChildrenNeeds />} />
-              <Route path="children/add" element={<AddChild />} />
-              <Route path="children/:id" element={<ChildProfile />} />
-              <Route path="donations" element={<Donations />} />
-              <Route path="sponsorships" element={<Sponsorships />} />
+              <Route index element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
+              <Route path="children" element={<ProtectedRoute requiredPermission="children"><Children /></ProtectedRoute>} />
+              <Route path="children/needs" element={<ProtectedRoute requiredPermission="children"><ChildrenNeeds /></ProtectedRoute>} />
+              <Route path="children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
+              <Route path="children/:id" element={<ProtectedRoute requiredPermission="children"><ChildProfile /></ProtectedRoute>} />
+              <Route path="donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
+              <Route path="sponsorships" element={<ProtectedRoute requiredPermission="sponsorships"><Sponsorships /></ProtectedRoute>} />
               <Route 
                 path="admin/permissions" 
                 element={
-                  <ProtectedRoute requiredPermission="manage_permissions">
+                  <ProtectedRoute requireAdmin>
                     <AdminPermissions />
                   </ProtectedRoute>
                 } 
@@ -74,7 +86,7 @@ const App = () => (
               <Route 
                 path="admin/media" 
                 element={
-                  <ProtectedRoute requiredPermission="manage_permissions">
+                  <ProtectedRoute requiredPermission="media">
                     <MediaManagement />
                   </ProtectedRoute>
                 } 
@@ -82,7 +94,7 @@ const App = () => (
               <Route 
                 path="admin/sponsors" 
                 element={
-                  <ProtectedRoute requiredPermission="manage_permissions">
+                  <ProtectedRoute requireAdmin>
                     <SponsorsManagement />
                   </ProtectedRoute>
                 } 
