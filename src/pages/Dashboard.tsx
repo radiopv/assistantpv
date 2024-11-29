@@ -11,6 +11,7 @@ import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/Sponsorsh
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
 import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
+import { HomepageManager } from "@/components/Admin/HomepageManager";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { DashboardStats } from "@/types/dashboard";
 
@@ -92,6 +93,7 @@ const Dashboard = () => {
       <div className="space-y-8">
         {isAdmin && (
           <>
+            <HomepageManager />
             <SponsorshipStats />
             <div className="grid gap-4 md:grid-cols-2">
               <UrgentNeedsStats />
