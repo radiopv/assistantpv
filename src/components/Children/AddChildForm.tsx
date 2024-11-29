@@ -27,7 +27,15 @@ export const AddChildForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value.trim() }));
+    if (name === 'gender') {
+      // Convert gender to uppercase and ensure it's either 'M' or 'F'
+      const normalizedGender = value.toUpperCase().trim();
+      if (normalizedGender === 'M' || normalizedGender === 'F' || value === '') {
+        setFormData(prev => ({ ...prev, [name]: normalizedGender }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value.trim() }));
+    }
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +48,7 @@ export const AddChildForm = () => {
     const errors = [];
     if (!formData.name.trim()) errors.push("Le nom est requis");
     if (!formData.gender) errors.push("Le genre est requis");
-    if (!["M", "F"].includes(formData.gender.toUpperCase())) {
+    if (!["M", "F"].includes(formData.gender)) {
       errors.push("Le genre doit être 'M' ou 'F'");
     }
     if (!formData.birth_date) errors.push("La date de naissance est requise");
@@ -107,7 +115,7 @@ export const AddChildForm = () => {
         .from('children')
         .insert({
           name: formData.name.trim(),
-          gender: formData.gender.toUpperCase().trim(),
+          gender: formData.gender,
           birth_date: formData.birth_date,
           age: age,
           city: formData.city.trim(),
