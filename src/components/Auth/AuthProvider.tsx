@@ -49,27 +49,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setIsAssistant(['assistant', 'admin'].includes(profile.role));
           setIsAdmin(profile.role === 'admin');
 
-          // Only redirect if on login page
+          // Redirection basée sur le rôle
           if (location.pathname === '/login') {
-            switch (profile.role) {
-              case 'admin':
-                navigate('/dashboard');
-                break;
-              case 'sponsor':
-                navigate('/sponsor-dashboard');
-                break;
-              case 'assistant':
-                navigate('/dashboard');
-                break;
-              default:
-                navigate('/');
+            if (profile.role === 'admin') {
+              navigate('/dashboard');
+            } else if (profile.role === 'assistant') {
+              navigate('/dashboard');
+            } else if (profile.role === 'sponsor') {
+              navigate('/sponsor-dashboard');
+            } else {
+              navigate('/');
             }
           }
         } else {
           setUser(null);
           setIsAssistant(false);
           setIsAdmin(false);
-          // Ne redirige vers login que si on essaie d'accéder aux pages protégées
+          
+          // Liste des pages protégées
           const protectedPages = [
             '/dashboard', 
             '/sponsor-dashboard', 
@@ -84,6 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             '/permissions',
             '/children-needs'
           ];
+
           if (protectedPages.includes(location.pathname)) {
             navigate('/login');
           }
@@ -98,11 +96,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
 
+    checkAuth();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       checkAuth();
     });
-
-    checkAuth();
 
     return () => {
       subscription.unsubscribe();
