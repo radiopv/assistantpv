@@ -9,24 +9,47 @@ import { PhotoUploadField } from "./FormFields/PhotoUploadField";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
+interface FormData {
+  name: string;
+  gender: string;
+  birth_date: string;
+  city: string | null;
+  status: string;
+  needs: any[];
+  is_sponsored: boolean;
+}
+
+const ALLOWED_GENDERS = ['M', 'F'];
+
 export const AddChildForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     gender: "",
     birth_date: "",
-    city: "",
+    city: null,
     status: "available",
     needs: [],
     is_sponsored: false
   });
 
-  const calculateAge = (birthDate: string) => {
+  const calculateAge = (birthDate: string): number | null => {
     if (!birthDate) return null;
     return differenceInYears(new Date(), parseISO(birthDate));
+  };
+
+  const validateForm = (): string | null => {
+    if (!formData.name.trim()) return "Le nom est requis";
+    if (!ALLOWED_GENDERS.includes(formData.gender)) return "Le genre doit être 'M' ou 'F'";
+    if (!formData.birth_date) return "La date de naissance est requise";
+    
+    const age = calculateAge(formData.birth_date);
+    if (age === null || age < 0) return "La date de naissance est invalide";
+    
+    return null;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,33 +68,25 @@ export const AddChildForm = () => {
     setLoading(true);
 
     try {
-      // Validation explicite des champs requis
-      if (!formData.name || !formData.gender || !formData.birth_date) {
-        throw new Error("Veuillez remplir tous les champs obligatoires");
+      const validationError = validateForm();
+      if (validationError) {
+        throw new Error(validationError);
       }
 
-      // Validation du genre
-      if (!['M', 'F'].includes(formData.gender)) {
-        throw new Error("Le genre doit être 'M' ou 'F'");
-      }
-
-      // Calcul de l'âge
       const age = calculateAge(formData.birth_date);
       if (age === null) {
-        throw new Error("La date de naissance est invalide");
+        throw new Error("Impossible de calculer l'âge");
       }
 
       let photoUrl = null;
 
-      // Upload de la photo si présente
       if (photo) {
         const fileExt = photo.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${fileName}`;
 
         const { error: uploadError, data } = await supabase.storage
           .from('children-photos')
-          .upload(filePath, photo);
+          .upload(fileName, photo);
 
         if (uploadError) throw uploadError;
 
@@ -84,7 +99,6 @@ export const AddChildForm = () => {
         }
       }
 
-      // Insertion dans la base de données
       const { error } = await supabase
         .from('children')
         .insert({
@@ -92,7 +106,7 @@ export const AddChildForm = () => {
           gender: formData.gender,
           birth_date: formData.birth_date,
           age: age,
-          city: formData.city || null,
+          city: formData.city,
           status: "available",
           photo_url: photoUrl,
           is_sponsored: false,
