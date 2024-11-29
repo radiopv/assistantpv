@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload } from "lucide-react";
+import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 
 interface ProfilePhotoUploadProps {
   childId: string;
@@ -14,17 +15,34 @@ interface ProfilePhotoUploadProps {
 
 export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete }: ProfilePhotoUploadProps) => {
   const [uploading, setUploading] = useState(false);
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>("");
   const { toast } = useToast();
 
-  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       if (!event.target.files || event.target.files.length === 0) {
         return;
       }
-      setUploading(true);
 
       const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+        setCropDialogOpen(true);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Erreur lors de la lecture du fichier:", error);
+    }
+  };
+
+  const handleUpload = async (croppedImageBlob: Blob) => {
+    try {
+      setUploading(true);
+      setCropDialogOpen(false);
+
+      const fileExt = "jpg";
       const filePath = `${childId}/${Math.random()}.${fileExt}`;
 
       // Si une photo existe déjà, on la supprime
@@ -39,7 +57,7 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
 
       const { error: uploadError } = await supabase.storage
         .from('children-photos')
-        .upload(filePath, file);
+        .upload(filePath, croppedImageBlob);
 
       if (uploadError) throw uploadError;
 
@@ -71,13 +89,20 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         id="profile-photo"
         type="file"
         accept="image/*"
-        onChange={handleUpload}
+        onChange={handleFileSelect}
         disabled={uploading}
       />
       <Button disabled={uploading}>
         <Upload className="w-4 h-4 mr-2" />
         {uploading ? "Upload en cours..." : "Changer la photo"}
       </Button>
+
+      <ImageCropDialog
+        open={cropDialogOpen}
+        onClose={() => setCropDialogOpen(false)}
+        imageSrc={selectedImage}
+        onCropComplete={handleUpload}
+      />
     </div>
   );
 };
