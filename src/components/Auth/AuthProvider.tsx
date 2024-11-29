@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   user: any | null;
@@ -28,15 +29,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) throw error;
+
+        if (session?.user) {
+          const { data: profile, error: profileError } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError) throw profileError;
+
+          setUser(profile);
+          setIsAssistant(['assistant', 'admin'].includes(profile.role));
 
           // Only redirect if on login page
           if (location.pathname === '/login') {
-            switch (parsedUser.role) {
+            switch (profile.role) {
               case 'admin':
                 navigate('/dashboard');
                 break;
@@ -66,12 +77,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     };
 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      checkAuth();
+    });
+
     checkAuth();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate, location.pathname]);
 
   const signOut = async () => {
     try {
-      localStorage.removeItem('user');
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
       setUser(null);
       setIsAssistant(false);
       toast({

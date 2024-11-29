@@ -29,6 +29,7 @@ import Permissions from "@/pages/Permissions";
 import SponsorshipRequest from "@/pages/SponsorshipRequest";
 import PublicAvailableChildren from "@/pages/PublicAvailableChildren";
 import PublicSponsoredChildren from "@/pages/PublicSponsoredChildren";
+import ChildrenNeeds from "@/pages/ChildrenNeeds";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => {
             <Route path="/children" element={<MainLayout><Children /></MainLayout>} />
             <Route path="/children/:id" element={<MainLayout><ChildProfile /></MainLayout>} />
             <Route path="/children/add" element={<MainLayout><AddChild /></MainLayout>} />
+            <Route path="/children-needs" element={<MainLayout><ChildrenNeeds /></MainLayout>} />
             <Route path="/donations" element={<MainLayout><Donations /></MainLayout>} />
             <Route path="/rewards" element={<MainLayout><Rewards /></MainLayout>} />
             <Route path="/messages" element={<MainLayout><Messages /></MainLayout>} />

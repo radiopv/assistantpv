@@ -29,6 +29,7 @@ const Sidebar = () => {
     { to: "/dashboard", icon: Home, label: "Tableau de bord" },
     { to: "/children", icon: Users, label: "Enfants" },
     { to: "/children/add", icon: Users, label: "Ajouter un enfant" },
+    { to: "/children-needs", icon: Heart, label: "Besoins des enfants" },
     { to: "/donations", icon: Gift, label: "Dons" },
     { to: "/statistics", icon: BarChart, label: "Statistiques" },
     { to: "/media-management", icon: Camera, label: "Gestion médias" },
