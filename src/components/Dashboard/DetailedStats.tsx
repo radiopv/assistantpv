@@ -14,7 +14,7 @@ import {
   Cell
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -62,7 +62,7 @@ export const DetailedStats = () => {
   const renderError = (message: string) => (
     <Alert variant="destructive">
       <AlertTriangle className="h-4 w-4" />
-      <AlertDescription>{message}</AlertDescription>
+      <div className="ml-2">{message}</div>
     </Alert>
   );
 
