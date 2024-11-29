@@ -23,6 +23,7 @@ import { AdminPermissions } from "./components/Admin/AdminPermissions";
 import Travels from "./pages/admin/Travels";
 import SiteConfig from "./pages/admin/SiteConfig";
 import Statistics from "./pages/admin/Statistics";
+import FAQ from "./pages/admin/FAQ";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,7 @@ const AppRoutes = () => (
       <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
       <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />
       <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
+      <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
     </Route>
   </Routes>
 );
