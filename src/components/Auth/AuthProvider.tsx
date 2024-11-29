@@ -32,6 +32,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Liste des pages protégées
+  const protectedPages = [
+    '/dashboard',
+    '/sponsor-dashboard',
+    '/children/add',
+    '/donations',
+    '/rewards',
+    '/messages',
+    '/media-management',
+    '/sponsors-management',
+    '/settings',
+    '/urgent-needs',
+    '/permissions'
+  ];
+
+  // Fonction pour rediriger selon le rôle
+  const redirectBasedOnRole = (role: string) => {
+    switch (role) {
+      case 'admin':
+        navigate('/dashboard');
+        break;
+      case 'sponsor':
+        navigate('/sponsor-dashboard');
+        break;
+      case 'assistant':
+        navigate('/dashboard');
+        break;
+      default:
+        navigate('/');
+    }
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -41,76 +73,79 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const { data: sponsors, error } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', session.session.user.id);
+            .eq('id', session.session.user.id)
+            .single();
 
           if (error) throw error;
-
-          const sponsor = sponsors?.[0];
           
-          if (sponsor) {
-            setUser(sponsor);
-            setIsAdmin(sponsor.role === 'admin');
-            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-            setIsSponsor(sponsor.role === 'sponsor');
+          if (sponsors) {
+            setUser(sponsors);
+            setIsAdmin(sponsors.role === 'admin');
+            setIsAssistant(['assistant', 'admin'].includes(sponsors.role));
+            setIsSponsor(sponsors.role === 'sponsor');
 
-            // Only redirect if on login page
-            if (location.pathname === '/login') {
-              switch (sponsor.role) {
-                case 'admin':
-                  navigate('/dashboard');
-                  break;
-                case 'sponsor':
-                  navigate('/sponsor-dashboard');
-                  break;
-                case 'assistant':
-                  navigate('/dashboard');
-                  break;
-                default:
-                  navigate('/');
-              }
+            // Si on est sur la page de login ou la page d'accueil, rediriger vers le dashboard approprié
+            if (location.pathname === '/login' || location.pathname === '/') {
+              redirectBasedOnRole(sponsors.role);
             }
           } else {
-            setUser(null);
-            setIsAdmin(false);
-            setIsAssistant(false);
-            setIsSponsor(false);
-            
-            // Redirect to login only for protected pages
-            const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
-            if (protectedPages.includes(location.pathname)) {
-              navigate('/login');
-            }
+            handleLogout();
           }
         } else {
-          setUser(null);
-          setIsAdmin(false);
-          setIsAssistant(false);
-          setIsSponsor(false);
-          
-          // Redirect to login only for protected pages
-          const protectedPages = ['/dashboard', '/sponsor-dashboard', '/children/add', '/donations', '/rewards', '/messages', '/media-management', '/sponsors-management', '/settings', '/urgent-needs', '/permissions'];
-          if (protectedPages.includes(location.pathname)) {
-            navigate('/login');
-          }
+          handleLogout();
         }
       } catch (error) {
         console.error('Error checking auth:', error);
-        setUser(null);
+        handleLogout();
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
+
+    // Écouter les changements d'authentification
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        const { data: sponsor } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (sponsor) {
+          setUser(sponsor);
+          setIsAdmin(sponsor.role === 'admin');
+          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+          setIsSponsor(sponsor.role === 'sponsor');
+          redirectBasedOnRole(sponsor.role);
+        }
+      } else if (event === 'SIGNED_OUT') {
+        handleLogout();
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, [navigate, location.pathname]);
+
+  const handleLogout = () => {
+    setUser(null);
+    setIsAdmin(false);
+    setIsAssistant(false);
+    setIsSponsor(false);
+    
+    // Rediriger vers login si on est sur une page protégée
+    if (protectedPages.includes(location.pathname)) {
+      navigate('/login');
+    }
+  };
 
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      setUser(null);
-      setIsAdmin(false);
-      setIsAssistant(false);
-      setIsSponsor(false);
+      handleLogout();
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
