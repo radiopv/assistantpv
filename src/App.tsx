@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
 import PublicLayout from "./components/Layout/PublicLayout";
@@ -68,15 +68,15 @@ const ProtectedRoute = ({
   return <>{children}</>;
 };
 
-const ConditionalLayout = ({ children }: { children: React.ReactNode }) => {
+const ConditionalLayout = () => {
   const { user } = useAuth();
   const isStaff = ['admin', 'assistant'].includes(user?.role || '');
 
   if (isStaff) {
-    return <MainLayout>{children}</MainLayout>;
+    return <MainLayout><Outlet /></MainLayout>;
   }
 
-  return <PublicLayout>{children}</PublicLayout>;
+  return <PublicLayout><Outlet /></PublicLayout>;
 };
 
 const App = () => (
