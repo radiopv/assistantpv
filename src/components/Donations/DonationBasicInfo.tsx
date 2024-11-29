@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -64,8 +64,8 @@ export const DonationBasicInfo = ({
         .from('locations')
         .insert({ 
           city_name: newCity.trim(),
-          latitude: 0, // Required fields in your schema
-          longitude: 0  // Required fields in your schema
+          latitude: 0,
+          longitude: 0
         });
 
       if (error) throw error;
@@ -130,44 +130,52 @@ export const DonationBasicInfo = ({
       <div>
         <Label htmlFor="city">Ville</Label>
         {showNewCityInput ? (
-          <div className="flex gap-2">
-            <Input
-              value={newCity}
-              onChange={(e) => setNewCity(e.target.value)}
-              placeholder="Nouvelle ville"
-            />
-            <Button 
-              onClick={handleAddNewCity}
-              variant="outline"
-              size="icon"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Input
+                value={newCity}
+                onChange={(e) => setNewCity(e.target.value)}
+                placeholder="Nouvelle ville"
+              />
+              <Button 
+                onClick={handleAddNewCity}
+                variant="outline"
+                size="icon"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+              <Button 
+                onClick={() => setShowNewCityInput(false)}
+                variant="outline"
+                size="icon"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         ) : (
-          <Select value={city} onValueChange={onCityChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une ville" />
-            </SelectTrigger>
-            <SelectContent>
-              {cities?.map((cityName) => (
-                <SelectItem key={cityName} value={cityName}>
-                  {cityName}
-                </SelectItem>
-              ))}
-              <SelectItem value="new">
-                <span 
-                  className="text-primary cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowNewCityInput(true);
-                  }}
-                >
-                  + Ajouter une nouvelle ville
-                </span>
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="space-y-2">
+            <Select value={city} onValueChange={onCityChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner une ville" />
+              </SelectTrigger>
+              <SelectContent>
+                {cities?.map((cityName) => (
+                  <SelectItem key={cityName} value={cityName}>
+                    {cityName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setShowNewCityInput(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Ajouter une nouvelle ville
+            </Button>
+          </div>
         )}
       </div>
 
