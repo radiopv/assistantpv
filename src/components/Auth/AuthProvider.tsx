@@ -29,77 +29,80 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) throw error;
+  const handleAuthChange = async (session: any) => {
+    try {
+      if (session?.user) {
+        const { data: profile, error: profileError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
 
-        if (session?.user) {
-          const { data: profile, error: profileError } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+        if (profileError) throw profileError;
 
-          if (profileError) throw profileError;
+        setUser(profile);
+        setIsAssistant(['assistant', 'admin'].includes(profile.role));
+        setIsAdmin(profile.role === 'admin');
 
-          setUser(profile);
-          setIsAssistant(['assistant', 'admin'].includes(profile.role));
-          setIsAdmin(profile.role === 'admin');
-
-          // Redirection basée sur le rôle
-          if (location.pathname === '/login') {
-            if (profile.role === 'admin') {
+        // Redirection basée sur le rôle
+        if (location.pathname === '/login') {
+          switch (profile.role) {
+            case 'admin':
+            case 'assistant':
               navigate('/dashboard');
-            } else if (profile.role === 'assistant') {
-              navigate('/dashboard');
-            } else if (profile.role === 'sponsor') {
+              break;
+            case 'sponsor':
               navigate('/sponsor-dashboard');
-            } else {
+              break;
+            default:
               navigate('/');
-            }
-          }
-        } else {
-          setUser(null);
-          setIsAssistant(false);
-          setIsAdmin(false);
-          
-          // Liste des pages protégées
-          const protectedPages = [
-            '/dashboard', 
-            '/sponsor-dashboard', 
-            '/children/add', 
-            '/donations', 
-            '/rewards', 
-            '/messages', 
-            '/media-management', 
-            '/sponsors-management', 
-            '/settings', 
-            '/urgent-needs', 
-            '/permissions',
-            '/children-needs'
-          ];
-
-          if (protectedPages.includes(location.pathname)) {
-            navigate('/login');
           }
         }
-      } catch (error) {
-        console.error('Error checking auth:', error);
+      } else {
         setUser(null);
         setIsAssistant(false);
         setIsAdmin(false);
-      } finally {
-        setLoading(false);
+
+        const protectedPages = [
+          '/dashboard',
+          '/sponsor-dashboard',
+          '/children/add',
+          '/donations',
+          '/rewards',
+          '/messages',
+          '/media-management',
+          '/sponsors-management',
+          '/settings',
+          '/urgent-needs',
+          '/permissions',
+          '/children-needs'
+        ];
+
+        if (protectedPages.includes(location.pathname)) {
+          navigate('/login');
+        }
       }
-    };
+    } catch (error) {
+      console.error('Error checking auth:', error);
+      toast({
+        title: "Erreur d'authentification",
+        description: "Une erreur est survenue lors de la vérification de l'authentification",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    checkAuth();
+  useEffect(() => {
+    // Initial auth check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      handleAuthChange(session);
+    });
 
+    // Setup auth listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      checkAuth();
+      handleAuthChange(session);
     });
 
     return () => {
