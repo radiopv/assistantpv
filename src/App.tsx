@@ -29,24 +29,20 @@ const App = () => {
       <Router>
         <AuthProvider>
           <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/donations/public" element={<PublicDonations />} />
-              <Route path="/statistics" element={<PublicStats />} />
-              <Route path="/videos" element={<PublicVideos />} />
-              <Route path="/faq" element={<PublicFAQ />} />
-              <Route path="/stories" element={<Stories />} />
-            </Route>
-            <Route element={<MainLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
-              <Route path="/children" element={<Children />} />
-              <Route path="/children/:id" element={<ChildProfile />} />
-              <Route path="/children/add" element={<AddChild />} />
-              <Route path="/donations" element={<Donations />} />
-              <Route path="/rewards" element={<Rewards />} />
-            </Route>
+            <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+            <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
+            <Route path="/donations/public" element={<PublicLayout><PublicDonations /></PublicLayout>} />
+            <Route path="/statistics" element={<PublicLayout><PublicStats /></PublicLayout>} />
+            <Route path="/videos" element={<PublicLayout><PublicVideos /></PublicLayout>} />
+            <Route path="/faq" element={<PublicLayout><PublicFAQ /></PublicLayout>} />
+            <Route path="/stories" element={<PublicLayout><Stories /></PublicLayout>} />
+            <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
+            <Route path="/sponsor-dashboard" element={<MainLayout><SponsorDashboard /></MainLayout>} />
+            <Route path="/children" element={<MainLayout><Children /></MainLayout>} />
+            <Route path="/children/:id" element={<MainLayout><ChildProfile /></MainLayout>} />
+            <Route path="/children/add" element={<MainLayout><AddChild /></MainLayout>} />
+            <Route path="/donations" element={<MainLayout><Donations /></MainLayout>} />
+            <Route path="/rewards" element={<MainLayout><Rewards /></MainLayout>} />
           </Routes>
           <Toaster />
         </AuthProvider>
