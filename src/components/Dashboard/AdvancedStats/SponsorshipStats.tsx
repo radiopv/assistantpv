@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import { SponsorshipConversionStats, TopCityStats } from "@/types/statistics";
 import {
   BarChart,
   Bar,
@@ -13,7 +14,7 @@ import {
 } from "recharts";
 
 export const SponsorshipStats = () => {
-  const { data: conversionStats, isLoading: conversionLoading } = useQuery({
+  const { data: conversionStats, isLoading: conversionLoading } = useQuery<SponsorshipConversionStats>({
     queryKey: ['sponsorship-conversion'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
@@ -22,7 +23,7 @@ export const SponsorshipStats = () => {
     }
   });
 
-  const { data: topCities, isLoading: citiesLoading } = useQuery({
+  const { data: topCities, isLoading: citiesLoading } = useQuery<TopCityStats[]>({
     queryKey: ['top-sponsorship-cities'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_top_sponsorship_cities');

@@ -3,9 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { Progress } from "@/components/ui/progress";
+import { UserEngagementStats as UserEngagementStatsType } from "@/types/statistics";
 
 export const UserEngagementStats = () => {
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading } = useQuery<UserEngagementStatsType>({
     queryKey: ['user-engagement'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');

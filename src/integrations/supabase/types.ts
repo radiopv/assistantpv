@@ -1852,6 +1852,15 @@ export type Database = {
           display_order: number
         }[]
       }
+      get_assistant_performance_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          assistant_name: string
+          donations_count: number
+          people_helped: number
+          success_rate: number
+        }[]
+      }
       get_assistant_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -1919,11 +1928,35 @@ export type Database = {
         }
         Returns: Json
       }
+      get_sponsorship_conversion_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_top_sponsorship_cities: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          city: string
+          active_sponsorships: number
+        }[]
+      }
       get_unread_messages_count: {
         Args: {
           user_uuid: string
         }
         Returns: number
+      }
+      get_urgent_needs_by_city: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          city: string
+          urgent_needs_count: number
+          total_needs: number
+          urgent_needs_ratio: number
+        }[]
+      }
+      get_user_engagement_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       get_user_permissions: {
         Args: {

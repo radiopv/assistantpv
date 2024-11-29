@@ -12,19 +12,19 @@ import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantSt
 import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { DashboardStats } from "@/types/dashboard";
+import { DashboardStats, DashboardResponse } from "@/types/dashboard";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
+  const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      const { data: rawData, error } = await supabase.rpc('get_dashboard_statistics');
+      const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return rawData as DashboardStats;
+      return data as DashboardStats;
     },
     meta: {
       errorMessage: "Erreur lors du chargement des statistiques",
@@ -89,7 +89,6 @@ const Dashboard = () => {
       <DashboardHeader stats={stats} />
       <DetailedStats />
       
-      {/* Nouvelles statistiques avancées */}
       <div className="space-y-8">
         {isAdmin && (
           <>
