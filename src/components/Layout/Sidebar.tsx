@@ -19,7 +19,8 @@ import {
   Database,
   UserCog,
   Mail,
-  AlertTriangle
+  AlertTriangle,
+  Lock
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -37,6 +38,7 @@ const Sidebar = () => {
     { to: "/media-management", icon: Camera, label: "Gestion médias" },
     { to: "/sponsors-management", icon: UserCog, label: "Gestion parrains" },
     { to: "/messages", icon: Mail, label: "Messages" },
+    { to: "/permissions", icon: Lock, label: "Permissions" },
     { to: "/settings", icon: Settings, label: "Paramètres" }
   ];
 

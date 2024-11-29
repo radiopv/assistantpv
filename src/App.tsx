@@ -25,6 +25,7 @@ import MediaManagement from "@/pages/MediaManagement";
 import SponsorsManagement from "@/pages/SponsorsManagement";
 import Settings from "@/pages/Settings";
 import UrgentNeeds from "@/pages/UrgentNeeds";
+import Permissions from "@/pages/Permissions";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => {
             <Route path="/sponsors-management" element={<MainLayout><SponsorsManagement /></MainLayout>} />
             <Route path="/settings" element={<MainLayout><Settings /></MainLayout>} />
             <Route path="/urgent-needs" element={<MainLayout><UrgentNeeds /></MainLayout>} />
+            <Route path="/permissions" element={<MainLayout><Permissions /></MainLayout>} />
 
             {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
