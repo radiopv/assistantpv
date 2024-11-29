@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { differenceInYears, parseISO } from "date-fns";
 import { BasicInfoFields } from "./FormFields/BasicInfoFields";
 import { PhotoUploadField } from "./FormFields/PhotoUploadField";
+import { Card } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 export const AddChildForm = () => {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ export const AddChildForm = () => {
     birth_date: "",
     city: "",
     status: "available",
+    needs: [],
+    is_sponsored: false
   });
 
   const calculateAge = (birthDate: string) => {
@@ -36,54 +40,51 @@ export const AddChildForm = () => {
     }
   };
 
-  const decodeError = (error: any): string => {
-    if (error.message.includes("children_gender_check")) {
-      return "Le genre doit être 'M' ou 'F'";
-    }
-    if (error.message.includes("violates foreign key constraint")) {
-      return "Erreur de référence : une des valeurs n'existe pas dans la base de données";
-    }
-    if (error.message.includes("violates not-null constraint")) {
-      return "Tous les champs obligatoires doivent être remplis";
-    }
-    return error.message || "Une erreur inconnue est survenue";
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      let photoUrl = null;
-
-      if (photo) {
-        const fileExt = photo.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from('children-photos')
-          .upload(filePath, photo);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('children-photos')
-          .getPublicUrl(filePath);
-
-        photoUrl = publicUrl;
+      // Validation explicite des champs requis
+      if (!formData.name || !formData.gender || !formData.birth_date) {
+        throw new Error("Veuillez remplir tous les champs obligatoires");
       }
 
-      // Validation explicite du genre
+      // Validation du genre
       if (!['M', 'F'].includes(formData.gender)) {
         throw new Error("Le genre doit être 'M' ou 'F'");
       }
 
+      // Calcul de l'âge
       const age = calculateAge(formData.birth_date);
       if (age === null) {
         throw new Error("La date de naissance est invalide");
       }
 
+      let photoUrl = null;
+
+      // Upload de la photo si présente
+      if (photo) {
+        const fileExt = photo.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+
+        const { error: uploadError, data } = await supabase.storage
+          .from('children-photos')
+          .upload(filePath, photo);
+
+        if (uploadError) throw uploadError;
+
+        if (data) {
+          const { data: { publicUrl } } = supabase.storage
+            .from('children-photos')
+            .getPublicUrl(data.path);
+
+          photoUrl = publicUrl;
+        }
+      }
+
+      // Insertion dans la base de données
       const { error } = await supabase
         .from('children')
         .insert({
@@ -91,10 +92,11 @@ export const AddChildForm = () => {
           gender: formData.gender,
           birth_date: formData.birth_date,
           age: age,
-          city: formData.city,
+          city: formData.city || null,
           status: "available",
           photo_url: photoUrl,
           is_sponsored: false,
+          needs: []
         });
 
       if (error) throw error;
@@ -110,7 +112,7 @@ export const AddChildForm = () => {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: decodeError(error),
+        description: error.message || "Une erreur est survenue lors de l'ajout de l'enfant",
       });
     } finally {
       setLoading(false);
@@ -118,33 +120,42 @@ export const AddChildForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <BasicInfoFields 
-          formData={formData}
-          handleChange={handleChange}
-          setFormData={setFormData}
-        />
-        <PhotoUploadField handlePhotoChange={handlePhotoChange} />
-      </div>
+    <Card className="p-6">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <div>
+            <Label className="text-lg font-semibold mb-4">
+              Informations de l'enfant
+            </Label>
+          </div>
+          
+          <BasicInfoFields 
+            formData={formData}
+            handleChange={handleChange}
+            setFormData={setFormData}
+          />
+          
+          <PhotoUploadField handlePhotoChange={handlePhotoChange} />
+        </div>
 
-      <div className="flex gap-4 pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => navigate('/children')}
-          className="w-full md:w-auto"
-        >
-          Annuler
-        </Button>
-        <Button 
-          type="submit" 
-          disabled={loading}
-          className="w-full md:w-auto"
-        >
-          {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
-        </Button>
-      </div>
-    </form>
+        <div className="flex gap-4 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/children')}
+            className="w-full md:w-auto"
+          >
+            Annuler
+          </Button>
+          <Button 
+            type="submit" 
+            disabled={loading}
+            className="w-full md:w-auto"
+          >
+            {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 };

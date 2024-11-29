@@ -7,7 +7,7 @@ interface PhotoUploadFieldProps {
 
 export const PhotoUploadField = ({ handlePhotoChange }: PhotoUploadFieldProps) => {
   return (
-    <div>
+    <div className="space-y-2">
       <Label htmlFor="photo">Photo</Label>
       <Input
         id="photo"
@@ -16,6 +16,9 @@ export const PhotoUploadField = ({ handlePhotoChange }: PhotoUploadFieldProps) =
         onChange={handlePhotoChange}
         className="cursor-pointer"
       />
+      <p className="text-sm text-gray-500">
+        Format accepté : JPG, PNG. Taille maximale : 5MB
+      </p>
     </div>
   );
 };

@@ -15,20 +15,21 @@ interface BasicInfoFieldsProps {
 
 export const BasicInfoFields = ({ formData, handleChange, setFormData }: BasicInfoFieldsProps) => {
   return (
-    <>
-      <div>
-        <Label htmlFor="name">Nom</Label>
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="space-y-2">
+        <Label htmlFor="name">Nom *</Label>
         <Input
           id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
           required
+          placeholder="Nom de l'enfant"
         />
       </div>
 
-      <div>
-        <Label htmlFor="gender">Genre</Label>
+      <div className="space-y-2">
+        <Label htmlFor="gender">Genre *</Label>
         <Select
           value={formData.gender}
           onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
@@ -44,8 +45,8 @@ export const BasicInfoFields = ({ formData, handleChange, setFormData }: BasicIn
         </Select>
       </div>
 
-      <div>
-        <Label htmlFor="birth_date">Date de naissance</Label>
+      <div className="space-y-2">
+        <Label htmlFor="birth_date">Date de naissance *</Label>
         <Input
           id="birth_date"
           name="birth_date"
@@ -56,16 +57,16 @@ export const BasicInfoFields = ({ formData, handleChange, setFormData }: BasicIn
         />
       </div>
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="city">Ville</Label>
         <Input
           id="city"
           name="city"
           value={formData.city}
           onChange={handleChange}
-          required
+          placeholder="Ville de l'enfant"
         />
       </div>
-    </>
+    </div>
   );
 };
