@@ -27,7 +27,7 @@ export const ChildNeeds = ({ child, needs, onDeleteNeed }: ChildNeedsProps) => {
       <div className="space-y-4">
         {needs?.map((need: Need, index: number) => (
           <div 
-            key={`${need.category}-${index}`}
+            key={`${need.categories?.join('-')}-${index}`}
             className={`p-3 rounded-lg border ${
               need.is_urgent ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
             }`}

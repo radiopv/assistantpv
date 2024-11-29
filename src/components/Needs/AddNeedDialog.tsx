@@ -57,8 +57,8 @@ export const AddNeedDialog = ({
           </Select>
 
           <Select
-            value={String(newNeed.category || "")}
-            onValueChange={(value) => onNeedChange({ category: value })}
+            value={newNeed.categories?.[0] || ""}
+            onValueChange={(value) => onNeedChange({ categories: [value] })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Catégorie du besoin" />
@@ -89,7 +89,7 @@ export const AddNeedDialog = ({
             <label htmlFor="urgent" className="text-sm text-gray-600">Besoin urgent</label>
           </div>
 
-          <Button onClick={onAddNeed} disabled={!selectedChild || !newNeed.category || !newNeed.description}>
+          <Button onClick={onAddNeed} disabled={!selectedChild || !newNeed.categories?.length || !newNeed.description}>
             Ajouter
           </Button>
         </div>
