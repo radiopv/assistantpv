@@ -16,7 +16,14 @@ import {
   UserCog,
   Mail,
   AlertTriangle,
-  Lock
+  Lock,
+  Layout,
+  Star,
+  HelpCircle,
+  Calendar,
+  Share2,
+  FileText,
+  Newspaper
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -34,6 +41,9 @@ const Sidebar = () => {
     { to: "/media-management", icon: Camera, label: "Gestion médias" },
     { to: "/sponsors-management", icon: UserCog, label: "Gestion parrains" },
     { to: "/messages", icon: Mail, label: "Messages" },
+    { to: "/homepage-management", icon: Layout, label: "Gestion accueil" },
+    { to: "/testimonials-management", icon: Star, label: "Gestion témoignages" },
+    { to: "/faq-management", icon: HelpCircle, label: "Gestion FAQ" },
     { to: "/permissions", icon: Lock, label: "Permissions" },
     { to: "/settings", icon: Settings, label: "Paramètres" }
   ];
@@ -42,7 +52,11 @@ const Sidebar = () => {
     { to: "/sponsor-dashboard", icon: Home, label: "Mon tableau de bord" },
     { to: "/messages", icon: MessageSquare, label: "Messages" },
     { to: "/rewards", icon: Award, label: "Récompenses" },
-    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés" }
+    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés" },
+    { to: "/my-testimonials", icon: Star, label: "Mes témoignages" },
+    { to: "/my-memories", icon: Camera, label: "Mes souvenirs" },
+    { to: "/my-calendar", icon: Calendar, label: "Mon calendrier" },
+    { to: "/share", icon: Share2, label: "Partager" }
   ];
 
   const assistantLinks = [
@@ -52,7 +66,9 @@ const Sidebar = () => {
     { to: "/donations", icon: Gift, label: "Dons" },
     { to: "/messages", icon: MessageSquare, label: "Messages" },
     { to: "/urgent-needs", icon: AlertTriangle, label: "Besoins urgents" },
-    { to: "/media-management", icon: Camera, label: "Gestion médias" }
+    { to: "/media-management", icon: Camera, label: "Gestion médias" },
+    { to: "/reports", icon: FileText, label: "Rapports" },
+    { to: "/news", icon: Newspaper, label: "Actualités" }
   ];
 
   const renderLinks = (links) => {
@@ -88,8 +104,7 @@ const Sidebar = () => {
           </div>
         )}
         
-        {/* Show sponsor section for both sponsors and admins */}
-        {(isSponsor || isAdmin) && (
+        {isSponsor && (
           <div className="space-y-1">
             <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
               Espace Parrain
