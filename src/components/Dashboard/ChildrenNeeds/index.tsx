@@ -3,19 +3,18 @@ import { Need } from "@/types/needs";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, ChevronDown } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { convertNeedsToJson } from "@/types/needs";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AddNeedForm } from "./AddNeedForm";
-import { ChildNeeds } from "./ChildNeeds";
+import { ChildNeedsList } from "./ChildNeedsList";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: { 
+interface ChildrenNeedsProps {
   children: any[];
   isLoading: boolean;
   onNeedsUpdate: () => void;
-}) => {
+}
+
+export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: ChildrenNeedsProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChild, setSelectedChild] = useState<any | null>(null);
   const [newNeed, setNewNeed] = useState<Need>({ 
@@ -23,48 +22,6 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
     description: "", 
     is_urgent: false 
   });
-
-  const handleAddNeed = async () => {
-    if (!selectedChild) return;
-
-    const updatedNeeds = [...(selectedChild.needs || []), newNeed];
-    const { error } = await supabase
-      .from('children')
-      .update({ needs: convertNeedsToJson(updatedNeeds) })
-      .eq('id', selectedChild.id);
-
-    if (error) {
-      toast.error("Erreur lors de l'ajout du besoin");
-      return;
-    }
-
-    toast.success("Besoin ajouté avec succès");
-    setNewNeed({ categories: [], description: "", is_urgent: false });
-    setSelectedChild(null);
-    setIsOpen(false);
-    onNeedsUpdate();
-  };
-
-  const handleDeleteNeed = async (childId: string, needIndex: number) => {
-    const child = children.find(c => c.id === childId);
-    if (!child) return;
-
-    const updatedNeeds = [...(child.needs || [])];
-    updatedNeeds.splice(needIndex, 1);
-
-    const { error } = await supabase
-      .from('children')
-      .update({ needs: convertNeedsToJson(updatedNeeds) })
-      .eq('id', childId);
-
-    if (error) {
-      toast.error("Erreur lors de la suppression du besoin");
-      return;
-    }
-
-    toast.success("Besoin supprimé avec succès");
-    onNeedsUpdate();
-  };
 
   if (isLoading) {
     return (
@@ -75,7 +32,13 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 w-full" />
+            <Card key={i} className="p-4">
+              <Skeleton className="h-6 w-32 mb-4" />
+              <div className="space-y-4">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            </Card>
           ))}
         </div>
       </div>
@@ -130,9 +93,9 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
 
       <div className="grid gap-6 md:grid-cols-2">
         {sortedChildren?.map((child) => (
-          <ChildNeeds 
-            key={child.id} 
-            child={child} 
+          <ChildNeedsList
+            key={child.id}
+            childName={child.name}
             needs={child.needs || []}
             onDeleteNeed={(index) => handleDeleteNeed(child.id, index)}
           />
