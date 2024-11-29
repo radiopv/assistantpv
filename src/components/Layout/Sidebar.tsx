@@ -12,7 +12,7 @@ import {
   BarChart
 } from "lucide-react";
 
-export const Sidebar = () => {
+const Sidebar = () => {
   const { signOut, user, isAssistant } = useAuth();
 
   const isAdmin = user?.role === 'admin';
@@ -128,3 +128,5 @@ export const Sidebar = () => {
     </div>
   );
 };
+
+export { Sidebar };

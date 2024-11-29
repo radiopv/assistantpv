@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link, Outlet, Navigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import Sidebar from "./Sidebar";
+import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { 
   LayoutDashboard, 
@@ -127,4 +127,4 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   );
 };
 
-export default MainLayout;
+export { MainLayout };
