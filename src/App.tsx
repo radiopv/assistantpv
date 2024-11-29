@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/components/Auth/AuthProvider";
@@ -29,6 +29,7 @@ const App = () => {
       <Router>
         <AuthProvider>
           <Routes>
+            {/* Public routes */}
             <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
             <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
             <Route path="/donations/public" element={<PublicLayout><PublicDonations /></PublicLayout>} />
@@ -36,6 +37,8 @@ const App = () => {
             <Route path="/videos" element={<PublicLayout><PublicVideos /></PublicLayout>} />
             <Route path="/faq" element={<PublicLayout><PublicFAQ /></PublicLayout>} />
             <Route path="/stories" element={<PublicLayout><Stories /></PublicLayout>} />
+
+            {/* Protected routes */}
             <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
             <Route path="/sponsor-dashboard" element={<MainLayout><SponsorDashboard /></MainLayout>} />
             <Route path="/children" element={<MainLayout><Children /></MainLayout>} />
@@ -43,6 +46,9 @@ const App = () => {
             <Route path="/children/add" element={<MainLayout><AddChild /></MainLayout>} />
             <Route path="/donations" element={<MainLayout><Donations /></MainLayout>} />
             <Route path="/rewards" element={<MainLayout><Rewards /></MainLayout>} />
+
+            {/* Catch-all route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <Toaster />
         </AuthProvider>

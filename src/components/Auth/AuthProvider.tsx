@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -32,8 +33,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
+
+          // Redirect based on role if on login or root page
+          if (location.pathname === '/login' || location.pathname === '/') {
+            switch (parsedUser.role) {
+              case 'admin':
+                navigate('/dashboard');
+                break;
+              case 'sponsor':
+                navigate('/sponsor-dashboard');
+                break;
+              case 'assistant':
+                navigate('/dashboard');
+                break;
+              default:
+                navigate('/');
+            }
+          }
         } else {
           setUser(null);
+          // Redirect to login if not on a public page
+          const publicPages = ['/', '/login', '/donations/public', '/statistics', '/videos', '/faq', '/stories'];
+          if (!publicPages.includes(location.pathname)) {
+            navigate('/login');
+          }
         }
       } catch (error) {
         console.error('Error checking auth:', error);
@@ -44,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
-  }, []);
+  }, [navigate, location.pathname]);
 
   const signOut = async () => {
     try {
