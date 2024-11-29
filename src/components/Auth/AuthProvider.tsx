@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { useAuth, UserRole } from "@/hooks/useAuth";
+import { useAuth as useAuthHook, UserRole } from "@/hooks/useAuth";
 import { ROLE_REDIRECTS } from "@/config/routes";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +27,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const auth = useAuth();
+  const auth = useAuthHook();
   const navigate = useNavigate();
 
   const handleRedirect = (role: UserRole) => {
@@ -143,7 +143,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useAuthContext = () => {
+// Export the useAuth hook
+export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
