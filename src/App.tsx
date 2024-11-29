@@ -30,7 +30,12 @@ const queryClient = new QueryClient({
   },
 });
 
-const ProtectedRoute = ({ children, requiredPermission, requireAdmin, requireAssistant }: { 
+const ProtectedRoute = ({ 
+  children, 
+  requiredPermission, 
+  requireAdmin, 
+  requireAssistant 
+}: { 
   children: React.ReactNode, 
   requiredPermission?: string,
   requireAdmin?: boolean,
@@ -63,6 +68,17 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin, requireAss
   return <>{children}</>;
 };
 
+const ConditionalLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useAuth();
+  const isStaff = ['admin', 'assistant'].includes(user?.role || '');
+
+  if (isStaff) {
+    return <MainLayout>{children}</MainLayout>;
+  }
+
+  return <PublicLayout>{children}</PublicLayout>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -71,14 +87,6 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Public Routes */}
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/children" element={<Children />} />
-              <Route path="/children/:id" element={<ChildProfile />} />
-              <Route path="/sponsorships" element={<Sponsorships />} />
-            </Route>
-
             {/* Auth Routes */}
             <Route path="/login" element={<Login />} />
 
@@ -93,6 +101,14 @@ const App = () => (
               <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
               <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
               <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
+            </Route>
+
+            {/* Public/Conditional Routes */}
+            <Route element={<ConditionalLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/children" element={<Children />} />
+              <Route path="/children/:id" element={<ChildProfile />} />
+              <Route path="/sponsorships" element={<Sponsorships />} />
             </Route>
 
             {/* Fallback Route */}
