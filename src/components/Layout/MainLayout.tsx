@@ -1,13 +1,9 @@
 import { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
-interface MainLayoutProps {
-  children?: ReactNode;
-}
-
-const MainLayout = ({ children }: MainLayoutProps) => {
+const MainLayout = () => {
   const { user, isAdmin, isAssistant } = useAuth();
 
   // Redirect to frontend if not admin or assistant
@@ -23,7 +19,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         </div>
         <main className="flex-1 ml-64 p-8 overflow-auto">
           <div className="container mx-auto animate-fade-in">
-            {children}
+            <Outlet />
           </div>
         </main>
       </div>

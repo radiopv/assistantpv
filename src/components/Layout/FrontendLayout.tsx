@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { 
   Home, 
   Heart, 
@@ -17,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
-const FrontendLayout = ({ children }: { children: React.ReactNode }) => {
+const FrontendLayout = () => {
   const { user, signOut } = useAuth();
 
   const publicLinks = [
@@ -113,7 +114,7 @@ const FrontendLayout = ({ children }: { children: React.ReactNode }) => {
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        {children}
+        <Outlet />
       </main>
     </div>
   );
