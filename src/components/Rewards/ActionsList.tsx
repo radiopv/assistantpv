@@ -5,12 +5,11 @@ import {
   MessageSquare, 
   Camera, 
   Heart, 
-  Users,
-  Share2
+  Users, 
+  Share2 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { SocialShare } from "@/components/Share/SocialShare";
 
 interface Action {
   title: string;
@@ -20,18 +19,28 @@ interface Action {
   link: string;
   isExternal?: boolean;
   onClick?: () => void;
-  customButton?: React.ReactNode;
 }
 
 export const ActionsList = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleShareComplete = () => {
-    toast({
-      title: "Partage réussi",
-      description: "Merci d'avoir partagé ! Vous avez gagné 25 points.",
-    });
+  const handleShare = async () => {
+    try {
+      await navigator.share({
+        title: 'Passion Varadero - Parrainage',
+        text: 'Rejoignez-nous dans notre mission de parrainage d\'enfants !',
+        url: window.location.origin
+      });
+      
+      toast({
+        title: "Partage réussi",
+        description: "Merci d'avoir partagé notre mission !",
+      });
+    } catch (error) {
+      // Si le partage n'est pas supporté ou échoue, on ouvre dans un nouvel onglet
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.origin), '_blank');
+    }
   };
 
   const actions: Action[] = [
@@ -40,7 +49,7 @@ export const ActionsList = () => {
       description: "Ajoutez une photo et complétez vos informations",
       points: 10,
       icon: <UserCircle className="w-5 h-5" />,
-      link: "/settings/profile"
+      link: "/settings"
     },
     {
       title: "Ajouter un témoignage",
@@ -54,29 +63,29 @@ export const ActionsList = () => {
       description: "Téléchargez une photo de votre filleul",
       points: 15,
       icon: <Camera className="w-5 h-5" />,
-      link: "/sponsor-dashboard/photos"
+      link: "/children"
     },
     {
       title: "Faire un don",
       description: "Soutenez un projet spécial",
       points: 30,
       icon: <Heart className="w-5 h-5" />,
-      link: "/donations/new"
+      link: "/donations"
     },
     {
       title: "Parrainer un autre enfant",
       description: "Étendez votre impact",
       points: 50,
       icon: <Users className="w-5 h-5" />,
-      link: "/children/available"
+      link: "/available-children"
     },
     {
       title: "Partager sur les réseaux",
       description: "Invitez d'autres à rejoindre l'aventure",
       points: 25,
       icon: <Share2 className="w-5 h-5" />,
-      link: "#",
-      customButton: <SocialShare onShare={handleShareComplete} />
+      onClick: handleShare,
+      link: "#"
     }
   ];
 
@@ -85,13 +94,14 @@ export const ActionsList = () => {
       action.onClick();
     } else if (action.isExternal) {
       window.open(action.link, '_blank');
-    } else if (action.link !== "#") {
+    } else {
       navigate(action.link);
-      toast({
-        title: "Action disponible",
-        description: `Cette action vous rapportera ${action.points} points une fois complétée.`,
-      });
     }
+
+    toast({
+      title: "Action disponible",
+      description: `Cette action vous rapportera ${action.points} points une fois complétée.`,
+    });
   };
 
   return (
@@ -111,15 +121,13 @@ export const ActionsList = () => {
                   <span className="text-sm font-medium text-primary">
                     +{action.points} points
                   </span>
-                  {action.customButton || (
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleActionClick(action)}
-                    >
-                      Commencer
-                    </Button>
-                  )}
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleActionClick(action)}
+                  >
+                    Commencer
+                  </Button>
                 </div>
               </div>
             </div>
