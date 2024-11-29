@@ -29,3 +29,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Ensure white background for all dropdown menus */
+[role="listbox"],
+[role="menu"],
+.select-content,
+[data-radix-popper-content-wrapper] > div {
+  @apply bg-white !important;
+}
+
+/* Ensure white background for dropdown items on hover */
+[role="option"]:hover,
+[role="menuitem"]:hover {
+  @apply bg-gray-100 !important;
+}
+
+/* Ensure selected items have proper contrast */
+[role="option"][data-highlighted],
+[role="menuitem"][data-highlighted] {
+  @apply bg-gray-100 text-gray-900 !important;
+}
