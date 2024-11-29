@@ -15,7 +15,7 @@ interface Message {
   recipient_id: string;
   created_at: string;
   is_read: boolean;
-  sender: {
+  sender?: {
     name: string;
     role: string;
   };
@@ -42,7 +42,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
       }
 
       // Transform the data to match the Message interface
-      const transformedMessages = data?.map(msg => ({
+      const transformedMessages = (data as Message[])?.map(msg => ({
         ...msg,
         sender: {
           name: msg.sender?.name || "Unknown",
@@ -69,7 +69,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
         (payload) => {
           if (payload.eventType === "INSERT") {
             const newMessage = {
-              ...payload.new as Message,
+              ...(payload.new as Message),
               sender: {
                 name: "Loading...", // This will be updated on the next fetch
                 role: "unknown"
@@ -100,9 +100,9 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold">{message.sender.name}</span>
-                  <Badge variant={message.sender.role === "admin" ? "destructive" : "secondary"}>
-                    {message.sender.role}
+                  <span className="font-semibold">{message.sender?.name}</span>
+                  <Badge variant={message.sender?.role === "admin" ? "destructive" : "secondary"}>
+                    {message.sender?.role}
                   </Badge>
                 </div>
                 <span className="text-sm text-gray-500">
