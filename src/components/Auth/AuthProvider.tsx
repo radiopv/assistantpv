@@ -44,15 +44,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAssistant(['assistant', 'admin'].includes(profile.role));
         setIsAdmin(profile.role === 'admin');
 
-        // Redirection basée sur le rôle
+        // Redirection basée sur le rôle après connexion
         if (location.pathname === '/login') {
           switch (profile.role) {
             case 'admin':
+              navigate('/admin/dashboard');
+              break;
             case 'assistant':
-              navigate('/dashboard');
+              navigate('/assistant/dashboard');
               break;
             case 'sponsor':
-              navigate('/sponsor-dashboard');
+              navigate('/sponsor/dashboard');
               break;
             default:
               navigate('/');
@@ -63,22 +65,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAssistant(false);
         setIsAdmin(false);
 
-        const protectedPages = [
-          '/dashboard',
-          '/sponsor-dashboard',
-          '/children/add',
-          '/donations',
-          '/rewards',
-          '/messages',
-          '/media-management',
-          '/sponsors-management',
-          '/settings',
-          '/urgent-needs',
-          '/permissions',
-          '/children-needs'
-        ];
-
-        if (protectedPages.includes(location.pathname)) {
+        // Redirection vers login si accès à une route protégée
+        const currentPath = location.pathname;
+        if (currentPath.startsWith('/admin') || 
+            currentPath.startsWith('/assistant') || 
+            currentPath.startsWith('/sponsor')) {
           navigate('/login');
         }
       }
@@ -95,12 +86,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Initial auth check
+    // Vérification initiale de l'authentification
     supabase.auth.getSession().then(({ data: { session } }) => {
       handleAuthChange(session);
     });
 
-    // Setup auth listener
+    // Écoute des changements d'état d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       handleAuthChange(session);
     });
