@@ -12,19 +12,16 @@ import {
   BarChart,
   Heart,
   Camera,
-  Database,
   UserCog,
   Mail,
-  AlertTriangle,
   Lock,
   FileText,
   Share2,
-  BookOpen,
   Image,
-  Video,
-  HelpCircle,
   Star,
+  HelpCircle,
   Calendar,
+  AlertTriangle,
   Newspaper
 } from "lucide-react";
 
