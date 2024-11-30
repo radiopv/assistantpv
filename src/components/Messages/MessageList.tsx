@@ -8,11 +8,6 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Star } from "lucide-react";
 
-interface Sender {
-  name: string;
-  role: string;
-}
-
 interface Message {
   id: string;
   subject: string;
@@ -23,7 +18,14 @@ interface Message {
   is_read: boolean;
   is_starred: boolean;
   is_archived: boolean;
-  sender?: Sender;
+  conversation_type: string;
+  parent_id: string;
+  sender_role: string;
+  updated_at: string;
+  sender?: {
+    name: string;
+    role: string;
+  };
 }
 
 export const MessageList = ({ 

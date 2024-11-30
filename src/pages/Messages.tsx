@@ -24,7 +24,7 @@ interface Message {
   parent_id: string;
   sender_role: string;
   updated_at: string;
-  sender: {
+  sender?: {
     name: string;
     role: string;
   };
@@ -56,7 +56,15 @@ const Messages = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as Message[];
+      
+      // Transform the data to match the Message interface
+      return (data || []).map(msg => ({
+        ...msg,
+        sender: msg.sender ? {
+          name: msg.sender.name || '',
+          role: msg.sender.role || ''
+        } : undefined
+      })) as Message[];
     }
   });
 
@@ -65,6 +73,8 @@ const Messages = () => {
     msg.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     msg.sender?.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // ... keep existing code (JSX for the component)
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -81,7 +91,7 @@ const Messages = () => {
               <Input
                 placeholder="Rechercher des messages..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                 className="pl-10"
               />
             </div>
