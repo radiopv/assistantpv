@@ -7,7 +7,11 @@ import {
   Users, 
   Heart,
   Menu,
-  LayoutDashboard
+  LayoutDashboard,
+  Gift,
+  MessageSquare,
+  History,
+  HelpCircle
 } from "lucide-react";
 import {
   Sheet,
@@ -33,6 +37,26 @@ const PublicLayout = () => {
       href: "/devenir-parrain",
       label: "Devenir parrain",
       icon: Heart,
+    },
+    {
+      href: "/dons",
+      label: "Dons",
+      icon: Gift,
+    },
+    {
+      href: "/temoignages",
+      label: "Témoignages",
+      icon: MessageSquare,
+    },
+    {
+      href: "/histoire",
+      label: "Histoire",
+      icon: History,
+    },
+    {
+      href: "/faq",
+      label: "FAQ",
+      icon: HelpCircle,
     },
   ];
 
