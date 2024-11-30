@@ -15,6 +15,7 @@ const Children = () => {
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
   const [selectedAge, setSelectedAge] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   // Fetch only available children for public view
   const { data: children, isLoading } = useQuery({
@@ -44,8 +45,9 @@ const Children = () => {
     const matchesCity = selectedCity === "all" || child.city === selectedCity;
     const matchesGender = selectedGender === "all" || child.gender === selectedGender;
     const matchesAge = selectedAge === "all" || child.age === parseInt(selectedAge);
+    const matchesStatus = selectedStatus === "all" || child.status === selectedStatus;
     
-    return matchesSearch && matchesCity && matchesGender && matchesAge;
+    return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
   });
 
   if (isLoading) {
@@ -77,10 +79,12 @@ const Children = () => {
         selectedCity={selectedCity}
         selectedGender={selectedGender}
         selectedAge={selectedAge}
+        selectedStatus={selectedStatus}
         onSearchChange={setSearchTerm}
         onCityChange={setSelectedCity}
         onGenderChange={setSelectedGender}
         onAgeChange={setSelectedAge}
+        onStatusChange={setSelectedStatus}
         cities={cities}
         ages={ages}
       />
