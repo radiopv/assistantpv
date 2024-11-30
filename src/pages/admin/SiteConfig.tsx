@@ -3,11 +3,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const SiteConfig = () => {
   const { toast } = useToast();
+  const { user, isAssistant } = useAuth();
+  const navigate = useNavigate();
   const [config, setConfig] = useState({
     siteName: "Passion Varadero",
     primaryColor: "#FF6B6B",
@@ -15,11 +19,49 @@ const SiteConfig = () => {
     logo: "",
   });
 
+  useEffect(() => {
+    // Redirect if not admin
+    if (user && !isAssistant) {
+      navigate("/");
+      return;
+    }
+
+    // Load current config
+    const loadConfig = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("site_config")
+          .select("*")
+          .single();
+
+        if (error) throw error;
+
+        if (data) {
+          setConfig({
+            siteName: data.site_name,
+            primaryColor: data.primary_color,
+            secondaryColor: data.secondary_color,
+            logo: data.logo_url || "",
+          });
+        }
+      } catch (error: any) {
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger la configuration.",
+        });
+      }
+    };
+
+    loadConfig();
+  }, [user, isAssistant, navigate]);
+
   const handleSave = async () => {
     try {
       const { error } = await supabase
         .from("site_config")
         .upsert({
+          id: "default", // Using a default ID since we only need one config
           site_name: config.siteName,
           primary_color: config.primaryColor,
           secondary_color: config.secondaryColor,
@@ -33,7 +75,7 @@ const SiteConfig = () => {
         title: "Configuration sauvegardée",
         description: "Les modifications ont été enregistrées avec succès.",
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -41,6 +83,10 @@ const SiteConfig = () => {
       });
     }
   };
+
+  if (!user || !isAssistant) {
+    return null;
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
