@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Need } from "@/types/needs";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown } from "lucide-react";
+import { Plus, ChevronDown, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
@@ -9,6 +9,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AddNeedForm } from "./AddNeedForm";
 import { NeedsList } from "./NeedsList";
+import { NeedsStats } from "./NeedsStats";
+import { ChildrenFilter } from "./ChildrenFilter";
 
 export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: { 
   children: any[];
@@ -21,6 +23,11 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
     category: "", 
     description: "", 
     is_urgent: false 
+  });
+  const [filters, setFilters] = useState({
+    category: "",
+    urgentOnly: false,
+    searchTerm: ""
   });
 
   const handleAddNeed = async () => {
@@ -48,6 +55,16 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
     }
   };
 
+  const filteredChildren = children.filter(child => {
+    const matchesSearch = child.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
+    const matchesCategory = !filters.category || 
+      (child.needs || []).some((need: Need) => need.category === filters.category);
+    const matchesUrgent = !filters.urgentOnly || 
+      (child.needs || []).some((need: Need) => need.is_urgent);
+    
+    return matchesSearch && matchesCategory && matchesUrgent;
+  }).sort((a, b) => a.name.localeCompare(b.name));
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -64,35 +81,48 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
     );
   }
 
-  const sortedChildren = [...children].sort((a, b) => a.name.localeCompare(b.name));
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-4">
         <h2 className="text-2xl font-semibold">Besoins des Enfants</h2>
-        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full md:w-auto">
-          <CollapsibleTrigger asChild>
-            <Button className="w-full md:w-auto bg-primary hover:bg-primary/90">
-              <Plus className="w-4 h-4 mr-2" />
-              Ajouter un besoin
-              <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-4">
-            <AddNeedForm
-              children={children}
-              selectedChildren={selectedChildren}
-              newNeed={newNeed}
-              setSelectedChildren={setSelectedChildren}
-              setNewNeed={setNewNeed}
-              onSubmit={handleAddNeed}
-            />
-          </CollapsibleContent>
-        </Collapsible>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setFilters(prev => ({ ...prev, urgentOnly: !prev.urgentOnly }))}
+            className={filters.urgentOnly ? "bg-red-50" : ""}
+          >
+            <Filter className="w-4 h-4 mr-2" />
+            Besoins urgents
+          </Button>
+          <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+            <CollapsibleTrigger asChild>
+              <Button className="bg-primary hover:bg-primary/90">
+                <Plus className="w-4 h-4 mr-2" />
+                Ajouter un besoin
+                <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4">
+              <AddNeedForm
+                children={children}
+                selectedChildren={selectedChildren}
+                newNeed={newNeed}
+                setSelectedChildren={setSelectedChildren}
+                setNewNeed={setNewNeed}
+                onSubmit={handleAddNeed}
+              />
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
       </div>
 
+      <NeedsStats children={children} />
+      
+      <ChildrenFilter filters={filters} setFilters={setFilters} />
+
       <div className="grid gap-6 md:grid-cols-2">
-        {sortedChildren?.map((child) => (
+        {filteredChildren.map((child) => (
           <NeedsList key={child.id} child={child} needs={child.needs || []} />
         ))}
       </div>
