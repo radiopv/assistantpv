@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { AddNeedForm } from "./AddNeedForm";
+import { NeedForm } from "./NeedForm";
 import { NeedsList } from "./NeedsList";
 import { NeedsStats } from "./NeedsStats";
 import { ChildrenFilter } from "./ChildrenFilter";
@@ -18,52 +18,56 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
   onNeedsUpdate: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedChildren, setSelectedChildren] = useState<any[]>([]);
-  const [newNeed, setNewNeed] = useState<Need>({ 
-    category: "", 
-    description: "", 
-    is_urgent: false 
-  });
+  const [selectedChild, setSelectedChild] = useState<any | null>(null);
+  const [selectedNeeds, setSelectedNeeds] = useState<Need[]>([]);
   const [filters, setFilters] = useState({
     category: "",
     urgentOnly: false,
     searchTerm: ""
   });
 
-  const handleAddNeed = async () => {
-    if (selectedChildren.length === 0) return;
+  const handleAddNeeds = async () => {
+    if (!selectedChild) return;
 
     try {
-      for (const child of selectedChildren) {
-        const updatedNeeds = [...(child.needs || []), newNeed];
-        const { error } = await supabase
-          .from('children')
-          .update({ needs: convertNeedsToJson(updatedNeeds) })
-          .eq('id', child.id);
+      const updatedNeeds = [...(selectedChild.needs || []), ...selectedNeeds];
+      const { error } = await supabase
+        .from('children')
+        .update({ needs: convertNeedsToJson(updatedNeeds) })
+        .eq('id', selectedChild.id);
 
-        if (error) throw error;
-      }
+      if (error) throw error;
 
-      toast.success(`Besoin ajouté avec succès pour ${selectedChildren.length} enfant(s)`);
-      setNewNeed({ category: "", description: "", is_urgent: false });
-      setSelectedChildren([]);
+      toast.success("Besoins ajoutés avec succès");
+      setSelectedNeeds([]);
+      setSelectedChild(null);
       setIsOpen(false);
       onNeedsUpdate();
     } catch (error) {
-      toast.error("Erreur lors de l'ajout du besoin");
+      toast.error("Erreur lors de l'ajout des besoins");
       console.error("Erreur:", error);
     }
   };
 
-  const filteredChildren = children.filter(child => {
-    const matchesSearch = child.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
-    const matchesCategory = !filters.category || 
-      (child.needs || []).some((need: Need) => need.category === filters.category);
-    const matchesUrgent = !filters.urgentOnly || 
-      (child.needs || []).some((need: Need) => need.is_urgent);
-    
-    return matchesSearch && matchesCategory && matchesUrgent;
-  }).sort((a, b) => a.name.localeCompare(b.name));
+  const filteredChildren = children
+    .filter(child => {
+      const hasNeeds = (child.needs || []).length > 0;
+      const matchesSearch = child.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
+      const matchesCategory = !filters.category || 
+        (child.needs || []).some((need: Need) => need.category === filters.category);
+      const matchesUrgent = !filters.urgentOnly || 
+        (child.needs || []).some((need: Need) => need.is_urgent);
+      
+      return hasNeeds && matchesSearch && matchesCategory && matchesUrgent;
+    })
+    .sort((a, b) => {
+      // Prioritize children with urgent needs
+      const aHasUrgent = (a.needs || []).some((need: Need) => need.is_urgent);
+      const bHasUrgent = (b.needs || []).some((need: Need) => need.is_urgent);
+      if (aHasUrgent && !bHasUrgent) return -1;
+      if (!aHasUrgent && bHasUrgent) return 1;
+      return a.name.localeCompare(b.name);
+    });
 
   if (isLoading) {
     return (
@@ -99,18 +103,15 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
             <CollapsibleTrigger asChild>
               <Button className="bg-primary hover:bg-primary/90">
                 <Plus className="w-4 h-4 mr-2" />
-                Ajouter un besoin
+                Ajouter des besoins
                 <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-4">
-              <AddNeedForm
-                children={children}
-                selectedChildren={selectedChildren}
-                newNeed={newNeed}
-                setSelectedChildren={setSelectedChildren}
-                setNewNeed={setNewNeed}
-                onSubmit={handleAddNeed}
+              <NeedForm
+                selectedNeeds={selectedNeeds}
+                setSelectedNeeds={setSelectedNeeds}
+                onSubmit={handleAddNeeds}
               />
             </CollapsibleContent>
           </Collapsible>
@@ -126,6 +127,12 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
           <NeedsList key={child.id} child={child} needs={child.needs || []} />
         ))}
       </div>
+
+      {filteredChildren.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          Aucun enfant n'a de besoins correspondant à vos critères
+        </div>
+      )}
     </div>
   );
 };

@@ -1,60 +1,62 @@
 import { Card } from "@/components/ui/card";
 import { Need } from "@/types/needs";
-import { NeedCategoryIcon } from "./NeedCategoryIcon";
-import { Badge } from "@/components/ui/badge";
 import { BellRing } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface NeedsListProps {
   child: any;
   needs: Need[];
 }
 
+const NEED_CATEGORIES = {
+  education: "Éducation",
+  jouet: "Jouet",
+  vetement: "Vêtement",
+  nourriture: "Nourriture",
+  medicament: "Médicament",
+  hygiene: "Hygiène",
+  autre: "Autre"
+};
+
 export const NeedsList = ({ child, needs }: NeedsListProps) => {
-  const NEED_CATEGORIES = {
-    education: "Éducation",
-    jouet: "Jouet",
-    vetement: "Vêtement",
-    nourriture: "Nourriture",
-    medicament: "Médicament",
-    hygiene: "Hygiène",
-    autre: "Autre"
-  };
+  if (!needs || needs.length === 0) return null;
 
   return (
-    <Card key={child.id} className="p-4 space-y-4">
-      <h3 className="font-semibold text-lg">{child.name}</h3>
-      <div className="space-y-3">
-        {needs?.map((need: Need, index: number) => (
+    <Card className="overflow-hidden bg-white shadow-lg">
+      <div className="p-4 border-b bg-gray-50">
+        <h3 className="font-semibold text-lg">{child.name}</h3>
+        <p className="text-sm text-gray-600">{child.age} ans</p>
+      </div>
+      
+      <div className="p-4 space-y-4">
+        {needs.map((need, index) => (
           <div 
-            key={`${need.category}-${index}`}
+            key={index}
             className={`p-4 rounded-lg border transition-all ${
               need.is_urgent 
-                ? 'bg-red-50 border-red-200 hover:bg-red-100' 
-                : 'bg-green-50 border-green-200 hover:bg-green-100'
+                ? 'bg-red-50 border-red-200 animate-pulse' 
+                : 'bg-blue-50 border-blue-200'
             }`}
           >
-            <div className="space-y-2">
+            <div className="flex flex-col space-y-2">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <NeedCategoryIcon category={need.category as string} />
-                  <span className="font-medium">
-                    {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                  </span>
-                </div>
+                <Badge variant={need.is_urgent ? "destructive" : "secondary"}>
+                  {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                </Badge>
                 {need.is_urgent && (
-                  <Badge variant="destructive" className="flex items-center gap-1">
-                    <BellRing className="w-3 h-3" />
+                  <div className="flex items-center text-red-500 text-sm">
+                    <BellRing className="w-4 h-4 mr-1" />
                     Urgent
-                  </Badge>
+                  </div>
                 )}
               </div>
-              <p className="text-sm text-gray-600">{need.description}</p>
+              
+              <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                {need.description}
+              </p>
             </div>
           </div>
         ))}
-        {needs.length === 0 && (
-          <p className="text-sm text-gray-500 italic">Aucun besoin enregistré</p>
-        )}
       </div>
     </Card>
   );
