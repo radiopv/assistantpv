@@ -1,37 +1,25 @@
-import { 
-  Book, 
-  Shirt, 
-  Apple, 
-  Stethoscope, 
-  Sparkles, 
-  GraduationCap,
-  HelpCircle 
-} from "lucide-react";
+import { Book, Gift, Shirt, Pizza, Pill, Shower, HelpCircle } from "lucide-react";
 
 interface NeedCategoryIconProps {
   category: string;
   className?: string;
 }
 
-export const NeedCategoryIcon = ({ category, className = "" }: NeedCategoryIconProps) => {
-  const iconProps = {
-    className: `w-5 h-5 ${className}`,
-  };
-
+export const NeedCategoryIcon = ({ category, className = "w-4 h-4" }: NeedCategoryIconProps) => {
   switch (category) {
     case "education":
-      return <GraduationCap {...iconProps} />;
+      return <Book className={className} />;
     case "jouet":
-      return <Sparkles {...iconProps} />;
+      return <Gift className={className} />;
     case "vetement":
-      return <Shirt {...iconProps} />;
+      return <Shirt className={className} />;
     case "nourriture":
-      return <Apple {...iconProps} />;
+      return <Pizza className={className} />;
     case "medicament":
-      return <Stethoscope {...iconProps} />;
+      return <Pill className={className} />;
     case "hygiene":
-      return <Book {...iconProps} />;
+      return <Shower className={className} />;
     default:
-      return <HelpCircle {...iconProps} />;
+      return <HelpCircle className={className} />;
   }
 };
