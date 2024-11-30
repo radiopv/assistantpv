@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus } from "lucide-react";
 import { Need } from "@/types/needs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useTranslation } from "@/components/Translation/TranslationContext";
 
 interface AddNeedDialogProps {
   children: any[];
@@ -23,6 +24,8 @@ export const AddNeedDialog = ({
   onNeedChange,
   onAddNeed
 }: AddNeedDialogProps) => {
+  const { t } = useTranslation();
+  
   const sortedChildren = [...children].sort((a, b) => 
     (a.name as string).localeCompare(b.name as string)
   );
@@ -32,12 +35,12 @@ export const AddNeedDialog = ({
       <DialogTrigger asChild>
         <Button>
           <Plus className="w-4 h-4 mr-2" />
-          Ajouter un besoin
+          {t("needs.add_need")}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Ajouter un besoin</DialogTitle>
+          <DialogTitle>{t("needs.add_need")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <Select
@@ -45,7 +48,7 @@ export const AddNeedDialog = ({
             onValueChange={onChildSelect}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un enfant" />
+              <SelectValue placeholder={t("needs.select_child")} />
             </SelectTrigger>
             <SelectContent>
               {sortedChildren?.map((child) => (
@@ -61,21 +64,21 @@ export const AddNeedDialog = ({
             onValueChange={(value) => onNeedChange({ category: value })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Catégorie du besoin" />
+              <SelectValue placeholder={t("needs.category_placeholder")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="education">Éducation</SelectItem>
-              <SelectItem value="jouet">Jouet</SelectItem>
-              <SelectItem value="vetement">Vêtement</SelectItem>
-              <SelectItem value="nourriture">Nourriture</SelectItem>
-              <SelectItem value="medicament">Médicament</SelectItem>
-              <SelectItem value="hygiene">Hygiène</SelectItem>
-              <SelectItem value="autre">Autre</SelectItem>
+              <SelectItem value="education">{t("needs.categories.education")}</SelectItem>
+              <SelectItem value="jouet">{t("needs.categories.toy")}</SelectItem>
+              <SelectItem value="vetement">{t("needs.categories.clothing")}</SelectItem>
+              <SelectItem value="nourriture">{t("needs.categories.food")}</SelectItem>
+              <SelectItem value="medicament">{t("needs.categories.medicine")}</SelectItem>
+              <SelectItem value="hygiene">{t("needs.categories.hygiene")}</SelectItem>
+              <SelectItem value="autre">{t("needs.categories.other")}</SelectItem>
             </SelectContent>
           </Select>
 
           <Input
-            placeholder="Description du besoin"
+            placeholder={t("needs.description_placeholder")}
             value={newNeed.description}
             onChange={(e) => onNeedChange({ description: e.target.value })}
           />
@@ -86,11 +89,11 @@ export const AddNeedDialog = ({
               checked={newNeed.is_urgent}
               onCheckedChange={(checked) => onNeedChange({ is_urgent: checked as boolean })}
             />
-            <label htmlFor="urgent" className="text-sm text-gray-600">Besoin urgent</label>
+            <label htmlFor="urgent" className="text-sm text-gray-600">{t("needs.urgent")}</label>
           </div>
 
           <Button onClick={onAddNeed} disabled={!selectedChild || !newNeed.category || !newNeed.description}>
-            Ajouter
+            {t("needs.add")}
           </Button>
         </div>
       </DialogContent>

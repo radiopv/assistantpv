@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "@/components/Translation/TranslationContext";
 
 interface Recipient {
   id: string;
@@ -24,6 +25,7 @@ export const NewMessageDialog = () => {
   const [content, setContent] = useState("");
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const loadRecipients = async () => {
     const { data: userData } = await supabase
@@ -57,8 +59,8 @@ export const NewMessageDialog = () => {
     if (!selectedRecipient || !subject || !content) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs",
+        title: t("messages.error"),
+        description: t("messages.fill_all_fields"),
       });
       return;
     }
@@ -76,8 +78,8 @@ export const NewMessageDialog = () => {
       if (messageError) throw messageError;
 
       toast({
-        title: "Message envoyé",
-        description: "Votre message a été envoyé avec succès",
+        title: t("messages.success"),
+        description: t("messages.sent_success"),
       });
 
       setOpen(false);
@@ -88,8 +90,8 @@ export const NewMessageDialog = () => {
       console.error("Error sending message:", error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi du message",
+        title: t("messages.error"),
+        description: t("messages.send_error"),
       });
     } finally {
       setLoading(false);
@@ -102,52 +104,52 @@ export const NewMessageDialog = () => {
       if (isOpen) loadRecipients();
     }}>
       <DialogTrigger asChild>
-        <Button>Nouveau message</Button>
+        <Button>{t("messages.new")}</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Nouveau message</DialogTitle>
+          <DialogTitle>{t("messages.new_message")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Destinataire</label>
+            <label className="text-sm font-medium">{t("messages.recipient")}</label>
             <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
               <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un destinataire" />
+                <SelectValue placeholder={t("messages.select_recipient")} />
               </SelectTrigger>
               <SelectContent>
                 {recipients.map((recipient) => (
                   <SelectItem key={recipient.id} value={recipient.id}>
-                    {recipient.name} ({recipient.role})
+                    {recipient.name} ({t(`roles.${recipient.role}`)})
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Sujet</label>
+            <label className="text-sm font-medium">{t("messages.subject")}</label>
             <Input
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
-              placeholder="Sujet du message"
+              placeholder={t("messages.subject_placeholder")}
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium">Message</label>
+            <label className="text-sm font-medium">{t("messages.message")}</label>
             <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              placeholder="Votre message"
+              placeholder={t("messages.message_placeholder")}
               rows={5}
             />
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button onClick={handleSubmit} disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Envoyer
+              {t("messages.send")}
             </Button>
           </div>
         </div>

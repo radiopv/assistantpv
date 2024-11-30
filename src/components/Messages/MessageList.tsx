@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useTranslation } from "@/components/Translation/TranslationContext";
 
 interface Sender {
   name: string;
@@ -24,8 +25,9 @@ interface Message {
 }
 
 export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Message) => void }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -46,10 +48,10 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
       const transformedMessages = (data as any[])?.map(msg => ({
         ...msg,
         sender: msg.sender ? {
-          name: msg.sender.name || "Unknown",
+          name: msg.sender.name || t("messages.unknown_sender"),
           role: msg.sender.role || "unknown"
         } : {
-          name: "Unknown",
+          name: t("messages.unknown_sender"),
           role: "unknown"
         }
       }));
@@ -74,7 +76,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
             const newMessage = {
               ...(payload.new as Message),
               sender: {
-                name: "Loading...",
+                name: t("messages.loading"),
                 role: "unknown"
               }
             };
@@ -88,13 +90,13 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
     return () => {
       subscription.unsubscribe();
     };
-  }, [user?.id]);
+  }, [user?.id, t]);
 
   return (
     <Card className="h-[600px] w-full">
       <ScrollArea className="h-full">
         <div className="p-4 space-y-4">
-          {messages.map((message) => (
+          {messages?.map((message) => (
             <div
               key={message.id}
               onClick={() => onSelectMessage(message)}
@@ -104,7 +106,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">{message.sender?.name}</span>
                   <Badge variant={message.sender?.role === "admin" ? "destructive" : "secondary"}>
-                    {message.sender?.role}
+                    {t(`roles.${message.sender?.role}`)}
                   </Badge>
                 </div>
                 <span className="text-sm text-gray-500">
@@ -118,7 +120,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
               <p className="text-sm text-gray-600 line-clamp-2">{message.content}</p>
               {!message.is_read && (
                 <Badge className="mt-2" variant="default">
-                  Nouveau
+                  {t("messages.new")}
                 </Badge>
               )}
             </div>
