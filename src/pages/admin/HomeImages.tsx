@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Upload, Trash2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 
 interface HomeImage {
   id: string;
@@ -23,6 +23,7 @@ type Position = typeof VALID_POSITIONS[number];
 const HomeImages = () => {
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState<Position>('main');
 
   const { data: images, isLoading, refetch } = useQuery({
     queryKey: ['home-images'],
@@ -37,7 +38,7 @@ const HomeImages = () => {
     }
   });
 
-  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>, position: Position) => {
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       if (!event.target.files || event.target.files.length === 0) {
         return;
@@ -62,9 +63,9 @@ const HomeImages = () => {
         .from('home_images')
         .insert({
           url: publicUrl,
-          position: position,
-          is_mobile: false,
-          layout_position: position
+          position: selectedPosition,
+          layout_position: selectedPosition,
+          is_mobile: false
         });
 
       if (dbError) throw dbError;
@@ -127,18 +128,29 @@ const HomeImages = () => {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Ajouter une nouvelle image</h2>
           <div className="space-y-4">
-            {VALID_POSITIONS.map((position) => (
-              <div key={position}>
-                <Label htmlFor={position}>Image {position}</Label>
-                <Input
-                  id={position}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleUpload(e, position)}
-                  disabled={uploading}
-                />
-              </div>
-            ))}
+            <div className="space-y-2">
+              <Label htmlFor="position">Position de l'image</Label>
+              <Select value={selectedPosition} onValueChange={(value) => setSelectedPosition(value as Position)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionnez une position" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="main">Principale</SelectItem>
+                  <SelectItem value="secondary">Secondaire</SelectItem>
+                  <SelectItem value="tertiary">Tertiaire</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="image">Image</Label>
+              <Input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleUpload}
+                disabled={uploading}
+              />
+            </div>
           </div>
         </Card>
 
