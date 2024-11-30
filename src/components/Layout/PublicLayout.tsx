@@ -60,8 +60,8 @@ const PublicLayout = () => {
     },
   ];
 
-  const isAdminOrAssistant = user?.role === 'admin' || user?.role === 'assistant';
-  const shouldShowAdminLink = session && isAdminOrAssistant;
+  // Vérification plus stricte pour l'accès administratif
+  const isAdminOrAssistant = session && user?.role && ['admin', 'assistant'].includes(user.role);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -89,7 +89,7 @@ const PublicLayout = () => {
                     <span className="text-base font-medium">{item.label}</span>
                   </Link>
                 ))}
-                {shouldShowAdminLink && (
+                {isAdminOrAssistant && (
                   <Link to="/dashboard">
                     <Button className="w-full h-12 text-base">
                       <LayoutDashboard className="mr-3 h-5 w-5" />
@@ -125,7 +125,7 @@ const PublicLayout = () => {
               </nav>
             </div>
             <div>
-              {shouldShowAdminLink && (
+              {isAdminOrAssistant && (
                 <Link to="/dashboard">
                   <Button className="h-10">
                     <LayoutDashboard className="mr-2 h-4 w-4" />
