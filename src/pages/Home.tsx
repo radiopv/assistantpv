@@ -14,7 +14,7 @@ const Home = () => {
       const { data, error } = await supabase
         .from('home_images')
         .select('url')
-        .eq('position', 'hero')
+        .eq('position', 'main')
         .maybeSingle();
       
       if (error) throw error;

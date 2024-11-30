@@ -17,6 +17,9 @@ interface HomeImage {
   layout_position: string;
 }
 
+const VALID_POSITIONS = ['main', 'secondary', 'tertiary'] as const;
+type Position = typeof VALID_POSITIONS[number];
+
 const HomeImages = () => {
   const { toast } = useToast();
   const [uploading, setUploading] = useState(false);
@@ -34,7 +37,7 @@ const HomeImages = () => {
     }
   });
 
-  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>, position: string) => {
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>, position: Position) => {
     try {
       if (!event.target.files || event.target.files.length === 0) {
         return;
@@ -61,7 +64,7 @@ const HomeImages = () => {
           url: publicUrl,
           position: position,
           is_mobile: false,
-          layout_position: position // Make sure layout_position matches position
+          layout_position: position
         });
 
       if (dbError) throw dbError;
@@ -125,12 +128,12 @@ const HomeImages = () => {
           <h2 className="text-xl font-semibold mb-4">Ajouter une nouvelle image</h2>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="hero">Image principale (Hero)</Label>
+              <Label htmlFor="main">Image principale</Label>
               <Input
-                id="hero"
+                id="main"
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleUpload(e, 'hero')}
+                onChange={(e) => handleUpload(e, 'main')}
                 disabled={uploading}
               />
             </div>
