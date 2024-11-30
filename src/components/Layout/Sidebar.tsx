@@ -142,15 +142,15 @@ const Sidebar = () => {
       <ScrollArea className="flex-1">
         <div className="space-y-4 py-4">
           <div className="px-3 py-2">
-            <h2 className="mb-2 px-4 text-lg font-semibold">Assistant</h2>
+            <h2 className="mb-2 px-4 text-lg font-semibold text-gray-900">Assistant</h2>
             <div className="space-y-1">
               {assistantLinks.filter(link => link.show).map((link) => (
                 <Link key={link.href} to={link.href}>
                   <Button
                     variant={location.pathname === link.href ? "secondary" : "ghost"}
                     className={cn(
-                      "w-full justify-start",
-                      location.pathname === link.href && "bg-primary/10"
+                      "w-full justify-start text-gray-700 hover:text-gray-900 hover:bg-gray-100",
+                      location.pathname === link.href && "bg-gray-100 text-gray-900 hover:bg-gray-200"
                     )}
                   >
                     <link.icon className="mr-2 h-4 w-4" />
@@ -162,15 +162,15 @@ const Sidebar = () => {
           </div>
           {(isAdmin || isAssistant) && (
             <div className="px-3 py-2">
-              <h2 className="mb-2 px-4 text-lg font-semibold">Administration</h2>
+              <h2 className="mb-2 px-4 text-lg font-semibold text-gray-900">Administration</h2>
               <div className="space-y-1">
                 {adminLinks.filter(link => link.show).map((link) => (
                   <Link key={link.href} to={link.href}>
                     <Button
                       variant={location.pathname === link.href ? "secondary" : "ghost"}
                       className={cn(
-                        "w-full justify-start",
-                        location.pathname === link.href && "bg-primary/10"
+                        "w-full justify-start text-gray-700 hover:text-gray-900 hover:bg-gray-100",
+                        location.pathname === link.href && "bg-gray-100 text-gray-900 hover:bg-gray-200"
                       )}
                     >
                       <link.icon className="mr-2 h-4 w-4" />
@@ -186,7 +186,7 @@ const Sidebar = () => {
       <div className="p-4 border-t">
         <Button
           variant="ghost"
-          className="w-full justify-start"
+          className="w-full justify-start text-gray-700 hover:text-gray-900 hover:bg-gray-100"
           onClick={() => signOut()}
         >
           <LogOut className="mr-2 h-4 w-4" />
