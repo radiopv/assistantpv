@@ -15,7 +15,7 @@ const NEED_CATEGORIES = [
   { value: "education", label: "Éducation" },
   { value: "jouet", label: "Jouet" },
   { value: "vetement", label: "Vêtement" },
-  { value: "nourriture", "Nourriture" },
+  { value: "nourriture", label: "Nourriture" },
   { value: "medicament", label: "Médicament" },
   { value: "hygiene", label: "Hygiène" },
   { value: "autre", label: "Autre" }
