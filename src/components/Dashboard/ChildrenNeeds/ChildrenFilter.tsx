@@ -8,9 +8,10 @@ interface ChildrenFilterProps {
     searchTerm: string;
   };
   setFilters: (filters: any) => void;
+  language: "fr" | "es";  // Ajout de la propriété language
 }
 
-export const ChildrenFilter = ({ filters, setFilters }: ChildrenFilterProps) => {
+export const ChildrenFilter = ({ filters, setFilters, language }: ChildrenFilterProps) => {
   const NEED_CATEGORIES = [
     { value: "", label: "Toutes les catégories" },
     { value: "education", label: "Éducation" },

@@ -1,3 +1,5 @@
+import { Card } from "@/components/ui/card";  // Ajout de l'import manquant
+
 interface DonationStatsProps {
   donations: any[];
   language: "fr" | "es";

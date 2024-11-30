@@ -12,9 +12,10 @@ import { DonationSubmitButton } from "./DonationSubmitButton";
 
 interface DonationFormProps {
   onDonationComplete?: () => void;
+  language: "fr" | "es";  // Ajout de la propriété language
 }
 
-export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
+export const DonationForm = ({ onDonationComplete, language }: DonationFormProps) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [quantity, setQuantity] = useState("");
   const [city, setCity] = useState("");

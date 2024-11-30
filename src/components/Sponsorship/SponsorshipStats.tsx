@@ -1,60 +1,72 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Users, Clock, CheckCircle } from "lucide-react";
 
-export const SponsorshipStats = () => {
+interface SponsorshipStatsProps {
+  language: "fr" | "es";
+}
+
+const translations = {
+  fr: {
+    totalSponsors: "Total des parrains",
+    activeSponsors: "Parrains actifs",
+    totalChildren: "Enfants parrainés",
+    monthlyDonations: "Dons mensuels",
+  },
+  es: {
+    totalSponsors: "Total de padrinos",
+    activeSponsors: "Padrinos activos",
+    totalChildren: "Niños apadrinados",
+    monthlyDonations: "Donaciones mensuales",
+  }
+};
+
+export const SponsorshipStats = ({ language }: SponsorshipStatsProps) => {
   const { data: stats } = useQuery({
-    queryKey: ["sponsorship-stats"],
+    queryKey: ['sponsorship-stats'],
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
-        .from("sponsorships")
-        .select("status");
+        .from('sponsorships')
+        .select('*');
 
       if (error) throw error;
 
-      const total = sponsorships.length;
-      const active = sponsorships.filter((s) => s.status === "active").length;
-      const pending = sponsorships.filter((s) => s.status === "pending").length;
+      const totalSponsors = new Set(sponsorships?.map(s => s.sponsor_id)).size;
+      const activeSponsors = sponsorships?.filter(s => s.status === 'active').length;
+      const sponsoredChildren = new Set(sponsorships?.map(s => s.child_id)).size;
+      const monthlyTotal = sponsorships
+        ?.filter(s => s.status === 'active')
+        .reduce((sum, s) => sum + (s.monthly_amount || 0), 0);
 
-      return { total, active, pending };
-    },
+      return {
+        totalSponsors,
+        activeSponsors,
+        sponsoredChildren,
+        monthlyTotal
+      };
+    }
   });
 
-  const statCards = [
-    {
-      title: "Total Parrainages",
-      value: stats?.total || 0,
-      icon: Users,
-      color: "bg-blue-500",
-    },
-    {
-      title: "Parrainages Actifs",
-      value: stats?.active || 0,
-      icon: CheckCircle,
-      color: "bg-green-500",
-    },
-    {
-      title: "En Attente",
-      value: stats?.pending || 0,
-      icon: Clock,
-      color: "bg-yellow-500",
-    },
-  ];
+  const t = translations[language];
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
-      {statCards.map(({ title, value, icon: Icon, color }) => (
-        <Card key={title}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">{title}</CardTitle>
-            <Icon className={`h-4 w-4 text-${color}`} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{value}</div>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <Card className="p-4 bg-primary/5">
+        <p className="text-sm text-gray-500">{t.totalSponsors}</p>
+        <p className="text-2xl font-bold">{stats?.totalSponsors || 0}</p>
+      </Card>
+      <Card className="p-4 bg-primary/5">
+        <p className="text-sm text-gray-500">{t.activeSponsors}</p>
+        <p className="text-2xl font-bold">{stats?.activeSponsors || 0}</p>
+      </Card>
+      <Card className="p-4 bg-primary/5">
+        <p className="text-sm text-gray-500">{t.totalChildren}</p>
+        <p className="text-2xl font-bold">{stats?.sponsoredChildren || 0}</p>
+      </Card>
+      <Card className="p-4 bg-primary/5">
+        <p className="text-sm text-gray-500">{t.monthlyDonations}</p>
+        <p className="text-2xl font-bold">${stats?.monthlyTotal || 0}</p>
+      </Card>
     </div>
   );
 };

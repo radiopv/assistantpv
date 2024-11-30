@@ -18,7 +18,7 @@ export const translations = {
       sortBy: "Trier par",
       date: "Date",
       peopleHelped: "Personnes aidées",
-      city: "Ville"
+      location: "Ville"  // Changé de city à location pour éviter le doublon
     },
     noResults: "Aucun don ne correspond à vos critères de recherche"
   },
@@ -41,7 +41,7 @@ export const translations = {
       sortBy: "Ordenar por",
       date: "Fecha",
       peopleHelped: "Personas ayudadas",
-      city: "Ciudad"
+      location: "Ciudad"  // Changé de city à location pour éviter le doublon
     },
     noResults: "Ninguna donación coincide con sus criterios de búsqueda"
   }

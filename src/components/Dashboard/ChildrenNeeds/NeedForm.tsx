@@ -8,20 +8,11 @@ import { BellRing, Plus } from "lucide-react";
 interface NeedFormProps {
   selectedNeeds: Need[];
   setSelectedNeeds: (needs: Need[]) => void;
-  onSubmit: () => void;
+  onSubmit: () => Promise<void>;
+  language: "fr" | "es";  // Ajout de la propriété language
 }
 
-const NEED_CATEGORIES = [
-  { value: "education", label: "Éducation" },
-  { value: "jouet", label: "Jouet" },
-  { value: "vetement", label: "Vêtement" },
-  { value: "nourriture", label: "Nourriture" },
-  { value: "medicament", label: "Médicament" },
-  { value: "hygiene", label: "Hygiène" },
-  { value: "autre", label: "Autre" }
-];
-
-export const NeedForm = ({ selectedNeeds, setSelectedNeeds, onSubmit }: NeedFormProps) => {
+export const NeedForm = ({ selectedNeeds, setSelectedNeeds, onSubmit, language }: NeedFormProps) => {
   const addNeed = () => {
     setSelectedNeeds([...selectedNeeds, { category: "", description: "", is_urgent: false }]);
   };
@@ -51,15 +42,15 @@ export const NeedForm = ({ selectedNeeds, setSelectedNeeds, onSubmit }: NeedForm
             </Button>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {NEED_CATEGORIES.map((category) => (
+              {["education", "jouet", "vetement", "nourriture", "medicament", "hygiene", "autre"].map((category) => (
                 <Button
-                  key={category.value}
-                  variant={need.category === category.value ? "default" : "outline"}
+                  key={category}
+                  variant={need.category === category ? "default" : "outline"}
                   size="sm"
                   className="w-full"
-                  onClick={() => updateNeed(index, "category", category.value)}
+                  onClick={() => updateNeed(index, "category", category)}
                 >
-                  {category.label}
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
                 </Button>
               ))}
             </div>
@@ -103,5 +94,3 @@ export const NeedForm = ({ selectedNeeds, setSelectedNeeds, onSubmit }: NeedForm
         </Button>
       </div>
     </Card>
-  );
-};

@@ -20,9 +20,10 @@ interface DonationCardProps {
   };
   onDelete?: () => void;
   isAdmin?: boolean;
+  language: "fr" | "es";  // Ajout de la propriété language
 }
 
-export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCardProps) => {
+export const DonationCard = ({ donation, onDelete, isAdmin = false, language }: DonationCardProps) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const { toast } = useToast();
 
