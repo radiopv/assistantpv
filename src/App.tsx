@@ -26,6 +26,7 @@ import SiteConfig from "./pages/admin/SiteConfig";
 import Travels from "./pages/admin/Travels";
 import Reports from "./pages/admin/Reports";
 
+// Configuration du client React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -35,7 +36,12 @@ const queryClient = new QueryClient({
   },
 });
 
-const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: { 
+// Composant pour protéger les routes
+const ProtectedRoute = ({ 
+  children, 
+  requiredPermission,
+  requireAdmin 
+}: { 
   children: React.ReactNode, 
   requiredPermission?: string,
   requireAdmin?: boolean 
@@ -43,9 +49,11 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   const { session, loading, isAssistant, user } = useAuth();
   
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
-      <div className="text-gray-600">Chargement...</div>
-    </div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-600">Chargement...</div>
+      </div>
+    );
   }
   
   if (!session || !isAssistant) {
@@ -63,17 +71,18 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   return <>{children}</>;
 };
 
+// Configuration des routes
 const AppRoutes = () => (
   <Routes>
-    {/* Public Routes */}
+    {/* Routes publiques */}
     <Route element={<PublicLayout />}>
       <Route index element={<Home />} />
     </Route>
 
-    {/* Auth Routes */}
+    {/* Routes d'authentification */}
     <Route path="/login" element={<Login />} />
 
-    {/* Protected Routes */}
+    {/* Routes protégées */}
     <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
       <Route path="/dashboard" element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
       <Route path="/children" element={<ProtectedRoute requiredPermission="children"><Children /></ProtectedRoute>} />
@@ -96,6 +105,7 @@ const AppRoutes = () => (
   </Routes>
 );
 
+// Composant principal de l'application
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
