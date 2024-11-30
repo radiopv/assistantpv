@@ -61,6 +61,7 @@ const PublicLayout = () => {
   ];
 
   const isAdminOrAssistant = user?.role === 'admin' || user?.role === 'assistant';
+  const shouldShowAdminLink = session && isAdminOrAssistant;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -88,18 +89,12 @@ const PublicLayout = () => {
                     <span>{item.label}</span>
                   </Link>
                 ))}
-                {session ? (
-                  isAdminOrAssistant ? (
-                    <Link to="/dashboard">
-                      <Button className="w-full">
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Administration
-                      </Button>
-                    </Link>
-                  ) : null
-                ) : (
-                  <Link to="/login">
-                    <Button className="w-full">Administration</Button>
+                {shouldShowAdminLink && (
+                  <Link to="/dashboard">
+                    <Button className="w-full">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Administration
+                    </Button>
                   </Link>
                 )}
               </div>
@@ -130,18 +125,12 @@ const PublicLayout = () => {
               </nav>
             </div>
             <div>
-              {session ? (
-                isAdminOrAssistant ? (
-                  <Link to="/dashboard">
-                    <Button>
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Administration
-                    </Button>
-                  </Link>
-                ) : null
-              ) : (
-                <Link to="/login">
-                  <Button>Administration</Button>
+              {shouldShowAdminLink && (
+                <Link to="/dashboard">
+                  <Button>
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Administration
+                  </Button>
                 </Link>
               )}
             </div>
