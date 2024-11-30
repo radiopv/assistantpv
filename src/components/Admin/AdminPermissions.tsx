@@ -1,82 +1,15 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Search, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-
-interface Permission {
-  page: string;
-  label: string;
-  description: string;
-}
-
-const pagePermissions: Permission[] = [
-  { page: "dashboard", label: "Dashboard", description: "Accès au tableau de bord" },
-  { page: "children", label: "Enfants", description: "Accès à la liste des enfants" },
-  { page: "donations", label: "Dons", description: "Accès aux dons" },
-  { page: "sponsorships", label: "Parrainages", description: "Accès aux parrainages" },
-  { page: "media", label: "Médias", description: "Accès à la gestion des médias" },
-];
-
-const actionPermissions: Permission[] = [
-  { page: "delete_children", label: "Supprimer des enfants", description: "Autoriser la suppression d'enfants" },
-  { page: "edit_children", label: "Modifier des enfants", description: "Autoriser la modification des enfants" },
-  { page: "delete_media", label: "Supprimer des médias", description: "Autoriser la suppression des médias" },
-  { page: "edit_donations", label: "Modifier les dons", description: "Autoriser la modification des dons" },
-  { page: "delete_donations", label: "Supprimer les dons", description: "Autoriser la suppression des dons" },
-];
-
-const PermissionsList = ({ 
-  permissions, 
-  user, 
-  onUpdatePermissions 
-}: { 
-  permissions: Permission[], 
-  user: any, 
-  onUpdatePermissions: (userId: string, permissions: any) => void 
-}) => (
-  <div className="space-y-4">
-    {permissions.map((permission) => (
-      <div key={permission.page} className="flex items-start space-x-3">
-        <Checkbox
-          id={`${user.id}-${permission.page}`}
-          checked={user.permissions?.[permission.page] === true}
-          onCheckedChange={(checked) => {
-            const newPermissions = {
-              ...user.permissions,
-              [permission.page]: checked
-            };
-            onUpdatePermissions(user.id, newPermissions);
-          }}
-        />
-        <div>
-          <label
-            htmlFor={`${user.id}-${permission.page}`}
-            className="font-medium cursor-pointer"
-          >
-            {permission.label}
-          </label>
-          <p className="text-sm text-gray-600">{permission.description}</p>
-        </div>
-      </div>
-    ))}
-  </div>
-);
+import { PermissionsList } from "./PermissionsList";
+import { DeleteUserDialog } from "./DeleteUserDialog";
+import { pagePermissions, actionPermissions } from "./types";
 
 export const AdminPermissions = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -216,25 +149,11 @@ export const AdminPermissions = () => {
         </div>
       </Tabs>
 
-      <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => userToDelete && deleteUser(userToDelete)}
-              className="bg-red-500 hover:bg-red-600"
-            >
-              Supprimer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeleteUserDialog
+        userToDelete={userToDelete}
+        onClose={() => setUserToDelete(null)}
+        onConfirm={deleteUser}
+      />
     </div>
   );
 };
