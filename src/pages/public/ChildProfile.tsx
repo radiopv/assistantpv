@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { convertJsonToNeeds } from "@/types/needs";
 
 const PublicChildProfile = () => {
   const { id } = useParams();
@@ -61,6 +61,7 @@ const PublicChildProfile = () => {
   }
 
   const age = differenceInYears(new Date(), parseISO(child.birth_date));
+  const needs = convertJsonToNeeds(child.needs);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -87,11 +88,11 @@ const PublicChildProfile = () => {
               <p>{child.city}</p>
             </div>
 
-            {child.needs && child.needs.length > 0 && (
+            {needs.length > 0 && (
               <div>
                 <h3 className="font-semibold">Besoins</h3>
                 <ul className="list-disc list-inside space-y-2">
-                  {child.needs.map((need: any, index: number) => (
+                  {needs.map((need, index) => (
                     <li key={index} className="flex items-center gap-2">
                       <span>{need.category}</span>
                       {need.is_urgent && (
