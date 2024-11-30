@@ -32,12 +32,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
+          
           // Mise à jour de isAssistant pour inclure à la fois les assistants et les admins
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
-          
+
           // Redirection basée sur le rôle
           if (window.location.pathname === '/login') {
             if (parsedUser.role === 'admin') {
+              // Redirection explicite vers l'interface d'administration
               navigate('/admin/permissions');
             } else if (parsedUser.role === 'assistant') {
               navigate('/dashboard');
@@ -47,7 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         } else {
           setUser(null);
-          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
+          if (!window.location.pathname.startsWith('/')) {
             navigate("/login");
           }
         }
