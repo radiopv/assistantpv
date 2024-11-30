@@ -27,14 +27,27 @@ export default {
         primary: {
           DEFAULT: "#FF6B6B",
           foreground: "#FFFFFF",
+          hover: "#ff8585",
         },
         secondary: {
           DEFAULT: "#4A90E2",
           foreground: "#FFFFFF",
+          hover: "#6BA4E9",
         },
         accent: {
           DEFAULT: "#FFD93D",
           foreground: "#2D3748",
+          hover: "#FFE066",
+        },
+        sidebar: {
+          DEFAULT: "#FFFFFF",
+          foreground: "#1A1F2C",
+          hover: "#F3F4F6",
+          active: "#E5E7EB",
+          border: "#E2E8F0",
+          accent: "#F1F5F9",
+          "accent-foreground": "#475569",
+          ring: "#94A3B8",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
