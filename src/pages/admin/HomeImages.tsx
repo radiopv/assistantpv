@@ -127,26 +127,18 @@ const HomeImages = () => {
         <Card className="p-6">
           <h2 className="text-xl font-semibold mb-4">Ajouter une nouvelle image</h2>
           <div className="space-y-4">
-            <div>
-              <Label htmlFor="main">Image principale</Label>
-              <Input
-                id="main"
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleUpload(e, 'main')}
-                disabled={uploading}
-              />
-            </div>
-            <div>
-              <Label htmlFor="secondary">Image secondaire</Label>
-              <Input
-                id="secondary"
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleUpload(e, 'secondary')}
-                disabled={uploading}
-              />
-            </div>
+            {VALID_POSITIONS.map((position) => (
+              <div key={position}>
+                <Label htmlFor={position}>Image {position}</Label>
+                <Input
+                  id={position}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleUpload(e, position)}
+                  disabled={uploading}
+                />
+              </div>
+            ))}
           </div>
         </Card>
 
