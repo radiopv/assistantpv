@@ -3,10 +3,11 @@ import { Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { 
-  LayoutDashboard, 
+  Home,
   Users, 
   Heart,
   Menu,
+  LayoutDashboard
 } from "lucide-react";
 import {
   Sheet,
@@ -21,16 +22,16 @@ const PublicLayout = () => {
     {
       href: "/",
       label: "Accueil",
-      icon: LayoutDashboard,
+      icon: Home,
     },
     {
-      href: "/children",
-      label: "Enfants",
+      href: "/enfants-disponibles",
+      label: "Enfants disponibles",
       icon: Users,
     },
     {
-      href: "/sponsorships",
-      label: "Parrainages",
+      href: "/devenir-parrain",
+      label: "Devenir parrain",
       icon: Heart,
     },
   ];

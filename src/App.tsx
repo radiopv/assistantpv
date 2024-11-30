@@ -9,6 +9,7 @@ import PublicLayout from "./components/Layout/PublicLayout";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
+import AvailableChildren from "./pages/public/AvailableChildren";
 import AddChild from "./pages/AddChild";
 import ChildProfile from "./pages/ChildProfile";
 import ChildrenNeeds from "./pages/ChildrenNeeds";
@@ -26,7 +27,6 @@ import SiteConfig from "./pages/admin/SiteConfig";
 import Travels from "./pages/admin/Travels";
 import Reports from "./pages/admin/Reports";
 
-// Configuration du client React Query
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -36,12 +36,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// Composant pour protéger les routes
-const ProtectedRoute = ({ 
-  children, 
-  requiredPermission,
-  requireAdmin 
-}: { 
+const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: { 
   children: React.ReactNode, 
   requiredPermission?: string,
   requireAdmin?: boolean 
@@ -71,12 +66,14 @@ const ProtectedRoute = ({
   return <>{children}</>;
 };
 
-// Configuration des routes
 const AppRoutes = () => (
   <Routes>
     {/* Routes publiques */}
     <Route element={<PublicLayout />}>
       <Route index element={<Home />} />
+      <Route path="/enfants-disponibles" element={<AvailableChildren />} />
+      <Route path="/enfant/:id" element={<ChildProfile />} />
+      <Route path="/devenir-parrain" element={<Sponsorships />} />
     </Route>
 
     {/* Routes d'authentification */}
@@ -105,7 +102,6 @@ const AppRoutes = () => (
   </Routes>
 );
 
-// Composant principal de l'application
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
