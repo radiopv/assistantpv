@@ -15,7 +15,7 @@ const Home = () => {
         .from('home_images')
         .select('url')
         .eq('position', 'hero')
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
       return data?.url || 'https://images.unsplash.com/photo-1501286353178-1ec881214838';
