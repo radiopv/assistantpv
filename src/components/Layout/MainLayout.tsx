@@ -2,9 +2,13 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Breadcrumbs } from "./Breadcrumbs";
+import { useLocation } from "react-router-dom";
 
 const MainLayout = () => {
   const { user } = useAuth();
+  const location = useLocation();
 
   if (!user) {
     return null;
@@ -16,14 +20,17 @@ const MainLayout = () => {
         <Sidebar />
       </div>
       <main className="flex-1 ml-64">
-        <div className="p-4 border-b bg-white flex justify-end">
+        <div className="p-4 border-b bg-white flex justify-between items-center">
+          <Breadcrumbs />
           <UserProfileMenu />
         </div>
-        <div className="p-8">
-          <div className="container mx-auto animate-fade-in">
-            <Outlet />
+        <ScrollArea className="h-[calc(100vh-4rem)]">
+          <div className="p-8">
+            <div className="container mx-auto animate-fade-in">
+              <Outlet />
+            </div>
           </div>
-        </div>
+        </ScrollArea>
       </main>
     </div>
   );
