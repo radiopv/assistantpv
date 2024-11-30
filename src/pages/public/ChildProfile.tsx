@@ -1,5 +1,5 @@
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,15 @@ import { convertJsonToNeeds } from "@/types/needs";
 const PublicChildProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [child, setChild] = useState<any>(null);
 
-  const { data: child, isLoading } = useQuery({
-    queryKey: ['public-child', id],
-    queryFn: async () => {
+  useEffect(() => {
+    loadChild();
+  }, [id]);
+
+  const loadChild = async () => {
+    try {
       const { data, error } = await supabase
         .from('children')
         .select('*')
@@ -22,25 +27,25 @@ const PublicChildProfile = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      setChild(data);
+    } catch (err) {
+      console.error('Erreur lors du chargement du profil:', err);
+    } finally {
+      setLoading(false);
     }
-  });
-
-  const handleSponsorshipRequest = () => {
-    navigate(`/devenir-parrain?child=${id}`);
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="container mx-auto p-4 space-y-6">
-        <Skeleton className="h-8 w-64" />
+      <div className="container mx-auto p-4">
         <Card className="p-6">
-          <div className="grid gap-6">
+          <div className="space-y-4">
+            <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-64 w-full" />
-            <div className="space-y-4">
-              <Skeleton className="h-4 w-1/2" />
-              <Skeleton className="h-4 w-1/3" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-1/2" />
             </div>
           </div>
         </Card>
@@ -52,9 +57,7 @@ const PublicChildProfile = () => {
     return (
       <div className="container mx-auto p-4">
         <Card className="p-6">
-          <p className="text-center text-gray-600">
-            Enfant non trouvé
-          </p>
+          <p className="text-center text-gray-600">Enfant non trouvé</p>
         </Card>
       </div>
     );
@@ -65,8 +68,10 @@ const PublicChildProfile = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold">{child.name}</h1>
-      
+      <Button variant="ghost" onClick={() => navigate('/enfants-disponibles')}>
+        ← Retour aux enfants disponibles
+      </Button>
+
       <Card className="overflow-hidden">
         <div className="aspect-video relative">
           <img
@@ -75,16 +80,12 @@ const PublicChildProfile = () => {
             className="w-full h-full object-cover"
           />
         </div>
-        
-        <div className="p-6 space-y-6">
-          <div className="grid gap-4">
+
+        <div className="p-6">
+          <div className="space-y-6">
             <div>
-              <h3 className="font-semibold">Âge</h3>
-              <p>{age} ans</p>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold">Ville</h3>
+              <h1 className="text-3xl font-bold">{child.name}</h1>
+              <p className="text-gray-600">{age} ans</p>
               <p>{child.city}</p>
             </div>
 
@@ -96,7 +97,7 @@ const PublicChildProfile = () => {
                     <li key={index} className="flex items-center gap-2">
                       <span>{need.category}</span>
                       {need.is_urgent && (
-                        <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full">
+                        <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">
                           Urgent
                         </span>
                       )}
@@ -105,14 +106,16 @@ const PublicChildProfile = () => {
                 </ul>
               </div>
             )}
-          </div>
 
-          <Button 
-            className="w-full" 
-            onClick={handleSponsorshipRequest}
-          >
-            Devenir parrain
-          </Button>
+            <div className="pt-4">
+              <Button 
+                className="w-full"
+                onClick={() => navigate(`/devenir-parrain?child=${child.id}`)}
+              >
+                Parrainer cet enfant
+              </Button>
+            </div>
+          </div>
         </div>
       </Card>
     </div>
