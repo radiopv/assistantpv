@@ -11,9 +11,7 @@ import {
   Gift,
   MessageSquare,
   History,
-  HelpCircle,
-  PiggyBank,
-  FileText
+  HelpCircle
 } from "lucide-react";
 import {
   Sheet,
@@ -43,7 +41,7 @@ const PublicLayout = () => {
     {
       href: "/dons",
       label: "Dons",
-      icon: PiggyBank,
+      icon: Gift,
     },
     {
       href: "/temoignages",
@@ -60,11 +58,6 @@ const PublicLayout = () => {
       label: "FAQ",
       icon: HelpCircle,
     },
-    {
-      href: "/documents",
-      label: "Documents",
-      icon: FileText,
-    }
   ];
 
   // Vérification plus stricte pour l'accès administratif
