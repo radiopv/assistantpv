@@ -8,7 +8,7 @@ import { convertNeedsToJson } from "@/types/needs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AddNeedForm } from "./AddNeedForm";
-import { NeedCard } from "./NeedCard";
+import { NeedsList } from "./NeedsList";
 
 export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: { 
   children: any[];
@@ -93,17 +93,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
 
       <div className="grid gap-6 md:grid-cols-2">
         {sortedChildren?.map((child) => (
-          <div key={child.id} className="space-y-4">
-            <h3 className="font-semibold text-lg">{child.name}</h3>
-            <div className="space-y-3">
-              {(child.needs || []).map((need: Need, index: number) => (
-                <NeedCard key={index} need={need} index={index} />
-              ))}
-              {(child.needs || []).length === 0 && (
-                <p className="text-sm text-gray-500 italic">Aucun besoin enregistré</p>
-              )}
-            </div>
-          </div>
+          <NeedsList key={child.id} child={child} needs={child.needs || []} />
         ))}
       </div>
     </div>

@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Need } from "@/types/needs";
 import { NeedCategoryIcon } from "./NeedCategoryIcon";
-import { Badge } from "@/components/ui/badge";
 import { BellRing } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface AddNeedFormProps {
   children: any[];
@@ -34,7 +32,7 @@ export const AddNeedForm = ({
   ];
 
   return (
-    <Card className="p-6 space-y-6">
+    <div className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
       <div className="space-y-4">
         <h3 className="text-lg font-semibold">Sélectionner la catégorie</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -102,6 +100,6 @@ export const AddNeedForm = ({
       >
         Ajouter le besoin pour {selectedChildren.length} enfant{selectedChildren.length > 1 ? 's' : ''}
       </Button>
-    </Card>
+    </div>
   );
 };
