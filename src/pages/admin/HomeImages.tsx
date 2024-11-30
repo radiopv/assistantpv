@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, Trash2 } from "lucide-react";
 
 interface HomeImage {
@@ -61,7 +61,7 @@ const HomeImages = () => {
           url: publicUrl,
           position: position,
           is_mobile: false,
-          layout_position: position
+          layout_position: position // Make sure layout_position matches position
         });
 
       if (dbError) throw dbError;
@@ -76,7 +76,7 @@ const HomeImages = () => {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'upload.",
+        description: error.message || "Une erreur est survenue lors de l'upload.",
       });
     } finally {
       setUploading(false);
@@ -98,11 +98,11 @@ const HomeImages = () => {
       });
 
       refetch();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression.",
+        description: error.message || "Une erreur est survenue lors de la suppression.",
       });
     }
   };
@@ -156,6 +156,7 @@ const HomeImages = () => {
                 <img src={image.url} alt="" className="w-20 h-20 object-cover rounded" />
                 <div className="flex-1">
                   <p className="font-medium">Position: {image.position}</p>
+                  <p className="text-sm text-gray-500">Layout: {image.layout_position}</p>
                 </div>
                 <Button
                   variant="destructive"
