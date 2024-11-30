@@ -86,6 +86,36 @@ export type Database = {
           },
         ]
       }
+      assistant_translations: {
+        Row: {
+          context: string
+          created_at: string | null
+          es: string
+          fr: string
+          id: string
+          key: string
+          updated_at: string | null
+        }
+        Insert: {
+          context: string
+          created_at?: string | null
+          es: string
+          fr: string
+          id?: string
+          key: string
+          updated_at?: string | null
+        }
+        Update: {
+          context?: string
+          created_at?: string | null
+          es?: string
+          fr?: string
+          id?: string
+          key?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       badges: {
         Row: {
           category: string | null
