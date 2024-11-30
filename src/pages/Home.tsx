@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Loader2, Palm, Heart, Sun } from "lucide-react";
+import { Loader2, PalmTree, Heart, Sun } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { HomeImageManager } from "@/components/Home/HomeImageManager";
 
@@ -123,7 +123,7 @@ const Home = () => {
             </div>
             <div className="text-center group">
               <div className="w-16 h-16 bg-cuban-palm/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-wave">
-                <Palm className="w-8 h-8 text-cuban-palm" />
+                <PalmTree className="w-8 h-8 text-cuban-palm" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-cuban-blue">Complétez votre profil</h3>
               <p className="text-gray-600">Remplissez les informations nécessaires pour devenir parrain</p>
