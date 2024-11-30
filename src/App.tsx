@@ -26,6 +26,7 @@ import Statistics from "./pages/admin/Statistics";
 import SiteConfig from "./pages/admin/SiteConfig";
 import Travels from "./pages/admin/Travels";
 import Reports from "./pages/admin/Reports";
+import HomeImages from "./pages/admin/HomeImages";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -93,6 +94,7 @@ const AppRoutes = () => (
       <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
       <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />
       <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
+      <Route path="/admin/home-images" element={<ProtectedRoute requireAdmin><HomeImages /></ProtectedRoute>} />
     </Route>
   </Routes>
 );

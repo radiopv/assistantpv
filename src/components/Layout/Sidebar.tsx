@@ -20,7 +20,8 @@ import {
   ChartBar,
   HelpCircle,
   Cog,
-  FileText
+  FileText,
+  Home
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -92,6 +93,12 @@ const Sidebar = () => {
       href: "/admin/sponsors",
       label: "Parrains",
       icon: Users,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/home-images",
+      label: "Images Accueil",
+      icon: Home,
       show: isAdmin,
     },
     {
