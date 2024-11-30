@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 const Donations = () => {
+  const [language, setLanguage] = useState<"fr" | "es">("fr");
   const [filters, setFilters] = useState({
     city: "",
     status: "",
@@ -64,6 +65,11 @@ const Donations = () => {
     }
   });
 
+  const handleDelete = async () => {
+    toast.success("Don supprimé avec succès");
+    // Refresh data
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-6 space-y-6">
@@ -77,12 +83,33 @@ const Donations = () => {
     );
   }
 
+  const exampleDonation = {
+    assistant_name: "Assistant",
+    donation_date: new Date().toISOString(),
+    status: "completed"
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <DonationHeader />
-      <DonationStats donations={donations || []} />
-      <DonationFilters filters={filters} setFilters={setFilters} />
-      <DonationList donations={donations || []} />
+      <DonationHeader donation={exampleDonation} />
+      <DonationStats donations={donations || []} language={language} />
+      <DonationFilters 
+        searchTerm={filters.searchTerm}
+        cityFilter={filters.city}
+        viewMode="grid"
+        setViewMode={() => {}}
+        sortBy={filters.sortBy}
+        setSortBy={(value) => setFilters(prev => ({ ...prev, sortBy: value }))}
+        cities={[...new Set(donations?.map(d => d.city) || [])]}
+        language={language}
+        setSearchTerm={(value) => setFilters(prev => ({ ...prev, searchTerm: value }))}
+        setCityFilter={(value) => setFilters(prev => ({ ...prev, city: value }))}
+      />
+      <DonationList 
+        donations={donations || []} 
+        onDelete={handleDelete}
+        language={language}
+      />
     </div>
   );
 };

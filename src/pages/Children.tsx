@@ -6,8 +6,10 @@ import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { ChildrenHeader } from "@/components/Children/ChildrenHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const Children = () => {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     status: "",
     city: "",
@@ -68,6 +70,14 @@ const Children = () => {
     }
   });
 
+  const handleAddChild = () => {
+    navigate("/children/add");
+  };
+
+  const handleViewProfile = (id: string) => {
+    navigate(`/children/${id}`);
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto py-6 space-y-6">
@@ -83,9 +93,26 @@ const Children = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <ChildrenHeader />
-      <ChildrenFilters filters={filters} setFilters={setFilters} />
-      <ChildrenList children={sortedChildren} />
+      <ChildrenHeader onAddChild={handleAddChild} />
+      <ChildrenFilters 
+        searchTerm={filters.searchTerm}
+        selectedCity={filters.city}
+        selectedGender=""
+        selectedAge=""
+        selectedStatus={filters.status}
+        onSearchChange={(value) => setFilters(prev => ({ ...prev, searchTerm: value }))}
+        onCityChange={(value) => setFilters(prev => ({ ...prev, city: value }))}
+        onGenderChange={() => {}}
+        onAgeChange={() => {}}
+        onStatusChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
+        cities={[...new Set(children?.map(c => c.city) || [])]}
+        ages={[...new Set(children?.map(c => c.age) || [])]}
+      />
+      <ChildrenList 
+        children={sortedChildren} 
+        isLoading={isLoading}
+        onViewProfile={handleViewProfile}
+      />
     </div>
   );
 };
