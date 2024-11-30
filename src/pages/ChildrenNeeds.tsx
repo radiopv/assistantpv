@@ -1,4 +1,4 @@
-import { ChildrenNeeds } from "@/components/Dashboard/ChildrenNeeds";
+import { ChildrenNeeds as ChildrenNeedsComponent } from "@/components/Dashboard/ChildrenNeeds";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ErrorAlert } from "@/components/ErrorAlert";
@@ -10,7 +10,6 @@ const ChildrenNeedsPage = () => {
       const { data, error } = await supabase
         .from('children')
         .select('*')
-        .not('needs', 'eq', '[]')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -25,7 +24,7 @@ const ChildrenNeedsPage = () => {
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Besoins des Enfants</h1>
-      <ChildrenNeeds 
+      <ChildrenNeedsComponent 
         children={children || []} 
         isLoading={isLoading} 
         onNeedsUpdate={() => refetch()}
