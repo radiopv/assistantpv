@@ -14,12 +14,10 @@ const SponsorshipManagement = () => {
         .from('children')
         .select(`
           *,
-          sponsorships (
-            sponsor:sponsors (
-              name,
-              email,
-              photo_url
-            )
+          sponsors (
+            name,
+            email,
+            photo_url
           )
         `)
         .order('name');
