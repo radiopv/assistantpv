@@ -8,6 +8,7 @@ import { BasicInfoFields } from "./FormFields/BasicInfoFields";
 import { PhotoUploadField } from "./FormFields/PhotoUploadField";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface FormData {
   name: string;
@@ -24,6 +25,7 @@ const ALLOWED_GENDERS = ['male', 'female'];
 export const AddChildForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useTranslations();
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -42,7 +44,7 @@ export const AddChildForm = () => {
   };
 
   const validateForm = (): string | null => {
-    if (!formData.name.trim()) return "Le nom est requis";
+    if (!formData.name.trim()) return t('required_field');
     if (!ALLOWED_GENDERS.includes(formData.gender)) return "Le genre doit être 'male' ou 'female'";
     if (!formData.birth_date) return "La date de naissance est requise";
     
@@ -116,7 +118,7 @@ export const AddChildForm = () => {
       if (error) throw error;
 
       toast({
-        title: "Enfant ajouté",
+        title: t('add_child'),
         description: "L'enfant a été ajouté avec succès.",
       });
 
@@ -139,7 +141,7 @@ export const AddChildForm = () => {
         <div className="space-y-4">
           <div>
             <Label className="text-lg font-semibold mb-4">
-              Informations de l'enfant
+              {t('child_info')}
             </Label>
           </div>
           
@@ -159,14 +161,14 @@ export const AddChildForm = () => {
             onClick={() => navigate('/children')}
             className="w-full md:w-auto"
           >
-            Annuler
+            {t('cancel')}
           </Button>
           <Button 
             type="submit" 
             disabled={loading}
             className="w-full md:w-auto"
           >
-            {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
+            {loading ? t('uploading') : t('add_child')}
           </Button>
         </div>
       </form>
