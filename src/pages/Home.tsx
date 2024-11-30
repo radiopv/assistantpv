@@ -4,9 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { HomeImageManager } from "@/components/Home/HomeImageManager";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user, isAssistant } = useAuth();
 
   const { data: featuredChildren, isLoading } = useQuery({
     queryKey: ['featured-children'],
@@ -41,6 +44,16 @@ const Home = () => {
           </Button>
         </div>
       </section>
+
+      {/* Admin Section for Image Management */}
+      {isAssistant && (
+        <section className="py-8 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-2xl font-bold mb-6">Gestion des images</h2>
+            <HomeImageManager />
+          </div>
+        </section>
+      )}
 
       {/* Featured Children Section */}
       <section className="py-16 bg-gray-50">
