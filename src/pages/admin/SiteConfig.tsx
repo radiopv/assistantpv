@@ -29,20 +29,34 @@ const SiteConfig = () => {
     // Load current config
     const loadConfig = async () => {
       try {
+        // First try to get existing config
         const { data, error } = await supabase
           .from("site_config")
           .select("*")
-          .single();
+          .limit(1);
 
         if (error) throw error;
 
-        if (data) {
+        if (data && data.length > 0) {
           setConfig({
-            siteName: data.site_name,
-            primaryColor: data.primary_color,
-            secondaryColor: data.secondary_color,
-            logo: data.logo_url || "",
+            siteName: data[0].site_name,
+            primaryColor: data[0].primary_color,
+            secondaryColor: data[0].secondary_color,
+            logo: data[0].logo_url || "",
           });
+        } else {
+          // If no config exists, create default one
+          const { error: insertError } = await supabase
+            .from("site_config")
+            .insert({
+              id: "default",
+              site_name: config.siteName,
+              primary_color: config.primaryColor,
+              secondary_color: config.secondaryColor,
+              logo_url: config.logo
+            });
+
+          if (insertError) throw insertError;
         }
       } catch (error: any) {
         toast({
@@ -61,7 +75,7 @@ const SiteConfig = () => {
       const { error } = await supabase
         .from("site_config")
         .upsert({
-          id: "default", // Using a default ID since we only need one config
+          id: "default",
           site_name: config.siteName,
           primary_color: config.primaryColor,
           secondary_color: config.secondaryColor,
