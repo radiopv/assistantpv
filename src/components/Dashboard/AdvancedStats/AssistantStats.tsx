@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { AssistantPerformanceStats } from "@/types/statistics";
+import { useTranslation } from "@/components/Translation/TranslationContext";
 import {
   Table,
   TableBody,
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/table";
 
 export const AssistantStats = () => {
+  const { t } = useTranslation();
   const { data: stats, isLoading } = useQuery<AssistantPerformanceStats[]>({
     queryKey: ['assistant-performance'],
     queryFn: async () => {
@@ -28,15 +30,15 @@ export const AssistantStats = () => {
 
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Performance des Assistants</h3>
+      <h3 className="text-lg font-semibold mb-4">{t("stats.assistant.title")}</h3>
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Assistant</TableHead>
-              <TableHead>Dons gérés</TableHead>
-              <TableHead>Personnes aidées</TableHead>
-              <TableHead>Taux de réussite</TableHead>
+              <TableHead>{t("stats.assistant.name")}</TableHead>
+              <TableHead>{t("stats.assistant.donations")}</TableHead>
+              <TableHead>{t("stats.assistant.helped")}</TableHead>
+              <TableHead>{t("stats.assistant.success_rate")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
