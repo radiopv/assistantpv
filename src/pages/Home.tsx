@@ -32,8 +32,8 @@ const Home = () => {
         className="relative h-[600px] bg-cover bg-center bg-fixed" 
         style={{ 
           backgroundImage: 'url(/lovable-uploads/273527d2-9b86-4f3f-b670-d45789cfcc89.png)',
-          backgroundPosition: 'center 20%', // Adjust to focus more on the face
-          backgroundSize: '100% auto'  // This will ensure the image covers the width while maintaining aspect ratio
+          backgroundPosition: 'center 20%',
+          backgroundSize: '100% auto'
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/30" />
@@ -46,7 +46,7 @@ const Home = () => {
           </p>
           <Button 
             size="lg"
-            onClick={() => navigate('/children')}
+            onClick={() => navigate('/enfants-disponibles')}
             className="bg-cuban-red hover:bg-cuban-red/90 text-white animate-fade-in delay-200"
           >
             Parrainer un enfant
@@ -54,7 +54,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Admin Section for Image Management */}
+      {/* Admin Section for Image Management - Only visible to admins */}
       {user?.role === 'admin' && (
         <section className="py-8 bg-white/50 backdrop-blur-sm">
           <div className="container mx-auto px-4">
@@ -89,7 +89,7 @@ const Home = () => {
                     <Button 
                       variant="outline" 
                       className="w-full border-cuban-blue text-cuban-blue hover:bg-cuban-blue hover:text-white"
-                      onClick={() => navigate(`/children/${child.id}`)}
+                      onClick={() => navigate(`/enfant/${child.id}`)}
                     >
                       En savoir plus
                     </Button>
@@ -103,7 +103,7 @@ const Home = () => {
             <Button 
               variant="outline"
               size="lg"
-              onClick={() => navigate('/children')}
+              onClick={() => navigate('/enfants-disponibles')}
               className="border-cuban-blue text-cuban-blue hover:bg-cuban-blue hover:text-white"
             >
               Voir tous les enfants
@@ -150,7 +150,7 @@ const Home = () => {
           <Button 
             variant="secondary" 
             size="lg"
-            onClick={() => navigate('/children')}
+            onClick={() => navigate('/devenir-parrain')}
             className="bg-white text-cuban-blue hover:bg-cuban-gold hover:text-cuban-blue"
           >
             Commencer maintenant
