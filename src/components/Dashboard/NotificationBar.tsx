@@ -3,8 +3,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { LanguageSelector } from "@/components/Translation/LanguageSelector";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const NotificationBar = () => {
+  const { isAssistant } = useAuth();
+  
   const { data: notifications } = useQuery({
     queryKey: ['unread-notifications'],
     queryFn: async () => {
@@ -50,6 +54,8 @@ export const NotificationBar = () => {
       <Button variant="ghost" size="icon" className="relative">
         <CheckSquare className="h-5 w-5" />
       </Button>
+
+      {isAssistant && <LanguageSelector />}
     </div>
   );
 };
