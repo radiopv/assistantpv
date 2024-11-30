@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -13,14 +12,14 @@ const Sidebar = () => {
 
   return (
     <div className="flex h-full flex-col border-r bg-white">
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <Link to="/">
-          <h1 className="text-xl font-bold">Passion Varadero</h1>
+          <h1 className="text-lg md:text-xl font-bold">Passion Varadero</h1>
         </Link>
       </div>
       <ScrollArea className="flex-1">
         <div className="space-y-4 py-4">
-          <div className="px-3 py-2">
+          <div className="px-2 md:px-3 py-2">
             <SidebarNavItems />
           </div>
         </div>
