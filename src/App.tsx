@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import AvailableChildren from "./pages/public/AvailableChildren";
+import PublicChildProfile from "./pages/public/ChildProfile";
+import BecomeSponsor from "./pages/public/BecomeSponsor";
 import AddChild from "./pages/AddChild";
 import ChildProfile from "./pages/ChildProfile";
 import ChildrenNeeds from "./pages/ChildrenNeeds";
@@ -72,8 +74,8 @@ const AppRoutes = () => (
     <Route element={<PublicLayout />}>
       <Route index element={<Home />} />
       <Route path="/enfants-disponibles" element={<AvailableChildren />} />
-      <Route path="/enfant/:id" element={<ChildProfile />} />
-      <Route path="/devenir-parrain" element={<Sponsorships />} />
+      <Route path="/enfant/:id" element={<PublicChildProfile />} />
+      <Route path="/devenir-parrain" element={<BecomeSponsor />} />
     </Route>
 
     {/* Routes d'authentification */}
