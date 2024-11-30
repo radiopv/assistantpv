@@ -7,15 +7,13 @@ import {
   Users, 
   Heart, 
   Gift, 
-  MessageSquare, 
-  Medal,
+  MessageSquare,
   UserCog,
   FileImage,
   FileText,
   BarChart3,
   HelpCircle,
   Settings,
-  Map,
   Plane
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
@@ -28,17 +26,16 @@ export function Sidebar({ className }: SidebarProps) {
   const isAdmin = user?.role === 'admin';
 
   const mainLinks = [
-    { to: "/dashboard", icon: Home, label: "Tableau de bord" },
-    { to: "/children", icon: Users, label: "Enfants" },
-    { to: "/sponsorships", icon: Heart, label: "Parrainages" },
-    { to: "/donations", icon: Gift, label: "Dons" },
+    { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "dashboard" },
+    { to: "/children", icon: Users, label: "Enfants", permission: "children" },
+    { to: "/sponsorships", icon: Heart, label: "Parrainages", permission: "sponsorships" },
+    { to: "/donations", icon: Gift, label: "Dons", permission: "donations" },
     { to: "/messages", icon: MessageSquare, label: "Messages" },
-    { to: "/rewards", icon: Medal, label: "Récompenses" },
   ];
 
   const adminLinks = [
     { to: "/admin/permissions", icon: UserCog, label: "Permissions" },
-    { to: "/admin/media", icon: FileImage, label: "Médias" },
+    { to: "/admin/media", icon: FileImage, label: "Médias", permission: "media" },
     { to: "/admin/reports", icon: FileText, label: "Rapports" },
     { to: "/admin/faq", icon: HelpCircle, label: "FAQ" },
     { to: "/admin/statistics", icon: BarChart3, label: "Statistiques" },
@@ -46,21 +43,28 @@ export function Sidebar({ className }: SidebarProps) {
     { to: "/admin/travels", icon: Plane, label: "Voyages" },
   ];
 
-  const renderNavLink = ({ to, icon: Icon, label }: { to: string, icon: any, label: string }) => (
-    <NavLink
-      key={to}
-      to={to}
-      className={({ isActive }) =>
-        cn(
-          "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
-          isActive && "text-primary bg-primary/10"
-        )
-      }
-    >
-      <Icon className="h-5 w-5 mr-3" />
-      {label}
-    </NavLink>
-  );
+  const renderNavLink = ({ to, icon: Icon, label, permission }: { to: string, icon: any, label: string, permission?: string }) => {
+    // Si l'utilisateur n'a pas la permission et n'est pas admin, ne pas afficher le lien
+    if (permission && !user?.permissions?.[permission] && !isAdmin) {
+      return null;
+    }
+
+    return (
+      <NavLink
+        key={to}
+        to={to}
+        className={({ isActive }) =>
+          cn(
+            "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:text-primary hover:bg-primary/10 rounded-lg transition",
+            isActive && "text-primary bg-primary/10"
+          )
+        }
+      >
+        <Icon className="h-5 w-5 mr-3" />
+        {label}
+      </NavLink>
+    );
+  };
 
   return (
     <div className={cn("pb-12 h-full bg-white border-r", className)}>
