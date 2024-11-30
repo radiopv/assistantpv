@@ -9,7 +9,7 @@ interface NeedFormProps {
   selectedNeeds: Need[];
   setSelectedNeeds: (needs: Need[]) => void;
   onSubmit: () => Promise<void>;
-  language: "fr" | "es";  // Ajout de la propriété language
+  language: "fr" | "es";
 }
 
 export const NeedForm = ({ selectedNeeds, setSelectedNeeds, onSubmit, language }: NeedFormProps) => {
@@ -94,3 +94,5 @@ export const NeedForm = ({ selectedNeeds, setSelectedNeeds, onSubmit, language }
         </Button>
       </div>
     </Card>
+  );
+};
