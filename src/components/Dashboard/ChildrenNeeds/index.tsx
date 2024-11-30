@@ -51,6 +51,54 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
     }
   };
 
+  const handleToggleUrgent = async (childId: string, needIndex: number) => {
+    const child = children.find(c => c.id === childId);
+    if (!child) return;
+
+    const updatedNeeds = [...(child.needs || [])];
+    updatedNeeds[needIndex] = {
+      ...updatedNeeds[needIndex],
+      is_urgent: !updatedNeeds[needIndex].is_urgent
+    };
+
+    try {
+      const { error } = await supabase
+        .from('children')
+        .update({ needs: convertNeedsToJson(updatedNeeds) })
+        .eq('id', childId);
+
+      if (error) throw error;
+
+      toast.success(language === "fr" ? "Statut d'urgence mis à jour" : "Estado de urgencia actualizado");
+      onNeedsUpdate();
+    } catch (error) {
+      toast.error(language === "fr" ? "Erreur lors de la mise à jour" : "Error al actualizar");
+      console.error("Erreur:", error);
+    }
+  };
+
+  const handleDeleteNeed = async (childId: string, needIndex: number) => {
+    const child = children.find(c => c.id === childId);
+    if (!child) return;
+
+    const updatedNeeds = (child.needs || []).filter((_, index) => index !== needIndex);
+
+    try {
+      const { error } = await supabase
+        .from('children')
+        .update({ needs: convertNeedsToJson(updatedNeeds) })
+        .eq('id', childId);
+
+      if (error) throw error;
+
+      toast.success(language === "fr" ? "Besoin supprimé avec succès" : "Necesidad eliminada con éxito");
+      onNeedsUpdate();
+    } catch (error) {
+      toast.error(language === "fr" ? "Erreur lors de la suppression" : "Error al eliminar");
+      console.error("Erreur:", error);
+    }
+  };
+
   const filteredChildren = children
     .filter(child => {
       const hasNeeds = (child.needs || []).length > 0;
@@ -111,6 +159,8 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
             childName={child.name}
             needs={child.needs || []}
             language={language}
+            onToggleUrgent={handleToggleUrgent}
+            onDeleteNeed={handleDeleteNeed}
           />
         ))}
       </div>
