@@ -6,11 +6,11 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useTranslations } from "@/hooks/useTranslations";
 
 interface ProfileHeaderProps {
   name: string;
@@ -29,12 +29,14 @@ export const ProfileHeader = ({
   onSave, 
   onDelete 
 }: ProfileHeaderProps) => {
+  const { t } = useTranslations();
+
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-4">
         <Button variant="ghost" onClick={onBack}>
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour
+          {t('back')}
         </Button>
         <h1 className="text-3xl font-bold text-gray-900">
           {name}
@@ -48,10 +50,10 @@ export const ProfileHeader = ({
           {editing ? (
             <>
               <Save className="w-4 h-4 mr-2" />
-              Enregistrer
+              {t('save')}
             </>
           ) : (
-            "Modifier"
+            t('edit')
           )}
         </Button>
 
@@ -59,20 +61,20 @@ export const ProfileHeader = ({
           <AlertDialogTrigger asChild>
             <Button variant="destructive">
               <Trash2 className="w-4 h-4 mr-2" />
-              Supprimer
+              {t('delete')}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet enfant ?</AlertDialogTitle>
+              <AlertDialogTitle>{t('delete_child_confirmation_title')}</AlertDialogTitle>
               <AlertDialogDescription>
-                Cette action est irréversible. Toutes les informations associées à cet enfant seront définitivement supprimées.
+                {t('delete_child_confirmation_description')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
               <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                Supprimer
+                {t('delete')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
