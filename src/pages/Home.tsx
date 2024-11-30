@@ -31,10 +31,10 @@ const Home = () => {
       <section 
         className="relative h-[600px] bg-cover bg-center bg-fixed" 
         style={{ 
-          backgroundImage: 'url(https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1772&q=80)'
+          backgroundImage: 'url(/lovable-uploads/20d0122c-dfc1-4714-8a9d-22914dc3af46.png)'
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/30" />
         <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center text-white text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
             Changez une vie, parrainez un enfant
