@@ -26,7 +26,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       icon: Users,
       color: "bg-primary",
       link: "/children",
-      tooltip: "Voir tous les enfants"
+      tooltip: t("dashboard.tooltips.view_all_children")
     },
     {
       label: t("dashboard.stats.children.sponsored"),
@@ -34,7 +34,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       icon: Gift,
       color: "bg-green-500",
       link: "/children?status=sponsored",
-      tooltip: "Voir les enfants parrainés"
+      tooltip: t("dashboard.tooltips.view_sponsored_children")
     },
     {
       label: t("dashboard.stats.urgent_needs"),
@@ -42,7 +42,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       icon: AlertTriangle,
       color: "bg-red-500",
       link: "/children-needs",
-      tooltip: "Voir les besoins urgents"
+      tooltip: t("dashboard.tooltips.view_urgent_needs")
     },
     {
       label: t("dashboard.stats.active_cities"),
@@ -50,7 +50,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       icon: MapPin,
       color: "bg-blue-500",
       link: "/donations?view=cities",
-      tooltip: "Voir les statistiques par ville"
+      tooltip: t("dashboard.tooltips.view_city_stats")
     },
   ];
 
