@@ -1,22 +1,22 @@
 import { useState } from "react";
 import { Need } from "@/types/needs";
-import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown, Filter } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { NeedForm } from "./NeedForm";
 import { NeedsList } from "./NeedsList";
 import { NeedsStats } from "./NeedsStats";
 import { ChildrenFilter } from "./ChildrenFilter";
+import { NeedsHeader } from "./NeedsHeader";
+import { translations } from "./translations";
 
 export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: { 
   children: any[];
   isLoading: boolean;
   onNeedsUpdate: () => void;
 }) => {
+  const [language, setLanguage] = useState<"fr" | "es">("fr");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChild, setSelectedChild] = useState<any | null>(null);
   const [selectedNeeds, setSelectedNeeds] = useState<Need[]>([]);
@@ -25,6 +25,8 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
     urgentOnly: false,
     searchTerm: ""
   });
+
+  const t = translations[language];
 
   const handleAddNeeds = async () => {
     if (!selectedChild) return;
@@ -38,13 +40,13 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
 
       if (error) throw error;
 
-      toast.success("Besoins ajoutés avec succès");
+      toast.success(language === "fr" ? "Besoins ajoutés avec succès" : "Necesidades agregadas con éxito");
       setSelectedNeeds([]);
       setSelectedChild(null);
       setIsOpen(false);
       onNeedsUpdate();
     } catch (error) {
-      toast.error("Erreur lors de l'ajout des besoins");
+      toast.error(language === "fr" ? "Erreur lors de l'ajout des besoins" : "Error al agregar las necesidades");
       console.error("Erreur:", error);
     }
   };
@@ -61,7 +63,6 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
       return hasNeeds && matchesSearch && matchesCategory && matchesUrgent;
     })
     .sort((a, b) => {
-      // Prioritize children with urgent needs
       const aHasUrgent = (a.needs || []).some((need: Need) => need.is_urgent);
       const bHasUrgent = (b.needs || []).some((need: Need) => need.is_urgent);
       if (aHasUrgent && !bHasUrgent) return -1;
@@ -87,51 +88,45 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center flex-wrap gap-4">
-        <h2 className="text-2xl font-semibold">Besoins des Enfants</h2>
-        <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setFilters(prev => ({ ...prev, urgentOnly: !prev.urgentOnly }))}
-            className={filters.urgentOnly ? "bg-red-50" : ""}
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            Besoins urgents
-          </Button>
-          <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-            <CollapsibleTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90">
-                <Plus className="w-4 h-4 mr-2" />
-                Ajouter des besoins
-                <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-4">
-              <NeedForm
-                selectedNeeds={selectedNeeds}
-                setSelectedNeeds={setSelectedNeeds}
-                onSubmit={handleAddNeeds}
-              />
-            </CollapsibleContent>
-          </Collapsible>
-        </div>
-      </div>
+      <NeedsHeader 
+        language={language}
+        setLanguage={setLanguage}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
 
       <NeedsStats children={children} />
       
-      <ChildrenFilter filters={filters} setFilters={setFilters} />
+      <ChildrenFilter 
+        filters={filters} 
+        setFilters={setFilters}
+        language={language}
+      />
 
       <div className="grid gap-6 md:grid-cols-2">
         {filteredChildren.map((child) => (
-          <NeedsList key={child.id} child={child} needs={child.needs || []} />
+          <NeedsList 
+            key={child.id} 
+            child={child} 
+            needs={child.needs || []}
+            language={language}
+          />
         ))}
       </div>
 
       {filteredChildren.length === 0 && (
         <div className="text-center py-12 text-gray-500">
-          Aucun enfant n'a de besoins correspondant à vos critères
+          {t.noNeeds}
         </div>
+      )}
+
+      {isOpen && (
+        <NeedForm
+          selectedNeeds={selectedNeeds}
+          setSelectedNeeds={setSelectedNeeds}
+          onSubmit={handleAddNeeds}
+          language={language}
+        />
       )}
     </div>
   );

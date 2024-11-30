@@ -8,25 +8,48 @@ import { BasicInfoFields } from "./FormFields/BasicInfoFields";
 import { PhotoUploadField } from "./FormFields/PhotoUploadField";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Globe } from "lucide-react";
 
-interface FormData {
-  name: string;
-  gender: string;
-  birth_date: string;
-  city: string | null;
-  status: string;
-  needs: any[];
-  is_sponsored: boolean;
-}
-
-const ALLOWED_GENDERS = ['male', 'female'];
+const translations = {
+  fr: {
+    title: "Informations de l'enfant",
+    addChild: "Ajouter l'enfant",
+    adding: "Ajout en cours...",
+    cancel: "Annuler",
+    success: "L'enfant a été ajouté avec succès.",
+    error: "Une erreur est survenue lors de l'ajout de l'enfant",
+    validation: {
+      nameRequired: "Le nom est requis",
+      genderRequired: "Le genre doit être 'male' ou 'female'",
+      birthDateRequired: "La date de naissance est requise",
+      birthDateInvalid: "La date de naissance est invalide",
+      ageError: "Impossible de calculer l'âge"
+    }
+  },
+  es: {
+    title: "Información del niño",
+    addChild: "Agregar niño",
+    adding: "Agregando...",
+    cancel: "Cancelar",
+    success: "El niño ha sido agregado con éxito.",
+    error: "Ocurrió un error al agregar al niño",
+    validation: {
+      nameRequired: "El nombre es requerido",
+      genderRequired: "El género debe ser 'male' o 'female'",
+      birthDateRequired: "La fecha de nacimiento es requerida",
+      birthDateInvalid: "La fecha de nacimiento es inválida",
+      ageError: "Imposible calcular la edad"
+    }
+  }
+};
 
 export const AddChildForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
-  const [formData, setFormData] = useState<FormData>({
+  const [language, setLanguage] = useState<"fr" | "es">("fr");
+  const [formData, setFormData] = useState({
     name: "",
     gender: "",
     birth_date: "",
@@ -42,12 +65,13 @@ export const AddChildForm = () => {
   };
 
   const validateForm = (): string | null => {
-    if (!formData.name.trim()) return "Le nom est requis";
-    if (!ALLOWED_GENDERS.includes(formData.gender)) return "Le genre doit être 'male' ou 'female'";
-    if (!formData.birth_date) return "La date de naissance est requise";
+    if (!formData.name.trim()) return translations[language].validation.nameRequired;
+    const ALLOWED_GENDERS = ['male', 'female'];
+    if (!ALLOWED_GENDERS.includes(formData.gender)) return translations[language].validation.genderRequired;
+    if (!formData.birth_date) return translations[language].validation.birthDateRequired;
     
     const age = calculateAge(formData.birth_date);
-    if (age === null || age < 0) return "La date de naissance est invalide";
+    if (age === null || age < 0) return translations[language].validation.birthDateInvalid;
     
     return null;
   };
@@ -75,7 +99,7 @@ export const AddChildForm = () => {
 
       const age = calculateAge(formData.birth_date);
       if (age === null) {
-        throw new Error("Impossible de calculer l'âge");
+        throw new Error(translations[language].validation.ageError);
       }
 
       let photoUrl = null;
@@ -116,8 +140,8 @@ export const AddChildForm = () => {
       if (error) throw error;
 
       toast({
-        title: "Enfant ajouté",
-        description: "L'enfant a été ajouté avec succès.",
+        title: translations[language].addChild,
+        description: translations[language].success,
       });
 
       navigate('/children');
@@ -125,7 +149,7 @@ export const AddChildForm = () => {
       console.error('Error adding child:', error);
       toast({
         variant: "destructive",
-        title: "Erreur",
+        title: translations[language].error,
         description: error.message || "Une erreur est survenue lors de l'ajout de l'enfant",
       });
     } finally {
@@ -133,24 +157,34 @@ export const AddChildForm = () => {
     }
   };
 
+  const t = translations[language];
+
   return (
     <Card className="p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <div>
-            <Label className="text-lg font-semibold mb-4">
-              Informations de l'enfant
-            </Label>
-          </div>
-          
-          <BasicInfoFields 
-            formData={formData}
-            handleChange={handleChange}
-            setFormData={setFormData}
-          />
-          
-          <PhotoUploadField handlePhotoChange={handlePhotoChange} />
+        <div className="flex justify-between items-center">
+          <Label className="text-lg font-semibold mb-4">
+            {t.title}
+          </Label>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            type="button"
+            onClick={() => setLanguage(language === "fr" ? "es" : "fr")}
+            className="flex items-center gap-2"
+          >
+            <Globe className="h-4 w-4" />
+            {language.toUpperCase()}
+          </Button>
         </div>
+        
+        <BasicInfoFields 
+          formData={formData}
+          handleChange={handleChange}
+          setFormData={setFormData}
+        />
+        
+        <PhotoUploadField handlePhotoChange={handlePhotoChange} />
 
         <div className="flex gap-4 pt-4">
           <Button
@@ -159,14 +193,14 @@ export const AddChildForm = () => {
             onClick={() => navigate('/children')}
             className="w-full md:w-auto"
           >
-            Annuler
+            {t.cancel}
           </Button>
           <Button 
             type="submit" 
             disabled={loading}
             className="w-full md:w-auto"
           >
-            {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
+            {loading ? t.adding : t.addChild}
           </Button>
         </div>
       </form>
