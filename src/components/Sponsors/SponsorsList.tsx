@@ -5,7 +5,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EditSponsorDialog } from "./EditSponsorDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Pencil } from "lucide-react";
+import { Pencil, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -14,6 +16,27 @@ interface SponsorsListProps {
 
 export const SponsorsList = ({ sponsors, isLoading }: SponsorsListProps) => {
   const [editingSponsor, setEditingSponsor] = useState<any>(null);
+
+  const handleRemoveSponsorship = async (sponsorshipId: string, childName: string) => {
+    try {
+      const { error } = await supabase
+        .from('sponsorships')
+        .update({ 
+          status: 'ended',
+          termination_date: new Date().toISOString(),
+          termination_reason: 'Parrain inactif',
+          termination_comment: 'Parrainage terminé par un administrateur'
+        })
+        .eq('id', sponsorshipId);
+
+      if (error) throw error;
+
+      toast.success(`Le parrainage de ${childName} a été terminé`);
+    } catch (error) {
+      console.error('Erreur lors de la suppression du parrainage:', error);
+      toast.error("Une erreur est survenue lors de la suppression du parrainage");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -74,9 +97,19 @@ export const SponsorsList = ({ sponsors, isLoading }: SponsorsListProps) => {
                 <div className="mt-1">
                   {sponsor.sponsorships.map((sponsorship: any) => (
                     sponsorship.child && (
-                      <span key={sponsorship.child.id} className="text-sm text-gray-600 block">
-                        {sponsorship.child.name}
-                      </span>
+                      <div key={sponsorship.child.id} className="flex items-center justify-between text-sm text-gray-600">
+                        <span>{sponsorship.child.name}</span>
+                        {!sponsor.is_active && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2"
+                            onClick={() => handleRemoveSponsorship(sponsorship.id, sponsorship.child.name)}
+                          >
+                            <X className="h-4 w-4 text-red-500" />
+                          </Button>
+                        )}
+                      </div>
                     )
                   ))}
                 </div>
