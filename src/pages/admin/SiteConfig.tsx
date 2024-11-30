@@ -8,6 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useNavigate } from "react-router-dom";
 
+// Fixed UUID for the default configuration
+const DEFAULT_CONFIG_ID = "00000000-0000-0000-0000-000000000000";
+
 const SiteConfig = () => {
   const { toast } = useToast();
   const { user, isAssistant } = useAuth();
@@ -49,7 +52,7 @@ const SiteConfig = () => {
           const { error: insertError } = await supabase
             .from("site_config")
             .insert({
-              id: "default",
+              id: DEFAULT_CONFIG_ID,
               site_name: config.siteName,
               primary_color: config.primaryColor,
               secondary_color: config.secondaryColor,
@@ -75,7 +78,7 @@ const SiteConfig = () => {
       const { error } = await supabase
         .from("site_config")
         .upsert({
-          id: "default",
+          id: DEFAULT_CONFIG_ID,
           site_name: config.siteName,
           primary_color: config.primaryColor,
           secondary_color: config.secondaryColor,
