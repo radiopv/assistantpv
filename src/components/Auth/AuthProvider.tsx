@@ -36,16 +36,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // Mise à jour de isAssistant pour inclure à la fois les assistants et les admins
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
 
-          // Redirection basée sur le rôle
+          // Redirection vers le dashboard pour tous les utilisateurs authentifiés
           if (window.location.pathname === '/login') {
-            if (parsedUser.role === 'admin') {
-              // Redirection explicite vers l'interface d'administration
-              navigate('/admin/permissions');
-            } else if (parsedUser.role === 'assistant') {
-              navigate('/dashboard');
-            } else {
-              navigate('/');
-            }
+            navigate('/dashboard');
           }
         } else {
           setUser(null);
