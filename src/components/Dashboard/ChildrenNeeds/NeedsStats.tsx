@@ -7,7 +7,7 @@ interface NeedsStatsProps {
 
 export const NeedsStats = ({ children }: NeedsStatsProps) => {
   const stats = children.reduce((acc, child) => {
-    const needs = child.needs || [];
+    const needs = (child.needs || []) as Need[];
     const urgentNeeds = needs.filter((need: Need) => need.is_urgent);
     
     needs.forEach((need: Need) => {
