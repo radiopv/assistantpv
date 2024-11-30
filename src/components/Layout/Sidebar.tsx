@@ -5,7 +5,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Home, 
   Users, 
-  Heart, 
   Gift, 
   MessageSquare,
   UserCog,
@@ -18,7 +17,8 @@ import {
   Globe,
   Calendar,
   Mail,
-  Database
+  Database,
+  Heart
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../Auth/AuthProvider";
@@ -32,13 +32,13 @@ export function Sidebar({ className }: SidebarProps) {
   const mainLinks = [
     { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "dashboard" },
     { to: "/children", icon: Users, label: "Enfants", permission: "children" },
-    { to: "/admin/sponsors", icon: Heart, label: "Parrainages", permission: "sponsorships" },
     { to: "/donations", icon: Gift, label: "Dons", permission: "donations" },
     { to: "/messages", icon: MessageSquare, label: "Messages" },
   ];
 
   const adminLinks = [
     { to: "/admin/permissions", icon: UserCog, label: "Permissions", permission: "manage_permissions" },
+    { to: "/admin/sponsors", icon: Heart, label: "Parrainages", permission: "sponsorships" },
     { to: "/admin/media", icon: FileImage, label: "Médias", permission: "media" },
     { to: "/admin/reports", icon: FileText, label: "Rapports", permission: "view_reports" },
     { to: "/admin/faq", icon: HelpCircle, label: "FAQ", permission: "manage_faq" },
@@ -86,7 +86,7 @@ export function Sidebar({ className }: SidebarProps) {
               {mainLinks.map(renderNavLink)}
             </div>
 
-            {isAdmin && (
+            {(isAdmin || user?.permissions?.sponsorships) && (
               <div className="mt-6">
                 <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
                   Administration
