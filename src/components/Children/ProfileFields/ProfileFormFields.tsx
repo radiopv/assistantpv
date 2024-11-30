@@ -4,13 +4,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
-import { useTranslations } from "@/hooks/useTranslations";
 
 const STATUS_OPTIONS = [
-  { value: "available", label_key: "status_available" },
-  { value: "sponsored", label_key: "status_sponsored" },
-  { value: "pending", label_key: "status_pending" },
-  { value: "urgent", label_key: "status_urgent" }
+  { value: "available", label: "Disponible" },
+  { value: "sponsored", label: "Parrainé" },
+  { value: "pending", label: "En attente" },
+  { value: "urgent", label: "Besoins urgents" }
 ];
 
 interface ProfileFormFieldsProps {
@@ -33,8 +32,6 @@ const formatAge = (birthDate: string) => {
 };
 
 export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormFieldsProps) => {
-  const { t } = useTranslations();
-
   const { data: cities } = useQuery({
     queryKey: ['cities'],
     queryFn: async () => {
@@ -62,7 +59,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
   return (
     <div className="grid gap-4">
       <div className="grid gap-2">
-        <Label htmlFor="name">{t('name')}</Label>
+        <Label htmlFor="name">Nom</Label>
         <Input
           id="name"
           value={child.name}
@@ -72,7 +69,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="birth_date">{t('birth_date')}</Label>
+        <Label htmlFor="birth_date">Date de naissance</Label>
         <Input
           id="birth_date"
           type="date"
@@ -83,7 +80,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="age">{t('age')}</Label>
+        <Label htmlFor="age">Âge</Label>
         <Input
           id="age"
           value={formatAge(child.birth_date)}
@@ -92,14 +89,14 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="city">{t('city')}</Label>
+        <Label htmlFor="city">Ville</Label>
         {editing ? (
           <Select
             value={child.city || ""}
             onValueChange={(value) => handleSelectChange("city", value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t('select_city')} />
+              <SelectValue placeholder="Sélectionner une ville" />
             </SelectTrigger>
             <SelectContent>
               {cities?.map((city) => (
@@ -119,7 +116,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
       </div>
 
       <div className="grid gap-2">
-        <Label htmlFor="status">{t('status')}</Label>
+        <Label htmlFor="status">Statut</Label>
         {editing ? (
           <Select
             defaultValue={child.status}
@@ -127,14 +124,14 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
             onValueChange={(value) => handleSelectChange("status", value)}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t('select_status')}>
-                {t(STATUS_OPTIONS.find(option => option.value === child.status)?.label_key || '')}
+              <SelectValue placeholder="Sélectionner un statut">
+                {STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {STATUS_OPTIONS.map((status) => (
                 <SelectItem key={status.value} value={status.value}>
-                  {t(status.label_key)}
+                  {status.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -142,7 +139,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
         ) : (
           <Input
             id="status"
-            value={t(STATUS_OPTIONS.find(option => option.value === child.status)?.label_key || '')}
+            value={STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
             disabled
           />
         )}

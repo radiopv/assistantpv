@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { SponsorshipConversionStats, TopCityStats } from "@/types/statistics";
-import { useTranslation } from "@/components/Translation/TranslationContext";
 import {
   BarChart,
   Bar,
@@ -15,8 +14,6 @@ import {
 } from "recharts";
 
 export const SponsorshipStats = () => {
-  const { t } = useTranslation();
-  
   const { data: conversionStats, isLoading: conversionLoading } = useQuery<SponsorshipConversionStats>({
     queryKey: ['sponsorship-conversion'],
     queryFn: async () => {
@@ -42,25 +39,25 @@ export const SponsorshipStats = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">{t("stats.sponsorships.conversion_stats")}</h3>
+        <h3 className="text-lg font-semibold mb-4">Statistiques de Conversion</h3>
         <div className="space-y-4">
           <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
-            <span>{t("stats.sponsorships.conversion_rate")}</span>
+            <span>Taux de conversion</span>
             <span className="font-bold">{conversionStats?.conversion_rate}%</span>
           </div>
           <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
-            <span>{t("stats.sponsorships.avg_duration")}</span>
-            <span className="font-bold">{conversionStats?.avg_duration_days} {t("common.days")}</span>
+            <span>Durée moyenne</span>
+            <span className="font-bold">{conversionStats?.avg_duration_days} jours</span>
           </div>
           <div className="flex justify-between items-center p-3 bg-primary/5 rounded">
-            <span>{t("stats.sponsorships.active")}</span>
+            <span>Parrainages actifs</span>
             <span className="font-bold">{conversionStats?.active_sponsorships}</span>
           </div>
         </div>
       </Card>
 
       <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">{t("stats.sponsorships.top_cities")}</h3>
+        <h3 className="text-lg font-semibold mb-4">Top 5 des Villes</h3>
         <div className="h-[300px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={topCities}>
@@ -68,7 +65,7 @@ export const SponsorshipStats = () => {
               <XAxis dataKey="city" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="active_sponsorships" fill="#8884d8" name={t("stats.sponsorships.active")} />
+              <Bar dataKey="active_sponsorships" fill="#8884d8" name="Parrainages actifs" />
             </BarChart>
           </ResponsiveContainer>
         </div>

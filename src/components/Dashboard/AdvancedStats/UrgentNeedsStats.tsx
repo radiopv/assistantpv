@@ -3,7 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { UrgentNeedsByCityStats } from "@/types/statistics";
-import { useTranslation } from "@/components/Translation/TranslationContext";
 import {
   PieChart,
   Pie,
@@ -16,7 +15,6 @@ import {
 const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
 
 export const UrgentNeedsStats = () => {
-  const { t } = useTranslation();
   const { data: stats, isLoading } = useQuery<UrgentNeedsByCityStats[]>({
     queryKey: ['urgent-needs-by-city'],
     queryFn: async () => {
@@ -32,7 +30,7 @@ export const UrgentNeedsStats = () => {
 
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">{t("stats.urgent_needs.title")}</h3>
+      <h3 className="text-lg font-semibold mb-4">Besoins Urgents par Ville</h3>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>

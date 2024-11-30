@@ -1,103 +1,130 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
+import { Need } from "@/types/needs";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle } from "lucide-react";
-import { useTranslation } from "@/components/Translation/TranslationContext";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
-interface Need {
-  id: string;
-  category: string;
-  description: string;
-  is_urgent: boolean;
-  child_id: string;
-  child_name: string;
+interface NeedsListProps {
+  childId: string;
+  childName: string;
+  needs: Need[];
+  onToggleUrgent: (childId: string, needIndex: number) => Promise<void>;
+  onDeleteNeed: (childId: string, needIndex: number) => Promise<void>;
 }
 
-export const NeedsList = () => {
-  const { t } = useTranslation();
-  
-  const { data: needs } = useQuery({
-    queryKey: ['children-needs'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('children')
-        .select(`
-          id,
-          name,
-          needs
-        `)
-        .not('needs', 'is', null);
+export const NeedsList = ({ 
+  childId, 
+  childName, 
+  needs = [], 
+  onToggleUrgent, 
+  onDeleteNeed 
+}: NeedsListProps) => {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-      if (error) throw error;
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      education: "Éducation",
+      jouet: "Jouet",
+      vetement: "Vêtement",
+      nourriture: "Nourriture",
+      medicament: "Médicament",
+      hygiene: "Hygiène",
+      autre: "Autre"
+    };
+    return labels[category] || category;
+  };
 
-      const formattedNeeds: Need[] = [];
-      data?.forEach(child => {
-        if (Array.isArray(child.needs)) {
-          child.needs.forEach((need: any) => {
-            formattedNeeds.push({
-              id: need.id || Math.random().toString(),
-              category: need.category,
-              description: need.description,
-              is_urgent: need.is_urgent,
-              child_id: child.id,
-              child_name: child.name
-            });
-          });
-        }
-      });
+  const allCategories = [
+    'education',
+    'jouet',
+    'vetement',
+    'nourriture',
+    'medicament',
+    'hygiene',
+    'autre'
+  ];
 
-      return formattedNeeds;
+  const handleCategoryClick = (category: string) => {
+    if (selectedCategories.includes(category)) {
+      setSelectedCategories(prev => prev.filter(cat => cat !== category));
+    } else {
+      setSelectedCategories(prev => [...prev, category]);
     }
-  });
-
-  const urgentNeeds = needs?.filter(need => need.is_urgent) || [];
-  const regularNeeds = needs?.filter(need => !need.is_urgent) || [];
+  };
 
   return (
-    <div className="space-y-6">
-      {urgentNeeds.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <AlertTriangle className="text-red-500" />
-            {t("needs.urgent_needs")}
-          </h3>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {urgentNeeds.map(need => (
-              <Card key={need.id} className="p-4 border-red-200 bg-red-50">
-                <div className="flex justify-between items-start mb-2">
-                  <Badge variant="destructive">{t(`needs.categories.${need.category}`)}</Badge>
-                  <Badge variant="outline">{need.child_name}</Badge>
-                </div>
-                <p className="text-sm text-gray-700">{need.description}</p>
-              </Card>
-            ))}
-          </div>
+    <Card className="p-4 md:p-6">
+      <h3 className="text-lg font-semibold mb-4">{childName}</h3>
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-2">
+          {allCategories.map((category) => (
+            <Badge 
+              key={category}
+              variant="outline"
+              className={`cursor-pointer transition-colors duration-200 text-sm md:text-base ${
+                selectedCategories.includes(category) 
+                  ? 'bg-red-500 text-white hover:bg-red-600' 
+                  : 'bg-green-500 text-white hover:bg-green-600'
+              }`}
+              onClick={() => handleCategoryClick(category)}
+            >
+              {getCategoryLabel(category)}
+            </Badge>
+          ))}
         </div>
-      )}
 
-      {regularNeeds.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold mb-4">{t("needs.other_needs")}</h3>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {regularNeeds.map(need => (
-              <Card key={need.id} className="p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <Badge>{t(`needs.categories.${need.category}`)}</Badge>
-                  <Badge variant="outline">{need.child_name}</Badge>
+        <div className="space-y-3">
+          {needs.map((need, index) => {
+            const categoryLabel = typeof need.category === 'string' ? need.category : '';
+            return (
+              <div 
+                key={`${categoryLabel}-${index}`}
+                className="flex items-center justify-between p-3 bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex-1 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-red-500 text-white">
+                      {getCategoryLabel(categoryLabel)}
+                    </Badge>
+                    <Input
+                      value={need.description}
+                      onChange={(e) => {
+                        // Update description functionality can be added here
+                      }}
+                      placeholder="Ajouter un commentaire..."
+                      className="flex-1"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`urgent-${need.category}`}
+                      checked={need.is_urgent}
+                      onCheckedChange={() => onToggleUrgent(childId, index)}
+                    />
+                    <label 
+                      htmlFor={`urgent-${need.category}`}
+                      className="text-sm text-gray-600 cursor-pointer"
+                    >
+                      Marquer comme urgent
+                    </label>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-700">{need.description}</p>
-              </Card>
-            ))}
-          </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-2 text-red-600 hover:text-red-800 hover:bg-red-50"
+                  onClick={() => onDeleteNeed(childId, index)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            );
+          })}
         </div>
-      )}
-
-      {(!needs || needs.length === 0) && (
-        <div className="text-center text-gray-500 py-8">
-          {t("needs.no_needs")}
-        </div>
-      )}
-    </div>
+      </div>
+    </Card>
   );
 };

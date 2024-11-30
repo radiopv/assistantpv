@@ -9,7 +9,6 @@ import {
   TooltipProvider, 
   TooltipTrigger 
 } from "@/components/ui/tooltip";
-import { useTranslation } from "@/components/Translation/TranslationContext";
 
 interface DashboardHeaderProps {
   stats: DashboardStats;
@@ -17,40 +16,39 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
 
   const dashboardStats = [
     {
-      label: t("dashboard.stats.children.total"),
+      label: "Enfants Total",
       value: stats?.children?.total || "0",
       icon: Users,
       color: "bg-primary",
       link: "/children",
-      tooltip: t("dashboard.tooltips.view_all_children")
+      tooltip: "Voir tous les enfants"
     },
     {
-      label: t("dashboard.stats.children.sponsored"),
+      label: "Enfants Parrainés",
       value: stats?.children?.sponsored || "0",
       icon: Gift,
       color: "bg-green-500",
       link: "/children?status=sponsored",
-      tooltip: t("dashboard.tooltips.view_sponsored_children")
+      tooltip: "Voir les enfants parrainés"
     },
     {
-      label: t("dashboard.stats.urgent_needs"),
+      label: "Besoins Urgents",
       value: stats?.children?.urgent_needs || "0",
       icon: AlertTriangle,
       color: "bg-red-500",
       link: "/children-needs",
-      tooltip: t("dashboard.tooltips.view_urgent_needs")
+      tooltip: "Voir les besoins urgents"
     },
     {
-      label: t("dashboard.stats.active_cities"),
+      label: "Villes Actives",
       value: stats?.cities || "0",
       icon: MapPin,
       color: "bg-blue-500",
       link: "/donations?view=cities",
-      tooltip: t("dashboard.tooltips.view_city_stats")
+      tooltip: "Voir les statistiques par ville"
     },
   ];
 
@@ -58,9 +56,9 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t("dashboard.title")}</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
           <p className="text-gray-600 mt-2">
-            {t("dashboard.welcome")}
+            Bienvenue dans votre espace assistant TousPourCuba
           </p>
         </div>
         <NotificationBar />

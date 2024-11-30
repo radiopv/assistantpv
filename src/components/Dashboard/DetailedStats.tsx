@@ -16,13 +16,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
-import { useTranslation } from "@/components/Translation/TranslationContext";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export const DetailedStats = () => {
-  const { t } = useTranslation();
-  
   const { data: monthlyStats, isLoading: monthlyLoading, error: monthlyError } = useQuery({
     queryKey: ['monthly-donations'],
     queryFn: async () => {
@@ -79,9 +76,9 @@ export const DetailedStats = () => {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t("stats.donations.evolution")}</h3>
+          <h3 className="text-lg font-semibold mb-4">Évolution des dons</h3>
           <div className="h-[300px]">
-            {monthlyError ? renderError(t("errors.loading_data")) : 
+            {monthlyError ? renderError("Erreur lors du chargement des données") : 
              monthlyLoading ? renderSkeleton() : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={monthlyStats}>
@@ -89,7 +86,7 @@ export const DetailedStats = () => {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="donations" fill="#8884d8" name={t("stats.donations.count")} />
+                  <Bar dataKey="donations" fill="#8884d8" />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -97,9 +94,9 @@ export const DetailedStats = () => {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t("stats.donations.by_city")}</h3>
+          <h3 className="text-lg font-semibold mb-4">Répartition géographique</h3>
           <div className="h-[300px]">
-            {cityError ? renderError(t("errors.loading_data")) :
+            {cityError ? renderError("Erreur lors du chargement des données") :
              cityLoading ? renderSkeleton() : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -124,9 +121,9 @@ export const DetailedStats = () => {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t("stats.sponsorships.title")}</h3>
+          <h3 className="text-lg font-semibold mb-4">Statistiques des parrainages</h3>
           <div className="space-y-4">
-            {sponsorshipError ? renderError(t("errors.loading_data")) :
+            {sponsorshipError ? renderError("Erreur lors du chargement des données") :
              sponsorshipLoading ? (
               <div className="space-y-2">
                 <Skeleton className="h-8 w-full" />
@@ -136,15 +133,15 @@ export const DetailedStats = () => {
             ) : (
               <>
                 <div className="flex justify-between items-center p-3 bg-green-100 rounded">
-                  <span>{t("stats.sponsorships.active")}</span>
+                  <span>Parrainages actifs</span>
                   <span className="font-bold">{sponsorshipStats?.active}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-yellow-100 rounded">
-                  <span>{t("stats.sponsorships.pending")}</span>
+                  <span>En attente</span>
                   <span className="font-bold">{sponsorshipStats?.pending}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
-                  <span>{t("stats.sponsorships.ended")}</span>
+                  <span>Terminés</span>
                   <span className="font-bold">{sponsorshipStats?.ended}</span>
                 </div>
               </>

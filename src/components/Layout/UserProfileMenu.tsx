@@ -13,12 +13,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { User, LogOut } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileForm } from "@/components/Profile/ProfileForm";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export const UserProfileMenu = () => {
   const { user, signOut } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const isMobile = useIsMobile();
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -35,11 +33,9 @@ export const UserProfileMenu = () => {
 
   return (
     <div className="flex items-center gap-4">
-      {!isMobile && (
-        <span className="text-sm text-gray-600">
-          Bienvenue, {formData.name || "Utilisateur"}
-        </span>
-      )}
+      <span className="text-sm text-gray-600">
+        Bienvenue, {formData.name || "Utilisateur"}
+      </span>
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

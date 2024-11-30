@@ -3,14 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { LanguageSelector } from "@/components/Translation/LanguageSelector";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { useTranslation } from "@/components/Translation/TranslationContext";
 
 export const NotificationBar = () => {
-  const { isAssistant } = useAuth();
-  const { t } = useTranslation();
-  
   const { data: notifications } = useQuery({
     queryKey: ['unread-notifications'],
     queryFn: async () => {
@@ -35,12 +29,7 @@ export const NotificationBar = () => {
 
   return (
     <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm">
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="relative"
-        aria-label={t("notifications.button")}
-      >
+      <Button variant="ghost" size="icon" className="relative">
         <Bell className="h-5 w-5" />
         {notifications && notifications > 0 && (
           <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
@@ -49,12 +38,7 @@ export const NotificationBar = () => {
         )}
       </Button>
 
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="relative"
-        aria-label={t("messages.button")}
-      >
+      <Button variant="ghost" size="icon" className="relative">
         <MessageSquare className="h-5 w-5" />
         {messages && messages > 0 && (
           <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0">
@@ -63,16 +47,9 @@ export const NotificationBar = () => {
         )}
       </Button>
 
-      <Button 
-        variant="ghost" 
-        size="icon" 
-        className="relative"
-        aria-label={t("tasks.button")}
-      >
+      <Button variant="ghost" size="icon" className="relative">
         <CheckSquare className="h-5 w-5" />
       </Button>
-
-      {isAssistant && <LanguageSelector />}
     </div>
   );
 };

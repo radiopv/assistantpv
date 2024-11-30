@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AlbumMediaUploadProps {
   childId: string;
@@ -14,7 +13,6 @@ interface AlbumMediaUploadProps {
 
 export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUploadProps) => {
   const [uploading, setUploading] = useState(false);
-  const [position, setPosition] = useState<string>("main");
   const { toast } = useToast();
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +42,6 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
           child_id: childId,
           url: publicUrl,
           type: file.type.startsWith('image/') ? 'image' : 'video',
-          position: position,
-          layout_position: position // Make sure to set both position and layout_position
         });
 
       if (dbError) throw dbError;
@@ -60,7 +56,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'upload.",
+        description: "Une erreur est survenue lors de l'upload.",
       });
     } finally {
       setUploading(false);
@@ -69,18 +65,6 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
   return (
     <div className="space-y-4">
-      <Label htmlFor="position">Position de l'image</Label>
-      <Select value={position} onValueChange={setPosition}>
-        <SelectTrigger>
-          <SelectValue placeholder="Sélectionnez une position" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="main">Principale</SelectItem>
-          <SelectItem value="secondary">Secondaire</SelectItem>
-          <SelectItem value="tertiary">Tertiaire</SelectItem>
-        </SelectContent>
-      </Select>
-
       <Label htmlFor="photo">Ajouter une photo</Label>
       <Input
         id="photo"

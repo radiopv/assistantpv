@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
-import { TranslationProvider } from "./components/Translation/TranslationContext";
 import MainLayout from "./components/Layout/MainLayout";
 import PublicLayout from "./components/Layout/PublicLayout";
 import Home from "./pages/Home";
@@ -26,7 +25,6 @@ import Statistics from "./pages/admin/Statistics";
 import SiteConfig from "./pages/admin/SiteConfig";
 import Travels from "./pages/admin/Travels";
 import Reports from "./pages/admin/Reports";
-import HomeImages from "./pages/admin/HomeImages";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,14 +52,12 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
     return <Navigate to="/login" replace />;
   }
 
-  // Vérification explicite du rôle admin
   if (requireAdmin && user?.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
-  // Vérification des permissions spécifiques
   if (requiredPermission && !user?.permissions?.[requiredPermission] && user?.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
@@ -88,17 +84,14 @@ const AppRoutes = () => (
       <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
       <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
-      
-      {/* Routes Admin */}
       <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
-      <Route path="/admin/media" element={<ProtectedRoute requireAdmin><MediaManagement /></ProtectedRoute>} />
+      <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
       <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
       <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><Reports /></ProtectedRoute>} />
       <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
       <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
       <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />
       <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
-      <Route path="/admin/home-images" element={<ProtectedRoute requireAdmin><HomeImages /></ProtectedRoute>} />
     </Route>
   </Routes>
 );
@@ -107,13 +100,11 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
       <AuthProvider>
-        <TranslationProvider>
-          <TooltipProvider>
-            <AppRoutes />
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
-        </TranslationProvider>
+        <TooltipProvider>
+          <AppRoutes />
+          <Toaster />
+          <Sonner />
+        </TooltipProvider>
       </AuthProvider>
     </BrowserRouter>
   </QueryClientProvider>

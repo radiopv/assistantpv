@@ -8,20 +8,6 @@ import { Loader2 } from "lucide-react";
 const Home = () => {
   const navigate = useNavigate();
 
-  const { data: heroImage } = useQuery({
-    queryKey: ['home-hero-image'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('home_images')
-        .select('url')
-        .eq('position', 'main')
-        .maybeSingle();
-      
-      if (error) throw error;
-      return data?.url || 'https://images.unsplash.com/photo-1501286353178-1ec881214838';
-    }
-  });
-
   const { data: featuredChildren, isLoading } = useQuery({
     queryKey: ['featured-children'],
     queryFn: async () => {
@@ -39,7 +25,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[600px] bg-cover bg-center" style={{ backgroundImage: `url(${heroImage})` }}>
+      <section className="relative h-[600px] bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1501286353178-1ec881214838)' }}>
         <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center text-white text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Changez une vie, parrainez un enfant</h1>
