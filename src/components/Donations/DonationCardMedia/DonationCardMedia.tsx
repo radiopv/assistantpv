@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, Video, X } from "lucide-react";
+import { Camera, Video } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { PhotoUpload } from "../PhotoUpload";
@@ -54,7 +54,6 @@ export const DonationCardMedia = ({
 
   return (
     <div className="space-y-4">
-      {/* Media Grids */}
       <DonationMediaGrid 
         photos={photos}
         videos={videos}
@@ -63,7 +62,6 @@ export const DonationCardMedia = ({
         onVideoDelete={onVideosUpdate}
       />
 
-      {/* Upload Buttons */}
       <div className="flex flex-wrap gap-2">
         <Button
           variant="outline"
@@ -85,7 +83,6 @@ export const DonationCardMedia = ({
         </Button>
       </div>
 
-      {/* Upload Forms */}
       {showPhotoUpload && (
         <PhotoUpload
           donationId={donationId}
@@ -106,12 +103,13 @@ export const DonationCardMedia = ({
         />
       )}
 
-      {/* Edit Dialog */}
-      <DonationMediaEdit
-        photo={selectedPhoto}
-        onClose={() => setSelectedPhoto(null)}
-        onSave={onPhotosUpdate}
-      />
+      {selectedPhoto && (
+        <DonationMediaEdit
+          photo={selectedPhoto}
+          onClose={() => setSelectedPhoto(null)}
+          onSave={onPhotosUpdate}
+        />
+      )}
     </div>
   );
 };
