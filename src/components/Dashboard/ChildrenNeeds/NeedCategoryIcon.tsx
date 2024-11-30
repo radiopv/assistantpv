@@ -1,4 +1,4 @@
-import { Book, Gift, Shirt, Pizza, Pill, Shower, HelpCircle } from "lucide-react";
+import { Book, Gift, Shirt, Pizza, Pill, Bath, HelpCircle } from "lucide-react";
 
 interface NeedCategoryIconProps {
   category: string;
@@ -18,7 +18,7 @@ export const NeedCategoryIcon = ({ category, className = "w-4 h-4" }: NeedCatego
     case "medicament":
       return <Pill className={className} />;
     case "hygiene":
-      return <Shower className={className} />;
+      return <Bath className={className} />;
     default:
       return <HelpCircle className={className} />;
   }
