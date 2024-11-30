@@ -9,6 +9,7 @@ import {
   TooltipProvider, 
   TooltipTrigger 
 } from "@/components/ui/tooltip";
+import { useTranslation } from "@/components/Translation/TranslationContext";
 
 interface DashboardHeaderProps {
   stats: DashboardStats;
@@ -16,10 +17,11 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const dashboardStats = [
     {
-      label: "Enfants Total",
+      label: t("dashboard.stats.children.total"),
       value: stats?.children?.total || "0",
       icon: Users,
       color: "bg-primary",
@@ -27,7 +29,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       tooltip: "Voir tous les enfants"
     },
     {
-      label: "Enfants Parrainés",
+      label: t("dashboard.stats.children.sponsored"),
       value: stats?.children?.sponsored || "0",
       icon: Gift,
       color: "bg-green-500",
@@ -35,7 +37,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       tooltip: "Voir les enfants parrainés"
     },
     {
-      label: "Besoins Urgents",
+      label: t("dashboard.stats.urgent_needs"),
       value: stats?.children?.urgent_needs || "0",
       icon: AlertTriangle,
       color: "bg-red-500",
@@ -43,7 +45,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       tooltip: "Voir les besoins urgents"
     },
     {
-      label: "Villes Actives",
+      label: t("dashboard.stats.active_cities"),
       value: stats?.cities || "0",
       icon: MapPin,
       color: "bg-blue-500",
@@ -56,9 +58,9 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t("dashboard.title")}</h1>
           <p className="text-gray-600 mt-2">
-            Bienvenue dans votre espace assistant TousPourCuba
+            {t("dashboard.welcome")}
           </p>
         </div>
         <NotificationBar />
