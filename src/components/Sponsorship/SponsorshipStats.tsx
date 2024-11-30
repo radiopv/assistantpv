@@ -6,6 +6,25 @@ interface SponsorshipStatsProps {
   language: "fr" | "es";
 }
 
+interface Sponsorship {
+  id: string;
+  child_id: string;
+  sponsor_id: string;
+  start_date: string;
+  end_date: string;
+  status: string;
+  comments: string;
+  created_at: string;
+  updated_at: string;
+  is_anonymous: boolean;
+  termination_date: string;
+  termination_comment: string;
+  termination_reason: string;
+  auto_terminate_job_id: string;
+  sponsorships: string;
+  amount?: number;
+}
+
 const translations = {
   fr: {
     totalSponsors: "Total des parrains",
@@ -31,12 +50,12 @@ export const SponsorshipStats = ({ language }: SponsorshipStatsProps) => {
 
       if (error) throw error;
 
-      const totalSponsors = new Set(sponsorships?.map(s => s.sponsor_id)).size;
-      const activeSponsors = sponsorships?.filter(s => s.status === 'active').length;
-      const sponsoredChildren = new Set(sponsorships?.map(s => s.child_id)).size;
+      const totalSponsors = new Set(sponsorships?.map((s: Sponsorship) => s.sponsor_id)).size;
+      const activeSponsors = sponsorships?.filter((s: Sponsorship) => s.status === 'active').length;
+      const sponsoredChildren = new Set(sponsorships?.map((s: Sponsorship) => s.child_id)).size;
       const monthlyTotal = sponsorships
-        ?.filter(s => s.status === 'active')
-        .reduce((sum, s) => sum + (s.monthly_amount || 0), 0);
+        ?.filter((s: Sponsorship) => s.status === 'active')
+        .reduce((sum: number, s: Sponsorship) => sum + (s.amount || 0), 0);
 
       return {
         totalSponsors,

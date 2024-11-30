@@ -21,7 +21,15 @@ export const translations = {
       email: "Email",
       phone: "Téléphone",
       address: "Adresse"
-    }
+    },
+    columns: {
+      name: "Nom",
+      amount: "Montant",
+      date: "Date"
+    },
+    title: "Liste des parrainages",
+    fetchErrorTitle: "Erreur de chargement",
+    fetchErrorMsg: "Une erreur est survenue lors du chargement des parrainages"
   },
   es: {
     pageTitle: "Gestión de Patrocinios",
@@ -45,6 +53,14 @@ export const translations = {
       email: "Correo",
       phone: "Teléfono",
       address: "Dirección"
-    }
+    },
+    columns: {
+      name: "Nombre",
+      amount: "Monto",
+      date: "Fecha"
+    },
+    title: "Lista de patrocinios",
+    fetchErrorTitle: "Error de carga",
+    fetchErrorMsg: "Se produjo un error al cargar los patrocinios"
   }
 };

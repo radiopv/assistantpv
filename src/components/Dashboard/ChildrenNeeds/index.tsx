@@ -106,8 +106,9 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
       <div className="grid gap-6 md:grid-cols-2">
         {filteredChildren.map((child) => (
           <NeedsList 
-            key={child.id} 
-            child={child} 
+            key={child.id}
+            childId={child.id}
+            childName={child.name}
             needs={child.needs || []}
             language={language}
           />
