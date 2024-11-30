@@ -23,10 +23,26 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border antialiased;
   }
+  
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground min-h-screen text-base;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Improve text readability on mobile */
+  p, h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+  }
+  
+  /* Ensure minimum touch target size */
+  button, a {
+    @apply min-h-[44px] min-w-[44px];
   }
 }
 
@@ -35,7 +51,7 @@
 [role="menu"],
 .select-content,
 [data-radix-popper-content-wrapper] > div {
-  @apply bg-white !important;
+  @apply bg-white shadow-lg !important;
 }
 
 /* Ensure white background for dropdown items on hover */
@@ -48,4 +64,39 @@
 [role="option"][data-highlighted],
 [role="menuitem"][data-highlighted] {
   @apply bg-gray-100 text-gray-900 !important;
+}
+
+/* Mobile-first responsive design utilities */
+@layer utilities {
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .touch-callout-none {
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Improve mobile form elements */
+@layer components {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  textarea {
+    @apply w-full px-4 py-2 text-base;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  
+  select {
+    @apply w-full h-10 px-4 text-base bg-white;
+    -webkit-appearance: none;
+    appearance: none;
+  }
 }
