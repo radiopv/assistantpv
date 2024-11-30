@@ -28,6 +28,10 @@ import Statistics from "./pages/admin/Statistics";
 import SiteConfig from "./pages/admin/SiteConfig";
 import Travels from "./pages/admin/Travels";
 import Reports from "./pages/admin/Reports";
+import PublicDonations from "./pages/public/Donations";
+import PublicTestimonials from "./pages/public/Testimonials";
+import History from "./pages/public/History";
+import PublicFAQ from "./pages/public/FAQ";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +80,10 @@ const AppRoutes = () => (
       <Route path="/enfants-disponibles" element={<AvailableChildren />} />
       <Route path="/enfant/:id" element={<PublicChildProfile />} />
       <Route path="/devenir-parrain" element={<BecomeSponsor />} />
+      <Route path="/dons" element={<PublicDonations />} />
+      <Route path="/temoignages" element={<PublicTestimonials />} />
+      <Route path="/histoire" element={<History />} />
+      <Route path="/faq" element={<PublicFAQ />} />
     </Route>
 
     {/* Routes d'authentification */}
