@@ -32,7 +32,7 @@ export function Sidebar({ className }: SidebarProps) {
   const mainLinks = [
     { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "dashboard" },
     { to: "/children", icon: Users, label: "Enfants", permission: "children" },
-    { to: "/sponsorships", icon: Heart, label: "Parrainages", permission: "sponsorships" },
+    { to: "/admin/sponsors", icon: Heart, label: "Parrainages", permission: "sponsorships" },
     { to: "/donations", icon: Gift, label: "Dons", permission: "donations" },
     { to: "/messages", icon: MessageSquare, label: "Messages" },
   ];
