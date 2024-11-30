@@ -42,7 +42,7 @@ const Messages = () => {
         .from("messages")
         .select(`
           *,
-          sender:sender_id(name, role)
+          sender:sponsors!messages_sender_id_fkey(name, role)
         `)
         .order("created_at", { ascending: false });
 
@@ -57,12 +57,11 @@ const Messages = () => {
       const { data, error } = await query;
       if (error) throw error;
       
-      // Transform the data to match the Message interface
       return (data || []).map(msg => ({
         ...msg,
-        sender: msg.sender ? {
-          name: msg.sender.name || '',
-          role: msg.sender.role || ''
+        sender: Array.isArray(msg.sender) && msg.sender.length > 0 ? {
+          name: msg.sender[0]?.name || '',
+          role: msg.sender[0]?.role || ''
         } : undefined
       })) as Message[];
     }
@@ -73,8 +72,6 @@ const Messages = () => {
     msg.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     msg.sender?.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  // ... keep existing code (JSX for the component)
 
   return (
     <div className="container mx-auto py-6 space-y-6">
