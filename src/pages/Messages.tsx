@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { MessageList } from "@/components/Messages/MessageList";
 import { NewMessageDialog } from "@/components/Messages/NewMessageDialog";
 import { Card } from "@/components/ui/card";
@@ -10,8 +10,28 @@ import { Search, Inbox, Star, Archive, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+interface Message {
+  id: string;
+  subject: string;
+  content: string;
+  sender_id: string;
+  recipient_id: string;
+  created_at: string;
+  is_read: boolean;
+  is_starred: boolean;
+  is_archived: boolean;
+  conversation_type: string;
+  parent_id: string;
+  sender_role: string;
+  updated_at: string;
+  sender: {
+    name: string;
+    role: string;
+  };
+}
+
 const Messages = () => {
-  const [selectedMessage, setSelectedMessage] = useState<any>(null);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -36,7 +56,7 @@ const Messages = () => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data;
+      return data as Message[];
     }
   });
 
@@ -56,13 +76,15 @@ const Messages = () => {
       <div className="flex gap-4">
         <div className="w-1/3 space-y-4">
           <div className="flex gap-2">
-            <Input
-              placeholder="Rechercher des messages..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-              icon={<Search className="h-4 w-4" />}
-            />
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <Input
+                placeholder="Rechercher des messages..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
             <Select value={filter} onValueChange={setFilter}>
               <SelectTrigger className="w-[180px]">
                 <Filter className="h-4 w-4 mr-2" />

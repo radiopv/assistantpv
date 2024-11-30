@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Templates } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface Recipient {
   id: string;
