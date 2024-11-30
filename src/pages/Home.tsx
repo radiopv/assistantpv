@@ -31,7 +31,9 @@ const Home = () => {
       <section 
         className="relative h-[600px] bg-cover bg-center bg-fixed" 
         style={{ 
-          backgroundImage: 'url(/lovable-uploads/20d0122c-dfc1-4714-8a9d-22914dc3af46.png)'
+          backgroundImage: 'url(/lovable-uploads/273527d2-9b86-4f3f-b670-d45789cfcc89.png)',
+          backgroundPosition: 'center 20%', // Adjust to focus more on the face
+          backgroundSize: '100% auto'  // This will ensure the image covers the width while maintaining aspect ratio
         }}
       >
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/30" />
