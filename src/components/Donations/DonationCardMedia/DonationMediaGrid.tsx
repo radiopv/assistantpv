@@ -1,3 +1,5 @@
+import { X } from "lucide-react";
+
 interface DonationMediaGridProps {
   photos: any[];
   videos: any[];
