@@ -14,7 +14,11 @@ import {
   BarChart3,
   HelpCircle,
   Settings,
-  Plane
+  Plane,
+  Globe,
+  Calendar,
+  Mail,
+  Database
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../Auth/AuthProvider";
@@ -34,13 +38,17 @@ export function Sidebar({ className }: SidebarProps) {
   ];
 
   const adminLinks = [
-    { to: "/admin/permissions", icon: UserCog, label: "Permissions" },
+    { to: "/admin/permissions", icon: UserCog, label: "Permissions", permission: "manage_permissions" },
     { to: "/admin/media", icon: FileImage, label: "Médias", permission: "media" },
-    { to: "/admin/reports", icon: FileText, label: "Rapports" },
-    { to: "/admin/faq", icon: HelpCircle, label: "FAQ" },
-    { to: "/admin/statistics", icon: BarChart3, label: "Statistiques" },
-    { to: "/admin/site-config", icon: Settings, label: "Configuration" },
-    { to: "/admin/travels", icon: Plane, label: "Voyages" },
+    { to: "/admin/reports", icon: FileText, label: "Rapports", permission: "view_reports" },
+    { to: "/admin/faq", icon: HelpCircle, label: "FAQ", permission: "manage_faq" },
+    { to: "/admin/statistics", icon: BarChart3, label: "Statistiques", permission: "view_statistics" },
+    { to: "/admin/site-config", icon: Settings, label: "Configuration", permission: "manage_system" },
+    { to: "/admin/travels", icon: Plane, label: "Voyages", permission: "manage_travels" },
+    { to: "/admin/locations", icon: Globe, label: "Emplacements", permission: "manage_locations" },
+    { to: "/admin/events", icon: Calendar, label: "Événements", permission: "manage_events" },
+    { to: "/admin/templates", icon: Mail, label: "Templates", permission: "manage_templates" },
+    { to: "/admin/database", icon: Database, label: "Base de données", permission: "manage_database" }
   ];
 
   const renderNavLink = ({ to, icon: Icon, label, permission }: { to: string, icon: any, label: string, permission?: string }) => {
