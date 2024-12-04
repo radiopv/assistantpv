@@ -65,11 +65,6 @@ export const frenchTranslations = {
   sponsorAlbum: "Photos de l'album parrain",
   sponsorAlbumDescription: "Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.",
 
-  // Missing content placeholders
-  noDescription: "Aucune description disponible",
-  noStory: "Aucune histoire disponible",
-  noComments: "Aucun commentaire disponible",
-
   // Donations
   donationsTitle: "Gestion des dons",
   donationsSubtitle: "Gérez les dons et leur distribution",
