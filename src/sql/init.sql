@@ -28,36 +28,6 @@ CREATE TABLE IF NOT EXISTS public.messages (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
 
--- Fonction pour obtenir les besoins urgents par ville
-CREATE OR REPLACE FUNCTION public.get_urgent_needs_by_city()
-RETURNS TABLE (
-    city TEXT,
-    urgent_needs_count BIGINT,
-    total_needs BIGINT,
-    urgent_needs_ratio NUMERIC
-) 
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    RETURN QUERY
-    WITH needs_data AS (
-        SELECT 
-            c.city,
-            (jsonb_array_elements(c.needs::jsonb) ->> 'is_urgent')::boolean as is_urgent
-        FROM public.children c
-        WHERE c.needs IS NOT NULL
-    )
-    SELECT 
-        nd.city,
-        COUNT(*) FILTER (WHERE nd.is_urgent) as urgent_needs_count,
-        COUNT(*) as total_needs,
-        ROUND(COUNT(*) FILTER (WHERE nd.is_urgent)::numeric / NULLIF(COUNT(*), 0)::numeric * 100, 2) as urgent_needs_ratio
-    FROM needs_data nd
-    GROUP BY nd.city
-    HAVING COUNT(*) > 0;
-END;
-$$;
-
 -- Ajout des politiques RLS pour la sécurité
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
