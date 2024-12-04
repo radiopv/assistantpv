@@ -51,21 +51,25 @@ const App = () => {
             <Route path="/available-children" element={<PublicLayout><PublicAvailableChildren /></PublicLayout>} />
             <Route path="/sponsored-children" element={<PublicLayout><PublicSponsoredChildren /></PublicLayout>} />
 
-            {/* Protected routes */}
-            <Route path="/dashboard" element={<MainLayout><Dashboard /></MainLayout>} />
+            {/* Admin routes */}
+            <Route path="/permissions" element={<MainLayout requireAdmin><Permissions /></MainLayout>} />
+            <Route path="/sponsors-management" element={<MainLayout requireAdmin><SponsorsManagement /></MainLayout>} />
+            <Route path="/settings" element={<MainLayout requireAdmin><Settings /></MainLayout>} />
+
+            {/* Assistant/Admin routes */}
+            <Route path="/dashboard" element={<MainLayout requireAssistant><Dashboard /></MainLayout>} />
+            <Route path="/children" element={<MainLayout requireAssistant><Children /></MainLayout>} />
+            <Route path="/children/add" element={<MainLayout requireAssistant><AddChild /></MainLayout>} />
+            <Route path="/children-needs" element={<MainLayout requireAssistant><ChildrenNeeds /></MainLayout>} />
+            <Route path="/children/:id" element={<MainLayout requireAssistant><ChildProfile /></MainLayout>} />
+            <Route path="/donations" element={<MainLayout requireAssistant><Donations /></MainLayout>} />
+            <Route path="/media-management" element={<MainLayout requireAssistant><MediaManagement /></MainLayout>} />
+            <Route path="/urgent-needs" element={<MainLayout requireAssistant><UrgentNeeds /></MainLayout>} />
+
+            {/* Sponsor routes */}
             <Route path="/sponsor-dashboard" element={<MainLayout><SponsorDashboard /></MainLayout>} />
-            <Route path="/children" element={<MainLayout><Children /></MainLayout>} />
-            <Route path="/children/:id" element={<MainLayout><ChildProfile /></MainLayout>} />
-            <Route path="/children/add" element={<MainLayout><AddChild /></MainLayout>} />
-            <Route path="/children-needs" element={<MainLayout><ChildrenNeeds /></MainLayout>} />
-            <Route path="/donations" element={<MainLayout><Donations /></MainLayout>} />
             <Route path="/rewards" element={<MainLayout><Rewards /></MainLayout>} />
             <Route path="/messages" element={<MainLayout><Messages /></MainLayout>} />
-            <Route path="/media-management" element={<MainLayout><MediaManagement /></MainLayout>} />
-            <Route path="/sponsors-management" element={<MainLayout><SponsorsManagement /></MainLayout>} />
-            <Route path="/settings" element={<MainLayout><Settings /></MainLayout>} />
-            <Route path="/urgent-needs" element={<MainLayout><UrgentNeeds /></MainLayout>} />
-            <Route path="/permissions" element={<MainLayout><Permissions /></MainLayout>} />
 
             {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
