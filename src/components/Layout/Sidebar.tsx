@@ -16,9 +16,15 @@ import {
   Plane,
   ChartBar,
   HelpCircle,
+  X,
 } from "lucide-react";
 
-const Sidebar = () => {
+interface SidebarProps {
+  isMobile?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   const { signOut, user } = useAuth();
   const location = useLocation();
 
@@ -97,11 +103,24 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="flex h-full flex-col border-r bg-white">
-      <div className="p-6">
-        <Link to="/">
+    <div className={cn(
+      "flex h-full flex-col border-r bg-white",
+      isMobile && "relative"
+    )}>
+      <div className="p-6 flex justify-between items-center">
+        <Link to="/" onClick={onClose}>
           <h1 className="text-xl font-bold">Passion Varadero</h1>
         </Link>
+        {isMobile && (
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="md:hidden"
+            onClick={onClose}
+          >
+            <X className="h-6 w-6" />
+          </Button>
+        )}
       </div>
       <ScrollArea className="flex-1">
         <div className="space-y-4 py-4">
@@ -109,15 +128,19 @@ const Sidebar = () => {
             <h2 className="mb-2 px-4 text-lg font-semibold">Assistant</h2>
             <div className="space-y-1">
               {assistantLinks.filter(link => link.show).map((link) => (
-                <Link key={link.href} to={link.href}>
+                <Link 
+                  key={link.href} 
+                  to={link.href}
+                  onClick={onClose}
+                >
                   <Button
                     variant={location.pathname === link.href ? "secondary" : "ghost"}
                     className={cn(
-                      "w-full justify-start",
+                      "w-full justify-start min-h-[44px]",
                       location.pathname === link.href && "bg-primary/10"
                     )}
                   >
-                    <link.icon className="mr-2 h-4 w-4" />
+                    <link.icon className="mr-2 h-5 w-5" />
                     {link.label}
                   </Button>
                 </Link>
@@ -129,15 +152,19 @@ const Sidebar = () => {
               <h2 className="mb-2 px-4 text-lg font-semibold">Administration</h2>
               <div className="space-y-1">
                 {adminLinks.filter(link => link.show).map((link) => (
-                  <Link key={link.href} to={link.href}>
+                  <Link 
+                    key={link.href} 
+                    to={link.href}
+                    onClick={onClose}
+                  >
                     <Button
                       variant={location.pathname === link.href ? "secondary" : "ghost"}
                       className={cn(
-                        "w-full justify-start",
+                        "w-full justify-start min-h-[44px]",
                         location.pathname === link.href && "bg-primary/10"
                       )}
                     >
-                      <link.icon className="mr-2 h-4 w-4" />
+                      <link.icon className="mr-2 h-5 w-5" />
                       {link.label}
                     </Button>
                   </Link>
@@ -150,10 +177,13 @@ const Sidebar = () => {
       <div className="p-4 border-t">
         <Button
           variant="ghost"
-          className="w-full justify-start"
-          onClick={() => signOut()}
+          className="w-full justify-start min-h-[44px]"
+          onClick={() => {
+            signOut();
+            onClose?.();
+          }}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-2 h-5 w-5" />
           Déconnexion
         </Button>
       </div>
