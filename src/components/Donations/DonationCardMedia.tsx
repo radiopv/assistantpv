@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Camera, Video, X } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { PhotoUpload } from "./PhotoUpload";
 import { VideoUpload } from "./VideoUpload";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { PhotoGrid } from "./Media/PhotoGrid";
+import { VideoGrid } from "./Media/VideoGrid";
+import { UploadButtons } from "./Media/UploadButtons";
 
 interface DonationCardMediaProps {
   donationId: string;
@@ -107,87 +108,16 @@ export const DonationCardMedia = ({
 
   return (
     <div className="space-y-4">
-      {/* Photos Grid */}
-      {photos && photos.length > 0 && (
-        <div>
-          <p className="text-gray-500 mb-2">Photos</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {photos.map((photo) => (
-              <div key={photo.id} className="relative group aspect-square">
-                <img
-                  src={photo.url}
-                  alt="Photo du don"
-                  className="w-full h-full object-cover rounded-md"
-                />
-                <button
-                  onClick={() => handleDeletePhoto(photo.id)}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <PhotoGrid photos={photos} onDeletePhoto={handleDeletePhoto} />
+      <VideoGrid videos={videos} onVideosUpdate={onVideosUpdate} />
 
-      {/* Videos Grid */}
-      {videos && videos.length > 0 && (
-        <div>
-          <p className="text-gray-500 mb-2">Vidéos</p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {videos.map((video) => (
-              <div key={video.id} className="relative group aspect-video">
-                {video.thumbnail_url ? (
-                  <img
-                    src={video.thumbnail_url}
-                    alt="Miniature vidéo"
-                    className="w-full h-full object-cover rounded-md cursor-pointer"
-                    onClick={() => window.open(video.url, '_blank')}
-                  />
-                ) : (
-                  <div 
-                    className="w-full h-full bg-gray-100 rounded-md flex items-center justify-center cursor-pointer"
-                    onClick={() => window.open(video.url, '_blank')}
-                  >
-                    <span className="text-sm text-gray-600">Voir la vidéo</span>
-                  </div>
-                )}
-                <button
-                  onClick={() => onVideosUpdate()}
-                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <UploadButtons
+        showPhotoUpload={showPhotoUpload}
+        showVideoUpload={showVideoUpload}
+        onPhotoUploadClick={() => setShowPhotoUpload(!showPhotoUpload)}
+        onVideoUploadClick={() => setShowVideoUpload(!showVideoUpload)}
+      />
 
-      {/* Upload Buttons */}
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowPhotoUpload(!showPhotoUpload)}
-          className="flex items-center gap-2"
-        >
-          <Camera className="w-4 h-4" />
-          {showPhotoUpload ? "Fermer" : "Ajouter des photos"}
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowVideoUpload(!showVideoUpload)}
-          className="flex items-center gap-2"
-        >
-          <Video className="w-4 h-4" />
-          {showVideoUpload ? "Fermer" : "Ajouter des vidéos"}
-        </Button>
-      </div>
-
-      {/* Upload Forms */}
       {showPhotoUpload && (
         <PhotoUpload
           donationId={donationId}
@@ -205,7 +135,6 @@ export const DonationCardMedia = ({
         />
       )}
 
-      {/* Image Crop Dialog */}
       <ImageCropDialog
         open={showCropDialog}
         onClose={() => setShowCropDialog(false)}
