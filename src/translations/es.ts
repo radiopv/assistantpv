@@ -16,7 +16,6 @@ export const spanishTranslations = {
   
   // Donations page
   manageDonations: "Gestione las donaciones y su distribución",
-  addDonation: "Agregar donación",
   close: "Cerrar",
   donationBy: "Donación por",
   completed: "Completado",
@@ -70,19 +69,14 @@ export const spanishTranslations = {
   viewIncompleteProfiles: "Ver perfiles incompletos",
 
   // Children page translations
-  manageDonations: "Gestione las donaciones y su distribución",
-  addChild: "Agregar un padrino",
-  edit: "Modificar el padrino",
   selectMessage: "Seleccionar un padrino",
+  edit: "Modificar el padrino",
 
   // Filters translations
-  searchPlaceholder: "Buscar un niño...",
-  allCities: "Todas las ciudades",
   allAges: "Todas las edades",
   allGenders: "Todos",
   gender: "Género",
   age: "Edad",
-  city: "Ciudad",
   status: "Estado",
   masculine: "Masculino",
   feminine: "Femenino",
