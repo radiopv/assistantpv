@@ -21,6 +21,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
     try {
       const updates = {
         is_sponsored: !!sponsorId,
+        sponsor_id: sponsorId,
         sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
         sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
       };
@@ -32,9 +33,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
 
       if (error) throw error;
 
-      // Invalidate and refetch children data
       await queryClient.invalidateQueries({ queryKey: ['children'] });
-
       toast.success(sponsorId ? "Parrain ajouté avec succès" : "Parrain retiré avec succès");
       onClose();
     } catch (error) {
