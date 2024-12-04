@@ -9,8 +9,9 @@ interface MediaCardProps {
     type: string;
     title?: string;
     description?: string;
+    thumbnail_url?: string;
   };
-  onDelete: (id: string) => void;
+  onDelete: (item: any) => void;
   onEdit: (item: any) => void;
 }
 
@@ -19,11 +20,23 @@ export const MediaCard = ({ item, onDelete, onEdit }: MediaCardProps) => {
     <Card className="p-4 space-y-4">
       <div className="aspect-video relative rounded-lg overflow-hidden bg-gray-100">
         {item.type === 'video' ? (
-          <video 
-            src={item.url} 
-            controls 
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            {item.thumbnail_url ? (
+              <img 
+                src={item.thumbnail_url} 
+                alt={item.title || 'Video thumbnail'} 
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => window.open(item.url, '_blank')}
+              />
+            ) : (
+              <div 
+                className="w-full h-full flex items-center justify-center bg-gray-200 cursor-pointer"
+                onClick={() => window.open(item.url, '_blank')}
+              >
+                <span className="text-gray-600">Voir la vidéo</span>
+              </div>
+            )}
+          </div>
         ) : (
           <img 
             src={item.url} 
@@ -53,7 +66,7 @@ export const MediaCard = ({ item, onDelete, onEdit }: MediaCardProps) => {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => onDelete(item.id)}
+          onClick={() => onDelete(item)}
         >
           <Trash2 className="w-4 h-4" />
         </Button>
