@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
