@@ -22,8 +22,8 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
       const updates = {
         is_sponsored: !!sponsorId,
         sponsor_id: sponsorId ? parseInt(sponsorId) : null,
-        sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
-        sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
+        sponsor_name: sponsors?.find(s => s.id.toString() === sponsorId)?.name || null,
+        sponsor_email: sponsors?.find(s => s.id.toString() === sponsorId)?.email || null,
       };
 
       const { error } = await supabase
@@ -63,7 +63,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
                 <SelectItem value="remove_sponsor">Retirer le parrain</SelectItem>
               )}
               {sponsors?.map((sponsor) => (
-                <SelectItem key={sponsor.id} value={sponsor.id}>
+                <SelectItem key={sponsor.id} value={sponsor.id.toString()}>
                   {sponsor.name}
                 </SelectItem>
               ))}
@@ -79,6 +79,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
             </Button>
             <Button
               onClick={() => handleSponsorUpdate(child.id, selectedSponsor === "remove_sponsor" ? null : selectedSponsor)}
+              disabled={!selectedSponsor}
             >
               Confirmer
             </Button>
