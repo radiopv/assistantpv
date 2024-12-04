@@ -115,7 +115,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
 
       <div className="grid gap-6 md:grid-cols-2">
         {sortedChildren?.map((child) => (
-          <ChildNeeds key={child.id} child={child} needs={child.needs} />
+          <ChildNeeds key={child.id} child={child} needs={child.needs || []} />
         ))}
       </div>
     </div>

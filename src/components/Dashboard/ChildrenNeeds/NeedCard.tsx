@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Need } from "@/types/needs";
 import { NeedCategoryIcon } from "./NeedCategoryIcon";
 import { BellRing } from "lucide-react";

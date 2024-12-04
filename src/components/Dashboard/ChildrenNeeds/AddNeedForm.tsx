@@ -10,12 +10,7 @@ interface AddNeedFormProps {
   onSubmit: () => void;
 }
 
-export const AddNeedForm = ({ 
-  selectedChild, 
-  newNeed, 
-  setNewNeed, 
-  onSubmit 
-}: AddNeedFormProps) => {
+export const AddNeedForm = ({ selectedChild, newNeed, setNewNeed, onSubmit }: AddNeedFormProps) => {
   const NEED_CATEGORIES = [
     { value: "education", label: "Éducation" },
     { value: "jouet", label: "Jouet" },
