@@ -34,6 +34,8 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+    font-display: optional;
   }
 
   body {
@@ -41,14 +43,29 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Optimisations tactiles */
+  /* Performance optimizations for images */
+  img {
+    @apply transition-opacity duration-300;
+    content-visibility: auto;
+    contain: paint;
+  }
+
+  img.lazy {
+    @apply opacity-0;
+  }
+
+  img.lazy.loaded {
+    @apply opacity-100;
+  }
+
+  /* Responsive touch targets */
   @media (hover: none) {
     .hover\:scale-105:active {
       transform: scale(1.05);
     }
   }
 
-  /* Ajustements pour les écrans mobiles */
+  /* Mobile optimizations */
   @media (max-width: 640px) {
     .container {
       @apply px-4;
@@ -96,13 +113,11 @@
   }
 
   .cuba-title {
-    @apply font-vintage text-3xl md:text-4xl lg:text-5xl font-bold;
-    font-size: clamp(1.875rem, 5vw, 3rem);
+    @apply font-vintage text-fluid-3xl font-bold;
   }
 
   .cuba-subtitle {
-    @apply font-vintage text-xl md:text-2xl lg:text-3xl;
-    font-size: clamp(1.25rem, 3vw, 1.875rem);
+    @apply font-vintage text-fluid-xl;
   }
 }
 
