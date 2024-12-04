@@ -40,46 +40,42 @@ const App = () => {
         <AuthProvider>
           <Routes>
             {/* Frontend routes (public + sponsor) */}
-            <Route element={<FrontendLayout>
-              <Routes>
-                {/* Public routes */}
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/donations/public" element={<PublicDonations />} />
-                <Route path="/statistics" element={<PublicStats />} />
-                <Route path="/videos" element={<PublicVideos />} />
-                <Route path="/faq" element={<PublicFAQ />} />
-                <Route path="/stories" element={<Stories />} />
-                <Route path="/become-sponsor" element={<SponsorshipRequest />} />
-                <Route path="/available-children" element={<PublicAvailableChildren />} />
-                <Route path="/sponsored-children" element={<PublicSponsoredChildren />} />
+            <Route element={<FrontendLayout />}>
+              {/* Public routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/donations/public" element={<PublicDonations />} />
+              <Route path="/statistics" element={<PublicStats />} />
+              <Route path="/videos" element={<PublicVideos />} />
+              <Route path="/faq" element={<PublicFAQ />} />
+              <Route path="/stories" element={<Stories />} />
+              <Route path="/become-sponsor" element={<SponsorshipRequest />} />
+              <Route path="/available-children" element={<PublicAvailableChildren />} />
+              <Route path="/sponsored-children" element={<PublicSponsoredChildren />} />
 
-                {/* Sponsor routes */}
-                <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
-                <Route path="/rewards" element={<Rewards />} />
-                <Route path="/messages" element={<Messages />} />
-              </Routes>
-            </FrontendLayout>} />
+              {/* Sponsor routes */}
+              <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
+              <Route path="/rewards" element={<Rewards />} />
+              <Route path="/messages" element={<Messages />} />
+            </Route>
 
             {/* Backend routes (admin + assistant) */}
-            <Route path="/admin" element={<MainLayout>
-              <Routes>
-                {/* Admin routes */}
-                <Route path="permissions" element={<Permissions />} />
-                <Route path="sponsors-management" element={<SponsorsManagement />} />
-                <Route path="settings" element={<Settings />} />
+            <Route path="/admin" element={<MainLayout />}>
+              {/* Admin routes */}
+              <Route path="permissions" element={<Permissions />} />
+              <Route path="sponsors-management" element={<SponsorsManagement />} />
+              <Route path="settings" element={<Settings />} />
 
-                {/* Assistant/Admin routes */}
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="children" element={<Children />} />
-                <Route path="children/add" element={<AddChild />} />
-                <Route path="children-needs" element={<ChildrenNeeds />} />
-                <Route path="children/:id" element={<ChildProfile />} />
-                <Route path="donations" element={<Donations />} />
-                <Route path="media-management" element={<MediaManagement />} />
-                <Route path="urgent-needs" element={<UrgentNeeds />} />
-              </Routes>
-            </MainLayout>} />
+              {/* Assistant/Admin routes */}
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="children" element={<Children />} />
+              <Route path="children/add" element={<AddChild />} />
+              <Route path="children-needs" element={<ChildrenNeeds />} />
+              <Route path="children/:id" element={<ChildProfile />} />
+              <Route path="donations" element={<Donations />} />
+              <Route path="media-management" element={<MediaManagement />} />
+              <Route path="urgent-needs" element={<UrgentNeeds />} />
+            </Route>
 
             {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
