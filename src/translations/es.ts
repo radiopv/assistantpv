@@ -70,5 +70,6 @@ export const spanishTranslations = {
   viewIncompleteProfiles: "Ver perfiles incompletos",
 
   // Children list translations
-  edit: "Modificar el padrino"
+  edit: "Modificar el padrino",
+  selectMessage: "Seleccionar un padrino"
 };

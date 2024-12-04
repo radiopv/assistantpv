@@ -70,5 +70,6 @@ export const frenchTranslations = {
   viewIncompleteProfiles: "Voir les profils incomplets",
 
   // Children list translations
-  edit: "Modifier le parrain"
+  edit: "Modifier le parrain",
+  selectMessage: "Sélectionner un parrain"
 };
