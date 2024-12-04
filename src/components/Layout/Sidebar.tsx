@@ -19,7 +19,8 @@ import {
   Mail,
   Database,
   Heart,
-  ListChecks
+  ListChecks,
+  UserPlus
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../Auth/AuthProvider";
@@ -32,6 +33,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   const mainLinks = [
     { to: "/dashboard", icon: Home, label: "Tableau de bord", permission: "dashboard" },
+    { to: "/children/add", icon: UserPlus, label: "Ajouter un enfant", permission: "edit_children" },
     { to: "/children", icon: Users, label: "Enfants", permission: "children" },
     { to: "/children-needs", icon: ListChecks, label: "Besoins", permission: "children" },
     { to: "/donations", icon: Gift, label: "Dons", permission: "donations" },
