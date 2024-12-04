@@ -51,18 +51,20 @@ const ChildProfile = () => {
 
   const handleUpdate = async () => {
     try {
-      // Convert needs back to JSON before saving
-      const updatedChild = {
-        ...child,
-        needs: convertNeedsToJson(child.needs)
-      };
-
+      console.log("Updating child with needs:", child.needs);
+      
       const { error } = await supabase
         .from('children')
-        .update(updatedChild)
+        .update({
+          ...child,
+          needs: child.needs // Save needs directly without conversion
+        })
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating child:', error);
+        throw error;
+      }
 
       toast({
         title: "Profil mis à jour",

@@ -1,18 +1,17 @@
 import { Need } from "@/types/needs";
 import { NeedsSelectionField } from "../FormFields/NeedsSelectionField";
-import { convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface NeedsSectionProps {
   child: any;
   editing: boolean;
-  onChange: (field: string, value: string) => void;
+  onChange: (field: string, value: any) => void;
 }
 
 export const NeedsSection = ({ child, editing, onChange }: NeedsSectionProps) => {
   const handleNeedsChange = (needs: Need[]) => {
-    const jsonNeeds = convertNeedsToJson(needs);
-    console.log("Saving needs to database:", jsonNeeds);
-    onChange('needs', JSON.stringify(jsonNeeds));
+    console.log("Saving needs directly:", needs);
+    onChange('needs', needs);
   };
 
   if (!editing) return null;

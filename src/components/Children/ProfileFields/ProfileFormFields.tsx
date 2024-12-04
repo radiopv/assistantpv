@@ -17,7 +17,7 @@ const STATUS_OPTIONS = [
 interface ProfileFormFieldsProps {
   child: any;
   editing: boolean;
-  onChange: (field: string, value: string) => void;
+  onChange: (field: string, value: string | any) => void;
 }
 
 const formatAge = (birthDate: string) => {
