@@ -9,7 +9,6 @@ import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
 import { DetailedStats } from "@/components/Dashboard/DetailedStats";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
-import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -96,7 +95,6 @@ const Dashboard = () => {
           <>
             <SponsorshipStats />
             <div className="grid gap-4 md:grid-cols-2">
-              <UrgentNeedsStats />
               <UserEngagementStats />
             </div>
             <AssistantStats />
@@ -105,14 +103,12 @@ const Dashboard = () => {
         
         {user?.role === 'assistant' && (
           <>
-            <UrgentNeedsStats />
             <AssistantStats />
           </>
         )}
         
         {user?.role === 'sponsor' && (
           <div className="grid gap-4 md:grid-cols-2">
-            <UrgentNeedsStats />
             <UserEngagementStats />
           </div>
         )}

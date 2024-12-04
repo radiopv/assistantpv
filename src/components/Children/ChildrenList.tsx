@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ChildCard } from "./ChildCard";
 import { SponsorDialog } from "./SponsorDialog";
 import { useState } from "react";
+import { Card } from "@/components/ui/card";
 
 interface ChildrenListProps {
   children: any[];

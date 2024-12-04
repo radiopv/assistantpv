@@ -1,14 +1,16 @@
 import { Card } from "@/components/ui/card";
-import { Users, Gift, AlertTriangle, MapPin } from "lucide-react";
+import { Users, Gift, AlertTriangle, MapPin, User } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard";
 import { NotificationBar } from "./NotificationBar";
 import { useNavigate } from "react-router-dom";
-import { Tooltip } from "@/components/ui/tooltip";
 import { 
   TooltipContent, 
   TooltipProvider, 
-  TooltipTrigger 
+  TooltipTrigger,
+  Tooltip 
 } from "@/components/ui/tooltip";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DashboardHeaderProps {
   stats: DashboardStats;
@@ -16,6 +18,19 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
   const navigate = useNavigate();
+
+  const { data: incompleteProfiles } = useQuery({
+    queryKey: ['incomplete-profiles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('children')
+        .select('id, name')
+        .or('city.is.null,birth_date.is.null,photo_url.is.null,name.is.null,story.is.null,description.is.null,needs.is.null');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
 
   const dashboardStats = [
     {
@@ -39,7 +54,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       value: stats?.children?.urgent_needs || "0",
       icon: AlertTriangle,
       color: "bg-red-500",
-      link: "/children-needs",
+      link: "/children?status=urgent",
       tooltip: "Voir les besoins urgents"
     },
     {
@@ -50,6 +65,14 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       link: "/donations?view=cities",
       tooltip: "Voir les statistiques par ville"
     },
+    {
+      label: "Profils Incomplets",
+      value: incompleteProfiles?.length || "0",
+      icon: User,
+      color: "bg-yellow-500",
+      link: "/children?status=incomplete",
+      tooltip: "Voir les profils incomplets"
+    }
   ];
 
   return (
@@ -64,7 +87,7 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
         <NotificationBar />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5">
         {dashboardStats.map(({ label, value, icon: Icon, color, link, tooltip }) => (
           <TooltipProvider key={label}>
             <Tooltip>
