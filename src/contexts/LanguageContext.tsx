@@ -52,6 +52,29 @@ const translations = {
     messageSentSuccess: "Votre message a été envoyé avec succès",
     messageError: "Une erreur est survenue lors de l'envoi du message",
     fillAllFields: "Veuillez remplir tous les champs",
+    // Menu translations
+    dashboard: "Tableau de bord",
+    children: "Enfants",
+    addChild: "Ajouter un enfant",
+    donations: "Dons",
+    messages: "Messages",
+    media: "Médias",
+    sponsors: "Parrains",
+    permissions: "Permissions",
+    faq: "FAQ",
+    statistics: "Statistiques",
+    travels: "Voyages",
+    
+    // Filters translations
+    viewMode: "Mode d'affichage",
+    grid: "Grille",
+    list: "Liste",
+
+    // Page titles and subtitles
+    donationsTitle: "Gestion des dons",
+    donationsSubtitle: "Gérez les dons et leur distribution",
+    messagesTitle: "Centre de messages",
+    messagesSubtitle: "Gérez vos communications",
   },
   es: {
     donations: "Donaciones",
@@ -96,6 +119,29 @@ const translations = {
     messageSentSuccess: "Su mensaje ha sido enviado con éxito",
     messageError: "Ha ocurrido un error al enviar el mensaje",
     fillAllFields: "Por favor complete todos los campos",
+    // Menu translations
+    dashboard: "Panel de control",
+    children: "Niños",
+    addChild: "Agregar niño",
+    donations: "Donaciones",
+    messages: "Mensajes",
+    media: "Medios",
+    sponsors: "Padrinos",
+    permissions: "Permisos",
+    faq: "Preguntas frecuentes",
+    statistics: "Estadísticas",
+    travels: "Viajes",
+    
+    // Filters translations
+    viewMode: "Modo de visualización",
+    grid: "Cuadrícula",
+    list: "Lista",
+
+    // Page titles and subtitles
+    donationsTitle: "Gestión de donaciones",
+    donationsSubtitle: "Gestione las donaciones y su distribución",
+    messagesTitle: "Centro de mensajes",
+    messagesSubtitle: "Gestione sus comunicaciones",
   }
 };
 

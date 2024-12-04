@@ -119,8 +119,8 @@ const Donations = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('donations')}</h1>
-          <p className="text-gray-600 mt-2">{t('manageDonations')}</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('donationsTitle')}</h1>
+          <p className="text-gray-600 mt-2">{t('donationsSubtitle')}</p>
         </div>
         <Button 
           className="bg-primary hover:bg-primary/90"

@@ -18,6 +18,7 @@ import {
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
 import { SidebarFooter } from "./Sidebar/SidebarFooter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SidebarProps {
   isMobile?: boolean;
@@ -26,6 +27,7 @@ interface SidebarProps {
 
 const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   const { signOut, user } = useAuth();
+  const { t } = useLanguage();
   const location = useLocation();
 
   const isAdmin = user?.role === 'admin';
@@ -33,31 +35,31 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   const assistantLinks = [
     {
       href: "/dashboard",
-      label: "Tableau de bord",
+      label: t("dashboard"),
       icon: LayoutDashboard,
       show: user?.permissions?.dashboard || isAdmin,
     },
     {
       href: "/children",
-      label: "Enfants",
+      label: t("children"),
       icon: Baby,
       show: user?.permissions?.children || isAdmin,
     },
     {
       href: "/children/add",
-      label: "Ajouter un enfant",
+      label: t("addChild"),
       icon: UserPlus,
       show: user?.permissions?.edit_children || isAdmin,
     },
     {
       href: "/donations",
-      label: "Dons",
+      label: t("donations"),
       icon: Gift,
       show: user?.permissions?.donations || isAdmin,
     },
     {
       href: "/messages",
-      label: "Messages",
+      label: t("messages"),
       icon: MessageSquare,
       show: true,
     },
@@ -66,37 +68,37 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   const adminLinks = [
     {
       href: "/admin/permissions",
-      label: "Permissions",
+      label: t("permissions"),
       icon: Settings,
       show: isAdmin,
     },
     {
       href: "/admin/media",
-      label: "Médias",
+      label: t("media"),
       icon: Image,
       show: user?.permissions?.media || isAdmin,
     },
     {
       href: "/admin/sponsors",
-      label: "Parrains",
+      label: t("sponsors"),
       icon: Users,
       show: isAdmin,
     },
     {
       href: "/admin/travels",
-      label: "Voyages",
+      label: t("travels"),
       icon: Plane,
       show: isAdmin,
     },
     {
       href: "/admin/statistics",
-      label: "Statistiques",
+      label: t("statistics"),
       icon: ChartBar,
       show: isAdmin,
     },
     {
       href: "/admin/faq",
-      label: "FAQ",
+      label: t("faq"),
       icon: HelpCircle,
       show: isAdmin,
     },
