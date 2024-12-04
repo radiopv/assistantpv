@@ -7,29 +7,69 @@ import { Badge } from "@/components/ui/badge";
 import { Award, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface Achievement {
+  id: string;
+  badge: {
+    id: string;
+    name: string;
+    description: string;
+    points: number;
+  };
+  earned_at: string | null;
+}
+
+interface Sponsorship {
+  id: string;
+  child: {
+    name: string;
+  };
+  start_date: string;
+}
+
+interface SponsorData {
+  current_level: {
+    name: string;
+    min_points: number;
+  } | null;
+  total_points: number;
+  achievements: Achievement[];
+  sponsorships: Sponsorship[];
+}
+
 export const SponsorDashboard = () => {
   const { user } = useAuth();
 
-  const { data: sponsorData } = useQuery({
+  const { data: sponsorData } = useQuery<SponsorData>({
     queryKey: ["sponsor-data", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("sponsors")
         .select(`
-          *,
+          total_points,
           current_level:sponsor_levels(*),
           achievements:user_achievements(
-            badge:badges(*)
+            id,
+            earned_at,
+            badge:badges(
+              id,
+              name,
+              description,
+              points
+            )
           ),
           sponsorships(
-            child:children(*)
+            id,
+            start_date,
+            child:children(
+              name
+            )
           )
         `)
         .eq("id", user?.id)
         .single();
 
       if (error) throw error;
-      return data;
+      return data as SponsorData;
     },
     enabled: !!user?.id,
   });
