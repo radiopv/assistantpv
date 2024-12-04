@@ -16,30 +16,53 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Need } from "@/types/needs";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-type DailyDonation = {
-  day: number;
-  donations: number;
-}
-
 export const DetailedStats = () => {
-  const { data: dailyStats, isLoading: dailyLoading, error: dailyError } = useQuery<DailyDonation[]>({
-    queryKey: ['daily-donations'],
+  const { data: urgentNeeds, isLoading: urgentLoading, error: urgentError } = useQuery({
+    queryKey: ['urgent-needs'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_daily_donation_trends');
+      const { data, error } = await supabase
+        .from('children')
+        .select('id, name, needs')
+        .not('needs', 'is', null);
+      
       if (error) throw error;
-      return data;
+
+      // Filter children with urgent needs
+      return data.filter(child => {
+        if (!child.needs) return false;
+        const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
+        return Array.isArray(needs) && needs.some((need: Need) => need.is_urgent);
+      });
     }
   });
 
   const { data: cityStats, isLoading: cityLoading, error: cityError } = useQuery({
     queryKey: ['city-donations'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_city_donation_stats');
+      const { data, error } = await supabase
+        .from('children')
+        .select('city')
+        .not('city', 'is', null);
+      
       if (error) throw error;
-      return data;
+
+      // Count children by city
+      const cityCounts = data.reduce((acc: any, child) => {
+        acc[child.city] = (acc[child.city] || 0) + 1;
+        return acc;
+      }, {});
+
+      // Convert to array and sort by count
+      return Object.entries(cityCounts)
+        .map(([city, count]) => ({ city, count }))
+        .sort((a, b) => (b.count as number) - (a.count as number))
+        .slice(0, 5); // Get top 5
     }
   });
 
@@ -81,25 +104,43 @@ export const DetailedStats = () => {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Évolution des dons</h3>
+          <h3 className="text-lg font-semibold mb-4">Besoins Urgents</h3>
           <div className="h-[300px]">
-            {dailyError ? renderError("Erreur lors du chargement des données") : 
-             dailyLoading ? renderSkeleton() : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={dailyStats}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="donations" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
+            {urgentError ? renderError("Erreur lors du chargement des données") : 
+             urgentLoading ? renderSkeleton() : (
+              <ScrollArea className="h-full">
+                <div className="space-y-4">
+                  {urgentNeeds?.map((child) => {
+                    const needs = typeof child.needs === 'string' 
+                      ? JSON.parse(child.needs) 
+                      : child.needs;
+                    
+                    const urgentNeeds = needs.filter((need: Need) => need.is_urgent);
+
+                    return (
+                      <div key={child.id} className="p-3 bg-red-50 rounded-lg">
+                        <p className="font-medium text-gray-900">{child.name}</p>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {urgentNeeds.map((need: Need, index: number) => (
+                            <Badge 
+                              key={`${need.category}-${index}`}
+                              variant="destructive"
+                            >
+                              {need.category}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </ScrollArea>
             )}
           </div>
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Répartition géographique</h3>
+          <h3 className="text-lg font-semibold mb-4">Top 5 des Villes</h3>
           <div className="h-[300px]">
             {cityError ? renderError("Erreur lors du chargement des données") :
              cityLoading ? renderSkeleton() : (
@@ -107,7 +148,7 @@ export const DetailedStats = () => {
                 <PieChart>
                   <Pie
                     data={cityStats}
-                    dataKey="donations"
+                    dataKey="count"
                     nameKey="city"
                     cx="50%"
                     cy="50%"
