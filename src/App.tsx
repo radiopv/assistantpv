@@ -22,7 +22,6 @@ import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
 import SiteConfig from "./pages/admin/SiteConfig";
 import Travels from "./pages/admin/Travels";
-import Reports from "./pages/admin/Reports";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -83,7 +82,6 @@ const AppRoutes = () => (
       <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
       <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
       <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
-      <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><Reports /></ProtectedRoute>} />
       <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
       <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
       <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />

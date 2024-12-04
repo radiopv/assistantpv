@@ -17,8 +17,7 @@ import {
   Plane,
   ChartBar,
   HelpCircle,
-  Cog,
-  FileText
+  Cog
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -102,12 +101,6 @@ const Sidebar = () => {
       href: "/admin/site-config",
       label: "Configuration",
       icon: Cog,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/reports",
-      label: "Rapports",
-      icon: FileText,
       show: isAdmin,
     },
     {
