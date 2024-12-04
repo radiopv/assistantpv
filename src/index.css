@@ -1,32 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 96.1%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
+    --primary: 201 100% 36.5%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 0 100% 50%;
+    --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 51 100% 50%;
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 201 100% 36.5%;
     --radius: 0.75rem;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-cuba-offwhite text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Optimisations tactiles */
+  @media (hover: none) {
+    .hover\:scale-105:active {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Ajustements pour les écrans mobiles */
+  @media (max-width: 640px) {
+    .container {
+      @apply px-4;
+    }
+
+    button, 
+    [role="button"],
+    input,
+    select,
+    textarea {
+      @apply min-h-[44px] min-w-[44px];
+    }
+
+    a {
+      @apply py-2;
+    }
+  }
+}
+
+@layer components {
+  .cuba-card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6;
+    background-image: linear-gradient(to bottom right, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+    backdrop-filter: blur(10px);
+  }
+
+  .cuba-button {
+    @apply px-4 py-3 rounded-md font-medium transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+           active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .cuba-button-primary {
+    @apply cuba-button bg-primary text-white hover:bg-primary-hover;
+  }
+
+  .cuba-button-secondary {
+    @apply cuba-button bg-secondary text-white hover:bg-secondary-hover;
+  }
+
+  .cuba-input {
+    @apply w-full px-4 py-3 rounded-md border border-gray-200
+           focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+           placeholder:text-gray-400;
+  }
+
+  .cuba-title {
+    @apply font-vintage text-3xl md:text-4xl lg:text-5xl font-bold;
+    font-size: clamp(1.875rem, 5vw, 3rem);
+  }
+
+  .cuba-subtitle {
+    @apply font-vintage text-xl md:text-2xl lg:text-3xl;
+    font-size: clamp(1.25rem, 3vw, 1.875rem);
   }
 }
 
@@ -48,4 +124,30 @@
 [role="option"][data-highlighted],
 [role="menuitem"][data-highlighted] {
   @apply bg-gray-100 text-gray-900 !important;
+}
+
+/* Optimisations pour le chargement des images */
+img {
+  @apply transition-opacity duration-300;
+}
+
+img.lazy {
+  @apply opacity-0;
+}
+
+img.lazy.loaded {
+  @apply opacity-100;
+}
+
+/* Animations fluides pour les transitions */
+.page-transition {
+  @apply animate-fade-in;
+}
+
+.menu-transition {
+  @apply animate-slide-in;
+}
+
+.modal-transition {
+  @apply animate-slide-up;
 }

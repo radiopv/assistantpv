@@ -12,9 +12,19 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: '1rem',
+        sm: '2rem',
+        lg: '4rem',
+        xl: '5rem',
+        '2xl': '6rem',
+      },
       screens: {
-        "2xl": "1400px",
+        sm: '640px',
+        md: '768px',
+        lg: '1024px',
+        xl: '1280px',
+        '2xl': '1400px',
       },
     },
     extend: {
@@ -25,16 +35,25 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#FF6B6B",
+          DEFAULT: "#0072BB", // Turquoise cubain
           foreground: "#FFFFFF",
+          hover: "#005d99",
         },
         secondary: {
-          DEFAULT: "#4A90E2",
+          DEFAULT: "#FF2400", // Rouge vif cubain
           foreground: "#FFFFFF",
+          hover: "#cc1d00",
         },
         accent: {
-          DEFAULT: "#FFD93D",
-          foreground: "#2D3748",
+          DEFAULT: "#FFD700", // Jaune doré cubain
+          foreground: "#000000",
+          hover: "#ccac00",
+        },
+        cuba: {
+          turquoise: "#0072BB",
+          red: "#FF2400",
+          gold: "#FFD700",
+          offwhite: "#F5F5F5",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -54,6 +73,10 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      fontFamily: {
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        vintage: ['Playfair Display', 'serif'],
+      },
       keyframes: {
         "fade-in": {
           "0%": { opacity: "0", transform: "translateY(10px)" },
@@ -63,10 +86,20 @@ export default {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0)" },
         },
+        "slide-up": {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
+        "slide-up": "slide-up 0.3s ease-out",
+      },
+      backgroundImage: {
+        'cuba-gradient': 'linear-gradient(135deg, #0072BB 0%, #005d99 100%)',
+        'sunset-gradient': 'linear-gradient(to right, #FF2400, #FFD700)',
+        'beach-gradient': 'linear-gradient(to bottom, #0072BB, #F5F5F5)',
       },
     },
   },
