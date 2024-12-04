@@ -15,6 +15,7 @@ import Donations from "./pages/Donations";
 import MediaManagement from "./pages/MediaManagement";
 import SponsorsManagement from "./pages/SponsorsManagement";
 import Messages from "./pages/Messages";
+import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
