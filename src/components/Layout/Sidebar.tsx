@@ -64,12 +64,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       icon: MessageSquare,
       show: true,
     },
-    {
-      href: "/admin/translations",
-      label: t("translationManager"),
-      icon: Languages,
-      show: true, // Available to all assistants
-    },
   ];
 
   const adminLinks = [
@@ -89,6 +83,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       href: "/admin/sponsors",
       label: t("sponsors"),
       icon: Users,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/translations",
+      label: t("translationManager"),
+      icon: Languages,
       show: isAdmin,
     },
     {
