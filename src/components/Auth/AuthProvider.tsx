@@ -29,80 +29,81 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) throw error;
+  const handleAuthChange = async (session: any) => {
+    try {
+      if (session?.user) {
+        const { data: profile, error: profileError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
 
-        if (session?.user) {
-          const { data: profile, error: profileError } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
+        if (profileError) throw profileError;
 
-          if (profileError) throw profileError;
+        setUser(profile);
+        setIsAssistant(['assistant', 'admin'].includes(profile.role));
+        setIsAdmin(profile.role === 'admin');
 
-          setUser(profile);
-          setIsAssistant(['assistant', 'admin'].includes(profile.role));
-          setIsAdmin(profile.role === 'admin');
-
-          // Only redirect if on login page
-          if (location.pathname === '/login') {
-            switch (profile.role) {
-              case 'admin':
-                navigate('/dashboard');
-                break;
-              case 'sponsor':
-                navigate('/sponsor-dashboard');
-                break;
-              case 'assistant':
-                navigate('/dashboard');
-                break;
-              default:
-                navigate('/');
-            }
-          }
-        } else {
-          setUser(null);
-          setIsAssistant(false);
-          setIsAdmin(false);
-          // Ne redirige vers login que si on essaie d'accéder aux pages protégées
-          const protectedPages = [
-            '/dashboard', 
-            '/sponsor-dashboard', 
-            '/children/add', 
-            '/donations', 
-            '/rewards', 
-            '/messages', 
-            '/media-management', 
-            '/sponsors-management', 
-            '/settings', 
-            '/urgent-needs', 
-            '/permissions',
-            '/children-needs'
-          ];
-          if (protectedPages.includes(location.pathname)) {
-            navigate('/login');
+        // Redirection basée sur le rôle
+        if (location.pathname === '/login') {
+          switch (profile.role) {
+            case 'admin':
+            case 'assistant':
+              navigate('/dashboard');
+              break;
+            case 'sponsor':
+              navigate('/sponsor-dashboard');
+              break;
+            default:
+              navigate('/');
           }
         }
-      } catch (error) {
-        console.error('Error checking auth:', error);
+      } else {
         setUser(null);
         setIsAssistant(false);
         setIsAdmin(false);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      checkAuth();
+        const protectedPages = [
+          '/dashboard',
+          '/sponsor-dashboard',
+          '/children/add',
+          '/donations',
+          '/rewards',
+          '/messages',
+          '/media-management',
+          '/sponsors-management',
+          '/settings',
+          '/urgent-needs',
+          '/permissions',
+          '/children-needs'
+        ];
+
+        if (protectedPages.includes(location.pathname)) {
+          navigate('/login');
+        }
+      }
+    } catch (error) {
+      console.error('Error checking auth:', error);
+      toast({
+        title: "Erreur d'authentification",
+        description: "Une erreur est survenue lors de la vérification de l'authentification",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Initial auth check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      handleAuthChange(session);
     });
 
-    checkAuth();
+    // Setup auth listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      handleAuthChange(session);
+    });
 
     return () => {
       subscription.unsubscribe();

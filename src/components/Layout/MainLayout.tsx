@@ -16,12 +16,13 @@ const MainLayout = ({ children, requireAdmin, requireAssistant }: MainLayoutProp
     return <Navigate to="/login" replace />;
   }
 
+  // Vérification des permissions
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (requireAssistant && !isAssistant && !isAdmin) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return (
