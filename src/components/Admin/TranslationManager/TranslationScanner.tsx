@@ -3,8 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
+import { AlertTriangle, CheckCircle2, Languages } from "lucide-react";
 import { frenchTranslations } from "@/translations/fr";
 import { spanishTranslations } from "@/translations/es";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -14,10 +14,16 @@ interface MissingTranslation {
   language: string;
 }
 
+interface EnglishText {
+  text: string;
+  location: string;
+}
+
 export const TranslationScanner = () => {
   const { t } = useLanguage();
   const [missingTranslations, setMissingTranslations] = useState<MissingTranslation[]>([]);
   const [unusedTranslations, setUnusedTranslations] = useState<string[]>([]);
+  const [englishTexts, setEnglishTexts] = useState<EnglishText[]>([]);
   const [scanning, setScanning] = useState(false);
 
   const scanForMissingTranslations = () => {
@@ -48,13 +54,41 @@ export const TranslationScanner = () => {
       ...Object.keys(spanishTranslations)
     ]);
 
-    // This is a basic check that could be enhanced with more sophisticated scanning
     const unused = Array.from(allKeys).filter(key => {
       const keyUsageCount = document.body.innerHTML.split(key).length - 1;
       return keyUsageCount === 0;
     });
 
     setUnusedTranslations(unused);
+    setScanning(false);
+  };
+
+  const detectEnglishText = () => {
+    setScanning(true);
+    const englishPattern = /[a-zA-Z\s]{4,}/g; // Pattern to match English words
+    const foundTexts: EnglishText[] = [];
+
+    // Scan the DOM for text content
+    const scanNode = (node: Node, location: string) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent?.trim();
+        if (text && englishPattern.test(text)) {
+          // Exclude translation keys and common programming terms
+          if (!Object.keys(frenchTranslations).includes(text) && 
+              !Object.keys(spanishTranslations).includes(text) &&
+              !text.includes('function') &&
+              !text.includes('const') &&
+              !text.includes('let') &&
+              !text.includes('var')) {
+            foundTexts.push({ text, location });
+          }
+        }
+      }
+      node.childNodes.forEach(child => scanNode(child, location));
+    };
+
+    scanNode(document.body, 'body');
+    setEnglishTexts(foundTexts);
     setScanning(false);
   };
 
@@ -77,24 +111,41 @@ export const TranslationScanner = () => {
             >
               {t("findUnusedTranslations")}
             </Button>
+            <Button
+              onClick={detectEnglishText}
+              disabled={scanning}
+              variant="outline"
+            >
+              <Languages className="w-4 h-4 mr-2" />
+              {t("detectEnglishText")}
+            </Button>
           </div>
         </div>
 
         {missingTranslations.length > 0 && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              {t(`missingTranslationsFound_${missingTranslations.length}`)}
-            </AlertDescription>
+            <p className="ml-2">
+              {t("missingTranslationsFound").replace("{{count}}", missingTranslations.length.toString())}
+            </p>
           </Alert>
         )}
 
         {unusedTranslations.length > 0 && (
           <Alert>
             <CheckCircle2 className="h-4 w-4" />
-            <AlertDescription>
-              {t(`unusedTranslationsFound_${unusedTranslations.length}`)}
-            </AlertDescription>
+            <p className="ml-2">
+              {t("unusedTranslationsFound").replace("{{count}}", unusedTranslations.length.toString())}
+            </p>
+          </Alert>
+        )}
+
+        {englishTexts.length > 0 && (
+          <Alert>
+            <Languages className="h-4 w-4" />
+            <p className="ml-2">
+              {t("englishTextFound").replace("{{count}}", englishTexts.length.toString())}
+            </p>
           </Alert>
         )}
 
@@ -125,6 +176,22 @@ export const TranslationScanner = () => {
                   {unusedTranslations.map((key, index) => (
                     <div key={index} className="p-2 bg-gray-50 rounded font-mono text-sm">
                       {key}
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+
+          {englishTexts.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-2">{t("englishTextDetected")}</h3>
+              <ScrollArea className="h-[200px]">
+                <div className="space-y-2">
+                  {englishTexts.map((item, index) => (
+                    <div key={index} className="p-2 bg-gray-50 rounded">
+                      <p className="font-mono text-sm">{item.text}</p>
+                      <p className="text-xs text-gray-500 mt-1">Location: {item.location}</p>
                     </div>
                   ))}
                 </div>

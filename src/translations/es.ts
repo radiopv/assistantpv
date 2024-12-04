@@ -43,7 +43,7 @@ export const spanishTranslations = {
   age: "Edad",
   birthDate: "Fecha de nacimiento",
   story: "Historia",
-  
+
   // Child profile
   childInfo: "Información del niño",
   descriptionPlaceholder: "Descripción general del niño...",
@@ -77,5 +77,23 @@ export const spanishTranslations = {
   translationError: "Error al actualizar las traducciones",
   translationUpdated: "Traducciones actualizadas con éxito",
   frenchTranslations: "Traducciones francesas",
-  spanishTranslations: "Traducciones españolas"
+  spanishTranslations: "Traducciones españolas",
+
+  // Profile status and filters
+  incompleteProfiles: "Estos perfiles están incompletos. Haga clic en un perfil para completar la información faltante.",
+  filterByCity: "Filtrar por ciudad",
+  allCities: "Todas las ciudades",
+  allGenders: "Todos los géneros",
+  allAges: "Todas las edades",
+  allStatus: "Todos los estados",
+  masculine: "Masculino",
+  feminine: "Femenino",
+  pending: "Pendiente",
+  urgent: "Urgente",
+  searchPlaceholder: "Buscar...",
+  sortBy: "Ordenar por",
+  date: "Fecha",
+  peopleHelped: "Personas ayudadas",
+  grid: "Cuadrícula",
+  list: "Lista",
 };
