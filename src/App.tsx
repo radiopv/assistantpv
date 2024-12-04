@@ -15,12 +15,9 @@ import Donations from "./pages/Donations";
 import MediaManagement from "./pages/MediaManagement";
 import SponsorsManagement from "./pages/SponsorsManagement";
 import Messages from "./pages/Messages";
-import Rewards from "./pages/Rewards";
-import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
-import SiteConfig from "./pages/admin/SiteConfig";
 import Travels from "./pages/admin/Travels";
 
 const queryClient = new QueryClient({
@@ -78,13 +75,11 @@ const AppRoutes = () => (
       <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
       <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-      <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
       <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
       <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
       <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
       <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
       <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
-      <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />
       <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
     </Route>
   </Routes>

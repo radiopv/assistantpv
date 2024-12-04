@@ -11,13 +11,11 @@ import {
   Settings,
   LogOut,
   Image,
-  Award,
   Baby,
   UserPlus,
   Plane,
   ChartBar,
   HelpCircle,
-  Cog
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -95,18 +93,6 @@ const Sidebar = () => {
       href: "/admin/faq",
       label: "FAQ",
       icon: HelpCircle,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/site-config",
-      label: "Configuration",
-      icon: Cog,
-      show: isAdmin,
-    },
-    {
-      href: "/rewards",
-      label: "Récompenses",
-      icon: Award,
       show: isAdmin,
     },
   ];
