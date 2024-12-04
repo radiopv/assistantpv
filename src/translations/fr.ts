@@ -45,6 +45,19 @@ export const frenchTranslations = {
   date: "Date",
   noDonationsFound: "Aucun don ne correspond à vos critères de recherche",
   
+  // Dashboard translations
+  welcomeMessage: "Bienvenue dans votre espace assistant TousPourCuba",
+  totalChildren: "Enfants Total",
+  sponsoredChildren: "Enfants Parrainés",
+  urgentNeeds: "Besoins Urgents",
+  activeCities: "Villes Actives",
+  incompleteProfiles: "Profils Incomplets",
+  viewAllChildren: "Voir tous les enfants",
+  viewSponsoredChildren: "Voir les enfants parrainés",
+  viewUrgentNeeds: "Voir les besoins urgents",
+  viewCityStats: "Voir les statistiques par ville",
+  viewIncompleteProfiles: "Voir les profils incomplets",
+  
   // Statistics translations
   totalDonations: "Total des dons",
   citiesCovered: "Villes couvertes",

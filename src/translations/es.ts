@@ -55,5 +55,18 @@ export const spanishTranslations = {
   activeSponsorships: "Patrocinios activos",
   pendingSponsorships: "Patrocinios pendientes",
   completedSponsorships: "Patrocinios completados",
-  error: "Se ha producido un error"
+  error: "Se ha producido un error",
+
+  // Dashboard translations
+  welcomeMessage: "Bienvenido a su espacio de asistente TousPourCuba",
+  totalChildren: "Total de Niños",
+  sponsoredChildren: "Niños Apadrinados",
+  urgentNeeds: "Necesidades Urgentes",
+  activeCities: "Ciudades Activas",
+  incompleteProfiles: "Perfiles Incompletos",
+  viewAllChildren: "Ver todos los niños",
+  viewSponsoredChildren: "Ver niños apadrinados",
+  viewUrgentNeeds: "Ver necesidades urgentes",
+  viewCityStats: "Ver estadísticas por ciudad",
+  viewIncompleteProfiles: "Ver perfiles incompletos"
 };

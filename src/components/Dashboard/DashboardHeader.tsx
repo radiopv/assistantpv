@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Users, Gift, AlertTriangle, MapPin, User } from "lucide-react";
+import { Users, Heart, AlertTriangle, MapPin, UserX } from "lucide-react";
 import { DashboardStats } from "@/types/dashboard";
 import { NotificationBar } from "./NotificationBar";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DashboardHeaderProps {
   stats: DashboardStats;
@@ -18,6 +19,7 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const { data: incompleteProfiles } = useQuery({
     queryKey: ['incomplete-profiles'],
@@ -29,7 +31,6 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
       
       if (error) throw error;
       
-      // Filter profiles that have at least one required field missing
       return data?.filter(child => {
         return !child.gender ||
                !child.birth_date ||
@@ -45,44 +46,44 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
 
   const dashboardStats = [
     {
-      label: "Enfants Total",
+      label: t('totalChildren'),
       value: stats?.children?.total || "0",
       icon: Users,
       color: "bg-primary",
       link: "/children",
-      tooltip: "Voir tous les enfants"
+      tooltip: t('viewAllChildren')
     },
     {
-      label: "Enfants Parrainés",
+      label: t('sponsoredChildren'),
       value: stats?.children?.sponsored || "0",
-      icon: Gift,
+      icon: Heart,
       color: "bg-green-500",
       link: "/children?status=sponsored",
-      tooltip: "Voir les enfants parrainés"
+      tooltip: t('viewSponsoredChildren')
     },
     {
-      label: "Besoins Urgents",
+      label: t('urgentNeeds'),
       value: stats?.children?.urgent_needs || "0",
       icon: AlertTriangle,
       color: "bg-red-500",
       link: "/children?status=urgent",
-      tooltip: "Voir les besoins urgents"
+      tooltip: t('viewUrgentNeeds')
     },
     {
-      label: "Villes Actives",
+      label: t('activeCities'),
       value: stats?.cities || "0",
       icon: MapPin,
       color: "bg-blue-500",
       link: "/donations?view=cities",
-      tooltip: "Voir les statistiques par ville"
+      tooltip: t('viewCityStats')
     },
     {
-      label: "Profils Incomplets",
+      label: t('incompleteProfiles'),
       value: incompleteProfiles?.length || "0",
-      icon: User,
+      icon: UserX,
       color: "bg-yellow-500",
       link: "/children?status=incomplete",
-      tooltip: "Voir les profils incomplets"
+      tooltip: t('viewIncompleteProfiles')
     }
   ];
 
@@ -90,9 +91,9 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard')}</h1>
           <p className="text-gray-600 mt-2">
-            Bienvenue dans votre espace assistant TousPourCuba
+            {t('welcomeMessage')}
           </p>
         </div>
         <NotificationBar />
