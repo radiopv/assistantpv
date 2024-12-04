@@ -16,7 +16,7 @@ const Stories = () => {
         .from("sponsor_memories")
         .select(`
           *,
-          child:children(
+          child:children!fk_child(
             name,
             age,
             city
