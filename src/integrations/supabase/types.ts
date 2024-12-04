@@ -1503,6 +1503,36 @@ export type Database = {
           },
         ]
       }
+      site_config: {
+        Row: {
+          created_at: string | null
+          id: string
+          logo_url: string | null
+          primary_color: string
+          secondary_color: string
+          site_name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          primary_color?: string
+          secondary_color?: string
+          site_name?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          logo_url?: string | null
+          primary_color?: string
+          secondary_color?: string
+          site_name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       sponsor_levels: {
         Row: {
           benefits: Json | null
