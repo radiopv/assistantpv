@@ -84,19 +84,17 @@ const translations = {
 
     // Statistics translations
     totalDonations: "Total des dons",
-    activeSponsorships: "Parrainages actifs",
-    pendingSponsorships: "Parrainages en attente",
-    completedSponsorships: "Parrainages terminés",
+    peopleHelped: "Personnes aidées",
+    citiesCovered: "Villes couvertes",
+    urgentNeedsByCity: "Besoins urgents par ville",
     urgentNeeds: "Besoins urgents",
     topCities: "Top 5 des villes",
     sponsorshipStats: "Statistiques des parrainages",
-    activeSponsors: "Parrains actifs",
-    inactiveSponsors: "Parrains inactifs",
-    assistants: "Assistants",
-    citiesCovered: "Villes couvertes",
-    engagementRate: "Taux d'engagement",
-    donationEvolution: "Évolution des dons",
-    sponsorshipEvolution: "Évolution des parrainages"
+    activeSponsorships: "Parrains actifs",
+    pendingSponsorships: "Parrains en attente",
+    completedSponsorships: "Parrainages terminés",
+    error: "Une erreur est survenue",
+    
   },
   es: {
     // Menu translations
@@ -173,19 +171,17 @@ const translations = {
 
     // Statistics translations
     totalDonations: "Total de donaciones",
-    activeSponsorships: "Patrocinios activos",
-    pendingSponsorships: "Patrocinios pendientes",
-    completedSponsorships: "Patrocinios completados",
+    peopleHelped: "Personas ayudadas",
+    citiesCovered: "Ciudades cubiertas",
+    urgentNeedsByCity: "Necesidades urgentes por ciudad",
     urgentNeeds: "Necesidades urgentes",
     topCities: "Top 5 ciudades",
     sponsorshipStats: "Estadísticas de patrocinio",
-    activeSponsors: "Padrinos activos",
-    inactiveSponsors: "Padrinos inactivos",
-    assistants: "Asistentes",
-    citiesCovered: "Ciudades cubiertas",
-    engagementRate: "Tasa de participación",
-    donationEvolution: "Evolución de donaciones",
-    sponsorshipEvolution: "Evolución de patrocinios"
+    activeSponsorships: "Patrocinios activos",
+    pendingSponsorships: "Patrocinios pendientes",
+    completedSponsorships: "Patrocinios completados",
+    error: "Se ha producido un error",
+    
   }
 };
 

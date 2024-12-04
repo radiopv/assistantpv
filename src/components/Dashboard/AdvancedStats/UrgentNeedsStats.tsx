@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   PieChart,
   Pie,
@@ -19,9 +20,11 @@ const MOCK_DATA = [
 ];
 
 export const UrgentNeedsStats = () => {
+  const { t } = useLanguage();
+  
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold mb-4">Besoins Urgents par Ville</h3>
+      <h3 className="text-lg font-semibold mb-4">{t('urgentNeedsByCity')}</h3>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
