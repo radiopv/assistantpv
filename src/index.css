@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -158,11 +158,11 @@
   }
 
   .cuba-title {
-    @apply font-vintage text-fluid-3xl font-bold;
+    @apply font-title text-fluid-3xl font-bold;
   }
 
   .cuba-subtitle {
-    @apply font-vintage text-fluid-xl;
+    @apply font-title text-fluid-xl;
   }
 
   /* Mobile-optimized components */

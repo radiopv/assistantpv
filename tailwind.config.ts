@@ -35,17 +35,17 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0072BB", // Turquoise cubain
+          DEFAULT: "#0072BB",
           foreground: "#FFFFFF",
           hover: "#005d99",
         },
         secondary: {
-          DEFAULT: "#FF2400", // Rouge vif cubain
+          DEFAULT: "#FF2400",
           foreground: "#FFFFFF",
           hover: "#cc1d00",
         },
         accent: {
-          DEFAULT: "#FFD700", // Jaune doré cubain
+          DEFAULT: "#FFD700",
           foreground: "#000000",
           hover: "#ccac00",
         },
@@ -74,8 +74,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
-        vintage: ['Playfair Display', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        title: ['Roboto', 'system-ui', 'sans-serif'],
       },
       fontSize: {
         'fluid-sm': 'clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem)',
