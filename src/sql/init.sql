@@ -197,27 +197,94 @@ CREATE INDEX IF NOT EXISTS idx_messages_recipient ON public.messages(recipient_i
 CREATE INDEX IF NOT EXISTS idx_messages_sender ON public.messages(sender_id);
 CREATE INDEX IF NOT EXISTS idx_messages_is_read ON public.messages(is_read);
 
--- Execute the fix function
+-- Create sponsorship_requests table
+CREATE TABLE IF NOT EXISTS public.sponsorship_requests (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    full_name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT,
+    city TEXT NOT NULL,
+    facebook_url TEXT,
+    motivation TEXT,
+    sponsorship_type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending',
+    terms_accepted BOOLEAN NOT NULL DEFAULT false,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
 
--- Function to get daily donation trends
-CREATE OR REPLACE FUNCTION get_daily_donation_trends()
-RETURNS TABLE (
-    day INTEGER,
-    donations BIGINT
+-- Add RLS policies for sponsorship_requests
+ALTER TABLE public.sponsorship_requests ENABLE ROW LEVEL SECURITY;
+
+-- Allow public to insert new requests
+CREATE POLICY "Allow public to insert sponsorship requests"
+    ON public.sponsorship_requests FOR INSERT
+    TO public
+    WITH CHECK (true);
+
+-- Allow admins to view and manage all requests
+CREATE POLICY "Allow admins to manage sponsorship requests"
+    ON public.sponsorship_requests
+    TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM public.sponsors s
+            WHERE s.id = auth.uid()::text
+            AND s.role = 'admin'
+        )
+    );
+
+-- Create function to approve sponsorship request
+CREATE OR REPLACE FUNCTION approve_sponsorship_request(
+    request_id UUID,
+    admin_id TEXT
 )
+RETURNS void
 LANGUAGE plpgsql
+SECURITY DEFINER
 AS $$
 BEGIN
-    RETURN QUERY
-    SELECT 
-        EXTRACT(DAY FROM created_at)::INTEGER as day,
-        COUNT(*)::BIGINT as donations
-    FROM donations
-    WHERE created_at >= date_trunc('month', CURRENT_DATE)
-    GROUP BY day
-    ORDER BY day;
+    -- Verify admin status
+    IF NOT EXISTS (
+        SELECT 1 FROM public.sponsors
+        WHERE id = admin_id
+        AND role = 'admin'
+    ) THEN
+        RAISE EXCEPTION 'Unauthorized: User is not an admin';
+    END IF;
+
+    -- Update request status
+    UPDATE public.sponsorship_requests
+    SET status = 'approved',
+        updated_at = NOW()
+    WHERE id = request_id;
 END;
 $$;
 
-SELECT fix_needs_json();
+-- Create function to reject sponsorship request
+CREATE OR REPLACE FUNCTION reject_sponsorship_request(
+    request_id UUID,
+    admin_id TEXT,
+    rejection_reason TEXT DEFAULT NULL
+)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    -- Verify admin status
+    IF NOT EXISTS (
+        SELECT 1 FROM public.sponsors
+        WHERE id = admin_id
+        AND role = 'admin'
+    ) THEN
+        RAISE EXCEPTION 'Unauthorized: User is not an admin';
+    END IF;
 
+    -- Update request status
+    UPDATE public.sponsorship_requests
+    SET status = 'rejected',
+        updated_at = NOW()
+    WHERE id = request_id;
+END;
+$$;

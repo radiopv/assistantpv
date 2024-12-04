@@ -18,6 +18,7 @@ import SponsorsManagement from "./pages/SponsorsManagement";
 import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
 import Login from "./pages/auth/Login";
+import SponsorshipRequest from "./pages/SponsorshipRequest";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
@@ -66,6 +67,7 @@ const AppRoutes = () => (
     {/* Public Routes */}
     <Route element={<PublicLayout />}>
       <Route index element={<Home />} />
+      <Route path="/become-sponsor" element={<SponsorshipRequest />} />
     </Route>
 
     {/* Auth Routes */}
