@@ -64,6 +64,9 @@ export const spanishTranslations = {
   childDeleteError: "Se produjo un error al eliminar el niño.",
   sponsorAlbum: "Fotos del álbum padrino",
   sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino.",
+  noDescription: "Sin descripción disponible",
+  noStory: "Sin historia disponible",
+  noComments: "Sin comentarios disponibles",
 
   // Donations
   donationsTitle: "Gestión de donaciones",
