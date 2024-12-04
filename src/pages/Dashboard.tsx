@@ -12,11 +12,13 @@ import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantSt
 import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { DashboardStats } from "@/types/dashboard";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { t } = useLanguage();
   const isAdmin = user?.role === 'admin';
 
   const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery<DashboardStats>({
@@ -27,10 +29,10 @@ const Dashboard = () => {
       return data as unknown as DashboardStats;
     },
     meta: {
-      errorMessage: "Erreur lors du chargement des statistiques",
+      errorMessage: t('error'),
       onError: (error: Error) => {
         console.error('Query error:', error);
-        toast.error("Erreur lors du chargement des statistiques");
+        toast.error(t('error'));
       }
     }
   });
@@ -61,7 +63,7 @@ const Dashboard = () => {
     return (
       <div className="space-y-6">
         <ErrorAlert 
-          message="Une erreur est survenue lors du chargement des statistiques" 
+          message={t('error')}
           retry={() => refetchStats()}
         />
       </div>

@@ -6,6 +6,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const MainLayout = () => {
   const { user } = useAuth();
@@ -16,41 +18,44 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block w-64 fixed h-full">
-        <Sidebar />
-      </div>
-
-      {/* Mobile Menu */}
-      <div className="md:hidden">
-        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-          <SheetTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="lg"
-              className="fixed top-4 left-4 z-50 p-3"
-            >
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[280px] p-0">
-            <Sidebar isMobile onClose={() => setIsMobileMenuOpen(false)} />
-          </SheetContent>
-        </Sheet>
-      </div>
-
-      <main className="flex-1 md:ml-64">
-        <div className="p-4 border-b bg-white flex justify-end">
-          <UserProfileMenu />
+    <LanguageProvider>
+      <div className="min-h-screen bg-gray-50 flex">
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block w-64 fixed h-full">
+          <Sidebar />
         </div>
-        <div className="p-4 md:p-8">
-          <div className="container mx-auto animate-fade-in">
-            <Outlet />
+
+        {/* Mobile Menu */}
+        <div className="md:hidden">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="lg"
+                className="fixed top-4 left-4 z-50 p-3"
+              >
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px] p-0">
+              <Sidebar isMobile onClose={() => setIsMobileMenuOpen(false)} />
+            </SheetContent>
+          </Sheet>
+        </div>
+
+        <main className="flex-1 md:ml-64">
+          <div className="p-4 border-b bg-white flex justify-between items-center">
+            <LanguageSelector />
+            <UserProfileMenu />
           </div>
-        </div>
-      </main>
-    </div>
+          <div className="p-4 md:p-8">
+            <div className="container mx-auto animate-fade-in">
+              <Outlet />
+            </div>
+          </div>
+        </main>
+      </div>
+    </LanguageProvider>
   );
 };
 
