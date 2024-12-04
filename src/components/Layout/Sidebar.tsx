@@ -14,6 +14,7 @@ import {
   Plane,
   ChartBar,
   HelpCircle,
+  Languages
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -62,6 +63,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       label: t("messages"),
       icon: MessageSquare,
       show: true,
+    },
+    {
+      href: "/admin/translations",
+      label: t("translationManager"),
+      icon: Languages,
+      show: true, // Available to all assistants
     },
   ];
 

@@ -63,5 +63,19 @@ export const spanishTranslations = {
   childDeleteSuccess: "El niño ha sido eliminado con éxito.",
   childDeleteError: "Se produjo un error al eliminar el niño.",
   sponsorAlbum: "Fotos del álbum padrino",
-  sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino."
+  sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino.",
+
+  // Translation Management
+  translationScanner: "Escáner de traducciones",
+  scanMissingTranslations: "Buscar traducciones faltantes",
+  findUnusedTranslations: "Encontrar traducciones no utilizadas",
+  missingTranslationsFound: "{{count}} traducciones faltantes encontradas",
+  unusedTranslationsFound: "{{count}} traducciones no utilizadas encontradas",
+  missingTranslations: "Traducciones faltantes",
+  unusedTranslations: "Traducciones no utilizadas",
+  translationManager: "Gestor de traducciones",
+  translationError: "Error al actualizar las traducciones",
+  translationUpdated: "Traducciones actualizadas con éxito",
+  frenchTranslations: "Traducciones francesas",
+  spanishTranslations: "Traducciones españolas"
 };

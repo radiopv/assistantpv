@@ -22,6 +22,7 @@ import { AdminPermissions } from "./components/Admin/AdminPermissions";
 import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
 import Travels from "./pages/admin/Travels";
+import TranslationsPage from "./pages/admin/Translations";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -82,6 +83,7 @@ const AppRoutes = () => (
       <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
       <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
       <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
+      <Route path="/admin/translations" element={<ProtectedRoute><TranslationsPage /></ProtectedRoute>} />
       <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
       <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
       <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
