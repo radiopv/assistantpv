@@ -12,7 +12,6 @@ import Children from "./pages/Children";
 import AddChild from "./pages/AddChild";
 import ChildProfile from "./pages/ChildProfile";
 import Donations from "./pages/Donations";
-import Sponsorships from "./pages/Sponsorships";
 import MediaManagement from "./pages/MediaManagement";
 import SponsorsManagement from "./pages/SponsorsManagement";
 import Messages from "./pages/Messages";
@@ -78,7 +77,6 @@ const AppRoutes = () => (
       <Route path="/children" element={<ProtectedRoute requiredPermission="children"><Children /></ProtectedRoute>} />
       <Route path="/children/:id" element={<ProtectedRoute requiredPermission="children"><ChildProfile /></ProtectedRoute>} />
       <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
-      <Route path="/sponsorships" element={<ProtectedRoute requiredPermission="sponsorships"><Sponsorships /></ProtectedRoute>} />
       <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
       <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />

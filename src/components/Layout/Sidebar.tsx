@@ -12,8 +12,6 @@ import {
   LogOut,
   Image,
   Award,
-  Heart,
-  ListChecks,
   Baby,
   UserPlus,
   Plane,
@@ -48,12 +46,6 @@ const Sidebar = () => {
       label: "Ajouter un enfant",
       icon: UserPlus,
       show: user?.permissions?.edit_children || isAdmin,
-    },
-    {
-      href: "/sponsorships",
-      label: "Parrainages",
-      icon: Heart,
-      show: user?.permissions?.sponsorships || isAdmin,
     },
     {
       href: "/donations",
