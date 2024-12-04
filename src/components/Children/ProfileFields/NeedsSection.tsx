@@ -1,6 +1,8 @@
 import { Need } from "@/types/needs";
 import { NeedsSelectionField } from "../FormFields/NeedsSelectionField";
 import { convertJsonToNeeds } from "@/types/needs";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "../FormFields/translations";
 
 interface NeedsSectionProps {
   child: any;
@@ -9,6 +11,9 @@ interface NeedsSectionProps {
 }
 
 export const NeedsSection = ({ child, editing, onChange }: NeedsSectionProps) => {
+  const { language } = useLanguage();
+  const t = translations[language as keyof typeof translations];
+
   const handleNeedsChange = (needs: Need[]) => {
     console.log("Saving needs directly:", needs);
     onChange('needs', needs);
@@ -21,6 +26,7 @@ export const NeedsSection = ({ child, editing, onChange }: NeedsSectionProps) =>
       <NeedsSelectionField
         selectedNeeds={convertJsonToNeeds(child.needs)}
         onNeedsChange={handleNeedsChange}
+        translations={t}
       />
     </div>
   );

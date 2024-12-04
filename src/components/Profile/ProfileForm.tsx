@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { PhotoUploadField } from "@/components/Children/FormFields/PhotoUploadField";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/components/Children/FormFields/translations";
 
 interface ProfileFormProps {
   initialData: {
@@ -21,6 +23,8 @@ interface ProfileFormProps {
 export const ProfileForm = ({ initialData, userId, onClose }: ProfileFormProps) => {
   const [formData, setFormData] = useState(initialData);
   const [isUploading, setIsUploading] = useState(false);
+  const { language } = useLanguage();
+  const t = translations[language as keyof typeof translations];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -97,7 +101,10 @@ export const ProfileForm = ({ initialData, userId, onClose }: ProfileFormProps) 
   return (
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
-        <PhotoUploadField handlePhotoChange={handlePhotoChange} />
+        <PhotoUploadField 
+          handlePhotoChange={handlePhotoChange} 
+          translations={t}
+        />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="name">Nom</Label>

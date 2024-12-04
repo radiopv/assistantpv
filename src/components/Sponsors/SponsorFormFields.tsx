@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PhotoUploadField } from "@/components/Children/FormFields/PhotoUploadField";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/components/Children/FormFields/translations";
 
 interface SponsorFormFieldsProps {
   formData: any;
@@ -19,6 +21,9 @@ export const SponsorFormFields = ({
   handleSelectChange,
   handlePhotoChange,
 }: SponsorFormFieldsProps) => {
+  const { language } = useLanguage();
+  const t = translations[language as keyof typeof translations];
+
   return (
     <>
       <div className="grid grid-cols-2 gap-4">
@@ -97,7 +102,10 @@ export const SponsorFormFields = ({
       </div>
 
       <div className="space-y-4">
-        <PhotoUploadField handlePhotoChange={handlePhotoChange} />
+        <PhotoUploadField 
+          handlePhotoChange={handlePhotoChange} 
+          translations={t}
+        />
       </div>
 
       <div className="flex flex-col gap-4">
