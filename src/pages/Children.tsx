@@ -24,18 +24,7 @@ const Children = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
-        .select(`
-          *,
-          sponsorships (
-            id,
-            status,
-            sponsor:sponsors (
-              id,
-              name,
-              email
-            )
-          )
-        `)
+        .select('*')
         .order('name', { ascending: true });
 
       if (error) {
@@ -43,13 +32,7 @@ const Children = () => {
         throw error;
       }
 
-      // Transforme les données pour maintenir la compatibilité avec le code existant
-      return data.map(child => ({
-        ...child,
-        is_sponsored: child.sponsorships && child.sponsorships.some(s => s.status === 'active'),
-        sponsor_name: child.sponsorships?.find(s => s.status === 'active')?.sponsor?.name || null,
-        sponsor_email: child.sponsorships?.find(s => s.status === 'active')?.sponsor?.email || null
-      }));
+      return data;
     }
   });
 
