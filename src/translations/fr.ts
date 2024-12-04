@@ -77,8 +77,6 @@ export const frenchTranslations = {
   assistantName: "Nom de l'assistant",
   categories: "Catégories",
   modify: "Modifier",
-  confirmDelete: "Êtes-vous sûr ?",
-  deleteWarning: "Cette action est irréversible. Toutes les données associées seront supprimées.",
 
   // Filters and search
   searchPlaceholder: "Rechercher un enfant...",

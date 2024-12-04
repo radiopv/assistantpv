@@ -64,7 +64,7 @@ export const spanishTranslations = {
 
   // Donations page
   manageDonations: "Gestione las donaciones y su distribución",
-  addDonation: "Agregar un don",
+  addDonation: "Agregar una donación",
   close: "Cerrar",
   donationBy: "Donación por",
   completed: "Completado",
@@ -77,8 +77,6 @@ export const spanishTranslations = {
   assistantName: "Nombre del asistente",
   categories: "Categorías",
   modify: "Modificar",
-  confirmDelete: "¿Está seguro?",
-  deleteWarning: "Esta acción es irreversible. Todos los datos asociados serán eliminados.",
 
   // Filters and search
   searchPlaceholder: "Buscar un niño...",
