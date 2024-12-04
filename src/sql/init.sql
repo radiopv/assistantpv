@@ -28,6 +28,60 @@ CREATE TABLE IF NOT EXISTS public.messages (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
 
+-- Create aid_categories table if it doesn't exist
+CREATE TABLE IF NOT EXISTS public.aid_categories (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
+
+-- Create donation_items table if it doesn't exist
+CREATE TABLE IF NOT EXISTS public.donation_items (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    donation_id UUID REFERENCES public.donations(id),
+    category_id UUID REFERENCES public.aid_categories(id),
+    quantity INTEGER NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
+
+-- Create the donation_items_with_categories view
+CREATE OR REPLACE VIEW public.donation_items_with_categories AS
+SELECT 
+    di.id,
+    di.donation_id,
+    di.category_id,
+    ac.name as category_name,
+    di.quantity,
+    di.description
+FROM 
+    public.donation_items di
+LEFT JOIN 
+    public.aid_categories ac ON di.category_id = ac.id;
+
+-- Add RLS policies
+ALTER TABLE public.aid_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.donation_items ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for aid_categories
+CREATE POLICY "Aid categories are viewable by everyone"
+    ON public.aid_categories FOR SELECT
+    TO PUBLIC
+    USING (true);
+
+-- Create policies for donation_items
+CREATE POLICY "Donation items are viewable by everyone"
+    ON public.donation_items FOR SELECT
+    TO PUBLIC
+    USING (true);
+
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_donation_items_donation_id ON public.donation_items(donation_id);
+CREATE INDEX IF NOT EXISTS idx_donation_items_category_id ON public.donation_items(category_id);
+
 -- Function to fix invalid JSON in needs column
 CREATE OR REPLACE FUNCTION fix_needs_json()
 RETURNS void
