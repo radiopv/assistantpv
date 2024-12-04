@@ -73,4 +73,12 @@ export const frenchTranslations = {
   scanningTranslations: "Scan en cours...",
   translationsFound: "{{count}} textes à traduire trouvés",
   scanAssistantSection: "Scanner la section assistant",
+
+  // Translation management
+  translationRequired: "La traduction est requise",
+  translationApproved: "Traduction approuvée avec succès",
+  originalText: "Texte original",
+  enterTranslation: "Entrer la traduction",
+  approve: "Approuver",
+  pendingTranslations: "Traductions en attente",
 };

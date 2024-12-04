@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Alert } from "@/components/ui/alert";
 import { AlertTriangle, CheckCircle2, Languages } from "lucide-react";
 import { frenchTranslations } from "@/translations/fr";
 import { spanishTranslations } from "@/translations/es";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { TranslationResults } from "./TranslationResults";
+import { TranslationApproval } from "./TranslationApproval";
 
 interface MissingTranslation {
   key: string;
@@ -25,12 +25,16 @@ export const TranslationScanner = () => {
   const [unusedTranslations, setUnusedTranslations] = useState<string[]>([]);
   const [englishTexts, setEnglishTexts] = useState<EnglishText[]>([]);
   const [scanning, setScanning] = useState(false);
+  const [pendingTranslations, setPendingTranslations] = useState<Array<{
+    key: string;
+    text: string;
+    language: string;
+  }>>([]);
 
   const scanForMissingTranslations = () => {
     setScanning(true);
     const missing: MissingTranslation[] = [];
     
-    // Compare French and Spanish translations
     Object.keys(frenchTranslations).forEach(key => {
       if (!spanishTranslations[key]) {
         missing.push({ key, language: 'es' });
@@ -65,15 +69,13 @@ export const TranslationScanner = () => {
 
   const detectEnglishText = () => {
     setScanning(true);
-    const englishPattern = /[a-zA-Z\s]{4,}/g; // Pattern to match English words
+    const englishPattern = /[a-zA-Z\s]{4,}/g;
     const foundTexts: EnglishText[] = [];
 
-    // Scan the DOM for text content
     const scanNode = (node: Node, location: string) => {
       if (node.nodeType === Node.TEXT_NODE) {
         const text = node.textContent?.trim();
         if (text && englishPattern.test(text)) {
-          // Exclude translation keys and common programming terms
           if (!Object.keys(frenchTranslations).includes(text) && 
               !Object.keys(spanishTranslations).includes(text) &&
               !text.includes('function') &&
@@ -81,6 +83,11 @@ export const TranslationScanner = () => {
               !text.includes('let') &&
               !text.includes('var')) {
             foundTexts.push({ text, location });
+            setPendingTranslations(prev => [
+              ...prev,
+              { key: `key_${Date.now()}_${foundTexts.length}`, text, language: 'fr' },
+              { key: `key_${Date.now()}_${foundTexts.length}`, text, language: 'es' }
+            ]);
           }
         }
       }
@@ -90,6 +97,12 @@ export const TranslationScanner = () => {
     scanNode(document.body, 'body');
     setEnglishTexts(foundTexts);
     setScanning(false);
+  };
+
+  const handleTranslationApprove = (key: string, value: string, language: string) => {
+    // Here you would typically update your translation files
+    console.log('Approved translation:', { key, value, language });
+    setPendingTranslations(prev => prev.filter(t => t.key !== key));
   };
 
   return (
@@ -149,56 +162,21 @@ export const TranslationScanner = () => {
           </Alert>
         )}
 
-        <div className="space-y-4">
-          {missingTranslations.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold mb-2">{t("missingTranslations")}</h3>
-              <ScrollArea className="h-[200px]">
-                <div className="space-y-2">
-                  {missingTranslations.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                      <span className="font-mono text-sm">{item.key}</span>
-                      <Badge variant="outline">
-                        {item.language === 'fr' ? 'French' : 'Spanish'}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          )}
+        {pendingTranslations.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-4">{t("pendingTranslations")}</h3>
+            <TranslationApproval 
+              translations={pendingTranslations}
+              onApprove={handleTranslationApprove}
+            />
+          </div>
+        )}
 
-          {unusedTranslations.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold mb-2">{t("unusedTranslations")}</h3>
-              <ScrollArea className="h-[200px]">
-                <div className="space-y-2">
-                  {unusedTranslations.map((key, index) => (
-                    <div key={index} className="p-2 bg-gray-50 rounded font-mono text-sm">
-                      {key}
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          )}
-
-          {englishTexts.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold mb-2">{t("englishTextDetected")}</h3>
-              <ScrollArea className="h-[200px]">
-                <div className="space-y-2">
-                  {englishTexts.map((item, index) => (
-                    <div key={index} className="p-2 bg-gray-50 rounded">
-                      <p className="font-mono text-sm">{item.text}</p>
-                      <p className="text-xs text-gray-500 mt-1">Location: {item.location}</p>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </div>
-          )}
-        </div>
+        <TranslationResults
+          missingTranslations={missingTranslations}
+          unusedTranslations={unusedTranslations}
+          englishTexts={englishTexts}
+        />
       </div>
     </Card>
   );

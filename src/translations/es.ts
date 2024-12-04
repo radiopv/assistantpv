@@ -76,9 +76,13 @@ export const spanishTranslations = {
   translationManager: "Gestor de traducciones",
   translationError: "Error al actualizar las traducciones",
   translationUpdated: "Traducciones actualizadas con éxito",
-  frenchTranslations: "Traducciones francesas",
-  spanishTranslations: "Traducciones españolas",
-  
+  translationRequired: "Se requiere traducción",
+  translationApproved: "Traducción aprobada con éxito",
+  originalText: "Texto original",
+  enterTranslation: "Introducir traducción",
+  approve: "Aprobar",
+  pendingTranslations: "Traducciones pendientes",
+
   // Profile Section
   welcome: "Bienvenido",
   editProfile: "Editar perfil",
