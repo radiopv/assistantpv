@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -84,7 +84,7 @@ export const TranslationScanner = () => {
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              {t("missingTranslationsFound", { count: missingTranslations.length })}
+              {t(`missingTranslationsFound_${missingTranslations.length}`)}
             </AlertDescription>
           </Alert>
         )}
@@ -93,7 +93,7 @@ export const TranslationScanner = () => {
           <Alert>
             <CheckCircle2 className="h-4 w-4" />
             <AlertDescription>
-              {t("unusedTranslationsFound", { count: unusedTranslations.length })}
+              {t(`unusedTranslationsFound_${unusedTranslations.length}`)}
             </AlertDescription>
           </Alert>
         )}
