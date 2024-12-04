@@ -1,8 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabase } from "@/integrations/supabase/client";
-import { UrgentNeedsByCityStats } from "@/types/statistics";
 import {
   PieChart,
   Pie,
@@ -14,20 +11,14 @@ import {
 
 const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
 
+// Temporary mock data until the Supabase function is ready
+const MOCK_DATA = [
+  { city: "Paris", urgent_needs_count: 5 },
+  { city: "Lyon", urgent_needs_count: 3 },
+  { city: "Marseille", urgent_needs_count: 4 }
+];
+
 export const UrgentNeedsStats = () => {
-  const { data: stats, isLoading } = useQuery<UrgentNeedsByCityStats[]>({
-    queryKey: ['urgent-needs-by-city'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_urgent_needs_by_city');
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  if (isLoading) {
-    return <Skeleton className="h-[400px] w-full" />;
-  }
-
   return (
     <Card className="p-6">
       <h3 className="text-lg font-semibold mb-4">Besoins Urgents par Ville</h3>
@@ -35,7 +26,7 @@ export const UrgentNeedsStats = () => {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={stats}
+              data={MOCK_DATA}
               dataKey="urgent_needs_count"
               nameKey="city"
               cx="50%"
@@ -43,7 +34,7 @@ export const UrgentNeedsStats = () => {
               outerRadius={100}
               label
             >
-              {stats?.map((entry, index) => (
+              {MOCK_DATA.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
