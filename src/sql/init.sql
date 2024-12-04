@@ -198,4 +198,26 @@ CREATE INDEX IF NOT EXISTS idx_messages_sender ON public.messages(sender_id);
 CREATE INDEX IF NOT EXISTS idx_messages_is_read ON public.messages(is_read);
 
 -- Execute the fix function
+
+-- Function to get daily donation trends
+CREATE OR REPLACE FUNCTION get_daily_donation_trends()
+RETURNS TABLE (
+    day INTEGER,
+    donations BIGINT
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        EXTRACT(DAY FROM created_at)::INTEGER as day,
+        COUNT(*)::BIGINT as donations
+    FROM donations
+    WHERE created_at >= date_trunc('month', CURRENT_DATE)
+    GROUP BY day
+    ORDER BY day;
+END;
+$$;
+
 SELECT fix_needs_json();
+

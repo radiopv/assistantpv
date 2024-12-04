@@ -20,10 +20,10 @@ import { AlertTriangle } from "lucide-react";
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export const DetailedStats = () => {
-  const { data: monthlyStats, isLoading: monthlyLoading, error: monthlyError } = useQuery({
-    queryKey: ['monthly-donations'],
+  const { data: dailyStats, isLoading: dailyLoading, error: dailyError } = useQuery({
+    queryKey: ['daily-donations'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_monthly_donation_trends');
+      const { data, error } = await supabase.rpc('get_daily_donation_trends');
       if (error) throw error;
       return data;
     }
@@ -78,12 +78,12 @@ export const DetailedStats = () => {
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Évolution des dons</h3>
           <div className="h-[300px]">
-            {monthlyError ? renderError("Erreur lors du chargement des données") : 
-             monthlyLoading ? renderSkeleton() : (
+            {dailyError ? renderError("Erreur lors du chargement des données") : 
+             dailyLoading ? renderSkeleton() : (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyStats}>
+                <BarChart data={dailyStats}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
+                  <XAxis dataKey="day" />
                   <YAxis />
                   <Tooltip />
                   <Bar dataKey="donations" fill="#8884d8" />
