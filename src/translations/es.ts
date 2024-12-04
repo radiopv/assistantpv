@@ -1,8 +1,8 @@
 export const spanishTranslations = {
-  // Menu translations
+  // Navigation and common actions
   dashboard: "Panel de control",
   children: "Niños",
-  addChild: "Agregar un padrino",
+  addChild: "Agregar un niño",
   donations: "Donaciones",
   messages: "Mensajes",
   media: "Medios",
@@ -14,13 +14,16 @@ export const spanishTranslations = {
   settings: "Configuración",
   language: "Idioma",
 
-  // Common actions and states
+  // Common actions
   save: "Guardar",
   cancel: "Cancelar",
   delete: "Eliminar",
   edit: "Modificar",
   confirm: "Confirmar",
   back: "Volver",
+  close: "Cerrar",
+
+  // Status and labels
   available: "Disponible",
   sponsored: "Apadrinado",
   by: "por",
@@ -39,7 +42,7 @@ export const spanishTranslations = {
   female: "Femenino",
   age: "Edad",
 
-  // Child profile translations
+  // Child profile
   childInfo: "Información del niño",
   birthDate: "Fecha de nacimiento",
   descriptionPlaceholder: "Descripción general del niño...",
@@ -49,7 +52,7 @@ export const spanishTranslations = {
   urgentNeed: "Necesidad urgente",
   needDescription: "Descripción de la necesidad",
   photoSection: "Fotos del álbum padrino",
-  photoDescription: "Estas fotos serán visibles en el espacio padrino. Permiten compartir momentos de la vida del niño con su padrino.",
+  photoDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino.",
   deleteChild: "Eliminar este niño",
   deleteConfirmation: "¿Está seguro de que desea eliminar este niño?",
   deleteWarning: "Esta acción es irreversible. Toda la información asociada a este niño será eliminada permanentemente.",
@@ -62,11 +65,10 @@ export const spanishTranslations = {
   sponsorAlbum: "Fotos del álbum padrino",
   sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino.",
 
-  // Donations page
+  // Donations
   donationsTitle: "Gestión de donaciones",
   donationsSubtitle: "Gestione las donaciones y su distribución",
   addDonation: "Agregar donación",
-  close: "Cerrar",
   donationBy: "Donación por",
   completed: "Completado",
   inProgress: "En curso",
@@ -79,7 +81,6 @@ export const spanishTranslations = {
   categories: "Categorías",
   modify: "Modificar",
   confirmDelete: "¿Está seguro?",
-  deleteWarning: "Esta acción es irreversible. Todos los datos asociados serán eliminados.",
   donationComments: "Comentarios",
   addComment: "Agregar comentario",
   donationDetails: "Detalles de la donación",
@@ -87,18 +88,22 @@ export const spanishTranslations = {
   donationStatus: "Estado",
   donationCity: "Ciudad",
   donationCategories: "Categorías",
+
+  // Categories
   monetary: "Monetario",
   clothing: "Ropa",
   food: "Alimentos",
   education: "Educación",
   medical: "Médico",
   other: "Otro",
+
+  // Upload
   uploadPhotos: "Subir fotos",
   uploadVideos: "Subir videos",
   acceptedFormats: "Formatos aceptados: JPG, PNG, MP4",
   maxFileSize: "Tamaño máximo: 5MB",
 
-  // Filters and search
+  // Search and filters
   searchPlaceholder: "Buscar...",
   filterByCity: "Filtrar por ciudad",
   allCities: "Todas las ciudades",
@@ -108,5 +113,9 @@ export const spanishTranslations = {
   grid: "Cuadrícula",
   list: "Lista",
   citiesCovered: "Ciudades cubiertas",
-  totalDonations: "Total de donaciones"
+  totalDonations: "Total de donaciones",
+
+  // Error messages
+  error: "Error",
+  errorMessage: "Se produjo un error"
 };

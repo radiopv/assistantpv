@@ -1,8 +1,8 @@
 export const frenchTranslations = {
-  // Menu translations
+  // Navigation and common actions
   dashboard: "Tableau de bord",
   children: "Enfants",
-  addChild: "Ajouter un parrain",
+  addChild: "Ajouter un enfant",
   donations: "Dons",
   messages: "Messages",
   media: "Médias",
@@ -13,14 +13,17 @@ export const frenchTranslations = {
   travels: "Voyages",
   settings: "Paramètres",
   language: "Langue",
-  
-  // Common actions and states
+
+  // Common actions
   save: "Sauvegarder",
   cancel: "Annuler",
   delete: "Supprimer",
   edit: "Modifier",
   confirm: "Confirmer",
   back: "Retour",
+  close: "Fermer",
+
+  // Status and labels
   available: "Disponible",
   sponsored: "Parrainé",
   by: "par",
@@ -39,7 +42,7 @@ export const frenchTranslations = {
   female: "Féminin",
   age: "Âge",
 
-  // Child profile translations
+  // Child profile
   childInfo: "Informations de l'enfant",
   birthDate: "Date de naissance",
   descriptionPlaceholder: "Description générale de l'enfant...",
@@ -62,11 +65,10 @@ export const frenchTranslations = {
   sponsorAlbum: "Photos de l'album parrain",
   sponsorAlbumDescription: "Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.",
 
-  // Donations page
+  // Donations
   donationsTitle: "Gestion des dons",
   donationsSubtitle: "Gérez les dons et leur distribution",
   addDonation: "Ajouter un don",
-  close: "Fermer",
   donationBy: "Don par",
   completed: "Complété",
   inProgress: "En cours",
@@ -79,7 +81,6 @@ export const frenchTranslations = {
   categories: "Catégories",
   modify: "Modifier",
   confirmDelete: "Êtes-vous sûr ?",
-  deleteWarning: "Cette action est irréversible. Toutes les données associées seront supprimées.",
   donationComments: "Commentaires",
   addComment: "Ajouter un commentaire",
   donationDetails: "Détails du don",
@@ -87,18 +88,22 @@ export const frenchTranslations = {
   donationStatus: "Statut",
   donationCity: "Ville",
   donationCategories: "Catégories",
+
+  // Categories
   monetary: "Monétaire",
   clothing: "Vêtements",
   food: "Nourriture",
   education: "Éducation",
   medical: "Médical",
   other: "Autre",
+
+  // Upload
   uploadPhotos: "Télécharger des photos",
   uploadVideos: "Télécharger des vidéos",
   acceptedFormats: "Formats acceptés : JPG, PNG, MP4",
   maxFileSize: "Taille maximale : 5MB",
 
-  // Filters and search
+  // Search and filters
   searchPlaceholder: "Rechercher...",
   filterByCity: "Filtrer par ville",
   allCities: "Toutes les villes",
@@ -108,5 +113,9 @@ export const frenchTranslations = {
   grid: "Grille",
   list: "Liste",
   citiesCovered: "Villes couvertes",
-  totalDonations: "Total des dons"
+  totalDonations: "Total des dons",
+
+  // Error messages
+  error: "Erreur",
+  errorMessage: "Une erreur est survenue"
 };
