@@ -4,6 +4,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
+import { NeedsSelectionField } from "../FormFields/NeedsSelectionField";
+import { Textarea } from "@/components/ui/textarea";
+import { convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
 
 const STATUS_OPTIONS = [
   { value: "available", label: "Disponible" },
@@ -15,7 +18,7 @@ const STATUS_OPTIONS = [
 interface ProfileFormFieldsProps {
   child: any;
   editing: boolean;
-  onChange: (field: string, value: string) => void;
+  onChange: (field: string, value: string | any) => void;
 }
 
 const formatAge = (birthDate: string) => {
@@ -48,12 +51,16 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
     }
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onChange(e.target.id, e.target.value);
   };
 
   const handleSelectChange = (field: string, value: string) => {
     onChange(field, value);
+  };
+
+  const handleNeedsChange = (needs: any[]) => {
+    onChange('needs', convertNeedsToJson(needs));
   };
 
   return (
@@ -144,6 +151,37 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
           />
         )}
       </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="description">Description</Label>
+        <Textarea
+          id="description"
+          value={child.description || ""}
+          onChange={handleInputChange}
+          disabled={!editing}
+          placeholder="Description générale de l'enfant..."
+          className="min-h-[100px]"
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="story">Histoire</Label>
+        <Textarea
+          id="story"
+          value={child.story || ""}
+          onChange={handleInputChange}
+          disabled={!editing}
+          placeholder="Histoire de l'enfant..."
+          className="min-h-[150px]"
+        />
+      </div>
+
+      {editing && (
+        <NeedsSelectionField
+          selectedNeeds={convertJsonToNeeds(child.needs)}
+          onNeedsChange={handleNeedsChange}
+        />
+      )}
     </div>
   );
 };
