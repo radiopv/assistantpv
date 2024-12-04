@@ -1,12 +1,11 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
-import { NeedsSelectionField } from "../FormFields/NeedsSelectionField";
-import { convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
+import { TextFields } from "./TextFields";
+import { NeedsSection } from "./NeedsSection";
 
 const STATUS_OPTIONS = [
   { value: "available", label: "Disponible" },
@@ -51,16 +50,12 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
     }
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.id, e.target.value);
   };
 
   const handleSelectChange = (field: string, value: string) => {
     onChange(field, value);
-  };
-
-  const handleNeedsChange = (needs: any[]) => {
-    onChange('needs', JSON.stringify(convertNeedsToJson(needs)));
   };
 
   return (
@@ -152,50 +147,17 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
         )}
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          value={child.description || ""}
-          onChange={handleInputChange}
-          disabled={!editing}
-          placeholder="Description générale de l'enfant..."
-          className="min-h-[100px]"
-        />
-      </div>
+      <TextFields
+        child={child}
+        editing={editing}
+        onChange={onChange}
+      />
 
-      <div className="grid gap-2">
-        <Label htmlFor="story">Histoire</Label>
-        <Textarea
-          id="story"
-          value={child.story || ""}
-          onChange={handleInputChange}
-          disabled={!editing}
-          placeholder="Histoire de l'enfant..."
-          className="min-h-[150px]"
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="comments">Commentaires</Label>
-        <Textarea
-          id="comments"
-          value={child.comments || ""}
-          onChange={handleInputChange}
-          disabled={!editing}
-          placeholder="Commentaires additionnels..."
-          className="min-h-[100px]"
-        />
-      </div>
-
-      {editing && (
-        <div className="grid gap-2">
-          <NeedsSelectionField
-            selectedNeeds={convertJsonToNeeds(child.needs)}
-            onNeedsChange={handleNeedsChange}
-          />
-        </div>
-      )}
+      <NeedsSection
+        child={child}
+        editing={editing}
+        onChange={onChange}
+      />
     </div>
   );
 };
