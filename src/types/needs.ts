@@ -1,35 +1,53 @@
 import { Json } from "@/integrations/supabase/types";
 
 export interface Need {
-  [key: string]: Json | undefined;
-  categories?: string[];
+  category: string;
   description: string;
   is_urgent: boolean;
 }
 
 export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
-  if (!Array.isArray(jsonNeeds)) return [];
-  return jsonNeeds.map(need => {
-    if (typeof need !== 'object' || !need) return {
-      categories: [],
-      description: '',
-      is_urgent: false
-    };
+  if (!jsonNeeds) return [];
+  
+  try {
+    // If jsonNeeds is a string, try to parse it
+    const needsArray = typeof jsonNeeds === 'string' ? JSON.parse(jsonNeeds) : jsonNeeds;
     
-    const needObj = need as Record<string, unknown>;
-    return {
-      categories: Array.isArray(needObj?.categories) ? needObj.categories.map(String) : [],
-      description: String(needObj?.description || ''),
-      is_urgent: Boolean(needObj?.is_urgent || false)
-    };
-  });
+    // Ensure we have an array
+    if (!Array.isArray(needsArray)) return [];
+
+    return needsArray.map(need => {
+      if (typeof need !== 'object' || !need) {
+        return {
+          category: '',
+          description: '',
+          is_urgent: false
+        };
+      }
+
+      const needObj = need as Record<string, unknown>;
+      return {
+        category: String(needObj?.category || ''),
+        description: String(needObj?.description || ''),
+        is_urgent: Boolean(needObj?.is_urgent || false)
+      };
+    });
+  } catch (error) {
+    console.error('Error parsing needs JSON:', error);
+    return [];
+  }
 };
 
 export const convertNeedsToJson = (needs: Need[]): Json => {
-  const jsonNeeds = needs.map(need => ({
-    categories: need.categories || [],
-    description: need.description,
-    is_urgent: need.is_urgent
-  }));
-  return jsonNeeds as unknown as Json;
+  try {
+    const jsonNeeds = needs.map(need => ({
+      category: need.category,
+      description: need.description,
+      is_urgent: need.is_urgent
+    }));
+    return jsonNeeds as Json;
+  } catch (error) {
+    console.error('Error converting needs to JSON:', error);
+    return [] as Json;
+  }
 };

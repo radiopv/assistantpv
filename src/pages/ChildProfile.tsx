@@ -9,6 +9,7 @@ import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { ProfileHeader } from "@/components/Children/ProfileHeader";
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { Card } from "@/components/ui/card";
+import { convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
 
 const ChildProfile = () => {
   const { id } = useParams();
@@ -32,8 +33,16 @@ const ChildProfile = () => {
         .single();
 
       if (error) throw error;
-      setChild(data);
+
+      // Convert needs to proper format
+      const formattedChild = {
+        ...data,
+        needs: convertJsonToNeeds(data.needs)
+      };
+      
+      setChild(formattedChild);
     } catch (err: any) {
+      console.error('Error loading child:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -42,9 +51,15 @@ const ChildProfile = () => {
 
   const handleUpdate = async () => {
     try {
+      // Convert needs back to JSON before saving
+      const updatedChild = {
+        ...child,
+        needs: convertNeedsToJson(child.needs)
+      };
+
       const { error } = await supabase
         .from('children')
-        .update(child)
+        .update(updatedChild)
         .eq('id', id);
 
       if (error) throw error;
@@ -54,7 +69,9 @@ const ChildProfile = () => {
         description: "Les modifications ont été enregistrées avec succès.",
       });
       setEditing(false);
+      loadChild(); // Reload to ensure data consistency
     } catch (err: any) {
+      console.error('Error updating child:', err);
       toast({
         variant: "destructive",
         title: "Erreur",
