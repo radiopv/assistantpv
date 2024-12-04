@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import { SponsorshipStats as SponsorshipStatsType } from "@/types/dashboard";
 import {
   BarChart,
   Bar,
@@ -13,12 +14,12 @@ import {
 } from "recharts";
 
 export const SponsorshipStats = () => {
-  const { data: conversionStats, isLoading: conversionLoading } = useQuery({
+  const { data: conversionStats, isLoading: conversionLoading } = useQuery<SponsorshipStatsType>({
     queryKey: ['sponsorship-conversion'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
       if (error) throw error;
-      return data;
+      return data as SponsorshipStatsType;
     }
   });
 
