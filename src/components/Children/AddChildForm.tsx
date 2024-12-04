@@ -6,8 +6,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { differenceInYears, parseISO } from "date-fns";
 import { BasicInfoFields } from "./FormFields/BasicInfoFields";
 import { PhotoUploadField } from "./FormFields/PhotoUploadField";
+import { NeedsSelectionField } from "./FormFields/NeedsSelectionField";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Need } from "@/types/needs";
 
 interface FormData {
   name: string;
@@ -15,7 +17,7 @@ interface FormData {
   birth_date: string;
   city: string | null;
   status: string;
-  needs: any[];
+  needs: Need[];
   is_sponsored: boolean;
 }
 
@@ -110,7 +112,7 @@ export const AddChildForm = () => {
           status: "available",
           photo_url: photoUrl,
           is_sponsored: false,
-          needs: []
+          needs: formData.needs
         });
 
       if (error) throw error;
@@ -150,6 +152,11 @@ export const AddChildForm = () => {
           />
           
           <PhotoUploadField handlePhotoChange={handlePhotoChange} />
+
+          <NeedsSelectionField
+            selectedNeeds={formData.needs}
+            onNeedsChange={(needs) => setFormData(prev => ({ ...prev, needs }))}
+          />
         </div>
 
         <div className="flex gap-4 pt-4">
