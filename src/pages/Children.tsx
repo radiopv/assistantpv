@@ -8,6 +8,7 @@ import { useState, useMemo } from "react";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ChildrenList } from "@/components/Children/ChildrenList";
 
 const Children = () => {
   const navigate = useNavigate();
@@ -47,8 +48,9 @@ const Children = () => {
   }, [children]);
 
   const hasUrgentNeeds = (child: any) => {
-    if (!child.needs || !Array.isArray(child.needs)) return false;
-    return child.needs.some((need: any) => need.is_urgent);
+    if (!child.needs) return false;
+    const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
+    return Array.isArray(needs) && needs.some((need: any) => need.is_urgent);
   };
 
   const filteredChildren = useMemo(() => {
@@ -59,11 +61,24 @@ const Children = () => {
       const matchesCity = selectedCity === "all" || child.city === selectedCity;
       const matchesGender = selectedGender === "all" || child.gender === selectedGender;
       const matchesAge = selectedAge === "all" || child.age === parseInt(selectedAge);
-      const matchesStatus = selectedStatus === "all" || 
-        (selectedStatus === "available" && !child.is_sponsored) ||
-        (selectedStatus === "sponsored" && child.is_sponsored) ||
-        (selectedStatus === "pending" && child.status === "pending") ||
-        (selectedStatus === "urgent" && hasUrgentNeeds(child));
+      
+      let matchesStatus = true;
+      if (selectedStatus !== "all") {
+        switch (selectedStatus) {
+          case "available":
+            matchesStatus = !child.is_sponsored;
+            break;
+          case "sponsored":
+            matchesStatus = child.is_sponsored;
+            break;
+          case "pending":
+            matchesStatus = child.status === "En attente";
+            break;
+          case "urgent":
+            matchesStatus = hasUrgentNeeds(child);
+            break;
+        }
+      }
       
       return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
     });
@@ -104,56 +119,11 @@ const Children = () => {
         ages={ages}
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {filteredChildren.map((child) => (
-          <Card 
-            key={child.id} 
-            className="p-4 cursor-pointer hover:shadow-lg transition-shadow active:scale-[0.98] touch-manipulation"
-            onClick={() => navigate(`/children/${child.id}`)}
-          >
-            <div className="aspect-square relative mb-4 rounded-lg overflow-hidden bg-gray-100">
-              {child.photo_url ? (
-                <img 
-                  src={child.photo_url} 
-                  alt={child.name}
-                  className="object-cover w-full h-full transition-opacity duration-300 lazy"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-gray-400">Pas de photo</span>
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <h3 className="font-semibold text-lg">{child.name}</h3>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p className="min-h-[44px] flex items-center">Âge : {child.age} ans</p>
-                <p className="min-h-[44px] flex items-center">
-                  Genre : {child.gender === 'M' ? 'Masculin' : 'Féminin'}
-                </p>
-                <p className="min-h-[44px] flex items-center">Ville : {child.city}</p>
-              </div>
-              <div className="pt-2 flex flex-wrap gap-2">
-                <span className={`px-3 py-2 rounded-full text-sm ${
-                  child.is_sponsored 
-                    ? 'bg-green-100 text-green-800' 
-                    : child.status === 'pending'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-blue-100 text-blue-800'
-                }`}>
-                  {child.is_sponsored ? 'Parrainé' : child.status === 'pending' ? 'En attente' : 'Disponible'}
-                </span>
-                {hasUrgentNeeds(child) && (
-                  <span className="px-3 py-2 rounded-full text-sm bg-red-100 text-red-800">
-                    Besoins urgents
-                  </span>
-                )}
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+      <ChildrenList 
+        children={filteredChildren}
+        isLoading={isLoading}
+        onViewProfile={(id) => navigate(`/children/${id}`)}
+      />
     </div>
   );
 };
