@@ -1,122 +1,49 @@
 import { useState } from "react";
 import { Need } from "@/types/needs";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { NeedForm } from "./NeedForm";
-import { NeedsList } from "./NeedsList";
-import { NeedsStats } from "./NeedsStats";
-import { ChildrenFilter } from "./ChildrenFilter";
-import { NeedsHeader } from "./NeedsHeader";
-import { translations } from "./translations";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AddNeedForm } from "./AddNeedForm";
+import { ChildNeeds } from "./ChildNeeds";
 
 export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: { 
   children: any[];
   isLoading: boolean;
   onNeedsUpdate: () => void;
 }) => {
-  const [language, setLanguage] = useState<"fr" | "es">("fr");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChild, setSelectedChild] = useState<any | null>(null);
-  const [selectedNeeds, setSelectedNeeds] = useState<Need[]>([]);
-  const [filters, setFilters] = useState({
-    category: "",
-    urgentOnly: false,
-    searchTerm: ""
+  const [newNeed, setNewNeed] = useState<Need>({ 
+    category: "", 
+    description: "", 
+    is_urgent: false 
   });
 
-  const t = translations[language];
-
-  const handleAddNeeds = async () => {
+  const handleAddNeed = async () => {
     if (!selectedChild) return;
 
-    try {
-      const updatedNeeds = [...(selectedChild.needs || []), ...selectedNeeds];
-      const { error } = await supabase
-        .from('children')
-        .update({ needs: convertNeedsToJson(updatedNeeds) })
-        .eq('id', selectedChild.id);
+    const updatedNeeds = [...(selectedChild.needs || []), newNeed];
+    const { error } = await supabase
+      .from('children')
+      .update({ needs: convertNeedsToJson(updatedNeeds) })
+      .eq('id', selectedChild.id);
 
-      if (error) throw error;
-
-      toast.success(language === "fr" ? "Besoins ajoutés avec succès" : "Necesidades agregadas con éxito");
-      setSelectedNeeds([]);
-      setSelectedChild(null);
-      setIsOpen(false);
-      onNeedsUpdate();
-    } catch (error) {
-      toast.error(language === "fr" ? "Erreur lors de l'ajout des besoins" : "Error al agregar las necesidades");
-      console.error("Erreur:", error);
+    if (error) {
+      toast.error("Erreur lors de l'ajout du besoin");
+      return;
     }
+
+    toast.success("Besoin ajouté avec succès");
+    setNewNeed({ category: "", description: "", is_urgent: false });
+    setSelectedChild(null);
+    setIsOpen(false);
+    onNeedsUpdate();
   };
-
-  const handleToggleUrgent = async (childId: string, needIndex: number) => {
-    const child = children.find(c => c.id === childId);
-    if (!child) return;
-
-    const updatedNeeds = [...(child.needs || [])];
-    updatedNeeds[needIndex] = {
-      ...updatedNeeds[needIndex],
-      is_urgent: !updatedNeeds[needIndex].is_urgent
-    };
-
-    try {
-      const { error } = await supabase
-        .from('children')
-        .update({ needs: convertNeedsToJson(updatedNeeds) })
-        .eq('id', childId);
-
-      if (error) throw error;
-
-      toast.success(language === "fr" ? "Statut d'urgence mis à jour" : "Estado de urgencia actualizado");
-      onNeedsUpdate();
-    } catch (error) {
-      toast.error(language === "fr" ? "Erreur lors de la mise à jour" : "Error al actualizar");
-      console.error("Erreur:", error);
-    }
-  };
-
-  const handleDeleteNeed = async (childId: string, needIndex: number) => {
-    const child = children.find(c => c.id === childId);
-    if (!child) return;
-
-    const updatedNeeds = (child.needs || []).filter((_, index) => index !== needIndex);
-
-    try {
-      const { error } = await supabase
-        .from('children')
-        .update({ needs: convertNeedsToJson(updatedNeeds) })
-        .eq('id', childId);
-
-      if (error) throw error;
-
-      toast.success(language === "fr" ? "Besoin supprimé avec succès" : "Necesidad eliminada con éxito");
-      onNeedsUpdate();
-    } catch (error) {
-      toast.error(language === "fr" ? "Erreur lors de la suppression" : "Error al eliminar");
-      console.error("Erreur:", error);
-    }
-  };
-
-  const filteredChildren = children
-    .filter(child => {
-      const hasNeeds = (child.needs || []).length > 0;
-      const matchesSearch = child.name.toLowerCase().includes(filters.searchTerm.toLowerCase());
-      const matchesCategory = !filters.category || 
-        (child.needs || []).some((need: Need) => need.category === filters.category);
-      const matchesUrgent = !filters.urgentOnly || 
-        (child.needs || []).some((need: Need) => need.is_urgent);
-      
-      return hasNeeds && matchesSearch && matchesCategory && matchesUrgent;
-    })
-    .sort((a, b) => {
-      const aHasUrgent = (a.needs || []).some((need: Need) => need.is_urgent);
-      const bHasUrgent = (b.needs || []).some((need: Need) => need.is_urgent);
-      if (aHasUrgent && !bHasUrgent) return -1;
-      if (!aHasUrgent && bHasUrgent) return 1;
-      return a.name.localeCompare(b.name);
-    });
 
   if (isLoading) {
     return (
@@ -127,58 +54,70 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 w-full" />
+            <Card key={i} className="p-4">
+              <Skeleton className="h-6 w-32 mb-4" />
+              <div className="space-y-4">
+                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full" />
+              </div>
+            </Card>
           ))}
         </div>
       </div>
     );
   }
 
+  const sortedChildren = [...children].sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="space-y-6">
-      <NeedsHeader 
-        language={language}
-        setLanguage={setLanguage}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-      />
+      <div className="flex justify-between items-center flex-wrap gap-4">
+        <h2 className="text-2xl font-semibold">Besoins des Enfants</h2>
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full md:w-auto">
+          <CollapsibleTrigger asChild>
+            <Button className="w-full md:w-auto bg-primary hover:bg-primary/90">
+              <Plus className="w-4 h-4 mr-2" />
+              Ajouter un besoin
+              <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4">
+            <Select
+              value={selectedChild?.id || ""}
+              onValueChange={(value) => {
+                const child = children?.find(c => c.id === value);
+                setSelectedChild(child || null);
+              }}
+            >
+              <SelectTrigger className="bg-white mb-4">
+                <SelectValue placeholder="Sélectionner un enfant" />
+              </SelectTrigger>
+              <SelectContent>
+                {sortedChildren?.map((child) => (
+                  <SelectItem key={child.id} value={child.id}>
+                    {child.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-      <NeedsStats children={children} />
-      
-      <ChildrenFilter 
-        filters={filters} 
-        setFilters={setFilters}
-        language={language}
-      />
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {filteredChildren.map((child) => (
-          <NeedsList 
-            key={child.id}
-            childId={child.id}
-            childName={child.name}
-            needs={child.needs || []}
-            language={language}
-            onToggleUrgent={handleToggleUrgent}
-            onDeleteNeed={handleDeleteNeed}
-          />
-        ))}
+            {selectedChild && (
+              <AddNeedForm
+                selectedChild={selectedChild}
+                newNeed={newNeed}
+                setNewNeed={setNewNeed}
+                onSubmit={handleAddNeed}
+              />
+            )}
+          </CollapsibleContent>
+        </Collapsible>
       </div>
 
-      {filteredChildren.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
-          {t.noNeeds}
-        </div>
-      )}
-
-      {isOpen && (
-        <NeedForm
-          selectedNeeds={selectedNeeds}
-          setSelectedNeeds={setSelectedNeeds}
-          onSubmit={handleAddNeeds}
-          language={language}
-        />
-      )}
+      <div className="grid gap-6 md:grid-cols-2">
+        {sortedChildren?.map((child) => (
+          <ChildNeeds key={child.id} child={child} needs={child.needs} />
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,11 +1,10 @@
 import { Card } from "@/components/ui/card";
 import { Need } from "@/types/needs";
-import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
 
 interface ChildNeedsProps {
   child: any;
-  needs: Need[];
+  needs: Need[] | null;
 }
 
 export const ChildNeeds = ({ child, needs: rawNeeds }: ChildNeedsProps) => {
@@ -19,7 +18,7 @@ export const ChildNeeds = ({ child, needs: rawNeeds }: ChildNeedsProps) => {
     autre: "Autre"
   };
 
-  // Ensure needs is always an array using the conversion function
+  // Convert needs to array if it's not already
   const needs = Array.isArray(rawNeeds) ? rawNeeds : convertJsonToNeeds(rawNeeds);
 
   return (
@@ -34,15 +33,8 @@ export const ChildNeeds = ({ child, needs: rawNeeds }: ChildNeedsProps) => {
             }`}
           >
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Badge variant={need.is_urgent ? "destructive" : "default"}>
-                  {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                </Badge>
-                {need.is_urgent && (
-                  <Badge variant="outline" className="text-red-500 border-red-500">
-                    Urgent
-                  </Badge>
-                )}
+              <div className="font-medium">
+                {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
               </div>
               <div className="text-sm text-gray-600">{need.description}</div>
             </div>

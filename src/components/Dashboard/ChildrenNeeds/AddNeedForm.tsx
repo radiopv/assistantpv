@@ -1,25 +1,20 @@
-import { Button } from "@/components/ui/button";
 import { Need } from "@/types/needs";
-import { NeedCategoryIcon } from "./NeedCategoryIcon";
-import { BellRing } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 
 interface AddNeedFormProps {
-  children: any[];
-  selectedChildren: any[];
+  selectedChild: any;
   newNeed: Need;
-  setSelectedChildren: (children: any[]) => void;
   setNewNeed: (need: Need) => void;
   onSubmit: () => void;
 }
 
-export const AddNeedForm = ({
-  children,
-  selectedChildren,
-  newNeed,
-  setSelectedChildren,
-  setNewNeed,
-  onSubmit
+export const AddNeedForm = ({ 
+  selectedChild, 
+  newNeed, 
+  setNewNeed, 
+  onSubmit 
 }: AddNeedFormProps) => {
   const NEED_CATEGORIES = [
     { value: "education", label: "Éducation" },
@@ -32,73 +27,48 @@ export const AddNeedForm = ({
   ];
 
   return (
-    <div className="space-y-6 bg-white p-6 rounded-lg border shadow-sm">
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Sélectionner la catégorie</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {NEED_CATEGORIES.map((category) => (
-            <Button
-              key={category.value}
-              variant={newNeed.category === category.value ? "default" : "outline"}
-              className="flex items-center gap-2 w-full"
-              onClick={() => setNewNeed({ ...newNeed, category: category.value })}
-            >
-              <NeedCategoryIcon category={category.value} />
-              {category.label}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Description du besoin</h3>
-          <Button
-            variant={newNeed.is_urgent ? "destructive" : "outline"}
-            size="sm"
-            className="flex items-center gap-2"
-            onClick={() => setNewNeed({ ...newNeed, is_urgent: !newNeed.is_urgent })}
-          >
-            <BellRing className="w-4 h-4" />
-            {newNeed.is_urgent ? "Urgent" : "Non urgent"}
-          </Button>
-        </div>
-        <Input
-          placeholder="Description détaillée du besoin..."
-          value={newNeed.description}
-          onChange={(e) => setNewNeed({ ...newNeed, description: e.target.value })}
-          className="w-full"
-        />
-      </div>
-
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Enfants concernés</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {children.map((child) => (
-            <Button
-              key={child.id}
-              variant={selectedChildren.some(c => c.id === child.id) ? "default" : "outline"}
-              className="flex items-center gap-2"
-              onClick={() => {
-                if (selectedChildren.some(c => c.id === child.id)) {
-                  setSelectedChildren(selectedChildren.filter(c => c.id !== child.id));
-                } else {
-                  setSelectedChildren([...selectedChildren, child]);
+    <div className="space-y-4 bg-white p-4 rounded-lg border shadow-lg">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {NEED_CATEGORIES.map((category) => (
+          <div key={category.value} className="flex items-center space-x-2">
+            <Checkbox
+              id={category.value}
+              checked={newNeed.category === category.value}
+              onCheckedChange={(checked) => {
+                if (checked) {
+                  setNewNeed({ ...newNeed, category: category.value });
                 }
               }}
-            >
-              {child.name}
-            </Button>
-          ))}
-        </div>
+            />
+            <label htmlFor={category.value} className="text-sm text-gray-600">
+              {category.label}
+            </label>
+          </div>
+        ))}
+      </div>
+
+      <Input
+        placeholder="Description du besoin"
+        value={newNeed.description}
+        onChange={(e) => setNewNeed({ ...newNeed, description: e.target.value })}
+        className="bg-white"
+      />
+
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="urgent"
+          checked={newNeed.is_urgent}
+          onCheckedChange={(checked) => setNewNeed({ ...newNeed, is_urgent: checked as boolean })}
+        />
+        <label htmlFor="urgent" className="text-sm text-gray-600">Besoin urgent</label>
       </div>
 
       <Button 
         onClick={onSubmit} 
-        disabled={selectedChildren.length === 0 || !newNeed.category || !newNeed.description}
+        disabled={!selectedChild || !newNeed.category || !newNeed.description}
         className="w-full"
       >
-        Ajouter le besoin pour {selectedChildren.length} enfant{selectedChildren.length > 1 ? 's' : ''}
+        Ajouter
       </Button>
     </div>
   );
