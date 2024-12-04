@@ -68,11 +68,11 @@ export const ChildrenFilters = ({
           </SelectContent>
         </Select>
 
-        <Select value={selectedAge} onValueChange={onAgeChange}>
+        <Select value={selectedAge.toString()} onValueChange={onAgeChange}>
           <SelectTrigger className="w-[180px] bg-white">
             <SelectValue placeholder="Âge" />
           </SelectTrigger>
-          <SelectContent className="bg-white">
+          <SelectContent className="bg-white max-h-[300px]">
             <SelectItem value="all">Tous les âges</SelectItem>
             {ages.map((age) => (
               <SelectItem key={age} value={age.toString()}>
