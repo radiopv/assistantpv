@@ -7,9 +7,11 @@ import { Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Children = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
@@ -76,10 +78,13 @@ const Children = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold">Liste des enfants</h1>
-        <Button onClick={() => navigate('/children/add')}>
+        <Button 
+          onClick={() => navigate('/children/add')}
+          className="w-full sm:w-auto min-h-[44px]"
+        >
           Ajouter un enfant
         </Button>
       </div>
@@ -99,22 +104,23 @@ const Children = () => {
         ages={ages}
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filteredChildren.map((child) => (
           <Card 
             key={child.id} 
-            className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+            className="p-4 cursor-pointer hover:shadow-lg transition-shadow active:scale-[0.98] touch-manipulation"
             onClick={() => navigate(`/children/${child.id}`)}
           >
-            <div className="aspect-square relative mb-4 rounded-lg overflow-hidden">
+            <div className="aspect-square relative mb-4 rounded-lg overflow-hidden bg-gray-100">
               {child.photo_url ? (
                 <img 
                   src={child.photo_url} 
                   alt={child.name}
-                  className="object-cover w-full h-full"
+                  className="object-cover w-full h-full transition-opacity duration-300 lazy"
+                  loading="lazy"
                 />
               ) : (
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                <div className="w-full h-full flex items-center justify-center">
                   <span className="text-gray-400">Pas de photo</span>
                 </div>
               )}
@@ -122,12 +128,14 @@ const Children = () => {
             <div className="space-y-2">
               <h3 className="font-semibold text-lg">{child.name}</h3>
               <div className="text-sm text-gray-600 space-y-1">
-                <p>Âge : {child.age} ans</p>
-                <p>Genre : {child.gender === 'M' ? 'Masculin' : 'Féminin'}</p>
-                <p>Ville : {child.city}</p>
+                <p className="min-h-[44px] flex items-center">Âge : {child.age} ans</p>
+                <p className="min-h-[44px] flex items-center">
+                  Genre : {child.gender === 'M' ? 'Masculin' : 'Féminin'}
+                </p>
+                <p className="min-h-[44px] flex items-center">Ville : {child.city}</p>
               </div>
               <div className="pt-2 flex flex-wrap gap-2">
-                <span className={`px-2 py-1 rounded-full text-xs ${
+                <span className={`px-3 py-2 rounded-full text-sm ${
                   child.is_sponsored 
                     ? 'bg-green-100 text-green-800' 
                     : child.status === 'pending'
@@ -137,7 +145,7 @@ const Children = () => {
                   {child.is_sponsored ? 'Parrainé' : child.status === 'pending' ? 'En attente' : 'Disponible'}
                 </span>
                 {hasUrgentNeeds(child) && (
-                  <span className="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">
+                  <span className="px-3 py-2 rounded-full text-sm bg-red-100 text-red-800">
                     Besoins urgents
                   </span>
                 )}
