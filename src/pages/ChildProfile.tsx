@@ -9,12 +9,14 @@ import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { ProfileHeader } from "@/components/Children/ProfileHeader";
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { Card } from "@/components/ui/card";
-import { convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
+import { convertJsonToNeeds } from "@/types/needs";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ChildProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [child, setChild] = useState<any>(null);
@@ -34,7 +36,6 @@ const ChildProfile = () => {
 
       if (error) throw error;
 
-      // Convert needs to proper format
       const formattedChild = {
         ...data,
         needs: convertJsonToNeeds(data.needs)
@@ -57,7 +58,7 @@ const ChildProfile = () => {
         .from('children')
         .update({
           ...child,
-          needs: child.needs // Save needs directly without conversion
+          needs: child.needs
         })
         .eq('id', id);
 
@@ -67,17 +68,17 @@ const ChildProfile = () => {
       }
 
       toast({
-        title: "Profil mis à jour",
-        description: "Les modifications ont été enregistrées avec succès.",
+        title: t("profileUpdated"),
+        description: t("profileUpdateSuccess"),
       });
       setEditing(false);
-      loadChild(); // Reload to ensure data consistency
+      loadChild();
     } catch (err: any) {
       console.error('Error updating child:', err);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour du profil.",
+        title: t("error"),
+        description: t("profileUpdateError"),
       });
     }
   };
@@ -92,15 +93,15 @@ const ChildProfile = () => {
       if (error) throw error;
 
       toast({
-        title: "Enfant supprimé",
-        description: "L'enfant a été supprimé avec succès.",
+        title: t("childDeleted"),
+        description: t("childDeleteSuccess"),
       });
       navigate('/children');
     } catch (err: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression de l'enfant.",
+        title: t("error"),
+        description: t("childDeleteError"),
       });
     }
   };
@@ -117,7 +118,7 @@ const ChildProfile = () => {
     return (
       <div className="space-y-6">
         <ErrorAlert 
-          message="Une erreur est survenue lors du chargement du profil" 
+          message={t("error")}
           retry={loadChild}
         />
       </div>
@@ -165,9 +166,9 @@ const ChildProfile = () => {
         />
 
         <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Photos de l'album parrain</h2>
+          <h2 className="text-xl font-semibold mb-4">{t("sponsorAlbum")}</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.
+            {t("sponsorAlbumDescription")}
           </p>
           <div className="space-y-6">
             <AlbumMediaUpload childId={id!} onUploadComplete={loadChild} />

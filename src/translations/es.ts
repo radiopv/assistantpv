@@ -13,7 +13,7 @@ export const spanishTranslations = {
   travels: "Viajes",
   settings: "Configuración",
   language: "Idioma",
-  
+
   // Common actions and states
   save: "Guardar",
   cancel: "Cancelar",
@@ -36,7 +36,7 @@ export const spanishTranslations = {
   male: "Masculino",
   female: "Femenino",
   age: "Edad",
-  
+
   // Donations page
   manageDonations: "Gestione las donaciones y su distribución",
   close: "Cerrar",
@@ -54,7 +54,7 @@ export const spanishTranslations = {
   confirmDelete: "¿Está seguro?",
   deleteWarning: "Esta acción es irreversible. Todos los datos asociados serán eliminados.",
   confirm: "Confirmar",
-  
+
   // Filters and search
   searchPlaceholder: "Buscar un niño...",
   filterByCity: "Filtrar por ciudad",
@@ -78,13 +78,22 @@ export const spanishTranslations = {
   photoSection: "Fotos del álbum padrino",
   photoDescription: "Estas fotos serán visibles en el espacio padrino. Permiten compartir momentos de la vida del niño con su padrino.",
 
-  // Admin translations
-  translationManager: "Gestor de traducciones",
-  frenchTranslations: "Traducciones francesas",
-  spanishTranslations: "Traducciones españolas",
-  key: "Clave",
-  frenchValue: "Valor en francés",
-  spanishValue: "Valor en español",
-  translationUpdated: "Traducciones actualizadas",
-  translationError: "Error al actualizar las traducciones"
+  // Profile page translations
+  back: "Volver",
+  edit: "Editar",
+  save: "Guardar",
+  delete: "Eliminar",
+  deleteChild: "Eliminar este niño",
+  deleteConfirmation: "¿Está seguro de que desea eliminar este niño?",
+  deleteWarning: "Esta acción es irreversible. Toda la información asociada a este niño será eliminada permanentemente.",
+  cancel: "Cancelar",
+  confirm: "Confirmar",
+  profileUpdated: "Perfil actualizado",
+  profileUpdateSuccess: "Los cambios se han guardado con éxito.",
+  profileUpdateError: "Se produjo un error al actualizar el perfil.",
+  childDeleted: "Niño eliminado",
+  childDeleteSuccess: "El niño ha sido eliminado con éxito.",
+  childDeleteError: "Se produjo un error al eliminar el niño.",
+  sponsorAlbum: "Fotos del álbum padrino",
+  sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino."
 };

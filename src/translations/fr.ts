@@ -88,13 +88,22 @@ export const frenchTranslations = {
   photoSection: "Photos de l'album parrain",
   photoDescription: "Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.",
 
-  // Admin translations
-  translationManager: "Gestionnaire de traductions",
-  frenchTranslations: "Traductions françaises",
-  spanishTranslations: "Traductions espagnoles",
-  key: "Clé",
-  frenchValue: "Valeur en français",
-  spanishValue: "Valeur en espagnol",
-  translationUpdated: "Traductions mises à jour",
-  translationError: "Erreur lors de la mise à jour des traductions"
+  // Profile page translations
+  back: "Retour",
+  edit: "Modifier",
+  save: "Enregistrer",
+  delete: "Supprimer",
+  deleteChild: "Supprimer cet enfant",
+  deleteConfirmation: "Êtes-vous sûr de vouloir supprimer cet enfant ?",
+  deleteWarning: "Cette action est irréversible. Toutes les informations associées à cet enfant seront définitivement supprimées.",
+  cancel: "Annuler",
+  confirm: "Confirmer",
+  profileUpdated: "Profil mis à jour",
+  profileUpdateSuccess: "Les modifications ont été enregistrées avec succès.",
+  profileUpdateError: "Une erreur est survenue lors de la mise à jour du profil.",
+  childDeleted: "Enfant supprimé",
+  childDeleteSuccess: "L'enfant a été supprimé avec succès.",
+  childDeleteError: "Une erreur est survenue lors de la suppression de l'enfant.",
+  sponsorAlbum: "Photos de l'album parrain",
+  sponsorAlbumDescription: "Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain."
 };
