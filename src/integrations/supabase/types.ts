@@ -535,6 +535,7 @@ export type Database = {
         }
         Relationships: []
       }
+
       donation_photos: {
         Row: {
           created_at: string
@@ -542,6 +543,7 @@ export type Database = {
           id: number
           title: string | null
           url: string | null
+          is_featured: boolean | null
         }
         Insert: {
           created_at?: string
@@ -549,6 +551,7 @@ export type Database = {
           id?: number
           title?: string | null
           url?: string | null
+          is_featured?: boolean | null
         }
         Update: {
           created_at?: string
@@ -556,6 +559,7 @@ export type Database = {
           id?: number
           title?: string | null
           url?: string | null
+          is_featured?: boolean | null
         }
         Relationships: [
           {
@@ -567,6 +571,7 @@ export type Database = {
           },
         ]
       }
+
       donation_videos: {
         Row: {
           created_at: string | null
@@ -2515,3 +2520,4 @@ export type Database = {
     }
   }
 }
+
