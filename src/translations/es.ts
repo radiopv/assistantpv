@@ -44,9 +44,11 @@ export const spanishTranslations = {
   date: "Fecha",
   noDonationsFound: "No se encontraron donaciones que coincidan con sus criterios de búsqueda",
   
-  // Sponsorship translations
-  sponsored: "Apadrinado",
-  by: "por",
+  // Status translations
+  allStatus: "Todos los estados",
+  available: "Disponible",
+  pending: "En espera",
+  urgent: "Necesidades urgentes",
   
   // Statistics translations
   totalDonations: "Total de donaciones",
@@ -72,26 +74,10 @@ export const spanishTranslations = {
   viewCityStats: "Ver estadísticas por ciudad",
   viewIncompleteProfiles: "Ver perfiles incompletos",
 
-  // Children page translations
-  selectMessage: "Seleccionar un padrino",
-  edit: "Modificar el padrino",
-
-  // Filters translations
-  allAges: "Todas las edades",
-  allGenders: "Todos",
-  gender: "Género",
-  age: "Edad",
-  status: "Estado",
-  masculine: "Masculino",
-  feminine: "Femenino",
-  years: "años",
-
-  // Status translations
-  allStatus: "Todos los estados",
-  available: "Disponible",
-  sponsored: "Apadrinado",
-  pending: "En espera",
-  urgent: "Necesidades urgentes",
+  // Children list translations
+  edit: "Modificar el parrain",
+  selectMessage: "Seleccionar un parrain",
+  sponsoredBy: "Apadrinado por",
 
   // Admin translations
   translationManager: "Gestor de traducciones",
