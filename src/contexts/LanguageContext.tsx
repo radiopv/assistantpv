@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'fr' | 'es';
 
@@ -10,154 +10,60 @@ interface LanguageContextType {
 
 const translations = {
   fr: {
-    // Dashboard translations
-    dashboard: "Tableau de bord",
     children: "Enfants",
-    donations: "Dons",
-    messages: "Messages",
-    media: "Médias",
-    sponsors: "Parrains",
-    statistics: "Statistiques",
-    settings: "Paramètres",
-    // Stats translations
-    activeSponsors: "Parrains actifs",
-    totalChildren: "Nombre d'enfants",
-    totalDonations: "Dons totaux",
-    pendingRequests: "Demandes en attente",
-    // Children page
+    manageDonations: "Gérer les dons et parrainages",
     addChild: "Ajouter un enfant",
-    searchChild: "Rechercher un enfant...",
-    city: "Ville",
-    allCities: "Toutes les villes",
-    gender: "Genre",
-    allGenders: "Tous",
-    male: "Masculin",
-    female: "Féminin",
-    age: "Âge",
-    allAges: "Tous les âges",
-    status: "Statut",
-    allStatus: "Tous les statuts",
-    available: "Disponible",
-    sponsored: "Parrainé",
-    pending: "En attente",
-    urgent: "Besoins urgents",
-    // Child profile
     profile: "Profil",
-    basicInfo: "Informations de base",
-    needs: "Besoins",
-    story: "Histoire",
-    comments: "Commentaires",
-    description: "Description",
-    sponsorAlbum: "Photos de l'album parrain",
-    sponsorAlbumDescription: "Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.",
-    // Donations page
-    addDonation: "Ajouter un don",
-    closeDonation: "Fermer",
-    manageDonations: "Gérez les dons et leur distribution",
-    searchDonation: "Rechercher un don...",
-    noDonations: "Aucun don ne correspond à vos critères de recherche",
-    // Messages page
-    newMessage: "Nouveau message",
-    selectMessage: "Sélectionnez un message pour le lire",
-    from: "De",
-    // Media page
-    uploadMedia: "Télécharger un média",
-    gallery: "Galerie",
-    // Common actions
     edit: "Modifier",
-    delete: "Supprimer",
-    save: "Enregistrer",
-    cancel: "Annuler",
-    confirm: "Confirmer",
-    back: "Retour",
-    // Common
-    loading: "Chargement...",
-    error: "Erreur",
-    success: "Succès",
     years: "ans",
     months: "mois",
-    // Additional translations
+    sponsored: "Parrainé",
+    available: "Disponible",
     by: "par",
-    selectSponsor: "Sélectionner un parrain",
-    removeSponsor: "Retirer le parrain",
-    sponsorUpdated: "Parrain mis à jour avec succès",
-    sponsorRemoved: "Parrain retiré avec succès",
-    errorUpdatingSponsor: "Erreur lors de la mise à jour du parrain",
+    description: "Description",
+    story: "Histoire",
+    comments: "Commentaires",
+    needs: "Besoins",
+    nameRequired: "Le nom est requis",
+    genderRequired: "Le genre est requis",
+    birthDateRequired: "La date de naissance est requise",
+    birthDateInvalid: "La date de naissance est invalide",
+    success: "Succès",
+    successMessage: "L'enfant a été ajouté avec succès",
+    error: "Erreur",
+    errorMessage: "Une erreur est survenue lors de l'ajout de l'enfant",
+    childInfo: "Informations sur l'enfant",
+    cancel: "Annuler",
+    adding: "Ajout en cours...",
+    add: "Ajouter"
   },
   es: {
-    // Dashboard translations
-    dashboard: "Panel de control",
     children: "Niños",
-    donations: "Donaciones",
-    messages: "Mensajes",
-    media: "Medios",
-    sponsors: "Patrocinadores",
-    statistics: "Estadísticas",
-    settings: "Configuración",
-    // Stats translations
-    activeSponsors: "Patrocinadores activos",
-    totalChildren: "Número de niños",
-    totalDonations: "Donaciones totales",
-    pendingRequests: "Solicitudes pendientes",
-    // Children page
+    manageDonations: "Gestionar donaciones y patrocinios",
     addChild: "Añadir niño",
-    searchChild: "Buscar niño...",
-    city: "Ciudad",
-    allCities: "Todas las ciudades",
-    gender: "Género",
-    allGenders: "Todos",
-    male: "Masculino",
-    female: "Femenino",
-    age: "Edad",
-    allAges: "Todas las edades",
-    status: "Estado",
-    allStatus: "Todos los estados",
-    available: "Disponible",
-    sponsored: "Patrocinado",
-    pending: "Pendiente",
-    urgent: "Necesidades urgentes",
-    // Child profile
     profile: "Perfil",
-    basicInfo: "Información básica",
-    needs: "Necesidades",
-    story: "Historia",
-    comments: "Comentarios",
-    description: "Descripción",
-    sponsorAlbum: "Fotos del álbum del patrocinador",
-    sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del patrocinador. Permiten compartir momentos de la vida del niño con su patrocinador.",
-    // Donations page
-    addDonation: "Añadir donación",
-    closeDonation: "Cerrar",
-    manageDonations: "Gestione las donaciones y su distribución",
-    searchDonation: "Buscar donación...",
-    noDonations: "Ninguna donación corresponde a sus criterios de búsqueda",
-    // Messages page
-    newMessage: "Nuevo mensaje",
-    selectMessage: "Seleccione un mensaje para leerlo",
-    from: "De",
-    // Media page
-    uploadMedia: "Subir medio",
-    gallery: "Galería",
-    // Common actions
     edit: "Editar",
-    delete: "Eliminar",
-    save: "Guardar",
-    cancel: "Cancelar",
-    confirm: "Confirmar",
-    back: "Volver",
-    // Common
-    loading: "Cargando...",
-    error: "Error",
-    success: "Éxito",
     years: "años",
     months: "meses",
-    // Additional translations
+    sponsored: "Patrocinado",
+    available: "Disponible",
     by: "por",
-    selectSponsor: "Seleccionar patrocinador",
-    removeSponsor: "Eliminar patrocinador",
-    sponsorUpdated: "Patrocinador actualizado con éxito",
-    sponsorRemoved: "Patrocinador eliminado con éxito",
-    errorUpdatingSponsor: "Error al actualizar el patrocinador",
+    description: "Descripción",
+    story: "Historia",
+    comments: "Comentarios",
+    needs: "Necesidades",
+    nameRequired: "El nombre es requerido",
+    genderRequired: "El género es requerido",
+    birthDateRequired: "La fecha de nacimiento es requerida",
+    birthDateInvalid: "La fecha de nacimiento es inválida",
+    success: "Éxito",
+    successMessage: "El niño ha sido añadido con éxito",
+    error: "Error",
+    errorMessage: "Ha ocurrido un error al añadir el niño",
+    childInfo: "Información del niño",
+    cancel: "Cancelar",
+    adding: "Añadiendo...",
+    add: "Añadir"
   }
 };
 
@@ -166,8 +72,29 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>('fr');
 
+  useEffect(() => {
+    // Detect browser/device language
+    const detectLanguage = () => {
+      const browserLang = navigator.language.toLowerCase();
+      if (browserLang.startsWith('es')) {
+        setLanguage('es');
+      } else if (browserLang.startsWith('fr')) {
+        setLanguage('fr');
+      }
+      // Default to French if no match (already set in useState)
+    };
+
+    detectLanguage();
+  }, []);
+
+  // Store language preference
+  useEffect(() => {
+    localStorage.setItem('preferredLanguage', language);
+  }, [language]);
+
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations.fr] || key;
+    const currentTranslations = translations[language];
+    return currentTranslations[key as keyof typeof currentTranslations] || key;
   };
 
   return (

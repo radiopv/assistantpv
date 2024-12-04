@@ -37,12 +37,64 @@
     text-size-adjust: 100%;
     font-display: optional;
     touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     @apply bg-cuba-offwhite text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
     overscroll-behavior-y: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Enhanced Mobile Optimizations */
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px; /* Slightly smaller base font size for mobile */
+    }
+
+    .container {
+      @apply px-4;
+    }
+
+    /* Improved touch targets */
+    button, 
+    [role="button"],
+    input,
+    select,
+    textarea {
+      @apply min-h-[44px] min-w-[44px];
+    }
+
+    /* Better spacing for mobile */
+    .mobile-spacing {
+      @apply space-y-4;
+    }
+
+    /* Prevent text overflow */
+    h1, h2, h3, h4, h5, h6 {
+      @apply break-words;
+    }
+
+    /* Improved form elements for mobile */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+      @apply w-full py-3 px-4;
+      font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+
+    /* Better table handling on mobile */
+    table {
+      @apply block w-full overflow-x-auto;
+    }
+
+    /* Enhanced touch feedback */
+    .touch-feedback:active {
+      @apply bg-gray-100/50 transition-colors duration-200;
+    }
   }
 
   /* Performance optimizations for images */
@@ -74,29 +126,6 @@
     .touch-scale:active {
       transform: scale(0.98);
       transition: transform 0.2s ease;
-    }
-  }
-
-  /* Mobile optimizations */
-  @media (max-width: 640px) {
-    .container {
-      @apply px-4;
-    }
-
-    button, 
-    [role="button"],
-    input,
-    select,
-    textarea {
-      @apply min-h-[44px] min-w-[44px];
-    }
-
-    a {
-      @apply py-2;
-    }
-
-    .touch-target {
-      @apply p-2;
     }
   }
 }
@@ -135,6 +164,21 @@
   .cuba-subtitle {
     @apply font-vintage text-fluid-xl;
   }
+
+  /* Mobile-optimized components */
+  @media (max-width: 640px) {
+    .cuba-card {
+      @apply p-4;
+    }
+
+    .cuba-button {
+      @apply py-2.5;
+    }
+
+    .cuba-input {
+      @apply py-2.5;
+    }
+  }
 }
 
 /* Ensure white background for all dropdown menus */
@@ -157,20 +201,7 @@
   @apply bg-gray-100 text-gray-900 !important;
 }
 
-/* Optimisations pour le chargement des images */
-img {
-  @apply transition-opacity duration-300;
-}
-
-img.lazy {
-  @apply opacity-0;
-}
-
-img.lazy.loaded {
-  @apply opacity-100;
-}
-
-/* Animations fluides pour les transitions */
+/* Animations */
 .page-transition {
   @apply animate-fade-in;
 }
