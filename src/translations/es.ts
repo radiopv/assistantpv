@@ -19,6 +19,8 @@ export const spanishTranslations = {
   cancel: "Cancelar",
   delete: "Eliminar",
   edit: "Modificar",
+  confirm: "Confirmar",
+  back: "Volver",
   available: "Disponible",
   sponsored: "Apadrinado",
   by: "por",
@@ -37,8 +39,32 @@ export const spanishTranslations = {
   female: "Femenino",
   age: "Edad",
 
+  // Child profile translations
+  childInfo: "Información del niño",
+  birthDate: "Fecha de nacimiento",
+  descriptionPlaceholder: "Descripción general del niño...",
+  story: "Historia",
+  storyPlaceholder: "Historia del niño...",
+  commentsPlaceholder: "Comentarios adicionales...",
+  urgentNeed: "Necesidad urgente",
+  needDescription: "Descripción de la necesidad",
+  photoSection: "Fotos del álbum padrino",
+  photoDescription: "Estas fotos serán visibles en el espacio padrino. Permiten compartir momentos de la vida del niño con su padrino.",
+  deleteChild: "Eliminar este niño",
+  deleteConfirmation: "¿Está seguro de que desea eliminar este niño?",
+  deleteWarning: "Esta acción es irreversible. Toda la información asociada a este niño será eliminada permanentemente.",
+  profileUpdated: "Perfil actualizado",
+  profileUpdateSuccess: "Los cambios se han guardado con éxito.",
+  profileUpdateError: "Se produjo un error al actualizar el perfil.",
+  childDeleted: "Niño eliminado",
+  childDeleteSuccess: "El niño ha sido eliminado con éxito.",
+  childDeleteError: "Se produjo un error al eliminar el niño.",
+  sponsorAlbum: "Fotos del álbum padrino",
+  sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino.",
+
   // Donations page
   manageDonations: "Gestione las donaciones y su distribución",
+  addDonation: "Agregar un don",
   close: "Cerrar",
   donationBy: "Donación por",
   completed: "Completado",
@@ -53,7 +79,6 @@ export const spanishTranslations = {
   modify: "Modificar",
   confirmDelete: "¿Está seguro?",
   deleteWarning: "Esta acción es irreversible. Todos los datos asociados serán eliminados.",
-  confirm: "Confirmar",
 
   // Filters and search
   searchPlaceholder: "Buscar un niño...",
@@ -64,36 +89,5 @@ export const spanishTranslations = {
   noDonationsFound: "No se encontraron donaciones que coincidan con sus criterios de búsqueda",
   allStatus: "Todos los estados",
   pending: "En espera",
-  urgent: "Necesidades urgentes",
-
-  // Child profile translations
-  childInfo: "Información del niño",
-  birthDate: "Fecha de nacimiento",
-  descriptionPlaceholder: "Descripción general del niño...",
-  story: "Historia",
-  storyPlaceholder: "Historia del niño...",
-  commentsPlaceholder: "Comentarios adicionales...",
-  urgentNeed: "Necesidad urgente",
-  needDescription: "Descripción de la necesidad",
-  photoSection: "Fotos del álbum padrino",
-  photoDescription: "Estas fotos serán visibles en el espacio padrino. Permiten compartir momentos de la vida del niño con su padrino.",
-
-  // Profile page translations
-  back: "Volver",
-  edit: "Editar",
-  save: "Guardar",
-  delete: "Eliminar",
-  deleteChild: "Eliminar este niño",
-  deleteConfirmation: "¿Está seguro de que desea eliminar este niño?",
-  deleteWarning: "Esta acción es irreversible. Toda la información asociada a este niño será eliminada permanentemente.",
-  cancel: "Cancelar",
-  confirm: "Confirmar",
-  profileUpdated: "Perfil actualizado",
-  profileUpdateSuccess: "Los cambios se han guardado con éxito.",
-  profileUpdateError: "Se produjo un error al actualizar el perfil.",
-  childDeleted: "Niño eliminado",
-  childDeleteSuccess: "El niño ha sido eliminado con éxito.",
-  childDeleteError: "Se produjo un error al eliminar el niño.",
-  sponsorAlbum: "Fotos del álbum padrino",
-  sponsorAlbumDescription: "Estas fotos serán visibles en el espacio del padrino. Permiten compartir momentos de la vida del niño con su padrino."
+  urgent: "Necesidades urgentes"
 };
