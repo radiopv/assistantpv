@@ -4,14 +4,26 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, Home, Users, Gift, MessageSquare, Settings } from "lucide-react";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Link, useLocation } from "react-router-dom";
 
 const MainLayout = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const mobileNavItems = [
+    { icon: Home, label: t('dashboard'), path: '/dashboard' },
+    { icon: Users, label: t('children'), path: '/children' },
+    { icon: Gift, label: t('donations'), path: '/donations' },
+    { icon: MessageSquare, label: t('messages'), path: '/messages' },
+    { icon: Settings, label: t('settings'), path: '/settings' },
+  ];
 
   if (!user) {
     return null;
@@ -26,24 +38,26 @@ const MainLayout = () => {
         </div>
 
         {/* Mobile Menu */}
-        <div className="md:hidden">
-          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button 
-                variant="ghost" 
-                size="lg"
-                className="fixed top-4 left-4 z-50 p-3"
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
+          <nav className="flex justify-around items-center h-16">
+            {mobileNavItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex flex-col items-center p-2 ${
+                  location.pathname === item.path
+                    ? 'text-primary'
+                    : 'text-gray-500'
+                }`}
               >
-                <Menu className="h-6 w-6" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] p-0">
-              <Sidebar isMobile onClose={() => setIsMobileMenuOpen(false)} />
-            </SheetContent>
-          </Sheet>
+                <item.icon className="h-5 w-5" />
+                <span className="text-xs mt-1">{item.label}</span>
+              </Link>
+            ))}
+          </nav>
         </div>
 
-        <main className="flex-1 md:ml-64">
+        <main className="flex-1 md:ml-64 pb-16 md:pb-0">
           <div className="p-4 border-b bg-white flex justify-between items-center">
             <LanguageSelector />
             <UserProfileMenu />

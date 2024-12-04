@@ -75,6 +75,23 @@ const translations = {
     donationsSubtitle: "Gérez les dons et leur distribution",
     messagesTitle: "Centre de messages",
     messagesSubtitle: "Gérez vos communications",
+
+    // Statistics translations
+    totalDonations: "Total des dons",
+    activeSponsorships: "Parrainages actifs",
+    pendingSponsorships: "Parrainages en attente",
+    completedSponsorships: "Parrainages terminés",
+    urgentNeeds: "Besoins urgents",
+    topCities: "Top 5 des villes",
+    sponsorshipStats: "Statistiques des parrainages",
+    activeSponsors: "Parrains actifs",
+    inactiveSponsors: "Parrains inactifs",
+    assistants: "Assistants",
+    citiesCovered: "Villes couvertes",
+    engagementRate: "Taux d'engagement",
+    peopleHelped: "Personnes aidées",
+    donationEvolution: "Évolution des dons",
+    sponsorshipEvolution: "Évolution des parrainages",
   },
   es: {
     donations: "Donaciones",
@@ -108,7 +125,7 @@ const translations = {
     messages: "Mensajes",
     newMessage: "Nuevo mensaje",
     recipient: "Destinatario",
-    selectRecipient: "Seleccionar destinatario",
+    selectRecipient: "Seleccionar un destinatario",
     subject: "Asunto",
     message: "Mensaje",
     send: "Enviar",
@@ -142,6 +159,23 @@ const translations = {
     donationsSubtitle: "Gestione las donaciones y su distribución",
     messagesTitle: "Centro de mensajes",
     messagesSubtitle: "Gestione sus comunicaciones",
+
+    // Statistics translations
+    totalDonations: "Total de donaciones",
+    activeSponsorships: "Patrocinios activos",
+    pendingSponsorships: "Patrocinios pendientes",
+    completedSponsorships: "Patrocinios completados",
+    urgentNeeds: "Necesidades urgentes",
+    topCities: "Top 5 ciudades",
+    sponsorshipStats: "Estadísticas de patrocinio",
+    activeSponsors: "Padrinos activos",
+    inactiveSponsors: "Padrinos inactivos",
+    assistants: "Asistentes",
+    citiesCovered: "Ciudades cubiertas",
+    engagementRate: "Tasa de participación",
+    peopleHelped: "Personas ayudadas",
+    donationEvolution: "Evolución de donaciones",
+    sponsorshipEvolution: "Evolución de patrocinios",
   }
 };
 

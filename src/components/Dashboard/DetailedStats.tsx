@@ -19,10 +19,13 @@ import { AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Need } from "@/types/needs";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export const DetailedStats = () => {
+  const { t } = useLanguage();
+
   const { data: urgentNeeds, isLoading: urgentLoading, error: urgentError } = useQuery({
     queryKey: ['urgent-needs'],
     queryFn: async () => {
@@ -33,7 +36,6 @@ export const DetailedStats = () => {
       
       if (error) throw error;
 
-      // Filter children with urgent needs
       return data.filter(child => {
         if (!child.needs) return false;
         const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
@@ -52,17 +54,15 @@ export const DetailedStats = () => {
       
       if (error) throw error;
 
-      // Count children by city
       const cityCounts = data.reduce((acc: any, child) => {
         acc[child.city] = (acc[child.city] || 0) + 1;
         return acc;
       }, {});
 
-      // Convert to array and sort by count
       return Object.entries(cityCounts)
         .map(([city, count]) => ({ city, count }))
         .sort((a, b) => (b.count as number) - (a.count as number))
-        .slice(0, 5); // Get top 5
+        .slice(0, 5);
     }
   });
 
@@ -104,9 +104,9 @@ export const DetailedStats = () => {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Besoins Urgents</h3>
+          <h3 className="text-lg font-semibold mb-4">{t('urgentNeeds')}</h3>
           <div className="h-[300px]">
-            {urgentError ? renderError("Erreur lors du chargement des données") : 
+            {urgentError ? renderError(t('error')) : 
              urgentLoading ? renderSkeleton() : (
               <ScrollArea className="h-full">
                 <div className="space-y-4">
@@ -140,9 +140,9 @@ export const DetailedStats = () => {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Top 5 des Villes</h3>
+          <h3 className="text-lg font-semibold mb-4">{t('topCities')}</h3>
           <div className="h-[300px]">
-            {cityError ? renderError("Erreur lors du chargement des données") :
+            {cityError ? renderError(t('error')) :
              cityLoading ? renderSkeleton() : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -167,9 +167,9 @@ export const DetailedStats = () => {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Statistiques des parrainages</h3>
+          <h3 className="text-lg font-semibold mb-4">{t('sponsorshipStats')}</h3>
           <div className="space-y-4">
-            {sponsorshipError ? renderError("Erreur lors du chargement des données") :
+            {sponsorshipError ? renderError(t('error')) :
              sponsorshipLoading ? (
               <div className="space-y-2">
                 <Skeleton className="h-8 w-full" />
@@ -179,15 +179,15 @@ export const DetailedStats = () => {
             ) : (
               <>
                 <div className="flex justify-between items-center p-3 bg-green-100 rounded">
-                  <span>Parrainages actifs</span>
+                  <span>{t('activeSponsorships')}</span>
                   <span className="font-bold">{sponsorshipStats?.active}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-yellow-100 rounded">
-                  <span>En attente</span>
+                  <span>{t('pendingSponsorships')}</span>
                   <span className="font-bold">{sponsorshipStats?.pending}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
-                  <span>Terminés</span>
+                  <span>{t('completedSponsorships')}</span>
                   <span className="font-bold">{sponsorshipStats?.ended}</span>
                 </div>
               </>
