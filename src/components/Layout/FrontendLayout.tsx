@@ -9,12 +9,18 @@ import {
   BookOpen,
   LogIn,
   Users,
-  Star
+  Star,
+  MessageSquare,
+  Award,
+  LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
-const PublicLayout = ({ children }: { children: React.ReactNode }) => {
-  const navLinks = [
+const FrontendLayout = ({ children }: { children: React.ReactNode }) => {
+  const { user, signOut } = useAuth();
+
+  const publicLinks = [
     { to: "/", icon: Home, label: "Accueil" },
     { to: "/available-children", icon: Users, label: "Enfants à parrainer" },
     { to: "/sponsored-children", icon: Star, label: "Enfants parrainés" },
@@ -23,6 +29,13 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
     { to: "/videos", icon: Video, label: "Vidéos" },
     { to: "/faq", icon: HelpCircle, label: "FAQ" },
     { to: "/statistics", icon: BarChart, label: "Statistiques" }
+  ];
+
+  const sponsorLinks = [
+    { to: "/sponsor-dashboard", icon: Home, label: "Mon tableau de bord" },
+    { to: "/messages", icon: MessageSquare, label: "Messages" },
+    { to: "/rewards", icon: Award, label: "Récompenses" },
+    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés" }
   ];
 
   return (
@@ -35,7 +48,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
             </Link>
             
             <div className="hidden md:flex items-center space-x-6">
-              {navLinks.map((link) => (
+              {publicLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
@@ -45,12 +58,36 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
                   <span>{link.label}</span>
                 </Link>
               ))}
-              <Link to="/login">
-                <Button variant="default" className="flex items-center gap-2">
-                  <LogIn className="h-4 w-4" />
-                  Connexion
-                </Button>
-              </Link>
+
+              {!user ? (
+                <Link to="/login">
+                  <Button variant="default" className="flex items-center gap-2">
+                    <LogIn className="h-4 w-4" />
+                    Connexion
+                  </Button>
+                </Link>
+              ) : (
+                <div className="flex items-center gap-4">
+                  {sponsorLinks.map((link) => (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                    >
+                      <link.icon className="h-5 w-5" />
+                      <span>{link.label}</span>
+                    </Link>
+                  ))}
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-2"
+                    onClick={() => signOut()}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Déconnexion
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -82,4 +119,4 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export { PublicLayout };
+export { FrontendLayout };

@@ -1,27 +1,17 @@
 import { ReactNode } from "react";
-import { Navigate, useLocation, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
-const MainLayout = () => {
+interface MainLayoutProps {
+  children?: ReactNode;
+}
+
+const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, isAdmin, isAssistant } = useAuth();
-  const location = useLocation();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Vérification des permissions basée sur le chemin
-  const path = location.pathname;
-  if (path.startsWith('/admin') && !isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (path.startsWith('/assistant') && !isAssistant && !isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (path.startsWith('/sponsor') && user.role !== 'sponsor' && !isAdmin) {
+  // Redirect to frontend if not admin or assistant
+  if (!user || (!isAdmin && !isAssistant)) {
     return <Navigate to="/" replace />;
   }
 
@@ -33,7 +23,7 @@ const MainLayout = () => {
         </div>
         <main className="flex-1 ml-64 p-8 overflow-auto">
           <div className="container mx-auto animate-fade-in">
-            <Outlet />
+            {children}
           </div>
         </main>
       </div>

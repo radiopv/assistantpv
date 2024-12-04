@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/components/Auth/AuthProvider";
 import { MainLayout } from "@/components/Layout/MainLayout";
-import { PublicLayout } from "@/components/Layout/PublicLayout";
+import { FrontendLayout } from "@/components/Layout/FrontendLayout";
 
 // Import pages
 import Home from "@/pages/Home";
@@ -39,74 +39,49 @@ const App = () => {
       <Router>
         <AuthProvider>
           <Routes>
-            {/* Interface publique (front-end) */}
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/donations/public" element={<PublicDonations />} />
-              <Route path="/statistics" element={<PublicStats />} />
-              <Route path="/videos" element={<PublicVideos />} />
-              <Route path="/faq" element={<PublicFAQ />} />
-              <Route path="/stories" element={<Stories />} />
-              <Route path="/become-sponsor" element={<SponsorshipRequest />} />
-              <Route path="/available-children" element={<PublicAvailableChildren />} />
-              <Route path="/sponsored-children" element={<PublicSponsoredChildren />} />
-            </Route>
+            {/* Frontend routes (public + sponsor) */}
+            <Route element={<FrontendLayout>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/donations/public" element={<PublicDonations />} />
+                <Route path="/statistics" element={<PublicStats />} />
+                <Route path="/videos" element={<PublicVideos />} />
+                <Route path="/faq" element={<PublicFAQ />} />
+                <Route path="/stories" element={<Stories />} />
+                <Route path="/become-sponsor" element={<SponsorshipRequest />} />
+                <Route path="/available-children" element={<PublicAvailableChildren />} />
+                <Route path="/sponsored-children" element={<PublicSponsoredChildren />} />
 
-            {/* Interface administrative (back-end) */}
-            <Route element={<MainLayout />}>
-              {/* Routes Admin */}
-              <Route 
-                path="/admin/*" 
-                element={
-                  <Routes>
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="children" element={<Children />} />
-                    <Route path="children/add" element={<AddChild />} />
-                    <Route path="children/:id" element={<ChildProfile />} />
-                    <Route path="children-needs" element={<ChildrenNeeds />} />
-                    <Route path="donations" element={<Donations />} />
-                    <Route path="media" element={<MediaManagement />} />
-                    <Route path="sponsors" element={<SponsorsManagement />} />
-                    <Route path="settings" element={<Settings />} />
-                    <Route path="permissions" element={<Permissions />} />
-                    <Route path="urgent-needs" element={<UrgentNeeds />} />
-                    <Route path="messages" element={<Messages />} />
-                  </Routes>
-                }
-              />
+                {/* Sponsor routes */}
+                <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
+                <Route path="/rewards" element={<Rewards />} />
+                <Route path="/messages" element={<Messages />} />
+              </Routes>
+            </FrontendLayout>} />
 
-              {/* Routes Assistant */}
-              <Route 
-                path="/assistant/*" 
-                element={
-                  <Routes>
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="children" element={<Children />} />
-                    <Route path="children/add" element={<AddChild />} />
-                    <Route path="children/:id" element={<ChildProfile />} />
-                    <Route path="donations" element={<Donations />} />
-                    <Route path="media" element={<MediaManagement />} />
-                    <Route path="urgent-needs" element={<UrgentNeeds />} />
-                    <Route path="messages" element={<Messages />} />
-                  </Routes>
-                }
-              />
+            {/* Backend routes (admin + assistant) */}
+            <Route path="/admin" element={<MainLayout>
+              <Routes>
+                {/* Admin routes */}
+                <Route path="permissions" element={<Permissions />} />
+                <Route path="sponsors-management" element={<SponsorsManagement />} />
+                <Route path="settings" element={<Settings />} />
 
-              {/* Routes Sponsor */}
-              <Route 
-                path="/sponsor/*" 
-                element={
-                  <Routes>
-                    <Route path="dashboard" element={<SponsorDashboard />} />
-                    <Route path="messages" element={<Messages />} />
-                    <Route path="rewards" element={<Rewards />} />
-                  </Routes>
-                }
-              />
-            </Route>
+                {/* Assistant/Admin routes */}
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="children" element={<Children />} />
+                <Route path="children/add" element={<AddChild />} />
+                <Route path="children-needs" element={<ChildrenNeeds />} />
+                <Route path="children/:id" element={<ChildProfile />} />
+                <Route path="donations" element={<Donations />} />
+                <Route path="media-management" element={<MediaManagement />} />
+                <Route path="urgent-needs" element={<UrgentNeeds />} />
+              </Routes>
+            </MainLayout>} />
 
-            {/* Redirection par défaut */}
+            {/* Catch-all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <Toaster />
