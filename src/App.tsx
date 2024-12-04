@@ -58,7 +58,7 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   }
 
   return <>{children}</>;
-});
+};
 
 const AppRoutes = () => (
   <Routes>
