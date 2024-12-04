@@ -8,22 +8,50 @@ export const NotificationBar = () => {
   const { data: notifications } = useQuery({
     queryKey: ['unread-notifications'],
     queryFn: async () => {
-      const { count } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_read', false);
-      return count || 0;
+      try {
+        const { count, error } = await supabase
+          .from('notifications')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_read', false);
+        
+        if (error) {
+          console.warn('Notifications table not accessible:', error.message);
+          return 0;
+        }
+        
+        return count || 0;
+      } catch (error) {
+        console.warn('Error fetching notifications:', error);
+        return 0;
+      }
+    },
+    meta: {
+      errorMessage: "Erreur lors du chargement des notifications"
     }
   });
 
   const { data: messages } = useQuery({
     queryKey: ['unread-messages'],
     queryFn: async () => {
-      const { count } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_read', false);
-      return count || 0;
+      try {
+        const { count, error } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_read', false);
+        
+        if (error) {
+          console.warn('Messages table not accessible:', error.message);
+          return 0;
+        }
+        
+        return count || 0;
+      } catch (error) {
+        console.warn('Error fetching messages:', error);
+        return 0;
+      }
+    },
+    meta: {
+      errorMessage: "Erreur lors du chargement des messages"
     }
   });
 
