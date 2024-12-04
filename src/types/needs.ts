@@ -10,10 +10,10 @@ export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
   if (!jsonNeeds) return [];
   
   try {
-    // If jsonNeeds is a string, try to parse it
+    // Si jsonNeeds est une chaîne, essayons de la parser
     const needsArray = typeof jsonNeeds === 'string' ? JSON.parse(jsonNeeds) : jsonNeeds;
     
-    // Ensure we have an array
+    // Assurons-nous que nous avons un tableau
     if (!Array.isArray(needsArray)) return [];
 
     return needsArray.map(need => {
@@ -38,13 +38,20 @@ export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
   }
 };
 
-export const convertNeedsToJson = (needs: Need[]): Json => {
+export const convertNeedsToJson = (needs: Need[] | null): Json => {
+  if (!needs || !Array.isArray(needs)) {
+    console.log('Needs is not an array:', needs);
+    return [];
+  }
+
   try {
+    console.log('Converting needs to JSON:', needs);
     const jsonNeeds = needs.map(need => ({
       category: need.category,
       description: need.description,
       is_urgent: need.is_urgent
     }));
+    console.log('Converted needs:', jsonNeeds);
     return jsonNeeds as Json;
   } catch (error) {
     console.error('Error converting needs to JSON:', error);
