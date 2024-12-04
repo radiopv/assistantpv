@@ -49,7 +49,6 @@ export const spanishTranslations = {
   totalDonations: "Total de donaciones",
   citiesCovered: "Ciudades cubiertas",
   urgentNeedsByCity: "Necesidades urgentes por ciudad",
-  urgentNeeds: "Necesidades urgentes",
   topCities: "Top 5 ciudades",
   sponsorshipStats: "Estadísticas de patrocinio",
   activeSponsorships: "Patrocinios activos",

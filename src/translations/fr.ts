@@ -45,10 +45,21 @@ export const frenchTranslations = {
   date: "Date",
   noDonationsFound: "Aucun don ne correspond à vos critères de recherche",
   
+  // Statistics translations
+  totalDonations: "Total des dons",
+  citiesCovered: "Villes couvertes",
+  urgentNeedsByCity: "Besoins urgents par ville",
+  topCities: "Top 5 des villes",
+  sponsorshipStats: "Statistiques des parrainages",
+  activeSponsorships: "Parrains actifs",
+  pendingSponsorships: "Parrains en attente",
+  completedSponsorships: "Parrainages terminés",
+  error: "Une erreur est survenue",
+
   // Dashboard translations
   welcomeMessage: "Bienvenue dans votre espace assistant TousPourCuba",
-  totalChildren: "Enfants Total",
-  sponsoredChildren: "Enfants Parrainés",
+  totalChildren: "Total de Niños",
+  sponsoredChildren: "Niños Apadrinados",
   urgentNeeds: "Besoins Urgents",
   activeCities: "Villes Actives",
   incompleteProfiles: "Profils Incomplets",
@@ -56,17 +67,5 @@ export const frenchTranslations = {
   viewSponsoredChildren: "Voir les enfants parrainés",
   viewUrgentNeeds: "Voir les besoins urgents",
   viewCityStats: "Voir les statistiques par ville",
-  viewIncompleteProfiles: "Voir les profils incomplets",
-  
-  // Statistics translations
-  totalDonations: "Total des dons",
-  citiesCovered: "Villes couvertes",
-  urgentNeedsByCity: "Besoins urgents par ville",
-  urgentNeeds: "Besoins urgents",
-  topCities: "Top 5 des villes",
-  sponsorshipStats: "Statistiques des parrainages",
-  activeSponsorships: "Parrains actifs",
-  pendingSponsorships: "Parrains en attente",
-  completedSponsorships: "Parrainages terminés",
-  error: "Une erreur est survenue"
+  viewIncompleteProfiles: "Voir les profils incomplets"
 };
