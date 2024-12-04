@@ -11,42 +11,43 @@ interface BasicInfoFieldsProps {
   };
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setFormData: (data: any) => void;
+  translations: any;
 }
 
-export const BasicInfoFields = ({ formData, handleChange, setFormData }: BasicInfoFieldsProps) => {
+export const BasicInfoFields = ({ formData, handleChange, setFormData, translations }: BasicInfoFieldsProps) => {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div className="space-y-2">
-        <Label htmlFor="name">Nom *</Label>
+        <Label htmlFor="name">{translations.name} *</Label>
         <Input
           id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
           required
-          placeholder="Nom de l'enfant"
+          placeholder={translations.name}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="gender">Genre *</Label>
+        <Label htmlFor="gender">{translations.gender} *</Label>
         <Select
           value={formData.gender}
           onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
           required
         >
           <SelectTrigger>
-            <SelectValue placeholder="Sélectionner le genre" />
+            <SelectValue placeholder={translations.selectGender} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="male">Masculin</SelectItem>
-            <SelectItem value="female">Féminin</SelectItem>
+            <SelectItem value="male">{translations.male}</SelectItem>
+            <SelectItem value="female">{translations.female}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="birth_date">Date de naissance *</Label>
+        <Label htmlFor="birth_date">{translations.birthDate} *</Label>
         <Input
           id="birth_date"
           name="birth_date"
@@ -58,13 +59,13 @@ export const BasicInfoFields = ({ formData, handleChange, setFormData }: BasicIn
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="city">Ville</Label>
+        <Label htmlFor="city">{translations.city}</Label>
         <Input
           id="city"
           name="city"
           value={formData.city}
           onChange={handleChange}
-          placeholder="Ville de l'enfant"
+          placeholder={translations.city}
         />
       </div>
     </div>

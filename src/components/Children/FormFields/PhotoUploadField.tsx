@@ -3,12 +3,13 @@ import { Label } from "@/components/ui/label";
 
 interface PhotoUploadFieldProps {
   handlePhotoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  translations: any;
 }
 
-export const PhotoUploadField = ({ handlePhotoChange }: PhotoUploadFieldProps) => {
+export const PhotoUploadField = ({ handlePhotoChange, translations }: PhotoUploadFieldProps) => {
   return (
     <div className="space-y-2">
-      <Label htmlFor="photo">Photo</Label>
+      <Label htmlFor="photo">{translations.photo}</Label>
       <Input
         id="photo"
         type="file"
@@ -17,7 +18,7 @@ export const PhotoUploadField = ({ handlePhotoChange }: PhotoUploadFieldProps) =
         className="cursor-pointer"
       />
       <p className="text-sm text-gray-500">
-        Format accepté : JPG, PNG. Taille maximale : 5MB
+        {translations.acceptedFormats}
       </p>
     </div>
   );

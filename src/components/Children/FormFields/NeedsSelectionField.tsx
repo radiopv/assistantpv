@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 interface NeedsSelectionFieldProps {
   selectedNeeds: Need[];
   onNeedsChange: (needs: Need[]) => void;
+  translations: any;
 }
 
-export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange }: NeedsSelectionFieldProps) => {
+export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange, translations }: NeedsSelectionFieldProps) => {
   const [availableNeeds, setAvailableNeeds] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -87,7 +88,7 @@ export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange }: NeedsSelec
 
   return (
     <div className="space-y-4">
-      <Label>Besoins de l'enfant</Label>
+      <Label>{translations.childNeeds}</Label>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {availableNeeds.map((category) => (
@@ -114,12 +115,12 @@ export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange }: NeedsSelec
                   onCheckedChange={() => toggleUrgent(need.category)}
                 />
                 <Label htmlFor={`urgent-${need.category}`}>
-                  Besoin urgent pour : {need.category}
+                  {translations.urgentNeed} {need.category}
                 </Label>
               </div>
               
               <Input
-                placeholder="Description du besoin..."
+                placeholder={translations.needDescription}
                 value={need.description}
                 onChange={(e) => updateNeedDescription(need.category, e.target.value)}
               />

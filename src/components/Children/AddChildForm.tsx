@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { Need } from "@/types/needs";
 import { Textarea } from "@/components/ui/textarea";
 import { convertNeedsToJson } from "@/types/needs";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "./FormFields/translations";
 
 interface FormData {
   name: string;
@@ -30,6 +32,9 @@ const ALLOWED_GENDERS = ['male', 'female'];
 export const AddChildForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { language } = useLanguage();
+  const t = translations[language as keyof typeof translations];
+
   const [loading, setLoading] = useState(false);
   const [photo, setPhoto] = useState<File | null>(null);
   const [formData, setFormData] = useState<FormData>({
@@ -50,12 +55,12 @@ export const AddChildForm = () => {
   };
 
   const validateForm = (): string | null => {
-    if (!formData.name.trim()) return "Le nom est requis";
-    if (!ALLOWED_GENDERS.includes(formData.gender)) return "Le genre doit être 'male' ou 'female'";
-    if (!formData.birth_date) return "La date de naissance est requise";
+    if (!formData.name.trim()) return t.nameRequired;
+    if (!ALLOWED_GENDERS.includes(formData.gender)) return t.genderRequired;
+    if (!formData.birth_date) return t.birthDateRequired;
     
     const age = calculateAge(formData.birth_date);
-    if (age === null || age < 0) return "La date de naissance est invalide";
+    if (age === null || age < 0) return t.birthDateInvalid;
     
     return null;
   };
@@ -83,7 +88,7 @@ export const AddChildForm = () => {
 
       const age = calculateAge(formData.birth_date);
       if (age === null) {
-        throw new Error("Impossible de calculer l'âge");
+        throw new Error(t.birthDateInvalid);
       }
 
       let photoUrl = null;
@@ -126,8 +131,8 @@ export const AddChildForm = () => {
       if (error) throw error;
 
       toast({
-        title: "Enfant ajouté",
-        description: "L'enfant a été ajouté avec succès.",
+        title: t.success,
+        description: t.successMessage,
       });
 
       navigate('/children');
@@ -135,8 +140,8 @@ export const AddChildForm = () => {
       console.error('Error adding child:', error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: error.message || "Une erreur est survenue lors de l'ajout de l'enfant",
+        title: t.error,
+        description: error.message || t.errorMessage,
       });
     } finally {
       setLoading(false);
@@ -149,7 +154,7 @@ export const AddChildForm = () => {
         <div className="space-y-4">
           <div>
             <Label className="text-lg font-semibold mb-4">
-              Informations de l'enfant
+              {t.childInfo}
             </Label>
           </div>
           
@@ -157,30 +162,34 @@ export const AddChildForm = () => {
             formData={formData}
             handleChange={handleChange}
             setFormData={setFormData}
+            translations={t}
           />
           
-          <PhotoUploadField handlePhotoChange={handlePhotoChange} />
+          <PhotoUploadField 
+            handlePhotoChange={handlePhotoChange} 
+            translations={t}
+          />
 
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t.description}</Label>
             <Textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Description générale de l'enfant..."
+              placeholder={t.descriptionPlaceholder}
               className="min-h-[100px]"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="story">Histoire</Label>
+            <Label htmlFor="story">{t.story}</Label>
             <Textarea
               id="story"
               name="story"
               value={formData.story}
               onChange={handleChange}
-              placeholder="Histoire de l'enfant..."
+              placeholder={t.storyPlaceholder}
               className="min-h-[150px]"
             />
           </div>
@@ -188,6 +197,7 @@ export const AddChildForm = () => {
           <NeedsSelectionField
             selectedNeeds={formData.needs}
             onNeedsChange={(needs) => setFormData(prev => ({ ...prev, needs }))}
+            translations={t}
           />
         </div>
 
@@ -198,14 +208,14 @@ export const AddChildForm = () => {
             onClick={() => navigate('/children')}
             className="w-full md:w-auto"
           >
-            Annuler
+            {t.cancel}
           </Button>
           <Button 
             type="submit" 
             disabled={loading}
             className="w-full md:w-auto"
           >
-            {loading ? "Ajout en cours..." : "Ajouter l'enfant"}
+            {loading ? t.adding : t.add}
           </Button>
         </div>
       </form>
