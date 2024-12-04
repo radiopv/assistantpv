@@ -1,3 +1,5 @@
+import { Card } from "@/components/ui/card";
+
 interface DonationStatsProps {
   donations: any[];
 }

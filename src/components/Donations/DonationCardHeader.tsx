@@ -23,6 +23,7 @@ interface DonationCardHeaderProps {
     status: string;
   };
   isAdmin?: boolean;
+  canDelete?: boolean;
   onEdit: () => void;
   onDelete?: () => void;
 }
@@ -30,6 +31,7 @@ interface DonationCardHeaderProps {
 export const DonationCardHeader = ({
   donation,
   isAdmin,
+  canDelete,
   onEdit,
   onDelete,
 }: DonationCardHeaderProps) => {

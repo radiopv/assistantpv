@@ -20,9 +20,10 @@ interface DonationCardProps {
   };
   onDelete?: () => void;
   isAdmin?: boolean;
+  canDelete?: boolean;
 }
 
-export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCardProps) => {
+export const DonationCard = ({ donation, onDelete, isAdmin = false, canDelete = false }: DonationCardProps) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const { toast } = useToast();
 
@@ -148,6 +149,7 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false }: DonationCa
         <DonationCardHeader
           donation={donation}
           isAdmin={isAdmin}
+          canDelete={canDelete}
           onEdit={() => setShowEditDialog(true)}
           onDelete={handleDelete}
         />
