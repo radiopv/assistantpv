@@ -4,25 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { convertJsonToNeeds } from "@/types/needs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ChildCardProps {
   child: any;
   onViewProfile: (id: string) => void;
   onSponsorClick: (child: any) => void;
 }
-
-const formatAge = (birthDate: string) => {
-  const today = new Date();
-  const birth = parseISO(birthDate);
-  const years = differenceInYears(today, birth);
-  
-  if (years === 0) {
-    const months = differenceInMonths(today, birth);
-    return `${months} mois`;
-  }
-  
-  return `${years} ans`;
-};
 
 const NEED_CATEGORIES = {
   education: "Éducation",
@@ -34,7 +22,23 @@ const NEED_CATEGORIES = {
   autre: "Autre"
 };
 
+const formatAge = (birthDate: string) => {
+  const { t } = useLanguage();
+  const today = new Date();
+  const birth = parseISO(birthDate);
+  const years = differenceInYears(today, birth);
+  
+  if (years === 0) {
+    const months = differenceInMonths(today, birth);
+    return `${months} ${t("months")}`;
+  }
+  
+  return `${years} ${t("years")}`;
+};
+
 export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
+  const { t } = useLanguage();
+
   return (
     <Card className="overflow-hidden">
       <div className="relative">
@@ -51,7 +55,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
                 : "bg-blue-100 text-blue-800"
             }`}
           >
-            {child.is_sponsored ? "Parrainé" : "Disponible"}
+            {child.is_sponsored ? t("sponsored") : t("available")}
           </span>
         </div>
       </div>
@@ -64,7 +68,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
             <p>{child.city}</p>
             {child.is_sponsored && child.sponsor_name && (
               <p className="font-medium text-blue-600">
-                Parrainé par: {child.sponsor_name}
+                {t("sponsored")} {t("by")}: {child.sponsor_name}
               </p>
             )}
           </div>
@@ -72,7 +76,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
 
         {child.description && (
           <div>
-            <h4 className="font-medium text-sm text-gray-700 mb-1">Description</h4>
+            <h4 className="font-medium text-sm text-gray-700 mb-1">{t("description")}</h4>
             <ScrollArea className="h-20">
               <p className="text-sm text-gray-600">{child.description}</p>
             </ScrollArea>
@@ -81,7 +85,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
 
         {child.story && (
           <div>
-            <h4 className="font-medium text-sm text-gray-700 mb-1">Histoire</h4>
+            <h4 className="font-medium text-sm text-gray-700 mb-1">{t("story")}</h4>
             <ScrollArea className="h-20">
               <p className="text-sm text-gray-600">{child.story}</p>
             </ScrollArea>
@@ -90,7 +94,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
 
         {child.comments && (
           <div>
-            <h4 className="font-medium text-sm text-gray-700 mb-1">Commentaires</h4>
+            <h4 className="font-medium text-sm text-gray-700 mb-1">{t("comments")}</h4>
             <ScrollArea className="h-20">
               <p className="text-sm text-gray-600">{child.comments}</p>
             </ScrollArea>
@@ -98,7 +102,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
         )}
 
         <div>
-          <h4 className="font-medium text-sm text-gray-700 mb-2">Besoins</h4>
+          <h4 className="font-medium text-sm text-gray-700 mb-2">{t("needs")}</h4>
           <div className="flex flex-wrap gap-2">
             {convertJsonToNeeds(child.needs).map((need, index) => (
               <Badge 
@@ -120,14 +124,14 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
             variant="outline"
             onClick={() => onViewProfile(child.id)}
           >
-            Voir le profil
+            {t("profile")}
           </Button>
 
           <Button 
             variant="outline"
             onClick={() => onSponsorClick(child)}
           >
-            {child.is_sponsored ? "Modifier parrain" : "Ajouter parrain"}
+            {child.is_sponsored ? t("edit") : t("addChild")}
           </Button>
         </div>
       </div>

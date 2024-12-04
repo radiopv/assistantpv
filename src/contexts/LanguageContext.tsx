@@ -76,6 +76,13 @@ const translations = {
     success: "Succès",
     years: "ans",
     months: "mois",
+    // Additional translations
+    by: "par",
+    selectSponsor: "Sélectionner un parrain",
+    removeSponsor: "Retirer le parrain",
+    sponsorUpdated: "Parrain mis à jour avec succès",
+    sponsorRemoved: "Parrain retiré avec succès",
+    errorUpdatingSponsor: "Erreur lors de la mise à jour du parrain",
   },
   es: {
     // Dashboard translations
@@ -144,6 +151,13 @@ const translations = {
     success: "Éxito",
     years: "años",
     months: "meses",
+    // Additional translations
+    by: "por",
+    selectSponsor: "Seleccionar patrocinador",
+    removeSponsor: "Eliminar patrocinador",
+    sponsorUpdated: "Patrocinador actualizado con éxito",
+    sponsorRemoved: "Patrocinador eliminado con éxito",
+    errorUpdatingSponsor: "Error al actualizar el patrocinador",
   }
 };
 

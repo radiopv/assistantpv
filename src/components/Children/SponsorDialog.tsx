@@ -5,6 +5,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsorDialogProps {
   child: any;
@@ -16,6 +17,7 @@ interface SponsorDialogProps {
 export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialogProps) => {
   const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id?.toString() || "");
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
 
   const handleSponsorUpdate = async (childId: string, sponsorId: string | null) => {
     try {
@@ -34,11 +36,11 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
       if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: ['children'] });
-      toast.success(sponsorId ? "Parrain ajouté avec succès" : "Parrain retiré avec succès");
+      toast.success(sponsorId ? t("success") : t("success"));
       onClose();
     } catch (error) {
       console.error('Error updating sponsor:', error);
-      toast.error("Une erreur est survenue lors de la mise à jour du parrain");
+      toast.error(t("error"));
     }
   };
 
@@ -47,7 +49,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {child.is_sponsored ? "Modifier le parrain" : "Ajouter un parrain"}
+            {child.is_sponsored ? t("edit") : t("addChild")}
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
@@ -56,11 +58,11 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
             onValueChange={setSelectedSponsor}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un parrain" />
+              <SelectValue placeholder={t("selectMessage")} />
             </SelectTrigger>
             <SelectContent>
               {child.is_sponsored && (
-                <SelectItem value="remove_sponsor">Retirer le parrain</SelectItem>
+                <SelectItem value="remove_sponsor">{t("delete")}</SelectItem>
               )}
               {sponsors?.map((sponsor) => (
                 <SelectItem key={sponsor.id} value={sponsor.id.toString()}>
@@ -75,13 +77,13 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
               variant="outline"
               onClick={onClose}
             >
-              Annuler
+              {t("cancel")}
             </Button>
             <Button
               onClick={() => handleSponsorUpdate(child.id, selectedSponsor === "remove_sponsor" ? null : selectedSponsor)}
               disabled={!selectedSponsor}
             >
-              Confirmer
+              {t("confirm")}
             </Button>
           </div>
         </div>
