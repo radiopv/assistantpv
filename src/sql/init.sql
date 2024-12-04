@@ -1,3 +1,16 @@
+-- Add is_featured column to donation_photos table if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'donation_photos' 
+        AND column_name = 'is_featured'
+    ) THEN
+        ALTER TABLE donation_photos ADD COLUMN is_featured BOOLEAN DEFAULT false;
+    END IF;
+END $$;
+
 -- Create notifications table
 CREATE TABLE IF NOT EXISTS public.notifications (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
