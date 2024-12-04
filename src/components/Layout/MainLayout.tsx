@@ -1,27 +1,31 @@
 import { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface MainLayoutProps {
   children?: ReactNode;
-  requireAdmin?: boolean;
-  requireAssistant?: boolean;
 }
 
-const MainLayout = ({ children, requireAdmin, requireAssistant }: MainLayoutProps) => {
+const MainLayout = ({ children }: MainLayoutProps) => {
   const { user, isAdmin, isAssistant } = useAuth();
+  const location = useLocation();
 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // Vérification des permissions
-  if (requireAdmin && !isAdmin) {
+  // Vérification des permissions basée sur le chemin
+  const path = location.pathname;
+  if (path.startsWith('/admin') && !isAdmin) {
     return <Navigate to="/" replace />;
   }
 
-  if (requireAssistant && !isAssistant && !isAdmin) {
+  if (path.startsWith('/assistant') && !isAssistant && !isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (path.startsWith('/sponsor') && user.role !== 'sponsor' && !isAdmin) {
     return <Navigate to="/" replace />;
   }
 
