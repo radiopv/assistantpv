@@ -23,9 +23,10 @@ interface SponsorCardProps {
   sponsor: any;
   onEdit: (sponsor: any) => void;
   onViewAlbum: (childId: string) => void;
+  onStatusChange: (sponsorId: string, field: string, value: boolean) => void;
 }
 
-export const SponsorCard = ({ sponsor, onEdit, onViewAlbum }: SponsorCardProps) => {
+export const SponsorCard = ({ sponsor, onEdit, onViewAlbum, onStatusChange }: SponsorCardProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
@@ -34,12 +35,16 @@ export const SponsorCard = ({ sponsor, onEdit, onViewAlbum }: SponsorCardProps) 
     setIsUpdating(true);
 
     try {
+      const newValue = !sponsor[field];
       const { error } = await supabase
         .from('sponsors')
-        .update({ [field]: !sponsor[field] })
+        .update({ [field]: newValue })
         .eq('id', sponsor.id);
 
       if (error) throw error;
+
+      // Call the onStatusChange prop to update the UI immediately
+      onStatusChange(sponsor.id, field, newValue);
 
       toast({
         title: "Succès",

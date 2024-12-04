@@ -12,10 +12,21 @@ interface SponsorsListProps {
   isLoading: boolean;
 }
 
-export const SponsorsList = ({ sponsors, isLoading }: SponsorsListProps) => {
+export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsListProps) => {
+  const [sponsors, setSponsors] = useState(initialSponsors);
   const [editingSponsor, setEditingSponsor] = useState<any>(null);
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  const handleStatusChange = (sponsorId: string, field: string, value: boolean) => {
+    setSponsors(prevSponsors => 
+      prevSponsors.map(sponsor => 
+        sponsor.id === sponsorId 
+          ? { ...sponsor, [field]: value }
+          : sponsor
+      )
+    );
+  };
 
   const viewAlbum = (childId: string) => {
     navigate(`/children/${childId}/album`);
@@ -50,6 +61,7 @@ export const SponsorsList = ({ sponsors, isLoading }: SponsorsListProps) => {
                 sponsor={sponsor}
                 onEdit={setEditingSponsor}
                 onViewAlbum={viewAlbum}
+                onStatusChange={handleStatusChange}
               />
             ))}
         </div>
@@ -65,6 +77,7 @@ export const SponsorsList = ({ sponsors, isLoading }: SponsorsListProps) => {
                 sponsor={sponsor}
                 onEdit={setEditingSponsor}
                 onViewAlbum={viewAlbum}
+                onStatusChange={handleStatusChange}
               />
             ))}
         </div>
