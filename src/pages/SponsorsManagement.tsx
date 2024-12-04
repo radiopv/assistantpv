@@ -35,7 +35,10 @@ const SponsorsManagement = () => {
         `)
         .order("name");
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching sponsors:", error);
+        throw error;
+      }
       return data;
     },
   });
@@ -47,12 +50,10 @@ const SponsorsManagement = () => {
   );
 
   const handleExport = () => {
-    // Implement CSV export functionality
     console.log("Export sponsors to CSV");
   };
 
   const handleImport = () => {
-    // Implement CSV import functionality
     console.log("Import sponsors from CSV");
   };
 
