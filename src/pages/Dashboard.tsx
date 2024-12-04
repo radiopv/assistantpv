@@ -24,6 +24,11 @@ import {
   MessageSquare,
   Heart,
   UserPlus,
+  FileText,
+  BarChart,
+  Camera,
+  Calendar,
+  Mail,
 } from "lucide-react";
 
 const Dashboard = () => {
@@ -66,6 +71,41 @@ const Dashboard = () => {
     };
   }, [queryClient]);
 
+  const adminLinks = [
+    { to: "/admin/permissions", icon: Settings, label: "Gestion des permissions", color: "bg-purple-100" },
+    { to: "/admin/media", icon: Image, label: "Gestion des médias", color: "bg-blue-100" },
+    { to: "/admin/sponsors", icon: UserCog, label: "Gestion des parrains", color: "bg-green-100" },
+    { to: "/admin/donations", icon: Gift, label: "Gestion des dons", color: "bg-yellow-100" },
+    { to: "/admin/statistics", icon: BarChart, label: "Statistiques", color: "bg-indigo-100" },
+    { to: "/admin/messages", icon: Mail, label: "Messages", color: "bg-pink-100" },
+  ];
+
+  const assistantLinks = [
+    { to: "/children", icon: Users, label: "Liste des enfants", color: "bg-blue-100" },
+    { to: "/children/add", icon: UserPlus, label: "Ajouter un enfant", color: "bg-green-100" },
+    { to: "/children/needs", icon: Heart, label: "Besoins des enfants", color: "bg-red-100" },
+    { to: "/sponsorships", icon: Heart, label: "Parrainages", color: "bg-pink-100" },
+    { to: "/messages", icon: MessageSquare, label: "Messages", color: "bg-purple-100" },
+    { to: "/media", icon: Camera, label: "Médias", color: "bg-indigo-100" },
+    { to: "/calendar", icon: Calendar, label: "Calendrier", color: "bg-cyan-100" },
+    { to: "/reports", icon: FileText, label: "Rapports", color: "bg-amber-100" },
+  ];
+
+  const renderQuickLinks = (links: any[]) => (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-8">
+      {links.map((link) => (
+        <Link key={link.to} to={link.to}>
+          <Card className={`p-6 hover:shadow-lg transition-shadow ${link.color}`}>
+            <div className="flex items-center gap-4">
+              <link.icon className="h-8 w-8 text-gray-700" />
+              <div className="font-medium text-gray-900">{link.label}</div>
+            </div>
+          </Card>
+        </Link>
+      ))}
+    </div>
+  );
+
   if (statsError) {
     return (
       <div className="space-y-6">
@@ -92,35 +132,6 @@ const Dashboard = () => {
       </div>
     );
   }
-
-  const renderQuickLinks = (links: any[]) => (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-8">
-      {links.map((link) => (
-        <Link key={link.to} to={link.to}>
-          <Card className={`p-6 hover:shadow-lg transition-shadow ${link.color}`}>
-            <div className="flex items-center gap-4">
-              <link.icon className="h-8 w-8 text-gray-700" />
-              <div className="font-medium text-gray-900">{link.label}</div>
-            </div>
-          </Card>
-        </Link>
-      ))}
-    </div>
-  );
-
-  const adminLinks = [
-    { to: "/admin/permissions", icon: Settings, label: "Gestion des permissions", color: "bg-purple-100" },
-    { to: "/admin/media", icon: Image, label: "Gestion des médias", color: "bg-blue-100" },
-    { to: "/admin/sponsors", icon: UserCog, label: "Gestion des parrains", color: "bg-green-100" },
-    { to: "/admin/donations", icon: Gift, label: "Gestion des dons", color: "bg-yellow-100" },
-  ];
-
-  const assistantLinks = [
-    { to: "/children", icon: Users, label: "Liste des enfants", color: "bg-blue-100" },
-    { to: "/children/add", icon: UserPlus, label: "Ajouter un enfant", color: "bg-green-100" },
-    { to: "/sponsorships", icon: Heart, label: "Parrainages", color: "bg-pink-100" },
-    { to: "/messages", icon: MessageSquare, label: "Messages", color: "bg-purple-100" },
-  ];
 
   return (
     <div className="space-y-8 animate-fade-in">
