@@ -15,20 +15,11 @@ interface Recipient {
   role: string;
 }
 
-interface MessageTemplate {
-  id: string;
-  name: string;
-  subject: string;
-  content: string;
-}
-
 export const NewMessageDialog = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
-  const [templates, setTemplates] = useState<MessageTemplate[]>([]);
   const [selectedRecipient, setSelectedRecipient] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState("");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const { user } = useAuth();
@@ -43,6 +34,7 @@ export const NewMessageDialog = () => {
 
     let query = supabase.from("sponsors").select("id, name, role");
 
+    // Filtrer les destinataires en fonction du rôle de l'utilisateur
     if (userData?.role === "sponsor") {
       query = query.in("role", ["admin", "assistant"]);
     } else if (userData?.role === "assistant") {
@@ -51,24 +43,14 @@ export const NewMessageDialog = () => {
       query = query.in("role", ["admin", "assistant", "sponsor"]);
     }
 
-    const { data } = await query;
-    setRecipients(data || []);
+    const { data, error } = await query;
 
-    // Load message templates
-    const { data: templateData } = await supabase
-      .from("message_templates")
-      .select("*")
-      .or(`is_global.eq.true,created_by.eq.${user?.id}`);
-    
-    setTemplates(templateData || []);
-  };
-
-  const handleTemplateSelect = (templateId: string) => {
-    const template = templates.find(t => t.id === templateId);
-    if (template) {
-      setSubject(template.subject);
-      setContent(template.content);
+    if (error) {
+      console.error("Error loading recipients:", error);
+      return;
     }
+
+    setRecipients(data || []);
   };
 
   const handleSubmit = async () => {
@@ -89,9 +71,6 @@ export const NewMessageDialog = () => {
         subject,
         content,
         sender_id: user?.id,
-        is_read: false,
-        is_starred: false,
-        is_archived: false,
       });
 
       if (messageError) throw messageError;
@@ -103,7 +82,6 @@ export const NewMessageDialog = () => {
 
       setOpen(false);
       setSelectedRecipient("");
-      setSelectedTemplate("");
       setSubject("");
       setContent("");
     } catch (error) {
@@ -146,23 +124,6 @@ export const NewMessageDialog = () => {
               </SelectContent>
             </Select>
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Modèle de message</label>
-            <Select value={selectedTemplate} onValueChange={handleTemplateSelect}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un modèle" />
-              </SelectTrigger>
-              <SelectContent>
-                {templates.map((template) => (
-                  <SelectItem key={template.id} value={template.id}>
-                    {template.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="space-y-2">
             <label className="text-sm font-medium">Sujet</label>
             <Input
@@ -171,7 +132,6 @@ export const NewMessageDialog = () => {
               placeholder="Sujet du message"
             />
           </div>
-
           <div className="space-y-2">
             <label className="text-sm font-medium">Message</label>
             <Textarea
@@ -181,7 +141,6 @@ export const NewMessageDialog = () => {
               rows={5}
             />
           </div>
-
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setOpen(false)}>
               Annuler

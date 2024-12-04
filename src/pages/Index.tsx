@@ -1,7 +1,17 @@
 import { Navigate } from "react-router-dom";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const Index = () => {
-  // Always redirect to the public home page
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div>Chargement...</div>;
+  }
+  
+  if (user) {
+    return <Navigate to="/dashboard" />;
+  }
+
   return <Navigate to="/" />;
 };
 

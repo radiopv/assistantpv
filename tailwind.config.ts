@@ -25,42 +25,29 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#E4002B", // Cuban red
+          DEFAULT: "#FF6B6B",
           foreground: "#FFFFFF",
-          hover: "#ff1741",
         },
         secondary: {
-          DEFAULT: "#003875", // Deep blue inspired by Cuban flag
+          DEFAULT: "#4A90E2",
           foreground: "#FFFFFF",
-          hover: "#004c9e",
         },
         accent: {
-          DEFAULT: "#FFD700", // Warm gold
+          DEFAULT: "#FFD93D",
           foreground: "#2D3748",
-          hover: "#ffd900",
         },
-        sidebar: {
-          DEFAULT: "#FFFFFF",
-          foreground: "#1A1F2C",
-          hover: "#F3F4F6",
-          active: "#E5E7EB",
-          border: "#E2E8F0",
-          accent: "#F1F5F9",
-          "accent-foreground": "#475569",
-          ring: "#94A3B8",
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
-        cuban: {
-          red: "#E4002B",
-          blue: "#003875",
-          white: "#FFFFFF",
-          gold: "#FFD700",
-          sand: "#F5DEB3",
-          palm: "#2E8B57",
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
         },
-      },
-      backgroundImage: {
-        'cuban-pattern': "url('/patterns/cuban-pattern.svg')",
-        'palm-leaves': "url('/patterns/palm-leaves.svg')",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -76,15 +63,10 @@ export default {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0)" },
         },
-        "wave": {
-          "0%, 100%": { transform: "rotate(0deg)" },
-          "50%": { transform: "rotate(15deg)" },
-        }
       },
       animation: {
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in": "slide-in 0.3s ease-out",
-        "wave": "wave 2s ease-in-out infinite",
       },
     },
   },

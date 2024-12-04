@@ -3,16 +3,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./components/Auth/AuthProvider";
+import { AuthProvider } from "./components/Auth/AuthProvider";
 import MainLayout from "./components/Layout/MainLayout";
 import PublicLayout from "./components/Layout/PublicLayout";
-
 import Home from "./pages/Home";
+import Stories from "./pages/Stories";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
-import AvailableChildren from "./pages/public/AvailableChildren";
-import PublicChildProfile from "./pages/public/ChildProfile";
-import BecomeSponsor from "./pages/public/BecomeSponsor";
 import AddChild from "./pages/AddChild";
 import ChildProfile from "./pages/ChildProfile";
 import ChildrenNeeds from "./pages/ChildrenNeeds";
@@ -24,15 +21,6 @@ import Messages from "./pages/Messages";
 import Rewards from "./pages/Rewards";
 import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
-import FAQ from "./pages/admin/FAQ";
-import Statistics from "./pages/admin/Statistics";
-import SiteConfig from "./pages/admin/SiteConfig";
-import Travels from "./pages/admin/Travels";
-import Reports from "./pages/admin/Reports";
-import PublicDonations from "./pages/public/Donations";
-import PublicTestimonials from "./pages/public/Testimonials";
-import History from "./pages/public/History";
-import PublicFAQ from "./pages/public/FAQ";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,19 +31,23 @@ const queryClient = new QueryClient({
   },
 });
 
-const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: { 
+const ProtectedRoute = ({ 
+  children, 
+  requiredPermission, 
+  requireAdmin, 
+  requireAssistant 
+}: { 
   children: React.ReactNode, 
   requiredPermission?: string,
-  requireAdmin?: boolean 
+  requireAdmin?: boolean,
+  requireAssistant?: boolean
 }) => {
   const { session, loading, isAssistant, user } = useAuth();
   
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-600">Chargement...</div>
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center">
+      <div className="text-gray-600">Chargement...</div>
+    </div>;
   }
   
   if (!session || !isAssistant) {
@@ -66,6 +58,10 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
     return <Navigate to="/" replace />;
   }
 
+  if (requireAssistant && !['admin', 'assistant'].includes(user?.role || '')) {
+    return <Navigate to="/" replace />;
+  }
+
   if (requiredPermission && !user?.permissions?.[requiredPermission] && user?.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
@@ -73,58 +69,56 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
   return <>{children}</>;
 };
 
-const AppRoutes = () => (
-  <Routes>
-    {/* Routes publiques */}
-    <Route element={<PublicLayout />}>
-      <Route index element={<Home />} />
-      <Route path="/enfants-disponibles" element={<AvailableChildren />} />
-      <Route path="/enfant/:id" element={<PublicChildProfile />} />
-      <Route path="/devenir-parrain" element={<BecomeSponsor />} />
-      <Route path="/dons" element={<PublicDonations />} />
-      <Route path="/temoignages" element={<PublicTestimonials />} />
-      <Route path="/histoire" element={<History />} />
-      <Route path="/faq" element={<PublicFAQ />} />
-    </Route>
+const ConditionalLayout = () => {
+  const { user } = useAuth();
+  const isStaff = ['admin', 'assistant'].includes(user?.role || '');
 
-    {/* Routes d'authentification */}
-    <Route path="/login" element={<Login />} />
+  if (isStaff) {
+    return <MainLayout><Outlet /></MainLayout>;
+  }
 
-    {/* Routes protégées */}
-    <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-      <Route path="/dashboard" element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
-      <Route path="/children" element={<ProtectedRoute requiredPermission="children"><Children /></ProtectedRoute>} />
-      <Route path="/children/:id" element={<ProtectedRoute requiredPermission="children"><ChildProfile /></ProtectedRoute>} />
-      <Route path="/children-needs" element={<ProtectedRoute requiredPermission="children"><ChildrenNeeds /></ProtectedRoute>} />
-      <Route path="/children/needs" element={<ProtectedRoute requiredPermission="children"><ChildrenNeeds /></ProtectedRoute>} />
-      <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
-      <Route path="/sponsorships" element={<ProtectedRoute requiredPermission="sponsorships"><Sponsorships /></ProtectedRoute>} />
-      <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
-      <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-      <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
-      <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
-      <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
-      <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
-      <Route path="/admin/reports" element={<ProtectedRoute requireAdmin><Reports /></ProtectedRoute>} />
-      <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
-      <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
-      <Route path="/admin/site-config" element={<ProtectedRoute requireAdmin><SiteConfig /></ProtectedRoute>} />
-      <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
-    </Route>
-  </Routes>
-);
+  return <PublicLayout><Outlet /></PublicLayout>;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <AuthProvider>
-        <TooltipProvider>
-          <AppRoutes />
-          <Toaster />
-          <Sonner />
-        </TooltipProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AuthProvider>
+          <Routes>
+            {/* Auth Routes */}
+            <Route path="/login" element={<Login />} />
+
+            {/* Protected Routes */}
+            <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+              <Route path="/dashboard" element={<ProtectedRoute requireAssistant><Dashboard /></ProtectedRoute>} />
+              <Route path="/children/needs" element={<ProtectedRoute requiredPermission="children"><ChildrenNeeds /></ProtectedRoute>} />
+              <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
+              <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
+              <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+              <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
+              <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
+              <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
+              <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
+            </Route>
+
+            {/* Public/Conditional Routes */}
+            <Route element={<ConditionalLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/stories" element={<Stories />} />
+              <Route path="/children" element={<Children />} />
+              <Route path="/children/:id" element={<ChildProfile />} />
+              <Route path="/sponsorships" element={<Sponsorships />} />
+            </Route>
+
+            {/* Fallback Route */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

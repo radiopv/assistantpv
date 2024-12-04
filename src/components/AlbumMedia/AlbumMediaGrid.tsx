@@ -1,7 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
-import { Alert } from "@/components/ui/alert";
-import { AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -10,7 +8,7 @@ interface AlbumMediaGridProps {
 }
 
 export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
-  const { data: media, isLoading, error } = useQuery({
+  const { data: media, isLoading } = useQuery({
     queryKey: ['album-media', childId],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -23,15 +21,6 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
       return data;
     }
   });
-
-  if (error) {
-    return (
-      <Alert variant="warning" className="flex items-center gap-2">
-        <AlertTriangle className="h-4 w-4" />
-        <span>L'album photo n'est pas encore disponible.</span>
-      </Alert>
-    );
-  }
 
   if (isLoading) {
     return (

@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   user: any | null;
@@ -33,32 +32,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
-          
-          // Redirection basée sur le rôle
-          if (window.location.pathname === '/login') {
-            if (parsedUser.role === 'admin' || parsedUser.role === 'assistant') {
-              navigate('/dashboard');
-            } else {
-              navigate('/');
-            }
-          }
         } else {
           setUser(null);
-          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
-            navigate("/login");
-          }
         }
       } catch (error) {
         console.error('Error checking auth:', error);
         setUser(null);
-        navigate("/login");
       } finally {
         setLoading(false);
       }
     };
 
     checkAuth();
-  }, [navigate]);
+  }, []);
 
   const signOut = async () => {
     try {
@@ -69,7 +55,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         title: "Déconnexion réussie",
         description: "À bientôt !",
       });
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Error signing out:", error);
       toast({

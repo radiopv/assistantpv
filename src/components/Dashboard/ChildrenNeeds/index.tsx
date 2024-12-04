@@ -17,7 +17,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
   onNeedsUpdate: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedChild, setSelectedChild] = useState<any | null>(null);
+  const [selectedChildren, setSelectedChildren] = useState<any[]>([]);
   const [newNeed, setNewNeed] = useState<Need>({ 
     category: "", 
     description: "", 
@@ -25,24 +25,29 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
   });
 
   const handleAddNeed = async () => {
-    if (!selectedChild) return;
+    if (selectedChildren.length === 0) return;
 
-    const updatedNeeds = [...(selectedChild.needs || []), newNeed];
-    const { error } = await supabase
-      .from('children')
-      .update({ needs: convertNeedsToJson(updatedNeeds) })
-      .eq('id', selectedChild.id);
+    try {
+      // Mettre à jour chaque enfant sélectionné
+      for (const child of selectedChildren) {
+        const updatedNeeds = [...(child.needs || []), newNeed];
+        const { error } = await supabase
+          .from('children')
+          .update({ needs: convertNeedsToJson(updatedNeeds) })
+          .eq('id', child.id);
 
-    if (error) {
+        if (error) throw error;
+      }
+
+      toast.success(`Besoin ajouté avec succès pour ${selectedChildren.length} enfant(s)`);
+      setNewNeed({ category: "", description: "", is_urgent: false });
+      setSelectedChildren([]);
+      setIsOpen(false);
+      onNeedsUpdate();
+    } catch (error) {
       toast.error("Erreur lors de l'ajout du besoin");
-      return;
+      console.error("Erreur:", error);
     }
-
-    toast.success("Besoin ajouté avec succès");
-    setNewNeed({ category: "", description: "", is_urgent: false });
-    setSelectedChild(null);
-    setIsOpen(false);
-    onNeedsUpdate();
   };
 
   if (isLoading) {
@@ -54,13 +59,7 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="p-4 rounded-lg border bg-white shadow-sm">
-              <Skeleton className="h-6 w-32 mb-4" />
-              <div className="space-y-4">
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-20 w-full" />
-              </div>
-            </div>
+            <Skeleton key={i} className="h-32 w-full" />
           ))}
         </div>
       </div>
@@ -82,33 +81,14 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-4">
-            <Select
-              value={selectedChild?.id || ""}
-              onValueChange={(value) => {
-                const child = children?.find(c => c.id === value);
-                setSelectedChild(child || null);
-              }}
-            >
-              <SelectTrigger className="bg-white mb-4">
-                <SelectValue placeholder="Sélectionner un enfant" />
-              </SelectTrigger>
-              <SelectContent>
-                {sortedChildren?.map((child) => (
-                  <SelectItem key={child.id} value={child.id}>
-                    {child.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {selectedChild && (
-              <AddNeedForm
-                selectedChild={selectedChild}
-                newNeed={newNeed}
-                setNewNeed={setNewNeed}
-                onSubmit={handleAddNeed}
-              />
-            )}
+            <AddNeedForm
+              children={children}
+              selectedChildren={selectedChildren}
+              newNeed={newNeed}
+              setSelectedChildren={setSelectedChildren}
+              setNewNeed={setNewNeed}
+              onSubmit={handleAddNeed}
+            />
           </CollapsibleContent>
         </Collapsible>
       </div>

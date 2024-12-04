@@ -36,47 +36,42 @@ export const PhotoUpload = ({
       }
 
       setUploading(true);
-      const files = Array.from(event.target.files);
-      const uploadPromises = files.map(async (file) => {
-        const fileExt = file.name.split('.').pop();
-        const filePath = `${sponsorId || donationId}/${Math.random()}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
-          .from(bucketName)
-          .upload(filePath, file);
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${sponsorId || donationId}/${Math.random()}.${fileExt}`;
 
-        if (uploadError) throw uploadError;
+      const { error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file);
 
-        const { data: { publicUrl } } = supabase.storage
-          .from(bucketName)
-          .getPublicUrl(filePath);
+      if (uploadError) throw uploadError;
 
-        if (sponsorId) {
-          const { error: updateError } = await supabase
-            .from('sponsors')
-            .update({ photo_url: publicUrl })
-            .eq('id', sponsorId);
+      const { data: { publicUrl } } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(filePath);
 
-          if (updateError) throw updateError;
-        } else if (donationId) {
-          const { error: dbError } = await supabase
-            .from('donation_photos')
-            .insert({
-              donation_id: donationId,
-              url: publicUrl,
-            });
+      if (sponsorId) {
+        const { error: updateError } = await supabase
+          .from('sponsors')
+          .update({ photo_url: publicUrl })
+          .eq('id', sponsorId);
 
-          if (dbError) throw dbError;
-        }
+        if (updateError) throw updateError;
+      } else if (donationId) {
+        const { error: dbError } = await supabase
+          .from('donation_photos')
+          .insert({
+            donation_id: donationId,
+            url: publicUrl,
+          });
 
-        return publicUrl;
-      });
-
-      await Promise.all(uploadPromises);
+        if (dbError) throw dbError;
+      }
 
       toast({
-        title: "Photos ajoutées",
-        description: "Les photos ont été ajoutées avec succès.",
+        title: "Photo ajoutée",
+        description: "La photo a été ajoutée avec succès.",
       });
 
       onUploadComplete?.();
@@ -94,12 +89,11 @@ export const PhotoUpload = ({
 
   return (
     <div className="space-y-4">
-      <Label htmlFor="photo">Ajouter des photos</Label>
+      <Label htmlFor="photo">Ajouter une photo</Label>
       <Input
         id="photo"
         type="file"
         accept="image/*"
-        multiple
         onChange={handleUpload}
         disabled={uploading}
       />
