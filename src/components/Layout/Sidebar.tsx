@@ -1,149 +1,140 @@
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { Button } from "@/components/ui/button";
 import { 
-  LayoutDashboard, 
+  Home, 
   Users, 
   Gift, 
-  MessageSquare,
+  LogOut, 
   Settings,
-  LogOut,
-  Image,
   Award,
-  Heart
+  MessageSquare,
+  BarChart,
+  Heart,
+  Camera,
+  Database,
+  UserCog,
+  Mail,
+  AlertTriangle,
+  Lock,
+  Layout,
+  Star,
+  HelpCircle,
+  Calendar,
+  Share2,
+  FileText,
+  Newspaper
 } from "lucide-react";
 
 const Sidebar = () => {
-  const { signOut, user } = useAuth();
-  const location = useLocation();
+  const { signOut, user, isAssistant } = useAuth();
 
   const isAdmin = user?.role === 'admin';
-  const isAssistant = ['admin', 'assistant'].includes(user?.role || '');
-
-  const mainLinks = [
-    {
-      href: "/",
-      label: "Tableau de bord",
-      icon: LayoutDashboard,
-      show: user?.permissions?.dashboard || isAdmin,
-    },
-    {
-      href: "/children",
-      label: "Enfants",
-      icon: Users,
-      show: user?.permissions?.children || isAdmin,
-    },
-    {
-      href: "/sponsorships",
-      label: "Parrainages",
-      icon: Heart,
-      show: user?.permissions?.sponsorships || isAdmin,
-    },
-    {
-      href: "/donations",
-      label: "Dons",
-      icon: Gift,
-      show: user?.permissions?.donations || isAdmin,
-    },
-    {
-      href: "/messages",
-      label: "Messages",
-      icon: MessageSquare,
-      show: true,
-    },
-    {
-      href: "/rewards",
-      label: "Récompenses",
-      icon: Award,
-      show: true,
-    },
-  ];
+  const isSponsor = user?.role === 'sponsor';
 
   const adminLinks = [
-    {
-      href: "/admin/permissions",
-      label: "Permissions",
-      icon: Settings,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/media",
-      label: "Médias",
-      icon: Image,
-      show: user?.permissions?.media || isAdmin,
-    },
-    {
-      href: "/admin/sponsors",
-      label: "Parrains",
-      icon: Users,
-      show: isAdmin,
-    },
+    { to: "/dashboard", icon: Home, label: "Tableau de bord" },
+    { to: "/children", icon: Users, label: "Enfants" },
+    { to: "/children/add", icon: Users, label: "Ajouter un enfant" },
+    { to: "/donations", icon: Gift, label: "Dons" },
+    { to: "/statistics", icon: BarChart, label: "Statistiques" },
+    { to: "/media-management", icon: Camera, label: "Gestion médias" },
+    { to: "/sponsors-management", icon: UserCog, label: "Gestion parrains" },
+    { to: "/messages", icon: Mail, label: "Messages" },
+    { to: "/homepage-management", icon: Layout, label: "Gestion accueil" },
+    { to: "/testimonials-management", icon: Star, label: "Gestion témoignages" },
+    { to: "/faq-management", icon: HelpCircle, label: "Gestion FAQ" },
+    { to: "/permissions", icon: Lock, label: "Permissions" },
+    { to: "/settings", icon: Settings, label: "Paramètres" }
   ];
 
+  const sponsorLinks = [
+    { to: "/sponsor-dashboard", icon: Home, label: "Mon tableau de bord" },
+    { to: "/messages", icon: MessageSquare, label: "Messages" },
+    { to: "/rewards", icon: Award, label: "Récompenses" },
+    { to: "/my-children", icon: Heart, label: "Mes enfants parrainés" },
+    { to: "/my-testimonials", icon: Star, label: "Mes témoignages" },
+    { to: "/my-memories", icon: Camera, label: "Mes souvenirs" },
+    { to: "/my-calendar", icon: Calendar, label: "Mon calendrier" },
+    { to: "/share", icon: Share2, label: "Partager" }
+  ];
+
+  const assistantLinks = [
+    { to: "/dashboard", icon: Home, label: "Tableau de bord" },
+    { to: "/children", icon: Users, label: "Enfants" },
+    { to: "/children/add", icon: Users, label: "Ajouter un enfant" },
+    { to: "/donations", icon: Gift, label: "Dons" },
+    { to: "/messages", icon: MessageSquare, label: "Messages" },
+    { to: "/urgent-needs", icon: AlertTriangle, label: "Besoins urgents" },
+    { to: "/media-management", icon: Camera, label: "Gestion médias" },
+    { to: "/reports", icon: FileText, label: "Rapports" },
+    { to: "/news", icon: Newspaper, label: "Actualités" }
+  ];
+
+  const renderLinks = (links) => {
+    return links.map((link) => (
+      <NavLink
+        key={link.to}
+        to={link.to}
+        className={({ isActive }) =>
+          `flex items-center gap-3 px-3 py-2 text-gray-500 transition-all hover:text-gray-900 ${
+            isActive ? 'bg-gray-100 text-gray-900 rounded-lg' : ''
+          }`
+        }
+      >
+        <link.icon className="h-4 w-4" />
+        <span className="text-sm font-medium">{link.label}</span>
+      </NavLink>
+    ));
+  };
+
   return (
-    <div className="flex h-full flex-col border-r bg-white">
-      <div className="p-6">
-        <Link to="/">
-          <h1 className="text-xl font-bold">Passion Varadero</h1>
-        </Link>
+    <div className="h-full px-3 py-4 overflow-y-auto bg-white border-r">
+      <div className="mb-8 px-4">
+        <h1 className="text-xl font-bold text-gray-900">Passion Varadero</h1>
       </div>
-      <ScrollArea className="flex-1">
-        <div className="space-y-4 py-4">
-          <div className="px-3 py-2">
-            <div className="space-y-1">
-              {mainLinks.filter(link => link.show).map((link) => (
-                <Link key={link.href} to={link.href}>
-                  <Button
-                    variant={location.pathname === link.href ? "secondary" : "ghost"}
-                    className={cn(
-                      "w-full justify-start",
-                      location.pathname === link.href && "bg-primary/10"
-                    )}
-                  >
-                    <link.icon className="mr-2 h-4 w-4" />
-                    {link.label}
-                  </Button>
-                </Link>
-              ))}
-            </div>
+      
+      <nav className="space-y-6">
+        {isAdmin && (
+          <div className="space-y-1">
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Administration
+            </p>
+            {renderLinks(adminLinks)}
           </div>
-          {(isAdmin || isAssistant) && (
-            <div className="px-3 py-2">
-              <h2 className="mb-2 px-4 text-lg font-semibold">Administration</h2>
-              <div className="space-y-1">
-                {adminLinks.filter(link => link.show).map((link) => (
-                  <Link key={link.href} to={link.href}>
-                    <Button
-                      variant={location.pathname === link.href ? "secondary" : "ghost"}
-                      className={cn(
-                        "w-full justify-start",
-                        location.pathname === link.href && "bg-primary/10"
-                      )}
-                    >
-                      <link.icon className="mr-2 h-4 w-4" />
-                      {link.label}
-                    </Button>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
-      <div className="p-4 border-t">
+        )}
+        
+        {isSponsor && (
+          <div className="space-y-1">
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Espace Parrain
+            </p>
+            {renderLinks(sponsorLinks)}
+          </div>
+        )}
+        
+        {isAssistant && !isAdmin && (
+          <div className="space-y-1">
+            <p className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Espace Assistant
+            </p>
+            {renderLinks(assistantLinks)}
+          </div>
+        )}
+      </nav>
+
+      <div className="border-t mt-6 pt-6">
         <Button
           variant="ghost"
-          className="w-full justify-start"
+          className="w-full justify-start text-gray-500 hover:text-gray-900"
           onClick={() => signOut()}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Déconnexion
+          <span className="text-sm font-medium">Déconnexion</span>
         </Button>
       </div>
     </div>
   );
 };
 
-export default Sidebar;
+export { Sidebar };

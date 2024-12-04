@@ -5,6 +5,31 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AvailableChildrenList } from "@/components/Sponsorship/AvailableChildrenList";
 import { SponsoredChildrenList } from "@/components/Sponsorship/SponsoredChildrenList";
 import { Loader2 } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
+
+interface Child {
+  id: string;
+  name: string;
+  age: number;
+  city: string | null;
+  gender: 'male' | 'female';
+  photo_url: string | null;
+  is_sponsored: boolean;
+  needs: {
+    category: string;
+    is_urgent: boolean;
+  }[];
+  sponsors: {
+    name: string;
+    email: string;
+    photo_url: string | null;
+  } | null;
+}
+
+interface NeedJson {
+  category?: string;
+  is_urgent?: boolean;
+}
 
 const SponsorshipManagement = () => {
   const { data: children, isLoading } = useQuery({
@@ -14,16 +39,40 @@ const SponsorshipManagement = () => {
         .from('children')
         .select(`
           *,
-          sponsors (
-            name,
-            email,
-            photo_url
+          sponsorships (
+            sponsors (
+              name,
+              email,
+              photo_url
+            )
           )
         `)
         .order('name');
 
       if (error) throw error;
-      return data;
+      
+      return data?.map(child => {
+        // Get sponsor from sponsorship if exists
+        const sponsor = child.sponsorships?.[0]?.sponsors || null;
+        
+        // Transform needs from Json to typed array
+        const needs = Array.isArray(child.needs) 
+          ? child.needs.map(need => {
+              const needObj = need as NeedJson;
+              return {
+                category: String(needObj?.category || ''),
+                is_urgent: Boolean(needObj?.is_urgent || false)
+              };
+            })
+          : [];
+
+        return {
+          ...child,
+          gender: child.gender.toLowerCase() as 'male' | 'female',
+          needs,
+          sponsors: sponsor
+        };
+      }) as Child[];
     }
   });
 

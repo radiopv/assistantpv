@@ -1,19 +1,17 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/components/ui/use-toast";
 import { ErrorAlert } from "@/components/ErrorAlert";
-import { AlbumMediaUpload } from "@/components/AlbumMedia/AlbumMediaUpload";
-import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
-import { ProfileHeader } from "@/components/Children/ProfileHeader";
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { LoadingState } from "@/components/ChildProfile/LoadingState";
+import { ProfileHeader } from "@/components/ChildProfile/ProfileHeader";
+import { ProfileActions } from "@/components/ChildProfile/ProfileActions";
 
 const ChildProfile = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +19,6 @@ const ChildProfile = () => {
   const [editing, setEditing] = useState(false);
   const { user } = useAuth();
   
-  // Check if user is admin or assistant
   const canEdit = user?.role === 'admin' || user?.role === 'assistant';
 
   useEffect(() => {
@@ -38,6 +35,7 @@ const ChildProfile = () => {
 
       if (error) throw error;
       setChild(data);
+      setError(null);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -113,10 +111,6 @@ const ChildProfile = () => {
     setChild(prev => ({ ...prev, [field]: value }));
   };
 
-  const handlePhotoUpdate = (url: string) => {
-    setChild(prev => ({ ...prev, photo_url: url }));
-  };
-
   if (error) {
     return (
       <div className="space-y-6">
@@ -129,63 +123,32 @@ const ChildProfile = () => {
   }
 
   if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-10 w-10" />
-          <Skeleton className="h-8 w-64" />
-        </div>
-        <Card className="p-6">
-          <div className="space-y-6">
-            <Skeleton className="h-48 w-full" />
-            <div className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-10 w-full" />
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   return (
     <div className="space-y-6">
-      <ProfileHeader
-        name={child.name}
-        editing={editing}
-        onBack={() => navigate('/children')}
-        onEdit={() => canEdit ? setEditing(true) : toast({
-          variant: "destructive",
-          title: "Accès refusé",
-          description: "Vous n'avez pas les permissions nécessaires pour modifier ce profil.",
-        })}
-        onSave={handleUpdate}
-        onDelete={handleDelete}
-        showEditButtons={canEdit}
-      />
-
-      <div className="grid gap-6">
+      <ProfileHeader name={child.name} />
+      
+      <Card className="p-6">
         <ProfileDetails
           child={child}
           editing={editing}
           onChange={handleChange}
-          onPhotoUpdate={handlePhotoUpdate}
+          onPhotoUpdate={(url) => handleChange('photo_url', url)}
         />
-
-        {canEdit && (
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Photos de l'album parrain</h2>
-            <p className="text-sm text-gray-500 mb-4">
-              Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.
-            </p>
-            <div className="space-y-6">
-              <AlbumMediaUpload childId={id!} onUploadComplete={loadChild} />
-              <AlbumMediaGrid childId={id!} />
-            </div>
-          </Card>
-        )}
-      </div>
+        
+        <div className="mt-6">
+          <ProfileActions
+            childId={id}
+            canEdit={canEdit}
+            editing={editing}
+            setEditing={setEditing}
+            handleUpdate={handleUpdate}
+            handleDelete={handleDelete}
+          />
+        </div>
+      </Card>
     </div>
   );
 };

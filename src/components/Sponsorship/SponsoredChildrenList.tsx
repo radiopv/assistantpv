@@ -4,8 +4,28 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+interface Sponsor {
+  name: string;
+  photo_url: string | null;
+  email?: string;
+}
+
+interface Child {
+  id: string;
+  name: string;
+  age: number;
+  city: string | null;
+  gender: 'male' | 'female';
+  photo_url: string | null;
+  sponsors: Sponsor | null;
+  needs?: {
+    category: string;
+    is_urgent: boolean;
+  }[];
+}
+
 interface SponsoredChildrenListProps {
-  children: any[];
+  children: Child[];
 }
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
@@ -33,20 +53,22 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
             {child.sponsors && (
               <div className="mt-4 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                 <Avatar>
-                  <AvatarImage src={child.sponsors.photo_url} />
+                  <AvatarImage src={child.sponsors.photo_url || undefined} />
                   <AvatarFallback>
                     {child.sponsors.name?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-medium">{child.sponsors.name}</p>
-                  <p className="text-sm text-gray-500">{child.sponsors.email}</p>
+                  {child.sponsors.email && (
+                    <p className="text-sm text-gray-500">{child.sponsors.email}</p>
+                  )}
                 </div>
               </div>
             )}
 
             <div className="mt-3 flex flex-wrap gap-2">
-              {child.needs?.map((need: any, index: number) => (
+              {child.needs?.map((need, index) => (
                 <Badge 
                   key={`${need.category}-${index}`}
                   variant={need.is_urgent ? "destructive" : "secondary"}

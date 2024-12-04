@@ -2,8 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { BadgeCard } from "@/components/Rewards/BadgeCard";
 import { LevelCard } from "@/components/Rewards/LevelCard";
+import { BadgeProgress } from "@/components/Rewards/BadgeProgress";
+import { ActionsList } from "@/components/Rewards/ActionsList";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Rewards = () => {
   const { user } = useAuth();
@@ -69,49 +72,63 @@ const Rewards = () => {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
-        <h2 className="text-2xl font-bold mb-4">Niveau et Progression</h2>
-        <div className="grid gap-4 md:grid-cols-2">
-          {levels?.map(level => {
-            // Parse the benefits from the JSON structure
-            const benefitsArray = level.benefits && typeof level.benefits === 'object' 
-              ? (level.benefits as { features?: string[] }).features || []
-              : [];
+        <h2 className="text-2xl font-bold mb-6">Récompenses et Progression</h2>
+        
+        <Tabs defaultValue="progress" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="progress">Progression</TabsTrigger>
+            <TabsTrigger value="badges">Badges</TabsTrigger>
+            <TabsTrigger value="actions">Actions</TabsTrigger>
+          </TabsList>
 
-            return (
-              <LevelCard
-                key={level.id}
-                name={level.name}
-                description={level.description}
-                currentPoints={userPoints}
-                requiredPoints={level.min_points}
-                benefits={benefitsArray}
-                isCurrent={level.id === currentLevel?.id}
-              />
-            );
-          })}
-        </div>
-      </div>
+          <TabsContent value="progress" className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              {levels?.map(level => {
+                const benefitsArray = level.benefits && typeof level.benefits === 'object' 
+                  ? (level.benefits as { features?: string[] }).features || []
+                  : [];
 
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Badges et Récompenses</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {badges?.map(badge => {
-            const achievement = achievements?.find(a => a.badge_id === badge.id);
-            const progress = 0; // TODO: Calculate actual progress
-            
-            return (
-              <BadgeCard
-                key={badge.id}
-                name={badge.name}
-                description={badge.description}
-                icon={badge.icon}
-                points={badge.points}
-                isUnlocked={!!achievement}
-                progress={progress}
-              />
-            );
-          })}
-        </div>
+                return (
+                  <LevelCard
+                    key={level.id}
+                    name={level.name}
+                    description={level.description}
+                    currentPoints={userPoints}
+                    requiredPoints={level.min_points}
+                    benefits={benefitsArray}
+                    isCurrent={level.id === currentLevel?.id}
+                  />
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="badges" className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {badges?.map(badge => {
+                const achievement = achievements?.find(a => a.badge_id === badge.id);
+                const progress = achievement ? 100 : 
+                  Math.min((userPoints / badge.points) * 100, 100);
+                
+                return (
+                  <BadgeProgress
+                    key={badge.id}
+                    name={badge.name}
+                    description={badge.description}
+                    currentPoints={userPoints}
+                    requiredPoints={badge.points}
+                    category={badge.category}
+                    isUnlocked={!!achievement}
+                  />
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="actions">
+            <ActionsList />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
