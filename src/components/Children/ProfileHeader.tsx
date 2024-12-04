@@ -19,7 +19,6 @@ interface ProfileHeaderProps {
   onEdit: () => void;
   onSave: () => void;
   onDelete: () => void;
-  showEditButtons?: boolean;
 }
 
 export const ProfileHeader = ({ 
@@ -28,8 +27,7 @@ export const ProfileHeader = ({
   onBack, 
   onEdit, 
   onSave, 
-  onDelete,
-  showEditButtons = true
+  onDelete 
 }: ProfileHeaderProps) => {
   return (
     <div className="flex justify-between items-center">
@@ -42,46 +40,44 @@ export const ProfileHeader = ({
           {name}
         </h1>
       </div>
-      {showEditButtons && (
-        <div className="flex gap-2">
-          <Button 
-            variant={editing ? "outline" : "default"}
-            onClick={() => editing ? onSave() : onEdit()}
-          >
-            {editing ? (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                Enregistrer
-              </>
-            ) : (
-              "Modifier"
-            )}
-          </Button>
+      <div className="flex gap-2">
+        <Button 
+          variant={editing ? "outline" : "default"}
+          onClick={() => editing ? onSave() : onEdit()}
+        >
+          {editing ? (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Enregistrer
+            </>
+          ) : (
+            "Modifier"
+          )}
+        </Button>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash2 className="w-4 h-4 mr-2" />
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="destructive">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Supprimer
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet enfant ?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Cette action est irréversible. Toutes les informations associées à cet enfant seront définitivement supprimées.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                 Supprimer
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet enfant ?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Cette action est irréversible. Toutes les informations associées à cet enfant seront définitivement supprimées.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Supprimer
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 };

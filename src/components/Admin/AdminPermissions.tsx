@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Search, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,11 +18,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { UserPermissionCard } from "./UserPermissionCard";
-import { RolePermissions } from "./RolePermissions";
-import { PageVisibility } from "./PageVisibility";
 
-const pagePermissions = [
+interface Permission {
+  page: string;
+  label: string;
+  description: string;
+}
+
+const pagePermissions: Permission[] = [
   { page: "dashboard", label: "Dashboard", description: "Accès au tableau de bord" },
   { page: "children", label: "Enfants", description: "Accès à la liste des enfants" },
   { page: "donations", label: "Dons", description: "Accès aux dons" },
@@ -26,7 +33,7 @@ const pagePermissions = [
   { page: "media", label: "Médias", description: "Accès à la gestion des médias" },
 ];
 
-const actionPermissions = [
+const actionPermissions: Permission[] = [
   { page: "delete_children", label: "Supprimer des enfants", description: "Autoriser la suppression d'enfants" },
   { page: "edit_children", label: "Modifier des enfants", description: "Autoriser la modification des enfants" },
   { page: "delete_media", label: "Supprimer des médias", description: "Autoriser la suppression des médias" },
@@ -34,11 +41,48 @@ const actionPermissions = [
   { page: "delete_donations", label: "Supprimer les dons", description: "Autoriser la suppression des dons" },
 ];
 
+const PermissionsList = ({ 
+  permissions, 
+  user, 
+  onUpdatePermissions 
+}: { 
+  permissions: Permission[], 
+  user: any, 
+  onUpdatePermissions: (userId: string, permissions: any) => void 
+}) => (
+  <div className="space-y-4">
+    {permissions.map((permission) => (
+      <div key={permission.page} className="flex items-start space-x-3">
+        <Checkbox
+          id={`${user.id}-${permission.page}`}
+          checked={user.permissions?.[permission.page] === true}
+          onCheckedChange={(checked) => {
+            const newPermissions = {
+              ...user.permissions,
+              [permission.page]: checked
+            };
+            onUpdatePermissions(user.id, newPermissions);
+          }}
+        />
+        <div>
+          <label
+            htmlFor={`${user.id}-${permission.page}`}
+            className="font-medium cursor-pointer"
+          >
+            {permission.label}
+          </label>
+          <p className="text-sm text-gray-600">{permission.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 export const AdminPermissions = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState("pages");
   const [userToDelete, setUserToDelete] = useState<string | null>(null);
 
   useEffect(() => {
@@ -50,7 +94,7 @@ export const AdminPermissions = () => {
       const { data, error } = await supabase
         .from('sponsors')
         .select('*')
-        .in('role', ['admin', 'assistant', 'sponsor'])
+        .in('role', ['admin', 'assistant'])
         .order('role');
       
       if (error) throw error;
@@ -122,37 +166,54 @@ export const AdminPermissions = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="users">Utilisateurs</TabsTrigger>
-          <TabsTrigger value="roles">Rôles</TabsTrigger>
-          <TabsTrigger value="pages">Visibilité des pages</TabsTrigger>
+          <TabsTrigger value="pages">Pages</TabsTrigger>
+          <TabsTrigger value="actions">Actions</TabsTrigger>
         </TabsList>
 
-        {activeTab === "users" && (
-          <div className="mt-6 grid gap-6">
-            {filteredUsers.map((user) => (
-              <UserPermissionCard
-                key={user.id}
-                user={user}
-                pagePermissions={pagePermissions}
-                actionPermissions={actionPermissions}
-                onUpdatePermissions={updateUserPermissions}
-                onDeleteUser={() => setUserToDelete(user.id)}
-              />
-            ))}
-          </div>
-        )}
+        <div className="mt-6 grid gap-6">
+          {filteredUsers.map((user) => (
+            <Card key={user.id} className="p-6">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+                <div>
+                  <h3 className="font-semibold">{user.name}</h3>
+                  <p className="text-sm text-gray-600">{user.email}</p>
+                </div>
+                <div className="flex gap-2 mt-2 md:mt-0 items-center">
+                  <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                    {user.role}
+                  </Badge>
+                  <Badge variant={user.is_active ? 'default' : 'destructive'}>
+                    {user.is_active ? 'Actif' : 'Inactif'}
+                  </Badge>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-red-500 hover:text-red-700 hover:bg-red-100"
+                    onClick={() => setUserToDelete(user.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
 
-        {activeTab === "roles" && (
-          <div className="mt-6">
-            <RolePermissions />
-          </div>
-        )}
+              <TabsContent value="pages" className="mt-0">
+                <PermissionsList
+                  permissions={pagePermissions}
+                  user={user}
+                  onUpdatePermissions={updateUserPermissions}
+                />
+              </TabsContent>
 
-        {activeTab === "pages" && (
-          <div className="mt-6">
-            <PageVisibility />
-          </div>
-        )}
+              <TabsContent value="actions" className="mt-0">
+                <PermissionsList
+                  permissions={actionPermissions}
+                  user={user}
+                  onUpdatePermissions={updateUserPermissions}
+                />
+              </TabsContent>
+            </Card>
+          ))}
+        </div>
       </Tabs>
 
       <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>

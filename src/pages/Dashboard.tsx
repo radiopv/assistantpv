@@ -11,7 +11,6 @@ import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/Sponsorsh
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
 import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
-import { HomepageManager } from "@/components/Admin/HomepageManager";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { DashboardStats } from "@/types/dashboard";
 
@@ -20,12 +19,12 @@ const Dashboard = () => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
 
-  const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery<DashboardStats>({
+  const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_dashboard_statistics');
+      const { data: rawData, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data as unknown as DashboardStats;
+      return rawData as DashboardStats;
     },
     meta: {
       errorMessage: "Erreur lors du chargement des statistiques",
@@ -90,10 +89,10 @@ const Dashboard = () => {
       <DashboardHeader stats={stats} />
       <DetailedStats />
       
+      {/* Nouvelles statistiques avancées */}
       <div className="space-y-8">
         {isAdmin && (
           <>
-            <HomepageManager />
             <SponsorshipStats />
             <div className="grid gap-4 md:grid-cols-2">
               <UrgentNeedsStats />

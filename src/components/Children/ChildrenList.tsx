@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
-import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface ChildrenListProps {
   children: any[];
@@ -24,9 +23,6 @@ const formatAge = (birthDate: string) => {
 };
 
 export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenListProps) => {
-  const { user } = useAuth();
-  const isStaff = user?.role === 'admin' || user?.role === 'assistant';
-
   if (isLoading) {
     return (
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -12,7 +12,3 @@ export interface DashboardStats {
   };
   cities: number;
 }
-
-export interface DashboardResponse {
-  data: DashboardStats;
-}

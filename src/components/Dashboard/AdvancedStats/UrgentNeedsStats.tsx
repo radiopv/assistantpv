@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
-import { UrgentNeedsByCityStats } from "@/types/statistics";
 import {
   PieChart,
   Pie,
@@ -15,7 +14,7 @@ import {
 const COLORS = ['#FF8042', '#00C49F', '#FFBB28', '#0088FE'];
 
 export const UrgentNeedsStats = () => {
-  const { data: stats, isLoading } = useQuery<UrgentNeedsByCityStats[]>({
+  const { data: stats, isLoading } = useQuery({
     queryKey: ['urgent-needs-by-city'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_urgent_needs_by_city');
@@ -43,7 +42,7 @@ export const UrgentNeedsStats = () => {
               outerRadius={100}
               label
             >
-              {stats?.map((entry, index) => (
+              {stats?.map((entry: any, index: number) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
