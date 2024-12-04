@@ -45,7 +45,7 @@ const Children = () => {
   }, [children]);
 
   const hasUrgentNeeds = (child: any) => {
-    if (!child.needs) return false;
+    if (!child.needs || !Array.isArray(child.needs)) return false;
     return child.needs.some((need: any) => need.is_urgent);
   };
 
