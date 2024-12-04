@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut, Languages } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileForm } from "@/components/Profile/ProfileForm";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -20,7 +20,6 @@ export const UserProfileMenu = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [scanning, setScanning] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -51,23 +50,6 @@ export const UserProfileMenu = () => {
     setIsProfileOpen(open);
   };
 
-  const handleScanTranslations = async () => {
-    setScanning(true);
-    try {
-      // Simulate scanning for demonstration
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Here you would implement the actual scanning logic
-      // For now, we'll just show a toast
-      toast.success(t("translationsFound").replace("{{count}}", "5"));
-    } catch (error) {
-      console.error('Error scanning translations:', error);
-      toast.error(t("translationError"));
-    } finally {
-      setScanning(false);
-    }
-  };
-
   if (!user) {
     return null;
   }
@@ -77,18 +59,6 @@ export const UserProfileMenu = () => {
       <span className="text-sm text-gray-600">
         {t("welcome")}, {formData.name || t("user")}
       </span>
-      
-      {user.role === 'admin' && (
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={handleScanTranslations}
-          disabled={scanning}
-        >
-          <Languages className="w-4 h-4 mr-2" />
-          {scanning ? t("scanningTranslations") : t("scanAssistantSection")}
-        </Button>
-      )}
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
