@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import {
@@ -18,18 +18,38 @@ export const UserProfileMenu = () => {
   const { user, signOut } = useAuth();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-    city: user?.city || "",
-    photo_url: user?.photo_url || "",
+    name: "",
+    email: "",
+    phone: "",
+    city: "",
+    photo_url: "",
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        city: user.city || "",
+        photo_url: user.photo_url || "",
+      });
+    }
+  }, [user]);
 
   const initials = formData.name
     ?.split(' ')
     .map(n => n[0])
     .join('')
     .toUpperCase() || '?';
+
+  const handleOpenChange = (open: boolean) => {
+    setIsProfileOpen(open);
+  };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex items-center gap-4">
@@ -59,9 +79,9 @@ export const UserProfileMenu = () => {
           
           <DropdownMenuSeparator />
           
-          <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+          <Dialog open={isProfileOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-              <DropdownMenuItem>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <User className="mr-2 h-4 w-4" />
                 <span>Profil</span>
               </DropdownMenuItem>
@@ -72,7 +92,7 @@ export const UserProfileMenu = () => {
               </DialogHeader>
               <ProfileForm 
                 initialData={formData}
-                userId={user?.id}
+                userId={user.id}
                 onClose={() => setIsProfileOpen(false)}
               />
             </DialogContent>
