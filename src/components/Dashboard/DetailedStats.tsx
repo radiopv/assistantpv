@@ -19,8 +19,13 @@ import { AlertTriangle } from "lucide-react";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
+type DailyDonation = {
+  day: number;
+  donations: number;
+}
+
 export const DetailedStats = () => {
-  const { data: dailyStats, isLoading: dailyLoading, error: dailyError } = useQuery({
+  const { data: dailyStats, isLoading: dailyLoading, error: dailyError } = useQuery<DailyDonation[]>({
     queryKey: ['daily-donations'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_daily_donation_trends');

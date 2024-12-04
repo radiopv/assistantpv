@@ -74,7 +74,7 @@ export type Database = {
           title?: string | null
           type?: string
           updated_at?: string | null
-          url?: string
+          url?: string | null
         }
         Relationships: [
           {
@@ -378,7 +378,7 @@ export type Database = {
           sponsorship_id?: number | null
           sponsorship_status?: string | null
           sponsorships?: string | null
-          start_date?: string | null
+          start_date?: string
           status: string
           updated_at?: string | null
         }
@@ -494,7 +494,7 @@ export type Database = {
           created_at?: string | null
           donation_id?: string | null
           id?: string | null
-          quantity?: number | null
+          quantity?: number
           updated_at?: string | null
         }
         Relationships: []
@@ -1270,7 +1270,7 @@ export type Database = {
           link?: string | null
           recipient_id?: string | null
           title?: string
-          type?: string
+          type: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1465,7 +1465,7 @@ export type Database = {
           created_at?: string | null
           data?: Json | null
           execute_at?: string
-          id?: string
+          id: string
           last_attempt?: string | null
           status?: string | null
           task_type?: string
@@ -1825,7 +1825,7 @@ export type Database = {
           id?: string
           motivation?: string | null
           phone?: string | null
-          status?: string
+          status: string
           terms_accepted?: boolean
           updated_at?: string | null
         }
@@ -1959,7 +1959,7 @@ export type Database = {
           is_featured?: boolean | null
           rating?: number | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           child_id?: string | null
@@ -2053,7 +2053,7 @@ export type Database = {
           created_at?: string | null
           earned_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
           updated_at?: string | null
@@ -2111,7 +2111,7 @@ export type Database = {
           category_name: string | null
           description: string | null
           donation_id: string | null
-          id: string | null
+          id: string
           quantity: number | null
         }
         Relationships: [
@@ -2296,6 +2296,13 @@ export type Database = {
       get_default_privacy_settings: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      get_daily_donation_trends: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          day: number
+          donations: number
+        }[]
       }
       get_featured_donation_videos: {
         Args: Record<PropertyKey, never>
@@ -2520,4 +2527,3 @@ export type Database = {
     }
   }
 }
-
