@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
@@ -149,6 +150,42 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
             disabled
           />
         )}
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="description">Description</Label>
+        <Textarea
+          id="description"
+          value={child.description || ""}
+          onChange={(e) => handleChange("description", e.target.value)}
+          disabled={!editing}
+          placeholder="Description générale de l'enfant..."
+          className="min-h-[100px]"
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="story">Histoire</Label>
+        <Textarea
+          id="story"
+          value={child.story || ""}
+          onChange={(e) => handleChange("story", e.target.value)}
+          disabled={!editing}
+          placeholder="Histoire de l'enfant..."
+          className="min-h-[150px]"
+        />
+      </div>
+
+      <div className="grid gap-2">
+        <Label htmlFor="comments">Commentaires</Label>
+        <Textarea
+          id="comments"
+          value={child.comments || ""}
+          onChange={(e) => handleChange("comments", e.target.value)}
+          disabled={!editing}
+          placeholder="Commentaires additionnels..."
+          className="min-h-[100px]"
+        />
       </div>
 
       {editing && (
