@@ -67,5 +67,8 @@ export const spanishTranslations = {
   viewSponsoredChildren: "Ver niños apadrinados",
   viewUrgentNeeds: "Ver necesidades urgentes",
   viewCityStats: "Ver estadísticas por ciudad",
-  viewIncompleteProfiles: "Ver perfiles incompletos"
+  viewIncompleteProfiles: "Ver perfiles incompletos",
+
+  // Children list translations
+  edit: "Modificar el padrino"
 };
