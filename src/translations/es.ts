@@ -91,7 +91,7 @@ export const spanishTranslations = {
   scanningTranslations: "Escaneando...",
   translationsFound: "{{count}} textos para traducir encontrados",
   scanAssistantSection: "Escanear sección de asistente",
-
+  
   // Profile status and filters
   incompleteProfiles: "Estos perfiles están incompletos. Haga clic en un perfil para completar la información faltante.",
   filterByCity: "Filtrar por ciudad",
@@ -109,13 +109,4 @@ export const spanishTranslations = {
   peopleHelped: "Personas ayudadas",
   grid: "Cuadrícula",
   list: "Lista",
-
-  // New additions
-  activeSponsors: "Padrinos activos",
-  inactiveSponsors: "Padrinos inactivos",
-  searchSponsor: "Buscar padrino",
-  sponsorManagement: "Gestión de padrinos",
-  export: "Exportar",
-  exportToCsv: "Exportar a CSV",
-  importFromCsv: "Importar desde CSV",
 };

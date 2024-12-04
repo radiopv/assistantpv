@@ -13,6 +13,8 @@ import {
   MapPin, 
   Star,
   Users,
+  Eye,
+  EyeOff,
   ToggleLeft,
   ToggleRight
 } from "lucide-react";
@@ -131,9 +133,9 @@ export const SponsorCard = ({ sponsor, onEdit, onViewAlbum, onStatusChange }: Sp
           disabled={isUpdating}
         >
           {sponsor.is_anonymous ? (
-            <ToggleLeft className="h-4 w-4 text-gray-500" />
+            <EyeOff className="h-4 w-4 text-gray-500" />
           ) : (
-            <ToggleRight className="h-4 w-4 text-green-500" />
+            <Eye className="h-4 w-4 text-green-500" />
           )}
           {sponsor.is_anonymous ? "Anonyme" : "Public"}
         </Button>

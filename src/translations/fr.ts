@@ -81,13 +81,4 @@ export const frenchTranslations = {
   enterTranslation: "Entrer la traduction",
   approve: "Approuver",
   pendingTranslations: "Traductions en attente",
-
-  // New translations
-  activeSponsors: "Parrains actifs",
-  inactiveSponsors: "Parrains inactifs",
-  searchSponsor: "Rechercher un parrain",
-  sponsorManagement: "Gestion des parrains",
-  export: "Exporter",
-  exportToCsv: "Exporter en CSV",
-  importFromCsv: "Importer depuis CSV",
 };
