@@ -24,11 +24,22 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
-        .select('id, name')
-        .or('city.is.null,birth_date.is.null,photo_url.is.null,name.is.null,story.is.null,description.is.null,needs.is.null');
+        .select('*')
+        .or('gender.is.null,birth_date.is.null,name.is.null,photo_url.is.null,city.is.null,story.is.null,comments.is.null,description.is.null');
       
       if (error) throw error;
-      return data;
+      
+      // Filter profiles that have at least one required field missing
+      return data?.filter(child => {
+        return !child.gender ||
+               !child.birth_date ||
+               !child.name ||
+               !child.photo_url ||
+               !child.city ||
+               !child.story ||
+               !child.comments ||
+               !child.description;
+      });
     }
   });
 
