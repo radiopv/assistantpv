@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { ErrorAlert } from "@/components/ErrorAlert";
@@ -13,6 +13,7 @@ import { ProfileActions } from "@/components/ChildProfile/ProfileActions";
 const ChildProfile = () => {
   const { id } = useParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [child, setChild] = useState<any>(null);
