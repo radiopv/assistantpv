@@ -6,12 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { differenceInYears, parseISO } from "date-fns";
 import { BasicInfoFields } from "./FormFields/BasicInfoFields";
 import { PhotoUploadField } from "./FormFields/PhotoUploadField";
-import { NeedsSelectionField } from "./FormFields/NeedsSelectionField";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Need } from "@/types/needs";
-import { Textarea } from "@/components/ui/textarea";
-import { convertNeedsToJson } from "@/types/needs";
 
 interface FormData {
   name: string;
@@ -19,10 +15,8 @@ interface FormData {
   birth_date: string;
   city: string | null;
   status: string;
-  needs: Need[];
+  needs: any[];
   is_sponsored: boolean;
-  description: string;
-  story: string;
 }
 
 const ALLOWED_GENDERS = ['male', 'female'];
@@ -39,9 +33,7 @@ export const AddChildForm = () => {
     city: null,
     status: "available",
     needs: [],
-    is_sponsored: false,
-    description: "",
-    story: ""
+    is_sponsored: false
   });
 
   const calculateAge = (birthDate: string): number | null => {
@@ -60,7 +52,7 @@ export const AddChildForm = () => {
     return null;
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -118,9 +110,7 @@ export const AddChildForm = () => {
           status: "available",
           photo_url: photoUrl,
           is_sponsored: false,
-          needs: convertNeedsToJson(formData.needs),
-          description: formData.description,
-          story: formData.story
+          needs: []
         });
 
       if (error) throw error;
@@ -160,35 +150,6 @@ export const AddChildForm = () => {
           />
           
           <PhotoUploadField handlePhotoChange={handlePhotoChange} />
-
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Description générale de l'enfant..."
-              className="min-h-[100px]"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="story">Histoire</Label>
-            <Textarea
-              id="story"
-              name="story"
-              value={formData.story}
-              onChange={handleChange}
-              placeholder="Histoire de l'enfant..."
-              className="min-h-[150px]"
-            />
-          </div>
-
-          <NeedsSelectionField
-            selectedNeeds={formData.needs}
-            onNeedsChange={(needs) => setFormData(prev => ({ ...prev, needs }))}
-          />
         </div>
 
         <div className="flex gap-4 pt-4">
