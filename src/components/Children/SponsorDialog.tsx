@@ -60,7 +60,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
             </SelectTrigger>
             <SelectContent>
               {child.is_sponsored && (
-                <SelectItem value="">Retirer le parrain</SelectItem>
+                <SelectItem value="remove_sponsor">Retirer le parrain</SelectItem>
               )}
               {sponsors?.map((sponsor) => (
                 <SelectItem key={sponsor.id} value={sponsor.id}>
@@ -78,7 +78,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
               Annuler
             </Button>
             <Button
-              onClick={() => handleSponsorUpdate(child.id, selectedSponsor || null)}
+              onClick={() => handleSponsorUpdate(child.id, selectedSponsor === "remove_sponsor" ? null : selectedSponsor)}
             >
               Confirmer
             </Button>
