@@ -82,5 +82,19 @@ export const frenchTranslations = {
 
   // Children list translations
   edit: "Modifier le parrain",
-  selectMessage: "Sélectionner un parrain"
+  selectMessage: "Sélectionner un parrain",
+
+  // Sponsorship translations
+  by: "par",
+  
+  // Admin translations
+  translationManager: "Gestionnaire de traductions",
+  frenchTranslations: "Traductions françaises",
+  spanishTranslations: "Traductions espagnoles",
+  key: "Clé",
+  frenchValue: "Valeur en français",
+  spanishValue: "Valeur en espagnol",
+  save: "Sauvegarder",
+  translationUpdated: "Traductions mises à jour",
+  translationError: "Erreur lors de la mise à jour des traductions"
 };

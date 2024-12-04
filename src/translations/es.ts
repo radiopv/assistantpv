@@ -44,6 +44,10 @@ export const spanishTranslations = {
   date: "Fecha",
   noDonationsFound: "No se encontraron donaciones que coincidan con sus criterios de búsqueda",
   
+  // Sponsorship translations
+  sponsored: "Apadrinado",
+  by: "por",
+  
   // Statistics translations
   totalDonations: "Total de donaciones",
   citiesCovered: "Ciudades cubiertas",
@@ -87,5 +91,16 @@ export const spanishTranslations = {
   available: "Disponible",
   sponsored: "Apadrinado",
   pending: "En espera",
-  urgent: "Necesidades urgentes"
+  urgent: "Necesidades urgentes",
+
+  // Admin translations
+  translationManager: "Gestor de traducciones",
+  frenchTranslations: "Traducciones francesas",
+  spanishTranslations: "Traducciones españolas",
+  key: "Clave",
+  frenchValue: "Valor en francés",
+  spanishValue: "Valor en español",
+  save: "Guardar",
+  translationUpdated: "Traducciones actualizadas",
+  translationError: "Error al actualizar las traducciones"
 };
