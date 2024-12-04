@@ -10,7 +10,20 @@ interface LanguageContextType {
 
 const translations = {
   fr: {
+    // Menu translations
+    dashboard: "Tableau de bord",
+    children: "Enfants",
+    addChild: "Ajouter un enfant",
     donations: "Dons",
+    messages: "Messages",
+    media: "Médias",
+    sponsors: "Parrains",
+    permissions: "Permissions",
+    faq: "FAQ",
+    statistics: "Statistiques",
+    travels: "Voyages",
+    
+    // Donations page
     manageDonations: "Gérez les dons et leur distribution",
     addDonation: "Ajouter un don",
     close: "Fermer",
@@ -32,13 +45,16 @@ const translations = {
     deleteWarning: "Cette action est irréversible. Le don et toutes les données associées seront définitivement supprimés.",
     cancel: "Annuler",
     confirm: "Confirmer",
+    
+    // Filters and search
     searchPlaceholder: "Rechercher par ville, assistant ou commentaires...",
     filterByCity: "Filtrer par ville",
     allCities: "Toutes les villes",
     sortBy: "Trier par",
     date: "Date",
     noDonationsFound: "Aucun don ne correspond à vos critères de recherche",
-    messages: "Messages",
+    
+    // Messages page
     newMessage: "Nouveau message",
     recipient: "Destinataire",
     selectRecipient: "Sélectionner un destinataire",
@@ -52,20 +68,8 @@ const translations = {
     messageSentSuccess: "Votre message a été envoyé avec succès",
     messageError: "Une erreur est survenue lors de l'envoi du message",
     fillAllFields: "Veuillez remplir tous les champs",
-    // Menu translations
-    dashboard: "Tableau de bord",
-    children: "Enfants",
-    addChild: "Ajouter un enfant",
-    donations: "Dons",
-    messages: "Messages",
-    media: "Médias",
-    sponsors: "Parrains",
-    permissions: "Permissions",
-    faq: "FAQ",
-    statistics: "Statistiques",
-    travels: "Voyages",
     
-    // Filters translations
+    // View modes
     viewMode: "Mode d'affichage",
     grid: "Grille",
     list: "Liste",
@@ -89,12 +93,24 @@ const translations = {
     assistants: "Assistants",
     citiesCovered: "Villes couvertes",
     engagementRate: "Taux d'engagement",
-    peopleHelped: "Personnes aidées",
     donationEvolution: "Évolution des dons",
-    sponsorshipEvolution: "Évolution des parrainages",
+    sponsorshipEvolution: "Évolution des parrainages"
   },
   es: {
+    // Menu translations
+    dashboard: "Panel de control",
+    children: "Niños",
+    addChild: "Agregar niño",
     donations: "Donaciones",
+    messages: "Mensajes",
+    media: "Medios",
+    sponsors: "Padrinos",
+    permissions: "Permisos",
+    faq: "Preguntas frecuentes",
+    statistics: "Estadísticas",
+    travels: "Viajes",
+    
+    // Donations page
     manageDonations: "Gestione las donaciones y su distribución",
     addDonation: "Agregar donación",
     close: "Cerrar",
@@ -116,13 +132,16 @@ const translations = {
     deleteWarning: "Esta acción es irreversible. La donación y todos los datos asociados serán eliminados permanentemente.",
     cancel: "Cancelar",
     confirm: "Confirmar",
+    
+    // Filters and search
     searchPlaceholder: "Buscar por ciudad, asistente o comentarios...",
     filterByCity: "Filtrar por ciudad",
     allCities: "Todas las ciudades",
     sortBy: "Ordenar por",
     date: "Fecha",
     noDonationsFound: "No se encontraron donaciones que coincidan con sus criterios de búsqueda",
-    messages: "Mensajes",
+    
+    // Messages page
     newMessage: "Nuevo mensaje",
     recipient: "Destinatario",
     selectRecipient: "Seleccionar un destinatario",
@@ -136,20 +155,8 @@ const translations = {
     messageSentSuccess: "Su mensaje ha sido enviado con éxito",
     messageError: "Ha ocurrido un error al enviar el mensaje",
     fillAllFields: "Por favor complete todos los campos",
-    // Menu translations
-    dashboard: "Panel de control",
-    children: "Niños",
-    addChild: "Agregar niño",
-    donations: "Donaciones",
-    messages: "Mensajes",
-    media: "Medios",
-    sponsors: "Padrinos",
-    permissions: "Permisos",
-    faq: "Preguntas frecuentes",
-    statistics: "Estadísticas",
-    travels: "Viajes",
     
-    // Filters translations
+    // View modes
     viewMode: "Modo de visualización",
     grid: "Cuadrícula",
     list: "Lista",
@@ -173,9 +180,8 @@ const translations = {
     assistants: "Asistentes",
     citiesCovered: "Ciudades cubiertas",
     engagementRate: "Tasa de participación",
-    peopleHelped: "Personas ayudadas",
     donationEvolution: "Evolución de donaciones",
-    sponsorshipEvolution: "Evolución de patrocinios",
+    sponsorshipEvolution: "Evolución de patrocinios"
   }
 };
 
