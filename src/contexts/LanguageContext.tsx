@@ -22,6 +22,8 @@ const translations = {
     faq: "FAQ",
     statistics: "Statistiques",
     travels: "Voyages",
+    settings: "Paramètres",
+    language: "Langue",
     
     // Donations page
     manageDonations: "Gérez les dons et leur distribution",
@@ -109,6 +111,8 @@ const translations = {
     faq: "Preguntas frecuentes",
     statistics: "Estadísticas",
     travels: "Viajes",
+    settings: "Configuración",
+    language: "Idioma",
     
     // Donations page
     manageDonations: "Gestione las donaciones y su distribución",
