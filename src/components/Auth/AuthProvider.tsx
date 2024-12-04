@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const { data: profile, error: profileError } = await supabase
           .from('sponsors')
           .select('*')
-          .eq('id', session.user.id)
+          .eq('email', session.user.email)
           .single();
 
         if (profileError) throw profileError;
@@ -49,7 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           switch (profile.role) {
             case 'admin':
             case 'assistant':
-              navigate('/dashboard');
+              navigate('/admin/dashboard');
               break;
             case 'sponsor':
               navigate('/sponsor-dashboard');
@@ -64,21 +64,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsAdmin(false);
 
         const protectedPages = [
-          '/dashboard',
+          '/admin/dashboard',
           '/sponsor-dashboard',
-          '/children/add',
-          '/donations',
+          '/admin/children/add',
+          '/admin/donations',
           '/rewards',
           '/messages',
-          '/media-management',
-          '/sponsors-management',
-          '/settings',
-          '/urgent-needs',
-          '/permissions',
-          '/children-needs'
+          '/admin/media-management',
+          '/admin/sponsors-management',
+          '/admin/settings',
+          '/admin/urgent-needs',
+          '/admin/permissions',
+          '/admin/children-needs'
         ];
 
-        if (protectedPages.includes(location.pathname)) {
+        if (protectedPages.some(page => location.pathname.startsWith(page))) {
           navigate('/login');
         }
       }
@@ -95,12 +95,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Initial auth check
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      handleAuthChange(session);
-    });
+    const checkAuth = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('email', user.email)
+            .single();
+          
+          if (profile) {
+            handleAuthChange({ user: profile });
+          }
+        }
+      } catch (error) {
+        console.error('Error during initial auth check:', error);
+      }
+    };
 
-    // Setup auth listener
+    checkAuth();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       handleAuthChange(session);
     });
