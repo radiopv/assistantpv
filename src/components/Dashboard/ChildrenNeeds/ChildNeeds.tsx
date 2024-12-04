@@ -1,13 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Need } from "@/types/needs";
 import { Badge } from "@/components/ui/badge";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface ChildNeedsProps {
   child: any;
   needs: Need[];
 }
 
-export const ChildNeeds = ({ child, needs }: ChildNeedsProps) => {
+export const ChildNeeds = ({ child, needs: rawNeeds }: ChildNeedsProps) => {
   const NEED_CATEGORIES = {
     education: "Éducation",
     jouet: "Jouet",
@@ -17,6 +18,9 @@ export const ChildNeeds = ({ child, needs }: ChildNeedsProps) => {
     hygiene: "Hygiène",
     autre: "Autre"
   };
+
+  // Ensure needs is always an array using the conversion function
+  const needs = Array.isArray(rawNeeds) ? rawNeeds : convertJsonToNeeds(rawNeeds);
 
   return (
     <Card className="p-4">
