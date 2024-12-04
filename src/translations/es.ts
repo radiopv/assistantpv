@@ -2,7 +2,7 @@ export const spanishTranslations = {
   // Menu translations
   dashboard: "Panel de control",
   children: "Niños",
-  addChild: "Agregar niño",
+  addChild: "Agregar un padrino",
   donations: "Donaciones",
   messages: "Mensajes",
   media: "Medios",

@@ -2,7 +2,7 @@ export const frenchTranslations = {
   // Menu translations
   dashboard: "Tableau de bord",
   children: "Enfants",
-  addChild: "Ajouter un enfant",
+  addChild: "Ajouter un parrain",
   donations: "Dons",
   messages: "Messages",
   media: "Médias",
@@ -59,7 +59,7 @@ export const frenchTranslations = {
   // Dashboard translations
   welcomeMessage: "Bienvenue dans votre espace assistant TousPourCuba",
   totalChildren: "Total de Niños",
-  sponsoredChildren: "Niños Apadrinados",
+  sponsoredChildren: "Niños Apadrinés",
   urgentNeeds: "Besoins Urgents",
   activeCities: "Villes Actives",
   incompleteProfiles: "Profils Incomplets",
