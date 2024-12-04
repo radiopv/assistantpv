@@ -35,7 +35,6 @@ export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange }: NeedsSelec
         ]);
       } catch (error) {
         console.error('Error fetching needs:', error);
-        // Fallback to default categories if table doesn't exist
         setAvailableNeeds([
           "education",
           "jouet",
@@ -114,7 +113,9 @@ export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange }: NeedsSelec
                   checked={need.is_urgent}
                   onCheckedChange={() => toggleUrgent(need.category)}
                 />
-                <Label htmlFor={`urgent-${need.category}`}>Besoin urgent</Label>
+                <Label htmlFor={`urgent-${need.category}`}>
+                  Besoin urgent pour : {need.category}
+                </Label>
               </div>
               
               <Input
