@@ -23,7 +23,6 @@ const Sidebar = () => {
   const location = useLocation();
 
   const isAdmin = user?.role === 'admin';
-  const isAssistant = ['admin', 'assistant'].includes(user?.role || '');
 
   const assistantLinks = [
     {
@@ -125,7 +124,7 @@ const Sidebar = () => {
               ))}
             </div>
           </div>
-          {(isAdmin || isAssistant) && (
+          {isAdmin && (
             <div className="px-3 py-2">
               <h2 className="mb-2 px-4 text-lg font-semibold">Administration</h2>
               <div className="space-y-1">
