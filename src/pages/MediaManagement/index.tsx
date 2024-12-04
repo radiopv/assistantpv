@@ -38,8 +38,8 @@ const MediaManagement = () => {
 
         const unifiedMedia: UnifiedMedia[] = [
           ...(donationPhotos.data || []).map(photo => ({
-            id: photo.id,
-            url: photo.url,
+            id: String(photo.id), // Convert number to string
+            url: photo.url || '',
             source_table: 'donation_photos',
             type: 'image',
             category: 'Donations',
@@ -64,11 +64,11 @@ const MediaManagement = () => {
           })),
           ...(sponsorPhotos.data || []).map(sponsor => ({
             id: sponsor.id,
-            url: sponsor.photo_url,
+            url: sponsor.photo_url || '',
             source_table: 'sponsors',
             type: 'image',
             category: 'Sponsors',
-            created_at: sponsor.created_at
+            created_at: new Date().toISOString() // Default creation date for sponsors
           }))
         ];
 
@@ -83,7 +83,7 @@ const MediaManagement = () => {
   const handleDelete = async (item: UnifiedMedia) => {
     try {
       const { error } = await supabase
-        .from(item.source_table)
+        .from(item.source_table as any) // Type assertion needed here
         .delete()
         .eq('id', item.id);
 
