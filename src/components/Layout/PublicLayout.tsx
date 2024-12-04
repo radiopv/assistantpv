@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { 
   LayoutDashboard, 
-  Users, 
-  Heart,
   Menu,
 } from "lucide-react";
 import {
@@ -22,16 +20,6 @@ const PublicLayout = () => {
       href: "/",
       label: "Accueil",
       icon: LayoutDashboard,
-    },
-    {
-      href: "/children",
-      label: "Enfants",
-      icon: Users,
-    },
-    {
-      href: "/sponsorships",
-      label: "Parrainages",
-      icon: Heart,
     },
   ];
 
