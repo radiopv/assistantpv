@@ -38,7 +38,7 @@ export const spanishTranslations = {
   confirm: "Confirmar",
   
   // Filters and search
-  searchPlaceholder: "Buscar por ciudad, asistente o comentarios...",
+  searchPlaceholder: "Buscar un niño...",
   filterByCity: "Filtrar por ciudad",
   allCities: "Todas las ciudades",
   sortBy: "Ordenar por",
@@ -69,7 +69,29 @@ export const spanishTranslations = {
   viewCityStats: "Ver estadísticas por ciudad",
   viewIncompleteProfiles: "Ver perfiles incompletos",
 
-  // Children list translations
+  // Children page translations
+  manageDonations: "Gestione las donaciones y su distribución",
+  addChild: "Agregar un padrino",
   edit: "Modificar el padrino",
-  selectMessage: "Seleccionar un padrino"
+  selectMessage: "Seleccionar un padrino",
+
+  // Filters translations
+  searchPlaceholder: "Buscar un niño...",
+  allCities: "Todas las ciudades",
+  allAges: "Todas las edades",
+  allGenders: "Todos",
+  gender: "Género",
+  age: "Edad",
+  city: "Ciudad",
+  status: "Estado",
+  masculine: "Masculino",
+  feminine: "Femenino",
+  years: "años",
+
+  // Status translations
+  allStatus: "Todos los estados",
+  available: "Disponible",
+  sponsored: "Apadrinado",
+  pending: "En espera",
+  urgent: "Necesidades urgentes"
 };

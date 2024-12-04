@@ -38,13 +38,24 @@ export const frenchTranslations = {
   confirm: "Confirmer",
   
   // Filters and search
-  searchPlaceholder: "Rechercher par ville, assistant ou commentaires...",
-  filterByCity: "Filtrer par ville",
+  searchPlaceholder: "Rechercher un enfant...",
   allCities: "Toutes les villes",
-  sortBy: "Trier par",
-  date: "Date",
-  noDonationsFound: "Aucun don ne correspond à vos critères de recherche",
+  allAges: "Tous les âges",
+  allGenders: "Tous",
+  gender: "Genre",
+  age: "Âge",
+  status: "Statut",
+  masculine: "Masculin",
+  feminine: "Féminin",
+  years: "ans",
   
+  // Status translations
+  allStatus: "Tous les statuts",
+  available: "Disponible",
+  sponsored: "Parrainé",
+  pending: "En attente",
+  urgent: "Besoins urgents",
+
   // Statistics translations
   totalDonations: "Total des dons",
   citiesCovered: "Villes couvertes",
@@ -58,8 +69,8 @@ export const frenchTranslations = {
 
   // Dashboard translations
   welcomeMessage: "Bienvenue dans votre espace assistant TousPourCuba",
-  totalChildren: "Total de Niños",
-  sponsoredChildren: "Niños Apadrinés",
+  totalChildren: "Total des Enfants",
+  sponsoredChildren: "Enfants Parrainés",
   urgentNeeds: "Besoins Urgents",
   activeCities: "Villes Actives",
   incompleteProfiles: "Profils Incomplets",
