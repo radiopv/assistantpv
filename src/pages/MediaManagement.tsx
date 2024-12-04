@@ -1,141 +1,45 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { MediaBrowserView } from "@/types/supabase/media";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-
-interface MediaItem {
-  id: string;
-  url: string;
-  thumbnail_url?: string;
-  source_table: string;
-  type: string;
-  title?: string;
-  description?: string;
-  category: string;
-}
+import { Loader2 } from "lucide-react";
 
 const MediaManagement = () => {
-  const { toast } = useToast();
-  
-  const { data: mediaItems, isLoading, refetch } = useQuery({
-    queryKey: ['unified-media'],
+  const { data: mediaItems, isLoading } = useQuery<MediaBrowserView[]>({
+    queryKey: ['media'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('unified_media_browser')
         .select('*')
         .order('created_at', { ascending: false });
-      
+
       if (error) throw error;
-      
-      // Transform the data to match MediaItem interface
-      return (data as any[]).map(item => ({
-        id: item.id,
-        url: item.url,
-        thumbnail_url: item.thumbnail_url,
-        source_table: item.source_table,
-        type: item.type,
-        title: item.title,
-        description: item.description,
-        category: item.category || 'uncategorized'
-      })) as MediaItem[];
+      return data;
     }
   });
 
-  const handleDelete = async (item: MediaItem) => {
-    try {
-      const { error } = await supabase
-        .from(item.source_table as any)
-        .delete()
-        .eq('id', item.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Media supprimé",
-        description: "Le média a été supprimé avec succès",
-      });
-
-      refetch();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression",
-      });
-    }
-  };
-
-  const categories = mediaItems ? [...new Set(mediaItems.map(item => item.category))] : [];
-
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">
-      <div className="text-gray-600">Chargement...</div>
-    </div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Gestion des Médias</h1>
-      </div>
-
-      <Tabs defaultValue={categories[0]} className="w-full">
-        <TabsList className="mb-4">
-          {categories.map(category => (
-            <TabsTrigger key={category} value={category} className="capitalize">
-              {category}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        {categories.map(category => (
-          <TabsContent key={category} value={category}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {mediaItems?.filter(item => item.category === category).map((item) => (
-                <Card key={item.id} className="p-4 space-y-4">
-                  <div className="aspect-video relative rounded-lg overflow-hidden bg-gray-100">
-                    {item.type === 'video' ? (
-                      <video 
-                        src={item.url} 
-                        controls 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <img 
-                        src={item.url} 
-                        alt={item.title || 'Media'} 
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    {item.title && (
-                      <h3 className="font-medium">{item.title}</h3>
-                    )}
-                    {item.description && (
-                      <p className="text-sm text-gray-600">{item.description}</p>
-                    )}
-                  </div>
-
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDelete(item)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+    <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-2xl font-bold">Media Management</h1>
+      <div className="grid gap-4">
+        {mediaItems?.map(item => (
+          <Card key={item.id} className="p-4">
+            <img src={item.url} alt={item.type} className="w-full h-32 object-cover" />
+            <div className="mt-2">
+              <h3 className="font-medium">{item.category}</h3>
+              <p className="text-sm text-gray-500">{item.created_at}</p>
             </div>
-          </TabsContent>
+          </Card>
         ))}
-      </Tabs>
+      </div>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { SponsorshipType } from "@/types/supabase/sponsorships";
 
 const SponsorshipRequestForm = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const SponsorshipRequestForm = () => {
     email: "",
     facebook_url: "",
     motivation: "",
-    sponsorship_type: "long_term",
+    sponsorship_type: "long_term" as SponsorshipType,
     terms_accepted: false
   });
 
@@ -34,10 +35,10 @@ const SponsorshipRequestForm = () => {
     try {
       const { error } = await supabase
         .from('sponsorship_requests')
-        .insert([{
+        .insert({
           ...formData,
           status: 'pending'
-        }]);
+        });
 
       if (error) throw error;
 
