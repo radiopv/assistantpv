@@ -26,3 +26,10 @@ export interface UserEngagementStats {
   total_assistants: number;
   cities_coverage: number;
 }
+
+export interface AssistantPerformanceStats {
+  assistant_name: string;
+  donations_count: number;
+  people_helped: number;
+  success_rate: number;
+}

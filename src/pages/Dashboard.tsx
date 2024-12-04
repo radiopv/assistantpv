@@ -13,11 +13,24 @@ import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNee
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { DashboardStats } from "@/types/dashboard";
+import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import {
+  Users,
+  Gift,
+  Image,
+  UserCog,
+  Settings,
+  MessageSquare,
+  Heart,
+  UserPlus,
+} from "lucide-react";
 
 const Dashboard = () => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
+  const isAssistant = user?.role === 'assistant';
 
   const { data: stats, isLoading: statsLoading, error: statsError, refetch: refetchStats } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
@@ -80,6 +93,35 @@ const Dashboard = () => {
     );
   }
 
+  const renderQuickLinks = (links: any[]) => (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-8">
+      {links.map((link) => (
+        <Link key={link.to} to={link.to}>
+          <Card className={`p-6 hover:shadow-lg transition-shadow ${link.color}`}>
+            <div className="flex items-center gap-4">
+              <link.icon className="h-8 w-8 text-gray-700" />
+              <div className="font-medium text-gray-900">{link.label}</div>
+            </div>
+          </Card>
+        </Link>
+      ))}
+    </div>
+  );
+
+  const adminLinks = [
+    { to: "/admin/permissions", icon: Settings, label: "Gestion des permissions", color: "bg-purple-100" },
+    { to: "/admin/media", icon: Image, label: "Gestion des médias", color: "bg-blue-100" },
+    { to: "/admin/sponsors", icon: UserCog, label: "Gestion des parrains", color: "bg-green-100" },
+    { to: "/admin/donations", icon: Gift, label: "Gestion des dons", color: "bg-yellow-100" },
+  ];
+
+  const assistantLinks = [
+    { to: "/children", icon: Users, label: "Liste des enfants", color: "bg-blue-100" },
+    { to: "/children/add", icon: UserPlus, label: "Ajouter un enfant", color: "bg-green-100" },
+    { to: "/sponsorships", icon: Heart, label: "Parrainages", color: "bg-pink-100" },
+    { to: "/messages", icon: MessageSquare, label: "Messages", color: "bg-purple-100" },
+  ];
+
   return (
     <div className="space-y-8 animate-fade-in">
       <DashboardHeader stats={stats} />
@@ -88,6 +130,10 @@ const Dashboard = () => {
       <div className="space-y-8">
         {isAdmin && (
           <>
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Accès rapide administrateur</h2>
+              {renderQuickLinks(adminLinks)}
+            </div>
             <SponsorshipStats />
             <div className="grid gap-4 md:grid-cols-2">
               <UrgentNeedsStats />
@@ -97,8 +143,12 @@ const Dashboard = () => {
           </>
         )}
         
-        {user?.role === 'assistant' && (
+        {isAssistant && (
           <>
+            <div>
+              <h2 className="text-2xl font-bold mb-4">Accès rapide assistant</h2>
+              {renderQuickLinks(assistantLinks)}
+            </div>
             <UrgentNeedsStats />
             <AssistantStats />
           </>
