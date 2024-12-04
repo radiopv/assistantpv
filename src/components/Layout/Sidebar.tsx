@@ -1,6 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { 
@@ -9,15 +8,16 @@ import {
   Gift, 
   MessageSquare,
   Settings,
-  LogOut,
   Image,
   Baby,
   UserPlus,
   Plane,
   ChartBar,
   HelpCircle,
-  X,
 } from "lucide-react";
+import { SidebarHeader } from "./Sidebar/SidebarHeader";
+import { SidebarSection } from "./Sidebar/SidebarSection";
+import { SidebarFooter } from "./Sidebar/SidebarFooter";
 
 interface SidebarProps {
   isMobile?: boolean;
@@ -107,86 +107,29 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       "flex h-full flex-col border-r bg-white",
       isMobile && "relative"
     )}>
-      <div className="p-6 flex justify-between items-center">
-        <Link to="/" onClick={onClose}>
-          <h1 className="text-xl font-bold">Passion Varadero</h1>
-        </Link>
-        {isMobile && (
-          <Button 
-            variant="ghost" 
-            size="icon"
-            className="md:hidden"
-            onClick={onClose}
-          >
-            <X className="h-6 w-6" />
-          </Button>
-        )}
-      </div>
+      <SidebarHeader isMobile={isMobile} onClose={onClose} />
+      
       <ScrollArea className="flex-1">
         <div className="space-y-4 py-4">
-          <div className="px-3 py-2">
-            <h2 className="mb-2 px-4 text-lg font-semibold">Assistant</h2>
-            <div className="space-y-1">
-              {assistantLinks.filter(link => link.show).map((link) => (
-                <Link 
-                  key={link.href} 
-                  to={link.href}
-                  onClick={onClose}
-                >
-                  <Button
-                    variant={location.pathname === link.href ? "secondary" : "ghost"}
-                    className={cn(
-                      "w-full justify-start min-h-[44px]",
-                      location.pathname === link.href && "bg-primary/10"
-                    )}
-                  >
-                    <link.icon className="mr-2 h-5 w-5" />
-                    {link.label}
-                  </Button>
-                </Link>
-              ))}
-            </div>
-          </div>
+          <SidebarSection
+            title="Assistant"
+            links={assistantLinks}
+            currentPath={location.pathname}
+            onClose={onClose}
+          />
+          
           {isAdmin && (
-            <div className="px-3 py-2">
-              <h2 className="mb-2 px-4 text-lg font-semibold">Administration</h2>
-              <div className="space-y-1">
-                {adminLinks.filter(link => link.show).map((link) => (
-                  <Link 
-                    key={link.href} 
-                    to={link.href}
-                    onClick={onClose}
-                  >
-                    <Button
-                      variant={location.pathname === link.href ? "secondary" : "ghost"}
-                      className={cn(
-                        "w-full justify-start min-h-[44px]",
-                        location.pathname === link.href && "bg-primary/10"
-                      )}
-                    >
-                      <link.icon className="mr-2 h-5 w-5" />
-                      {link.label}
-                    </Button>
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <SidebarSection
+              title="Administration"
+              links={adminLinks}
+              currentPath={location.pathname}
+              onClose={onClose}
+            />
           )}
         </div>
       </ScrollArea>
-      <div className="p-4 border-t">
-        <Button
-          variant="ghost"
-          className="w-full justify-start min-h-[44px]"
-          onClick={() => {
-            signOut();
-            onClose?.();
-          }}
-        >
-          <LogOut className="mr-2 h-5 w-5" />
-          Déconnexion
-        </Button>
-      </div>
+
+      <SidebarFooter onSignOut={signOut} onClose={onClose} />
     </div>
   );
 };
