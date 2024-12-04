@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { convertNeedsToJson } from "@/types/needs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AddNeedForm } from "./AddNeedForm";
 import { ChildNeeds } from "./ChildNeeds";
@@ -55,13 +54,13 @@ export const ChildrenNeeds = ({ children, isLoading, onNeedsUpdate }: {
         </div>
         <div className="grid gap-6 md:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="p-4">
+            <div key={i} className="p-4 rounded-lg border bg-white shadow-sm">
               <Skeleton className="h-6 w-32 mb-4" />
               <div className="space-y-4">
                 <Skeleton className="h-20 w-full" />
                 <Skeleton className="h-20 w-full" />
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       </div>
