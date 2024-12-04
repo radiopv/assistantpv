@@ -51,7 +51,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
     }
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     onChange(e.target.id, e.target.value);
   };
 
@@ -157,7 +157,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
         <Textarea
           id="description"
           value={child.description || ""}
-          onChange={(e) => handleChange("description", e.target.value)}
+          onChange={handleInputChange}
           disabled={!editing}
           placeholder="Description générale de l'enfant..."
           className="min-h-[100px]"
@@ -169,7 +169,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
         <Textarea
           id="story"
           value={child.story || ""}
-          onChange={(e) => handleChange("story", e.target.value)}
+          onChange={handleInputChange}
           disabled={!editing}
           placeholder="Histoire de l'enfant..."
           className="min-h-[150px]"
@@ -181,7 +181,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
         <Textarea
           id="comments"
           value={child.comments || ""}
-          onChange={(e) => handleChange("comments", e.target.value)}
+          onChange={handleInputChange}
           disabled={!editing}
           placeholder="Commentaires additionnels..."
           className="min-h-[100px]"
