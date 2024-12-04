@@ -19,7 +19,7 @@ export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange }: NeedsSelec
     const fetchNeeds = async () => {
       try {
         const { data, error } = await supabase
-          .from('need_categories')
+          .from('aid_categories')
           .select('name');
 
         if (error) throw error;

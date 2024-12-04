@@ -4,6 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
+import { NeedsSelectionField } from "../FormFields/NeedsSelectionField";
+import { convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
 
 const STATUS_OPTIONS = [
   { value: "available", label: "Disponible" },
@@ -54,6 +56,10 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
 
   const handleSelectChange = (field: string, value: string) => {
     onChange(field, value);
+  };
+
+  const handleNeedsChange = (needs: any[]) => {
+    onChange('needs', JSON.stringify(convertNeedsToJson(needs)));
   };
 
   return (
@@ -144,6 +150,15 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
           />
         )}
       </div>
+
+      {editing && (
+        <div className="grid gap-2">
+          <NeedsSelectionField
+            selectedNeeds={convertJsonToNeeds(child.needs)}
+            onNeedsChange={handleNeedsChange}
+          />
+        </div>
+      )}
     </div>
   );
 };
