@@ -44,12 +44,6 @@ const Sidebar = () => {
       show: user?.permissions?.children || isAdmin,
     },
     {
-      href: "/children/needs",
-      label: "Besoins",
-      icon: ListChecks,
-      show: user?.permissions?.children || isAdmin,
-    },
-    {
       href: "/children/add",
       label: "Ajouter un enfant",
       icon: UserPlus,
