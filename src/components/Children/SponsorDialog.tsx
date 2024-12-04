@@ -14,14 +14,14 @@ interface SponsorDialogProps {
 }
 
 export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialogProps) => {
-  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id || "");
+  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id?.toString() || "");
   const queryClient = useQueryClient();
 
   const handleSponsorUpdate = async (childId: string, sponsorId: string | null) => {
     try {
       const updates = {
         is_sponsored: !!sponsorId,
-        sponsor_id: sponsorId,
+        sponsor_id: sponsorId ? parseInt(sponsorId) : null,
         sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
         sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
       };
