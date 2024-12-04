@@ -78,7 +78,16 @@ export const spanishTranslations = {
   translationUpdated: "Traducciones actualizadas con éxito",
   frenchTranslations: "Traducciones francesas",
   spanishTranslations: "Traducciones españolas",
-
+  
+  // Profile Section
+  welcome: "Bienvenido",
+  editProfile: "Editar perfil",
+  logout: "Cerrar sesión",
+  scanTranslations: "Escanear traducciones",
+  scanningTranslations: "Escaneando...",
+  translationsFound: "{{count}} textos para traducir encontrados",
+  scanAssistantSection: "Escanear sección de asistente",
+  
   // Profile status and filters
   incompleteProfiles: "Estos perfiles están incompletos. Haga clic en un perfil para completar la información faltante.",
   filterByCity: "Filtrar por ciudad",

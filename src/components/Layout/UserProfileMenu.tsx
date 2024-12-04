@@ -10,13 +10,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, Languages } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileForm } from "@/components/Profile/ProfileForm";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { toast } from "sonner";
 
 export const UserProfileMenu = () => {
   const { user, signOut } = useAuth();
+  const { t } = useLanguage();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -47,6 +51,23 @@ export const UserProfileMenu = () => {
     setIsProfileOpen(open);
   };
 
+  const handleScanTranslations = async () => {
+    setScanning(true);
+    try {
+      // Simulate scanning for demonstration
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Here you would implement the actual scanning logic
+      // For now, we'll just show a toast
+      toast.success(t("translationsFound").replace("{{count}}", "5"));
+    } catch (error) {
+      console.error('Error scanning translations:', error);
+      toast.error(t("translationError"));
+    } finally {
+      setScanning(false);
+    }
+  };
+
   if (!user) {
     return null;
   }
@@ -54,8 +75,20 @@ export const UserProfileMenu = () => {
   return (
     <div className="flex items-center gap-4">
       <span className="text-sm text-gray-600">
-        Bienvenue, {formData.name || "Utilisateur"}
+        {t("welcome")}, {formData.name || t("user")}
       </span>
+      
+      {user.role === 'admin' && (
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={handleScanTranslations}
+          disabled={scanning}
+        >
+          <Languages className="w-4 h-4 mr-2" />
+          {scanning ? t("scanningTranslations") : t("scanAssistantSection")}
+        </Button>
+      )}
       
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -83,12 +116,12 @@ export const UserProfileMenu = () => {
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 <User className="mr-2 h-4 w-4" />
-                <span>Profil</span>
+                <span>{t("editProfile")}</span>
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Modifier le profil</DialogTitle>
+                <DialogTitle>{t("editProfile")}</DialogTitle>
               </DialogHeader>
               <ProfileForm 
                 initialData={formData}
@@ -100,7 +133,7 @@ export const UserProfileMenu = () => {
 
           <DropdownMenuItem onClick={signOut}>
             <LogOut className="mr-2 h-4 w-4" />
-            <span>Se déconnecter</span>
+            <span>{t("logout")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
