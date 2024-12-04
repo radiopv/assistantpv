@@ -10,60 +10,92 @@ interface LanguageContextType {
 
 const translations = {
   fr: {
-    children: "Enfants",
-    manageDonations: "Gérer les dons et parrainages",
-    addChild: "Ajouter un enfant",
-    profile: "Profil",
-    edit: "Modifier",
-    years: "ans",
-    months: "mois",
-    sponsored: "Parrainé",
-    available: "Disponible",
-    by: "par",
-    description: "Description",
-    story: "Histoire",
+    donations: "Dons",
+    manageDonations: "Gérez les dons et leur distribution",
+    addDonation: "Ajouter un don",
+    close: "Fermer",
+    donationBy: "Don par",
+    completed: "Complété",
+    inProgress: "En cours",
+    photos: "Photos",
+    videos: "Vidéos",
+    addPhotos: "Ajouter des photos",
+    addVideos: "Ajouter des vidéos",
     comments: "Commentaires",
-    needs: "Besoins",
-    nameRequired: "Le nom est requis",
-    genderRequired: "Le genre est requis",
-    birthDateRequired: "La date de naissance est requise",
-    birthDateInvalid: "La date de naissance est invalide",
-    success: "Succès",
-    successMessage: "L'enfant a été ajouté avec succès",
-    error: "Erreur",
-    errorMessage: "Une erreur est survenue lors de l'ajout de l'enfant",
-    childInfo: "Informations sur l'enfant",
+    city: "Ville",
+    peopleHelped: "Personnes aidées",
+    assistantName: "Nom de l'assistant",
+    categories: "Catégories",
+    modify: "Modifier",
+    delete: "Supprimer",
+    confirmDelete: "Êtes-vous sûr ?",
+    deleteWarning: "Cette action est irréversible. Le don et toutes les données associées seront définitivement supprimés.",
     cancel: "Annuler",
-    adding: "Ajout en cours...",
-    add: "Ajouter"
+    confirm: "Confirmer",
+    searchPlaceholder: "Rechercher par ville, assistant ou commentaires...",
+    filterByCity: "Filtrer par ville",
+    allCities: "Toutes les villes",
+    sortBy: "Trier par",
+    date: "Date",
+    noDonationsFound: "Aucun don ne correspond à vos critères de recherche",
+    messages: "Messages",
+    newMessage: "Nouveau message",
+    recipient: "Destinataire",
+    selectRecipient: "Sélectionner un destinataire",
+    subject: "Sujet",
+    message: "Message",
+    send: "Envoyer",
+    sending: "Envoi en cours...",
+    new: "Nouveau",
+    selectMessageToRead: "Sélectionnez un message pour le lire",
+    messageSent: "Message envoyé",
+    messageSentSuccess: "Votre message a été envoyé avec succès",
+    messageError: "Une erreur est survenue lors de l'envoi du message",
+    fillAllFields: "Veuillez remplir tous les champs",
   },
   es: {
-    children: "Niños",
-    manageDonations: "Gestionar donaciones y patrocinios",
-    addChild: "Añadir niño",
-    profile: "Perfil",
-    edit: "Editar",
-    years: "años",
-    months: "meses",
-    sponsored: "Patrocinado",
-    available: "Disponible",
-    by: "por",
-    description: "Descripción",
-    story: "Historia",
+    donations: "Donaciones",
+    manageDonations: "Gestione las donaciones y su distribución",
+    addDonation: "Agregar donación",
+    close: "Cerrar",
+    donationBy: "Donación por",
+    completed: "Completado",
+    inProgress: "En curso",
+    photos: "Fotos",
+    videos: "Videos",
+    addPhotos: "Agregar fotos",
+    addVideos: "Agregar videos",
     comments: "Comentarios",
-    needs: "Necesidades",
-    nameRequired: "El nombre es requerido",
-    genderRequired: "El género es requerido",
-    birthDateRequired: "La fecha de nacimiento es requerida",
-    birthDateInvalid: "La fecha de nacimiento es inválida",
-    success: "Éxito",
-    successMessage: "El niño ha sido añadido con éxito",
-    error: "Error",
-    errorMessage: "Ha ocurrido un error al añadir el niño",
-    childInfo: "Información del niño",
+    city: "Ciudad",
+    peopleHelped: "Personas ayudadas",
+    assistantName: "Nombre del asistente",
+    categories: "Categorías",
+    modify: "Modificar",
+    delete: "Eliminar",
+    confirmDelete: "¿Está seguro?",
+    deleteWarning: "Esta acción es irreversible. La donación y todos los datos asociados serán eliminados permanentemente.",
     cancel: "Cancelar",
-    adding: "Añadiendo...",
-    add: "Añadir"
+    confirm: "Confirmar",
+    searchPlaceholder: "Buscar por ciudad, asistente o comentarios...",
+    filterByCity: "Filtrar por ciudad",
+    allCities: "Todas las ciudades",
+    sortBy: "Ordenar por",
+    date: "Fecha",
+    noDonationsFound: "No se encontraron donaciones que coincidan con sus criterios de búsqueda",
+    messages: "Mensajes",
+    newMessage: "Nuevo mensaje",
+    recipient: "Destinatario",
+    selectRecipient: "Seleccionar destinatario",
+    subject: "Asunto",
+    message: "Mensaje",
+    send: "Enviar",
+    sending: "Enviando...",
+    new: "Nuevo",
+    selectMessageToRead: "Seleccione un mensaje para leerlo",
+    messageSent: "Mensaje enviado",
+    messageSentSuccess: "Su mensaje ha sido enviado con éxito",
+    messageError: "Ha ocurrido un error al enviar el mensaje",
+    fillAllFields: "Por favor complete todos los campos",
   }
 };
 
@@ -73,7 +105,6 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [language, setLanguage] = useState<Language>('fr');
 
   useEffect(() => {
-    // Detect browser/device language
     const detectLanguage = () => {
       const browserLang = navigator.language.toLowerCase();
       if (browserLang.startsWith('es')) {
@@ -81,13 +112,11 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       } else if (browserLang.startsWith('fr')) {
         setLanguage('fr');
       }
-      // Default to French if no match (already set in useState)
     };
 
     detectLanguage();
   }, []);
 
-  // Store language preference
   useEffect(() => {
     localStorage.setItem('preferredLanguage', language);
   }, [language]);

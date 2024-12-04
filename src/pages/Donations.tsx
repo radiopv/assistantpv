@@ -11,6 +11,7 @@ import { useState } from "react";
 import { DonationStats } from "@/components/Donations/DonationStats";
 import { DonationFilters } from "@/components/Donations/DonationFilters";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Donations = () => {
   const [showForm, setShowForm] = useState(false);
@@ -19,6 +20,7 @@ const Donations = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<string>("date");
   const { user } = useAuth();
+  const { t } = useLanguage();
   
   const { data: donations, isLoading, error, refetch } = useQuery({
     queryKey: ['donations'],
@@ -84,7 +86,7 @@ const Donations = () => {
     return (
       <div className="space-y-6">
         <ErrorAlert 
-          message="Une erreur est survenue lors du chargement des dons" 
+          message={t('errorMessage')}
           retry={() => refetch()}
         />
       </div>
@@ -117,15 +119,15 @@ const Donations = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dons</h1>
-          <p className="text-gray-600 mt-2">Gérez les dons et leur distribution</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t('donations')}</h1>
+          <p className="text-gray-600 mt-2">{t('manageDonations')}</p>
         </div>
         <Button 
           className="bg-primary hover:bg-primary/90"
           onClick={() => setShowForm(!showForm)}
         >
           <Plus className="w-4 h-4 mr-2" />
-          {showForm ? "Fermer" : "Ajouter un don"}
+          {showForm ? t('close') : t('addDonation')}
         </Button>
       </div>
 
@@ -165,7 +167,7 @@ const Donations = () => {
             </div>
           ) : (
             <p className="text-center text-gray-600">
-              Aucun don ne correspond à vos critères de recherche
+              {t('noDonationsFound')}
             </p>
           )}
         </div>
