@@ -2,6 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface ChildrenListProps {
   children: any[];
@@ -41,6 +43,16 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
     );
   }
 
+  const NEED_CATEGORIES = {
+    education: "Éducation",
+    jouet: "Jouet",
+    vetement: "Vêtement",
+    nourriture: "Nourriture",
+    medicament: "Médicament",
+    hygiene: "Hygiène",
+    autre: "Autre"
+  };
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {children.map((child) => (
@@ -65,6 +77,18 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
                 {child.status}
               </span>
             </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {convertJsonToNeeds(child.needs).map((need, index) => (
+                <Badge 
+                  key={`${need.category}-${index}`}
+                  variant={need.is_urgent ? "destructive" : "secondary"}
+                >
+                  {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                </Badge>
+              ))}
+            </div>
+            
             <Button 
               className="w-full mt-4" 
               variant="outline"
