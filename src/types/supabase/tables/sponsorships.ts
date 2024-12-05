@@ -17,4 +17,17 @@ export interface SponsorshipWithDetails extends Sponsorship {
   };
 }
 
-export type SponsorshipRequest = Database["public"]["Tables"]["sponsorship_requests"]["Row"];
+export type SponsorshipRequest = {
+  id: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  city: string;
+  facebook_url?: string;
+  motivation?: string;
+  sponsorship_type: 'long_term' | 'one_time';
+  status: 'pending' | 'approved' | 'rejected';
+  terms_accepted: boolean;
+  created_at?: string;
+  updated_at?: string;
+};

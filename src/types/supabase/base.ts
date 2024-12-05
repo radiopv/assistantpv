@@ -1,38 +1,56 @@
+import { Json } from "./json";
+
 export interface Database {
   public: {
     Tables: {
       sponsorships: {
         Row: {
-          id: string
-          child_id: string
-          sponsor_id: string
-          start_date: string
-          end_date: string | null
-          status: 'active' | 'pending' | 'ended'
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          child_id: string;
+          sponsor_id: string;
+          start_date: string;
+          end_date: string | null;
+          status: 'active' | 'pending' | 'ended';
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string
-          child_id: string
-          sponsor_id: string
-          start_date?: string
-          end_date?: string | null
-          status?: 'active' | 'pending' | 'ended'
-          created_at?: string
-          updated_at?: string
-        }
+          id?: string;
+          child_id: string;
+          sponsor_id: string;
+          start_date?: string;
+          end_date?: string | null;
+          status?: 'active' | 'pending' | 'ended';
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string
-          child_id?: string
-          sponsor_id?: string
-          start_date?: string
-          end_date?: string | null
-          status?: 'active' | 'pending' | 'ended'
-          created_at?: string
-          updated_at?: string
-        }
-      }
+          id?: string;
+          child_id?: string;
+          sponsor_id?: string;
+          start_date?: string;
+          end_date?: string | null;
+          status?: 'active' | 'pending' | 'ended';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "sponsorships_child_id_fkey";
+            columns: ["child_id"];
+            isOneToOne: false;
+            referencedRelation: "children";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sponsorships_sponsor_id_fkey";
+            columns: ["sponsor_id"];
+            isOneToOne: false;
+            referencedRelation: "sponsors";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       profiles: {
         Row: {
           id: string
@@ -114,29 +132,29 @@ export interface Database {
           updated_at?: string
         }
       }
-    }
+    };
     Views: {
       unified_media_browser: {
         Row: {
-          id: string
-          url: string
-          type: string
-          source_table: string
-          category: string
-          metadata: Json
-          created_at: string
-        }
-      }
+          id: string;
+          url: string;
+          type: string;
+          source_table: string;
+          category: string;
+          metadata: Json;
+          created_at: string;
+        };
+      };
       donation_items_with_categories: {
         Row: {
-          category_id: string | null
-          category_name: string | null
-          description: string | null
-          donation_id: string | null
-          id: string | null
-          quantity: number | null
-        }
-      }
+          category_id: string | null;
+          category_name: string | null;
+          description: string | null;
+          donation_id: string | null;
+          id: string | null;
+          quantity: number | null;
+        };
+      };
       donation_statistics: {
         Row: {
           completed_donations: number | null
@@ -164,17 +182,12 @@ export interface Database {
           sponsor_stats: Json | null
         }
       }
-    }
+    };
+    Functions: {
+      // ... keep existing code (function definitions)
+    };
     Enums: {
-      user_role: "admin" | "assistant" | "sponsor" | "visitor"
-    }
-  }
+      user_role: "admin" | "assistant" | "sponsor" | "visitor";
+    };
+  };
 }
-
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
