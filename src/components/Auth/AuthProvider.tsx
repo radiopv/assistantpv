@@ -79,24 +79,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (sponsorData) {
-        // Create or update profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: sponsorData.id,
-            role: sponsorData.role || 'sponsor'
-          }, {
-            onConflict: 'id'
-          });
-
-        if (profileError) {
-          console.error('Error creating/updating profile:', profileError);
-          // Continue anyway as this shouldn't block login
-        }
-
+        // Store user data first
         localStorage.setItem('user', JSON.stringify(sponsorData));
         setUser(sponsorData);
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
+
+        // Then try to create/update profile
+        try {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .upsert({
+              id: sponsorData.id,
+              role: sponsorData.role || 'sponsor'
+            }, {
+              onConflict: 'id'
+            });
+
+          if (profileError) {
+            console.error('Error creating/updating profile:', profileError);
+            // Don't throw here, as the user is already authenticated
+          }
+        } catch (profileError) {
+          console.error('Error handling profile:', profileError);
+          // Continue anyway as profile creation shouldn't block login
+        }
         
         toast({
           title: "Connexion réussie",
