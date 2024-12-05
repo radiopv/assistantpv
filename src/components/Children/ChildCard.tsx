@@ -53,7 +53,6 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
     console.log("Need category:", needCategory);
     console.log("Comment:", comment);
     console.log("Is urgent:", isUrgent);
-    // Here you would implement the logic to save the comment and update urgent status
     setSelectedNeed(null);
     setComment("");
   };
@@ -124,14 +123,12 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           <div className="flex justify-between items-center mb-2">
             <h4 className="font-medium text-sm text-gray-700">{t("needs")}</h4>
             <div className="flex items-center gap-2 text-xs">
-              <span className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-blue-500 mr-1"></div>
+              <Badge variant="default" className="text-xs">
                 {t("normalNeed")}
-              </span>
-              <span className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+              </Badge>
+              <Badge variant="destructive" className="text-xs">
                 {t("urgentNeed")}
-              </span>
+              </Badge>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
