@@ -1,7 +1,14 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MapPin, Users, User } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface DonationBasicInfoProps {
   city: string;
@@ -29,7 +36,7 @@ export const DonationBasicInfo = ({
       peopleHelped: "Personnes aidées",
       peoplePlaceholder: "Nombre de personnes",
       assistantName: "Nom de l'assistant",
-      assistantPlaceholder: "Nom de l'assistant"
+      selectAssistant: "Sélectionnez un assistant"
     },
     es: {
       city: "Ciudad",
@@ -37,11 +44,16 @@ export const DonationBasicInfo = ({
       peopleHelped: "Personas ayudadas",
       peoplePlaceholder: "Número de personas",
       assistantName: "Nombre del asistente",
-      assistantPlaceholder: "Nombre del asistente"
+      selectAssistant: "Seleccione un asistente"
     }
   };
 
   const t = translations[language as keyof typeof translations];
+
+  const assistantOptions = [
+    "Vitia et Pancho",
+    "Vitia et Pancho et Demailys"
+  ];
 
   return (
     <>
@@ -80,13 +92,18 @@ export const DonationBasicInfo = ({
           <User className="w-4 h-4 text-gray-500" />
           {t.assistantName}
         </Label>
-        <Input
-          id="assistant"
-          value={assistantName}
-          onChange={(e) => onAssistantNameChange(e.target.value)}
-          className="text-base"
-          placeholder={t.assistantPlaceholder}
-        />
+        <Select value={assistantName} onValueChange={onAssistantNameChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={t.selectAssistant} />
+          </SelectTrigger>
+          <SelectContent>
+            {assistantOptions.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </>
   );
