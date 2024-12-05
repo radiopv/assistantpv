@@ -33,34 +33,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
-          
-          // Verify if profile exists, if not create it
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', parsedUser.id)
-            .single();
-            
-          if (profileError && profileError.code === 'PGRST116') {
-            // Profile doesn't exist, create it
-            const { error: createError } = await supabase
-              .from('profiles')
-              .insert([
-                { 
-                  id: parsedUser.id,
-                  role: parsedUser.role || 'sponsor'
-                }
-              ]);
-              
-            if (createError) {
-              console.error('Error creating profile:', createError);
-              throw createError;
-            }
-          } else if (profileError) {
-            console.error('Error checking profile:', profileError);
-            throw profileError;
-          }
-
           setUser(parsedUser);
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
           
@@ -95,40 +67,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .from('sponsors')
         .select('*')
         .eq('email', email)
-        .eq('password_hash', password)
-        .single();
+        .eq('password_hash', password);
 
       if (error) throw error;
       
-      if (data) {
-        // Create or update profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert([
-            { 
-              id: data.id,
-              role: data.role || 'sponsor'
-            }
-          ], { 
-            onConflict: 'id',
-            ignoreDuplicates: false 
-          });
-          
-        if (profileError) {
-          console.error('Error upserting profile:', profileError);
-          throw profileError;
-        }
-
-        localStorage.setItem('user', JSON.stringify(data));
-        setUser(data);
-        setIsAssistant(['assistant', 'admin'].includes(data.role));
+      if (data && data.length > 0) {
+        const sponsorData = data[0];
+        localStorage.setItem('user', JSON.stringify(sponsorData));
+        setUser(sponsorData);
+        setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
         
         toast({
           title: "Connexion réussie",
           description: "Bienvenue !",
         });
 
-        if (data.role === 'admin' || data.role === 'assistant') {
+        if (sponsorData.role === 'admin' || sponsorData.role === 'assistant') {
           navigate('/dashboard');
         } else {
           navigate('/');
