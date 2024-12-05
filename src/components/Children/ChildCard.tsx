@@ -105,9 +105,9 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           onClose={() => setSelectedNeed(null)}
         />
         
-        <div className="flex gap-2 pt-2">
+        <div className="flex flex-col items-center gap-2">
           <Button 
-            className="flex-1 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
+            className="w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
             variant="outline"
             onClick={() => onViewProfile(child.id)}
           >
@@ -115,7 +115,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           </Button>
 
           <Button 
-            className="flex-1 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
+            className="w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
             variant="outline"
             onClick={() => onSponsorClick(child)}
           >
