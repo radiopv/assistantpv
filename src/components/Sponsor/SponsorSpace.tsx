@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
 import { AlbumSection } from "./AlbumSection";
 import { SponsoredChildrenList } from "./SponsoredChildrenList";
-import type { SponsoredChild } from "@/types/sponsorship";
+import type { SponsoredChild, Child, Sponsorship } from "@/types/sponsorship";
 import { useToast } from "@/components/ui/use-toast";
 
 export const SponsorSpace = () => {
@@ -22,10 +22,9 @@ export const SponsorSpace = () => {
       try {
         if (!user?.id) return;
         
-        // Modifions la requête pour récupérer correctement les enfants parrainés
         const { data: sponsorships, error } = await supabase
           .from('sponsorships')
-          .select(`
+          .select<'sponsorships', Sponsorship & { children: Child }>(`
             child_id,
             children (
               id,
@@ -68,8 +67,9 @@ export const SponsorSpace = () => {
               id: sponsorship.children.id,
               name: sponsorship.children.name,
               photo_url: sponsorship.children.photo_url,
-              city: sponsorship.children.city,
-              age: age
+              city: sponsorship.children.city || '',
+              age: age,
+              status: sponsorship.children.status
             };
           })
           .filter((child): child is SponsoredChild => child !== null);

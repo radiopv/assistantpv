@@ -1,13 +1,14 @@
 import { createContext, useContext, useEffect } from "react";
 import { useAuthHook } from "./useAuthHook";
+import type { Sponsor } from "@/types/auth";
 
 interface AuthContextType {
-  user: any | null;
+  user: Sponsor | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAssistant: boolean;
-  session: any | null;
+  session: Sponsor | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
