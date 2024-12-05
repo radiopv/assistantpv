@@ -119,5 +119,63 @@ export const spanishTranslations = {
   changesSaved: "Cambios guardados correctamente",
   profileUpdated: "Perfil actualizado correctamente",
   passwordChanged: "Contraseña cambiada correctamente",
-  emailSent: "Correo electrónico enviado correctamente"
+  emailSent: "Correo electrónico enviado correctamente",
+
+  // Assistant space translations
+  dashboard: "Panel de control",
+  children: "Niños",
+  sponsors: "Padrinos",
+  donations: "Donaciones",
+  messages: "Mensajes",
+  settings: "Configuración",
+  translationManager: "Gestor de traducciones",
+  permissions: "Permisos",
+  statistics: "Estadísticas",
+  travels: "Viajes",
+  faq: "Preguntas frecuentes",
+  activity: "Registro de actividad",
+
+  // Assistant actions
+  addChild: "Agregar niño",
+  editChild: "Editar niño",
+  deleteChild: "Eliminar niño",
+  addDonation: "Agregar donación",
+  scanAssistantSection: "Escanear sección",
+  scanningTranslations: "Escaneando traducciones...",
+  scanStarted: "Escaneo iniciado",
+  scanError: "Error durante el escaneo",
+  
+  // Translation manager
+  missingTranslations: "Traducciones faltantes",
+  unusedTranslations: "Traducciones no utilizadas",
+  englishTextDetected: "Texto en inglés detectado",
+  translationError: "Error en las traducciones",
+  translationUpdated: "Traducciones actualizadas",
+  translationRequired: "Traducción requerida",
+  translationApproved: "Traducción aprobada",
+  originalText: "Texto original",
+  enterTranslation: "Introducir traducción",
+  approve: "Aprobar",
+  pendingTranslations: "Traducciones pendientes",
+  frenchTranslations: "Traducciones al francés",
+  spanishTranslations: "Traducciones al español",
+
+  // Assistant dashboard
+  urgentNeedsByCity: "Necesidades urgentes por ciudad",
+  activeSponsors: "Padrinos activos",
+  pendingRequests: "Solicitudes pendientes",
+  activeSponsorsComingSoon: "Lista de padrinos activos próximamente",
+  sponsorshipManagement: "Gestión de patrocinios",
+  sponsorshipRequestApproved: "Solicitud de patrocinio aprobada",
+  sponsorshipRequestRejected: "Solicitud de patrocinio rechazada",
+  sponsorshipRequestApprovalError: "Error al aprobar la solicitud",
+  sponsorshipRequestRejectionError: "Error al rechazar la solicitud",
+
+  // Assistant notifications
+  notificationsTitle: "Notificaciones",
+  noNotifications: "No hay notificaciones",
+  markAllAsRead: "Marcar todo como leído",
+  newMessage: "Nuevo mensaje",
+  newDonation: "Nueva donación",
+  newSponsorRequest: "Nueva solicitud de patrocinio",
 };
