@@ -1,29 +1,17 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { convertJsonToNeeds } from "@/types/needs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Tooltip } from "@/components/ui/tooltip";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { NeedsSection } from "./Needs/NeedsSection";
 
 interface ChildCardProps {
   child: any;
   onViewProfile: (id: string) => void;
   onSponsorClick: (child: any) => void;
 }
-
-const NEED_CATEGORIES = {
-  education: "Éducation",
-  jouet: "Jouet",
-  vetement: "Vêtement",
-  nourriture: "Nourriture",
-  medicament: "Médicament",
-  hygiene: "Hygiène",
-  autre: "Autre"
-};
 
 const formatAge = (birthDate: string) => {
   const { t } = useLanguage();
@@ -119,69 +107,15 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           </div>
         )}
 
-        <div>
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="font-medium text-sm text-gray-700">{t("needs")}</h4>
-            <div className="flex items-center gap-2 text-xs">
-              <span className="flex items-center">
-                <Badge variant="default" className="mr-1 px-1">
-                  {t("normalNeed")}
-                </Badge>
-              </span>
-              <span className="flex items-center">
-                <Badge variant="destructive" className="mr-1 px-1">
-                  {t("urgentNeed")}
-                </Badge>
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {convertJsonToNeeds(child.needs).map((need, index) => (
-              <div key={`${need.category}-${index}`} className="relative">
-                <Badge 
-                  variant={need.is_urgent ? "destructive" : "default"}
-                  className="cursor-pointer hover:opacity-80 transition-opacity px-3 py-1"
-                  onClick={() => handleNeedClick(need.category)}
-                >
-                  {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                </Badge>
-
-                {selectedNeed === need.category && (
-                  <Card className="absolute z-10 top-full mt-2 p-3 w-64 space-y-3">
-                    <p className="text-sm font-medium">
-                      {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                    </p>
-                    {need.description && (
-                      <p className="text-sm text-gray-600">{need.description}</p>
-                    )}
-                    <Input
-                      placeholder={t("addComment")}
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      className="text-sm"
-                    />
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant={need.is_urgent ? "default" : "destructive"}
-                        onClick={() => handleCommentSubmit(need.category, !need.is_urgent)}
-                      >
-                        {need.is_urgent ? t("markAsNormal") : t("markAsUrgent")}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setSelectedNeed(null)}
-                      >
-                        {t("close")}
-                      </Button>
-                    </div>
-                  </Card>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <NeedsSection
+          needs={convertJsonToNeeds(child.needs)}
+          selectedNeed={selectedNeed}
+          comment={comment}
+          onNeedClick={handleNeedClick}
+          onCommentChange={setComment}
+          onCommentSubmit={handleCommentSubmit}
+          onClose={() => setSelectedNeed(null)}
+        />
         
         <div className="flex gap-2 pt-2">
           <Button 
