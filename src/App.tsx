@@ -8,6 +8,7 @@ import { LanguageProvider } from "./contexts/LanguageContext";
 import MainLayout from "./components/Layout/MainLayout";
 import PublicLayout from "./components/Layout/PublicLayout";
 import Home from "./pages/Home";
+import BecomeSponsor from "./pages/BecomeSponsor";
 import Dashboard from "./pages/Dashboard";
 import Children from "./pages/Children";
 import AddChild from "./pages/AddChild";
@@ -65,6 +66,7 @@ const AppRoutes = () => (
     {/* Public Routes */}
     <Route element={<PublicLayout />}>
       <Route index element={<Home />} />
+      <Route path="/become-sponsor" element={<BecomeSponsor />} />
     </Route>
 
     {/* Auth Routes */}

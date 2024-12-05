@@ -221,3 +221,90 @@ $$;
 
 SELECT fix_needs_json();
 
+
+-- Function to approve sponsorship request
+CREATE OR REPLACE FUNCTION approve_sponsorship_request(
+  request_id UUID,
+  admin_id UUID
+)
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_email TEXT;
+  v_full_name TEXT;
+BEGIN
+  -- Get request details
+  SELECT email, full_name INTO v_email, v_full_name
+  FROM sponsorship_requests
+  WHERE id = request_id;
+
+  -- Create sponsor account
+  INSERT INTO sponsors (
+    email,
+    name,
+    role,
+    is_active
+  )
+  VALUES (
+    v_email,
+    v_full_name,
+    'sponsor',
+    true
+  );
+
+  -- Update request status
+  UPDATE sponsorship_requests
+  SET status = 'approved'
+  WHERE id = request_id;
+
+  -- Log the action
+  INSERT INTO activity_logs (
+    user_id,
+    action,
+    details
+  )
+  VALUES (
+    admin_id,
+    'approve_sponsorship_request',
+    jsonb_build_object(
+      'request_id', request_id,
+      'sponsor_name', v_full_name
+    )
+  );
+END;
+$$;
+
+-- Function to reject sponsorship request
+CREATE OR REPLACE FUNCTION reject_sponsorship_request(
+  request_id UUID,
+  admin_id UUID,
+  rejection_reason TEXT DEFAULT NULL
+)
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  -- Update request status
+  UPDATE sponsorship_requests
+  SET 
+    status = 'rejected',
+    updated_at = NOW()
+  WHERE id = request_id;
+
+  -- Log the action
+  INSERT INTO activity_logs (
+    user_id,
+    action,
+    details
+  )
+  VALUES (
+    admin_id,
+    'reject_sponsorship_request',
+    jsonb_build_object(
+      'request_id', request_id,
+      'reason', rejection_reason
+    )
+  );
+END;
+$$;
