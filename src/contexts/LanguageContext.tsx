@@ -9,6 +9,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: keyof Translations) => string;
+  addTranslation: (key: string, value: string, language: Language) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -39,8 +40,23 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return translation;
   };
 
+  const addTranslation = (key: string, value: string, targetLanguage: Language) => {
+    if (targetLanguage === 'fr') {
+      frenchTranslations[key as keyof typeof frenchTranslations] = value;
+    } else {
+      spanishTranslations[key as keyof typeof spanishTranslations] = value;
+    }
+    
+    if (targetLanguage === language) {
+      setTranslations(prev => ({
+        ...prev,
+        [key]: value
+      }));
+    }
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, addTranslation }}>
       {children}
     </LanguageContext.Provider>
   );

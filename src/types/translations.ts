@@ -25,6 +25,11 @@ export interface Translations {
   about: string;
   contact: string;
   messages: string;
+  editProfile: string;
+  welcome: string;
+  back: string;
+  next: string;
+  language: string;
 
   // Common actions
   save: string;
@@ -32,8 +37,6 @@ export interface Translations {
   edit: string;
   delete: string;
   confirm: string;
-  back: string;
-  next: string;
   submit: string;
   search: string;
   filter: string;
@@ -41,6 +44,11 @@ export interface Translations {
   add: string;
   remove: string;
   update: string;
+  close: string;
+  grid: string;
+  list: string;
+  logout: string;
+  user: string;
 
   // Child related
   childName: string;
@@ -53,46 +61,105 @@ export interface Translations {
   sponsored: string;
   available: string;
   by: string;
+  addChild: string;
+  months: string;
+  years: string;
+  age: string;
+  sponsor: string;
+  editOrRemoveSponsor: string;
+  addSponsor: string;
+  masculine: string;
+  feminine: string;
+  allAges: string;
+  allStatus: string;
+  pending: string;
+  urgent: string;
+  manageDonations: string;
+
+  // Search and filters
+  searchPlaceholder: string;
+  filterByCity: string;
+  allCities: string;
+  gender: string;
+  allGenders: string;
+  status: string;
+  sortBy: string;
+  date: string;
+
+  // Translation management
+  translationManager: string;
+  translationScanner: string;
+  scanMissingTranslations: string;
+  findUnusedTranslations: string;
+  detectEnglishText: string;
+  missingTranslations: string;
+  unusedTranslations: string;
+  englishTextDetected: string;
+  missingTranslationsFound: string;
+  unusedTranslationsFound: string;
+  englishTextFound: string;
+  pendingTranslations: string;
+  translationRequired: string;
+  translationApproved: string;
+  originalText: string;
+  enterTranslation: string;
+  approve: string;
+  translationError: string;
+  translationUpdated: string;
+  scanStarted: string;
+  scanError: string;
+  scanningTranslations: string;
+  scanAssistantSection: string;
+  frenchTranslations: string;
+  spanishTranslations: string;
+
+  // Admin
+  permissions: string;
+  travels: string;
+  statistics: string;
+  faq: string;
 
   // Dashboard
-  totalChildren: string;
-  sponsoredChildren: string;
-  urgentNeeds: string;
-  activeCities: string;
-  incompleteProfiles: string;
-  viewAllChildren: string;
-  viewSponsoredChildren: string;
-  viewUrgentNeeds: string;
-  viewCityStats: string;
-  viewIncompleteProfiles: string;
-  welcomeMessage: string;
+  urgentNeedsByCity: string;
+  topCities: string;
+  sponsorshipStats: string;
+  activeSponsorships: string;
+  pendingSponsorships: string;
+  completedSponsorships: string;
 
-  // Sponsorship
-  becomeSponsor: string;
-  sponsorshipDescription: string;
-  fullName: string;
-  motivation: string;
-  facebookUrl: string;
-  longTermSponsorship: string;
-  acceptTerms: string;
-  sponsorshipTerminationNote: string;
-  submitting: string;
-  submitRequest: string;
-  pleaseAcceptTerms: string;
-  sponsorshipRequestSubmitted: string;
-  errorSubmittingRequest: string;
-  
-  // Messages
-  success: string;
-  error: string;
-  warning: string;
-  info: string;
-  loading: string;
-  noResults: string;
-  confirmDelete: string;
+  // Donations
+  totalDonations: string;
+  peopleHelped: string;
+  citiesCovered: string;
+  donationsTitle: string;
+  donationsSubtitle: string;
+  addDonation: string;
+  noDonationsFound: string;
+  donationBy: string;
+  selectMessageToRead: string;
 
-  // Donation categories
-  monetary: string;
-  material: string;
-  service: string;
+  // Sponsors
+  activeSponsors: string;
+  inactiveSponsors: string;
+  selectMessage: string;
+
+  // Profile
+  profileUpdated: string;
+  profileUpdateSuccess: string;
+  profileUpdateError: string;
+  childDeleted: string;
+  childDeleteSuccess: string;
+  childDeleteError: string;
+  sponsorAlbum: string;
+  sponsorAlbumDescription: string;
+  errorMessage: string;
+
+  // Comments
+  addComment: string;
+  markAsNormal: string;
+  markAsUrgent: string;
+
+  // Confirmations
+  deleteConfirmation: string;
+  deleteWarning: string;
 }
