@@ -4,10 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useAuthHook = () => {
-  const [user, setUser] = useState<any | null>(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
@@ -17,6 +14,13 @@ export const useAuthHook = () => {
       console.log('Checking auth for email:', userEmail);
       
       if (!userEmail) {
+        // Try to get user from localStorage if no email provided
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
+        }
         setLoading(false);
         return;
       }
