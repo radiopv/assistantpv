@@ -48,8 +48,7 @@ export const HeroSection = () => {
     );
   }
 
-  const isMobile = window.innerWidth < 768;
-  const mainImage = "/lovable-uploads/ccc3a025-c40a-41aa-a21c-fa19f639e444.png";
+  const mainImage = "/lovable-uploads/7b0fcfb7-f95f-4624-990d-4a7f8ca8d21c.png";
 
   return (
     <div className="relative flex flex-col md:flex-row items-center justify-between p-4 md:p-8 bg-cuba-gradient text-white">
