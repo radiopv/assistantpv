@@ -36,6 +36,7 @@ export const UrgentNeedsSection = () => {
         throw error;
       }
 
+      // Filter children to ensure they have valid needs
       return data?.filter(child => {
         const needs = convertJsonToNeeds(child.needs);
         return needs.length > 0;
