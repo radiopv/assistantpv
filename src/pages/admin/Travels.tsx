@@ -1,5 +1,16 @@
-// Fix the type issue in the Travels component
-const namesList = data?.map(item => item.name) || [];
-const emailsList = data?.map(item => item.email) || [];
+import { useState } from 'react';
 
-// Use these arrays in your component instead of accessing .name directly
+const Travels = () => {
+  const [namesList, setNamesList] = useState<string[]>([]);
+  const [emailsList, setEmailsList] = useState<string[]>([]);
+
+  // Component logic here
+  return (
+    <div>
+      <h1>Travels Management</h1>
+      {/* Component content */}
+    </div>
+  );
+};
+
+export default Travels;

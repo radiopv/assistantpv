@@ -9,8 +9,8 @@ const MediaManagement = () => {
     queryKey: ["media-items"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("unified_media_browser")
-        .select("*");
+        .from('unified_media_browser')
+        .select('*');
 
       if (error) throw error;
       return data as MediaBrowserView[];
@@ -31,7 +31,7 @@ const MediaManagement = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {mediaItems?.map((item) => (
           <Card key={item.id} className="p-4">
-            <img src={item.url} alt={item.title} className="w-full h-auto rounded" />
+            <img src={item.url} alt={item.title || ''} className="w-full h-auto rounded" />
             <h2 className="mt-2 font-semibold">{item.title}</h2>
             <p className="text-sm">{item.description}</p>
           </Card>
