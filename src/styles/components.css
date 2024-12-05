@@ -1,0 +1,50 @@
+@layer components {
+  .cuba-card {
+    @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6;
+    background-image: linear-gradient(to bottom right, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+    backdrop-filter: blur(10px);
+  }
+
+  .cuba-button {
+    @apply px-4 py-3 rounded-md font-medium transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
+           active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .cuba-button-primary {
+    @apply cuba-button bg-primary text-white hover:bg-primary-hover;
+  }
+
+  .cuba-button-secondary {
+    @apply cuba-button bg-secondary text-white hover:bg-secondary-hover;
+  }
+
+  .cuba-input {
+    @apply w-full px-4 py-3 rounded-md border border-gray-200
+           focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+           placeholder:text-gray-400;
+  }
+
+  .cuba-title {
+    @apply font-title text-fluid-3xl font-bold;
+  }
+
+  .cuba-subtitle {
+    @apply font-title text-fluid-xl;
+  }
+
+  /* Mobile-optimized components */
+  @media (max-width: 640px) {
+    .cuba-card {
+      @apply p-4;
+    }
+
+    .cuba-button {
+      @apply py-2.5;
+    }
+
+    .cuba-input {
+      @apply py-2.5;
+    }
+  }
+}
