@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
@@ -26,20 +26,24 @@ import AvailableChildren from "@/pages/AvailableChildren";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 
 export const Router = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <Routes>
       {/* Public Routes */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={user ? <Navigate to={user.role === 'admin' || user.role === 'assistant' ? '/dashboard' : '/'} /> : <Login />} />
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/become-sponsor/:childId" element={<BecomeSponsor />} />
       </Route>
 
       {/* Protected Routes */}
-      {user && (
+      {user ? (
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/children" element={<Children />} />
@@ -59,6 +63,8 @@ export const Router = () => {
           <Route path="/admin/sponsorship-requests" element={<SponsorshipRequests />} />
           <Route path="/sponsor/travels" element={<Travels />} />
         </Route>
+      ) : (
+        <Route path="*" element={<Navigate to="/login" replace />} />
       )}
     </Routes>
   );

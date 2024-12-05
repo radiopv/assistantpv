@@ -24,7 +24,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, isAssistant, signIn, signOut, checkAuth } = useAuthHook();
 
   useEffect(() => {
-    checkAuth(user?.email);
+    // Check auth on mount and when user email changes
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      checkAuth(parsedUser.email);
+    } else {
+      checkAuth(user?.email);
+    }
   }, [user?.email]);
 
   return (

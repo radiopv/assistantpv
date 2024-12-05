@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useAuthHook = () => {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<any | null>(() => {
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
@@ -32,6 +35,7 @@ export const useAuthHook = () => {
       if (sponsorData) {
         console.log('Found sponsor data:', sponsorData);
         setUser(sponsorData);
+        localStorage.setItem('user', JSON.stringify(sponsorData));
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
         
         if (window.location.pathname === '/login') {
@@ -44,6 +48,7 @@ export const useAuthHook = () => {
       } else {
         console.log('No sponsor found for email:', userEmail);
         setUser(null);
+        localStorage.removeItem('user');
         if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
           navigate("/login");
         }
@@ -51,6 +56,7 @@ export const useAuthHook = () => {
     } catch (error) {
       console.error('Error checking auth:', error);
       setUser(null);
+      localStorage.removeItem('user');
       navigate("/login");
     } finally {
       setLoading(false);
@@ -76,12 +82,10 @@ export const useAuthHook = () => {
       if (sponsorData) {
         console.log('Sign in successful:', sponsorData);
         setUser(sponsorData);
+        localStorage.setItem('user', JSON.stringify(sponsorData));
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
         
-        toast({
-          title: "Connexion réussie",
-          description: "Bienvenue !",
-        });
+        toast.success("Connexion réussie");
 
         if (sponsorData.role === 'admin' || sponsorData.role === 'assistant') {
           navigate('/dashboard');
@@ -90,19 +94,11 @@ export const useAuthHook = () => {
         }
       } else {
         console.log('Invalid credentials for:', email);
-        toast({
-          title: "Erreur de connexion",
-          description: "Email ou mot de passe incorrect",
-          variant: "destructive",
-        });
+        toast.error("Email ou mot de passe incorrect");
       }
     } catch (error) {
       console.error("Error signing in:", error);
-      toast({
-        title: "Erreur de connexion",
-        description: "Une erreur est survenue",
-        variant: "destructive",
-      });
+      toast.error("Une erreur est survenue");
     }
   };
 
@@ -110,18 +106,12 @@ export const useAuthHook = () => {
     try {
       setUser(null);
       setIsAssistant(false);
-      toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !",
-      });
+      localStorage.removeItem('user');
+      toast.success("Déconnexion réussie");
       navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
-      toast({
-        title: "Erreur lors de la déconnexion",
-        description: "Veuillez réessayer",
-        variant: "destructive",
-      });
+      toast.error("Erreur lors de la déconnexion");
     }
   };
 
