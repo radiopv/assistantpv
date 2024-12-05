@@ -4,7 +4,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface NeedBadgeProps {
   category: string;
   isUrgent?: boolean;
+  isSelected?: boolean;
+  description?: string;
+  comment?: string;
   onNeedClick?: () => void;
+  onCommentChange?: (comment: string) => void;
+  onSubmit?: (isUrgent: boolean) => void;
+  onClose?: () => void;
 }
 
 const NEED_CATEGORIES = {
@@ -20,7 +26,13 @@ const NEED_CATEGORIES = {
 export const NeedBadge = ({
   category,
   isUrgent = false,
+  isSelected = false,
+  description = "",
+  comment = "",
   onNeedClick,
+  onCommentChange,
+  onSubmit,
+  onClose,
 }: NeedBadgeProps) => {
   const { t } = useLanguage();
 
