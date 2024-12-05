@@ -1,26 +1,37 @@
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 export const logActivity = async (userId: string | null, action: string, details?: any) => {
   try {
-    // Skip logging if no user ID is provided
     if (!userId) {
       console.log('No user ID provided for activity logging');
       return;
     }
 
-    // Check if user exists in auth.users
+    // Check if user exists in profiles
     const { data: userExists, error: userCheckError } = await supabase
       .from('profiles')
       .select('id')
       .eq('id', userId)
-      .single();
+      .maybeSingle(); // Using maybeSingle() instead of single()
 
-    if (userCheckError || !userExists) {
-      console.warn('User not found in profiles table, skipping activity log:', userId);
+    if (userCheckError) {
+      console.error('Error checking user profile:', userCheckError);
       return;
     }
 
-    // Log the activity
+    if (!userExists) {
+      console.warn('User not found in profiles table, creating profile:', userId);
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert([{ id: userId, role: 'pending-sponsor' }]);
+        
+      if (insertError) {
+        console.error('Error creating profile:', insertError);
+        return;
+      }
+    }
+
     const { error } = await supabase
       .from('activity_logs')
       .insert({

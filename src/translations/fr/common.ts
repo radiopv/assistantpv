@@ -20,7 +20,7 @@ export const commonTranslations = {
   next: "Suivant",
   language: "Langue",
   months: "mois",
-  years: "ans",
+  years: "années",
   age: "Âge",
   city: "Ville",
   gender: "Genre",
@@ -30,5 +30,5 @@ export const commonTranslations = {
   allCities: "Toutes les villes",
   sortBy: "Trier par",
   user: "Utilisateur",
-  logout: "Se déconnecter"
+  logout: "Déconnexion"
 };
