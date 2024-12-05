@@ -101,17 +101,6 @@ export const ChildrenFilters = ({
               ))}
             </SelectContent>
           </Select>
-
-          <Select value={selectedStatus} onValueChange={onStatusChange}>
-            <SelectTrigger className="w-[180px] bg-white">
-              <SelectValue placeholder={t("status")} />
-            </SelectTrigger>
-            <SelectContent className="bg-white">
-              <SelectItem value="all">{t("allStatus")}</SelectItem>
-              <SelectItem value="pending">{t("pending")}</SelectItem>
-              <SelectItem value="urgent">{t("urgent")}</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
       </div>
     </div>

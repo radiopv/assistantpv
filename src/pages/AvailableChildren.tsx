@@ -27,7 +27,6 @@ const AvailableChildren = () => {
       const { data, error } = await supabase
         .from('children')
         .select('*')
-        .eq('status', 'available')
         .order('name');
 
       if (error) throw error;
@@ -46,8 +45,9 @@ const AvailableChildren = () => {
     const matchesCity = selectedCity === "all" || child.city === selectedCity;
     const matchesGender = selectedGender === "all" || child.gender === selectedGender;
     const matchesAge = selectedAge === "all" || differenceInYears(new Date(), parseISO(child.birth_date)) === parseInt(selectedAge);
+    const matchesStatus = selectedStatus === "available" ? !child.is_sponsored : child.is_sponsored;
     
-    return matchesSearch && matchesCity && matchesGender && matchesAge;
+    return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
   });
 
   if (isLoading) {
