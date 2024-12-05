@@ -9,16 +9,22 @@ export const spanishTranslations = {
   resetPassword: "Restablecer contraseña",
   confirmPassword: "Confirmar contraseña",
   
-  // Navigation
+  // Navigation and common sections
   home: "Inicio",
   profile: "Perfil",
   settings: "Configuración",
   dashboard: "Panel de control",
-  children: "Niños",
   sponsors: "Padrinos",
   donations: "Donaciones",
+  messages: "Mensajes",
   about: "Acerca de",
   contact: "Contacto",
+  children: "Niños",
+  statistics: "Estadísticas",
+  travels: "Viajes",
+  faq: "Preguntas frecuentes",
+  activity: "Registro de actividad",
+  permissions: "Permisos",
   
   // Common actions
   save: "Guardar",
@@ -121,24 +127,8 @@ export const spanishTranslations = {
   passwordChanged: "Contraseña cambiada correctamente",
   emailSent: "Correo electrónico enviado correctamente",
 
-  // Assistant space translations
-  dashboard: "Panel de control",
-  children: "Niños",
-  sponsors: "Padrinos",
-  donations: "Donaciones",
-  messages: "Mensajes",
-  settings: "Configuración",
+  // Assistant specific
   translationManager: "Gestor de traducciones",
-  permissions: "Permisos",
-  statistics: "Estadísticas",
-  travels: "Viajes",
-  faq: "Preguntas frecuentes",
-  activity: "Registro de actividad",
-
-  // Assistant actions
-  addChild: "Agregar niño",
-  editChild: "Editar niño",
-  deleteChild: "Eliminar niño",
   addDonation: "Agregar donación",
   scanAssistantSection: "Escanear sección",
   scanningTranslations: "Escaneando traducciones...",
@@ -177,5 +167,5 @@ export const spanishTranslations = {
   markAllAsRead: "Marcar todo como leído",
   newMessage: "Nuevo mensaje",
   newDonation: "Nueva donación",
-  newSponsorRequest: "Nueva solicitud de patrocinio",
+  newSponsorRequest: "Nueva solicitud de patrocinio"
 };
