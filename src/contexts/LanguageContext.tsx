@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { frenchTranslations } from '../translations/fr';
 import { spanishTranslations } from '../translations/es';
-import { useToast } from '@/components/ui/use-toast';
 
 type Language = 'fr' | 'es';
 
@@ -9,7 +8,6 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
-  addTranslation: (key: string, value: string, lang: Language) => void;
 }
 
 const translations = {
@@ -21,11 +19,6 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>('fr');
-  const { toast } = useToast();
-  const [dynamicTranslations, setDynamicTranslations] = useState<{
-    fr: Record<string, string>;
-    es: Record<string, string>;
-  }>({ fr: {}, es: {} });
 
   useEffect(() => {
     const detectLanguage = () => {
@@ -44,49 +37,13 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     localStorage.setItem('preferredLanguage', language);
   }, [language]);
 
-  const addTranslation = (key: string, value: string, lang: Language) => {
-    setDynamicTranslations(prev => ({
-      ...prev,
-      [lang]: {
-        ...prev[lang],
-        [key]: value
-      }
-    }));
-
-    // Log l'ajout de la traduction pour le débogage
-    console.log(`Added translation for ${lang}:`, { key, value });
-  };
-
   const t = (key: string): string => {
-    // Vérifie d'abord dans les traductions dynamiques
-    const dynamicTranslation = dynamicTranslations[language][key];
-    if (dynamicTranslation) {
-      return dynamicTranslation;
-    }
-
-    // Vérifie ensuite dans les traductions statiques
-    const staticTranslations = translations[language];
-    const translation = staticTranslations[key as keyof typeof staticTranslations];
-    
-    if (!translation) {
-      console.warn(`Missing translation for key: ${key} in language: ${language}`);
-      
-      // Affiche une notification toast pour les traductions manquantes
-      toast({
-        title: "Traduction manquante",
-        description: `La clé "${key}" n'a pas de traduction en ${language === 'fr' ? 'français' : 'espagnol'}.`,
-        variant: "warning",
-      });
-
-      // Retourne le message par défaut
-      return "Traduction indisponible";
-    }
-
-    return translation;
+    const currentTranslations = translations[language];
+    return currentTranslations[key as keyof typeof currentTranslations] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, addTranslation }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
