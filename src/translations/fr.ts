@@ -107,4 +107,21 @@ export const frenchTranslations = {
   pleaseWait: "Veuillez patienter...",
   required: "Requis",
   invalid: "Invalide",
+
+  // Home page translations
+  changeLife: "Changez une vie, parrainez un enfant",
+  giveHope: "Donnez de l'espoir et un avenir meilleur aux enfants cubains grâce à votre parrainage",
+  sponsorChild: "Parrainer un enfant",
+  childrenWaitingSponsorship: "Enfants en attente de parrainage",
+  learnMore: "En savoir plus",
+  readyToChange: "Prêt à changer une vie ?",
+  sponsorshipDifference: "Votre parrainage peut faire une réelle différence dans la vie d'un enfant",
+  startNow: "Commencer maintenant",
+  howItWorks: "Comment ça marche ?",
+  chooseChild: "Choisissez un enfant",
+  browseProfiles: "Parcourez les profils des enfants et choisissez celui que vous souhaitez parrainer",
+  completeProfile: "Complétez votre profil",
+  fillInformation: "Remplissez les informations nécessaires pour devenir parrain",
+  startSponsorship: "Commencez votre parrainage",
+  receiveUpdates: "Recevez des nouvelles régulières et suivez l'évolution de votre filleul"
 };
