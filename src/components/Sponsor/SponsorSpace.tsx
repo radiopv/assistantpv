@@ -7,10 +7,12 @@ import { Loader2 } from "lucide-react";
 import { AlbumSection } from "./AlbumSection";
 import { SponsoredChildrenList } from "./SponsoredChildrenList";
 import type { SponsoredChild } from "@/types/sponsorship";
+import { useToast } from "@/components/ui/use-toast";
 
 export const SponsorSpace = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
+  const { toast } = useToast();
   const [sponsoredChildren, setSponsoredChildren] = useState<SponsoredChild[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
@@ -18,28 +20,32 @@ export const SponsorSpace = () => {
   useEffect(() => {
     const fetchSponsoredChildren = async () => {
       try {
-        console.log("Fetching sponsored children for user:", user?.id);
+        if (!user?.id) return;
         
-        const { data: sponsorships, error: sponsorshipsError } = await supabase
+        const { data: sponsorships, error } = await supabase
           .from('sponsorships')
           .select(`
             child_id,
-            status,
             children (
               id,
               name,
               photo_url,
               city,
-              age,
+              birth_date,
               status
             )
           `)
-          .eq('sponsor_id', user?.id)
+          .eq('sponsor_id', user.id)
           .eq('status', 'active');
 
-        if (sponsorshipsError) {
-          console.error('Error fetching sponsorships:', sponsorshipsError);
-          throw sponsorshipsError;
+        if (error) {
+          console.error('Error fetching sponsorships:', error);
+          toast({
+            variant: "destructive",
+            title: "Erreur",
+            description: "Impossible de récupérer vos filleuls"
+          });
+          return;
         }
 
         console.log("Sponsorships data:", sponsorships);
@@ -55,7 +61,12 @@ export const SponsorSpace = () => {
           setSelectedChild(children[0].id);
         }
       } catch (error) {
-        console.error('Error fetching sponsored children:', error);
+        console.error('Error in fetchSponsoredChildren:', error);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Une erreur est survenue lors de la récupération de vos filleuls"
+        });
       } finally {
         setLoading(false);
       }
@@ -64,7 +75,7 @@ export const SponsorSpace = () => {
     if (user?.id) {
       fetchSponsoredChildren();
     }
-  }, [user?.id]);
+  }, [user?.id, toast]);
 
   if (loading) {
     return (
