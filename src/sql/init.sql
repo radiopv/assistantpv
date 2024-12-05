@@ -1,3 +1,19 @@
+-- Create sponsorship_requests table if it doesn't exist
+CREATE TABLE IF NOT EXISTS public.sponsorship_requests (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50),
+    city VARCHAR(255),
+    motivation TEXT,
+    facebook_url TEXT,
+    is_long_term BOOLEAN DEFAULT true,
+    terms_accepted BOOLEAN DEFAULT false,
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
+);
+
 -- Add is_featured column to donation_photos table if it doesn't exist
 DO $$ 
 BEGIN

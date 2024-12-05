@@ -1,241 +1,200 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { SponsorsList } from "@/components/Sponsors/SponsorsList";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Search, Download, Upload, Filter, Check, X } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { AvailableChildrenList } from "@/components/Sponsorship/AvailableChildrenList";
+import { SponsoredChildrenList } from "@/components/Sponsorship/SponsoredChildrenList";
+import { Loader2, Check, X } from "lucide-react";
 
-const SponsorsManagement = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const { t } = useLanguage();
+interface SponsorshipRequest {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  city: string;
+  motivation: string;
+  facebook_url: string;
+  is_long_term: boolean;
+  status: string;
+  created_at: string;
+}
+
+const SponsorshipManagement = () => {
   const { toast } = useToast();
-  const { user } = useAuth();
 
-  const { data: sponsors, isLoading: sponsorsLoading } = useQuery({
-    queryKey: ["sponsors"],
+  const { data: children, isLoading: childrenLoading } = useQuery({
+    queryKey: ['children'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sponsors")
+        .from('children')
         .select(`
           *,
-          sponsorships (
-            id,
-            start_date,
-            child:children (
-              id,
-              name,
-              photo_url
-            )
+          sponsors (
+            name,
+            email,
+            photo_url
           )
         `)
-        .order("name");
+        .order('name');
 
       if (error) throw error;
       return data;
-    },
+    }
   });
 
-  const { data: requests, isLoading: requestsLoading, refetch: refetchRequests } = useQuery({
-    queryKey: ["sponsorship-requests"],
+  const { data: requests, isLoading: requestsLoading } = useQuery({
+    queryKey: ['sponsorship-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sponsorship_requests")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('sponsorship_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
-    },
+      return data as SponsorshipRequest[];
+    }
   });
 
-  const handleApproveRequest = async (requestId: string) => {
+  const handleApprove = async (requestId: string) => {
     try {
-      const { error } = await supabase.rpc('approve_sponsorship_request', {
-        request_id: requestId,
-        admin_id: user?.id
-      });
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .update({ status: 'approved' })
+        .eq('id', requestId);
 
       if (error) throw error;
 
       toast({
-        title: t("success"),
-        description: t("requestApproved"),
+        title: "Succès",
+        description: "La demande de parrainage a été approuvée",
       });
-
-      refetchRequests();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error approving request:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: error.message || t("errorApprovingRequest"),
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'approbation de la demande",
       });
     }
   };
 
-  const handleRejectRequest = async (requestId: string) => {
+  const handleReject = async (requestId: string) => {
     try {
-      const { error } = await supabase.rpc('reject_sponsorship_request', {
-        request_id: requestId,
-        admin_id: user?.id
-      });
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .update({ status: 'rejected' })
+        .eq('id', requestId);
 
       if (error) throw error;
 
       toast({
-        title: t("success"),
-        description: t("requestRejected"),
+        title: "Succès",
+        description: "La demande de parrainage a été rejetée",
       });
-
-      refetchRequests();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error rejecting request:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: error.message || t("errorRejectingRequest"),
+        title: "Erreur",
+        description: "Une erreur est survenue lors du rejet de la demande",
       });
     }
   };
 
-  const filteredSponsors = sponsors?.filter(sponsor =>
-    sponsor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sponsor.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    sponsor.city?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  if (childrenLoading || requestsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  const sponsoredChildren = children?.filter(child => child.is_sponsored) || [];
+  const availableChildren = children?.filter(child => !child.is_sponsored) || [];
+  const pendingRequests = requests?.filter(req => req.status === 'pending') || [];
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <Tabs defaultValue="sponsors" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="sponsors">{t("sponsors")}</TabsTrigger>
-          <TabsTrigger value="requests">{t("sponsorshipRequests")}</TabsTrigger>
+    <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-2xl font-bold">Gestion des Parrainages</h1>
+
+      <Tabs defaultValue="requests" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="requests">
+            Demandes en attente ({pendingRequests.length})
+          </TabsTrigger>
+          <TabsTrigger value="available">
+            Enfants Disponibles ({availableChildren.length})
+          </TabsTrigger>
+          <TabsTrigger value="sponsored">
+            Enfants Parrainés ({sponsoredChildren.length})
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="sponsors" className="space-y-6">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <h1 className="text-2xl font-bold">{t("sponsorManagement")}</h1>
-            
-            <div className="flex flex-wrap gap-4">
-              <div className="relative flex-1 md:flex-none md:min-w-[300px]">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                  placeholder={t("searchSponsor")}
-                  className="pl-8"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">
-                    <Filter className="h-4 w-4 mr-2" />
-                    {t("export")}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => console.log("Export")}>
-                    <Download className="h-4 w-4 mr-2" />
-                    {t("exportToCsv")}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => console.log("Import")}>
-                    <Upload className="h-4 w-4 mr-2" />
-                    {t("importFromCsv")}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+        <TabsContent value="requests" className="mt-6">
+          <Card className="p-4">
+            <div className="space-y-4">
+              {pendingRequests.map((request) => (
+                <div key={request.id} className="border p-4 rounded-lg">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold">{request.full_name}</h3>
+                      <p className="text-sm text-gray-600">{request.email}</p>
+                      <p className="text-sm text-gray-600">{request.city}</p>
+                      <p className="text-sm text-gray-600">
+                        {request.is_long_term ? "Parrainage à long terme" : "Parrainage unique"}
+                      </p>
+                      {request.motivation && (
+                        <p className="mt-2 text-gray-700">{request.motivation}</p>
+                      )}
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-green-600 hover:text-green-700"
+                        onClick={() => handleApprove(request.id)}
+                      >
+                        <Check className="w-4 h-4 mr-1" />
+                        Approuver
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 hover:text-red-700"
+                        onClick={() => handleReject(request.id)}
+                      >
+                        <X className="w-4 h-4 mr-1" />
+                        Rejeter
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {pendingRequests.length === 0 && (
+                <p className="text-center text-gray-500">
+                  Aucune demande en attente
+                </p>
+              )}
             </div>
-          </div>
-
-          <SponsorsList sponsors={filteredSponsors || []} isLoading={sponsorsLoading} />
+          </Card>
         </TabsContent>
 
-        <TabsContent value="requests">
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t("name")}</TableHead>
-                  <TableHead>{t("email")}</TableHead>
-                  <TableHead>{t("city")}</TableHead>
-                  <TableHead>{t("phone")}</TableHead>
-                  <TableHead>{t("sponsorshipType")}</TableHead>
-                  <TableHead>{t("actions")}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {requestsLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-4">
-                      {t("loading")}
-                    </TableCell>
-                  </TableRow>
-                ) : requests?.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-4">
-                      {t("noRequests")}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  requests?.map((request) => (
-                    <TableRow key={request.id}>
-                      <TableCell>{request.full_name}</TableCell>
-                      <TableCell>{request.email}</TableCell>
-                      <TableCell>{request.city}</TableCell>
-                      <TableCell>{request.phone || "-"}</TableCell>
-                      <TableCell>
-                        {request.is_long_term ? t("longTerm") : t("oneTime")}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-green-600 hover:text-green-700"
-                            onClick={() => handleApproveRequest(request.id)}
-                          >
-                            <Check className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-red-600 hover:text-red-700"
-                            onClick={() => handleRejectRequest(request.id)}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+        <TabsContent value="available" className="mt-6">
+          <Card className="p-4">
+            <AvailableChildrenList children={availableChildren} />
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="sponsored" className="mt-6">
+          <Card className="p-4">
+            <SponsoredChildrenList children={sponsoredChildren} />
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
   );
 };
 
-export default SponsorsManagement;
+export default SponsorshipManagement;
