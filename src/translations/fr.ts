@@ -28,6 +28,22 @@ export const frenchTranslations = {
   editProfile: "Modifier le profil",
   welcome: "Bienvenue",
 
+  // Admin Menu
+  permissions: "Gestion des permissions",
+  translationManager: "Gestion des traductions",
+  travels: "Voyages",
+  statistics: "Statistiques",
+  faq: "FAQ",
+  activityLog: "Journal d'activité",
+  sponsorshipManagement: "Gestion des parrainages",
+  needsManagement: "Gestion des besoins",
+
+  // Assistant Menu
+  childrenList: "Liste des enfants",
+  addNewChild: "Ajouter un enfant",
+  donationsList: "Liste des dons",
+  messageCenter: "Centre de messages",
+
   // Actions
   save: "Enregistrer",
   cancel: "Annuler",
@@ -83,6 +99,22 @@ export const frenchTranslations = {
   urgentNeedsByCity: "Besoins urgents par ville",
   sponsorAlbum: "Album du parrain",
   sponsorAlbumDescription: "Photos et vidéos partagées par le parrain",
+
+  // Admin Pages
+  permissionsManagement: "Gestion des permissions",
+  userPermissions: "Permissions utilisateur",
+  roleManagement: "Gestion des rôles",
+  translationScanner: "Scanner de traductions",
+  travelPlanning: "Planification des voyages",
+  statisticsOverview: "Vue d'ensemble des statistiques",
+  faqManagement: "Gestion de la FAQ",
+  activityMonitoring: "Suivi des activités",
+
+  // Assistant Pages
+  childProfile: "Profil de l'enfant",
+  donationDetails: "Détails du don",
+  messageHistory: "Historique des messages",
+  sponsorshipRequests: "Demandes de parrainage",
 
   // Sponsorship
   becomeSponsor: "Devenir parrain",
@@ -158,5 +190,54 @@ export const frenchTranslations = {
   pendingSponsorships: "Parrainages en attente",
   activeSponsorships: "Parrainages actifs",
   sponsorshipStats: "Statistiques de parrainage",
-  topCities: "Villes principales"
+  topCities: "Villes principales",
+
+  // Needs Management
+  needsCategories: "Catégories de besoins",
+  addNeedCategory: "Ajouter une catégorie",
+  editNeedCategory: "Modifier la catégorie",
+  deleteNeedCategory: "Supprimer la catégorie",
+  needPriority: "Priorité du besoin",
+  urgent: "Urgent",
+  normal: "Normal",
+  addNeed: "Ajouter un besoin",
+  editNeed: "Modifier le besoin",
+  deleteNeed: "Supprimer le besoin",
+
+  // Activity Log
+  activityDate: "Date de l'activité",
+  activityType: "Type d'activité",
+  activityUser: "Utilisateur",
+  activityDetails: "Détails",
+  filterByDate: "Filtrer par date",
+  filterByType: "Filtrer par type",
+  filterByUser: "Filtrer par utilisateur",
+  exportLog: "Exporter le journal",
+
+  // Travel Management
+  travelDate: "Date du voyage",
+  destination: "Destination",
+  purpose: "Objectif",
+  participants: "Participants",
+  addTravel: "Ajouter un voyage",
+  editTravel: "Modifier le voyage",
+  deleteTravel: "Supprimer le voyage",
+  travelStatus: "Statut du voyage",
+  planned: "Planifié",
+  inProgress: "En cours",
+  completed: "Terminé",
+  cancelled: "Annulé",
+
+  // Donations Management
+  donationType: "Type de don",
+  donationAmount: "Montant du don",
+  donationDate: "Date du don",
+  donationStatus: "Statut du don",
+  donor: "Donateur",
+  addDonation: "Ajouter un don",
+  editDonation: "Modifier le don",
+  deleteDonation: "Supprimer le don",
+  monetary: "Monétaire",
+  material: "Matériel",
+  service: "Service"
 };
