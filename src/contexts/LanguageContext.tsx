@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
 import { frenchTranslations } from '@/translations/fr';
 import { spanishTranslations } from '@/translations/es';
-import { Translations } from '@/types/translations';
+import { englishTranslations } from '@/translations/en';
 
-type Language = 'fr' | 'es';
+type Language = 'fr' | 'es' | 'en';
 
 interface LanguageContextType {
   language: Language;
@@ -18,16 +18,21 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguage] = useState<Language>('fr');
   const [translations, setTranslations] = useState({
     fr: frenchTranslations,
-    es: spanishTranslations
+    es: spanishTranslations,
+    en: englishTranslations
   });
 
   const t = (key: string): string => {
+    // Essayer d'abord la langue sélectionnée
     const translation = translations[language][key as keyof typeof translations[typeof language]];
-    if (!translation) {
-      // Au lieu de logger une erreur, on retourne simplement la clé
-      return key;
-    }
-    return translation;
+    if (translation) return translation;
+
+    // Si pas trouvé, essayer l'anglais comme fallback
+    const englishTranslation = translations.en[key as keyof typeof translations['en']];
+    if (englishTranslation) return englishTranslation;
+
+    // Si toujours pas trouvé, retourner la clé
+    return key;
   };
 
   const addTranslation = (key: string, value: string, lang: Language) => {
