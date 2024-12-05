@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AuthContextType {
   user: any;
@@ -47,7 +47,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(sponsorData);
         }
       } catch (error) {
-        console.error('Error checking user:', error);
+        console.error('Error checking user session:', error);
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -67,10 +68,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (sponsorError) throw sponsorError;
         setUser(sponsorData);
-      } else {
+        setLoading(false);
+      } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
@@ -84,8 +86,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         password,
       });
+
       if (error) throw error;
-      navigate('/');
     } catch (error) {
       console.error('Error signing in:', error);
       throw error;
@@ -96,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      navigate('/login');
+      navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
       throw error;
