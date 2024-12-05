@@ -28,13 +28,40 @@ export const DonationFilters = ({
   onViewModeChange,
   cities,
 }: DonationFiltersProps) => {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      searchPlaceholder: "Rechercher des dons...",
+      filterByCity: "Filtrer par ville",
+      allCities: "Toutes les villes",
+      sortBy: "Trier par",
+      date: "Date",
+      peopleHelped: "Personnes aidées",
+      city: "Ville",
+      grid: "Grille",
+      list: "Liste"
+    },
+    es: {
+      searchPlaceholder: "Buscar donaciones...",
+      filterByCity: "Filtrar por ciudad",
+      allCities: "Todas las ciudades",
+      sortBy: "Ordenar por",
+      date: "Fecha",
+      peopleHelped: "Personas ayudadas",
+      city: "Ciudad",
+      grid: "Cuadrícula",
+      list: "Lista"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   return (
     <div className="flex flex-col md:flex-row gap-4 mb-6">
       <div className="flex-1">
         <SearchInput
-          placeholder={t("searchPlaceholder")}
+          placeholder={t.searchPlaceholder}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full"
@@ -43,10 +70,10 @@ export const DonationFilters = ({
       </div>
       <Select value={cityFilter} onValueChange={onCityFilterChange}>
         <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder={t("filterByCity")} />
+          <SelectValue placeholder={t.filterByCity} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{t("allCities")}</SelectItem>
+          <SelectItem value="all">{t.allCities}</SelectItem>
           {cities.map(city => (
             <SelectItem key={city} value={city}>{city}</SelectItem>
           ))}
@@ -54,12 +81,12 @@ export const DonationFilters = ({
       </Select>
       <Select value={sortBy} onValueChange={onSortChange}>
         <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder={t("sortBy")} />
+          <SelectValue placeholder={t.sortBy} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="date">{t("date")}</SelectItem>
-          <SelectItem value="peopleHelped">{t("peopleHelped")}</SelectItem>
-          <SelectItem value="city">{t("city")}</SelectItem>
+          <SelectItem value="date">{t.date}</SelectItem>
+          <SelectItem value="peopleHelped">{t.peopleHelped}</SelectItem>
+          <SelectItem value="city">{t.city}</SelectItem>
         </SelectContent>
       </Select>
       <div className="flex gap-2">
@@ -67,7 +94,7 @@ export const DonationFilters = ({
           variant={viewMode === "grid" ? "default" : "outline"}
           size="icon"
           onClick={() => onViewModeChange("grid")}
-          title={t("grid")}
+          title={t.grid}
         >
           <Grid className="h-4 w-4" />
         </Button>
@@ -75,7 +102,7 @@ export const DonationFilters = ({
           variant={viewMode === "list" ? "default" : "outline"}
           size="icon"
           onClick={() => onViewModeChange("list")}
-          title={t("list")}
+          title={t.list}
         >
           <List className="h-4 w-4" />
         </Button>
