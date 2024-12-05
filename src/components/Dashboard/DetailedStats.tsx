@@ -33,35 +33,18 @@ export const DetailedStats = () => {
         await logActivity(user.id, "A consulté les besoins urgents");
       }
 
-      // Filter children with urgent needs and log the process
       const childrenWithUrgentNeeds = data.filter(child => {
         if (!child.needs) return false;
         
         try {
           const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
-          console.log('Processing child:', child.name, 'needs:', needs);
-          
-          if (!Array.isArray(needs)) {
-            console.log('Needs is not an array for child:', child.name);
-            return false;
-          }
-          
-          const hasUrgentNeeds = needs.some((need: Need) => {
-            const isUrgent = need.is_urgent === true;
-            if (isUrgent) {
-              console.log('Found urgent need for child:', child.name, 'need:', need);
-            }
-            return isUrgent;
-          });
-          
-          return hasUrgentNeeds;
+          return Array.isArray(needs) && needs.some((need: Need) => need.is_urgent === true);
         } catch (e) {
           console.error('Error processing needs for child:', child.name, e);
           return false;
         }
       });
 
-      console.log('Total children with urgent needs:', childrenWithUrgentNeeds.length);
       return childrenWithUrgentNeeds;
     }
   });
@@ -80,49 +63,46 @@ export const DetailedStats = () => {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-4">
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t('urgentNeeds')}</h3>
-          <div className="h-[300px]">
-            {urgentError ? renderError(t('error')) : 
-             urgentLoading ? renderSkeleton() : (
-              <ScrollArea className="h-full">
-                <div className="space-y-4">
-                  {urgentNeeds?.map((child) => {
-                    const needs = typeof child.needs === 'string' 
-                      ? JSON.parse(child.needs) 
-                      : child.needs;
-                    
-                    const urgentNeeds = needs.filter((need: Need) => need.is_urgent);
+    <Card className="p-6 bg-white shadow-lg rounded-lg">
+      <h3 className="text-xl font-semibold mb-4 text-gray-800">{t('urgentNeeds')}</h3>
+      <div className="h-[300px]">
+        {urgentError ? renderError(t('error')) : 
+         urgentLoading ? renderSkeleton() : (
+          <ScrollArea className="h-full pr-4">
+            <div className="space-y-4">
+              {urgentNeeds?.map((child) => {
+                const needs = typeof child.needs === 'string' 
+                  ? JSON.parse(child.needs) 
+                  : child.needs;
+                
+                const urgentNeeds = needs.filter((need: Need) => need.is_urgent);
 
-                    return (
-                      <div key={child.id} className="p-3 bg-red-50 rounded-lg">
-                        <p className="font-medium text-gray-900">{child.name}</p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {urgentNeeds.map((need: Need, index: number) => (
-                            <Badge 
-                              key={`${need.category}-${index}`}
-                              variant="destructive"
-                            >
-                              {need.category}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                  {(!urgentNeeds || urgentNeeds.length === 0) && (
-                    <div className="text-center text-gray-500">
-                      {t('noUrgentNeeds')}
+                return (
+                  <div key={child.id} className="p-4 bg-red-50 rounded-lg border border-red-100 hover:shadow-md transition-shadow">
+                    <p className="font-medium text-gray-900 mb-2">{child.name}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {urgentNeeds.map((need: Need, index: number) => (
+                        <Badge 
+                          key={`${need.category}-${index}`}
+                          variant="destructive"
+                          className="px-3 py-1"
+                        >
+                          {need.category}
+                        </Badge>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                );
+              })}
+              {(!urgentNeeds || urgentNeeds.length === 0) && (
+                <div className="text-center text-gray-500 py-8">
+                  {t('noUrgentNeeds')}
                 </div>
-              </ScrollArea>
-            )}
-          </div>
-        </Card>
+              )}
+            </div>
+          </ScrollArea>
+        )}
       </div>
-    </div>
+    </Card>
   );
 };

@@ -8,6 +8,9 @@ import { toast } from "sonner";
 import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
 import { DetailedStats } from "@/components/Dashboard/DetailedStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
+import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
+import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
+import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DashboardStats } from "@/types/dashboard";
@@ -46,7 +49,7 @@ const Dashboard = () => {
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
-          toast.success("Les données ont été mises à jour");
+          toast.success(t('dataUpdated'));
         }
       )
       .subscribe();
@@ -54,11 +57,11 @@ const Dashboard = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, [queryClient, t]);
 
   if (statsError) {
     return (
-      <div className="space-y-6">
+      <div className="container mx-auto p-6">
         <ErrorAlert 
           message={t('error')}
           retry={() => refetchStats()}
@@ -69,14 +72,14 @@ const Dashboard = () => {
 
   if (statsLoading) {
     return (
-      <div className="space-y-6">
+      <div className="container mx-auto p-6 space-y-8">
         <div>
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-4 w-96 mt-2" />
         </div>
-        <div className="grid gap-6 md:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-48" />
           ))}
         </div>
       </div>
@@ -84,12 +87,23 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="container mx-auto p-6 space-y-8 animate-fade-in">
       <DashboardHeader stats={stats} />
-      <DetailedStats />
+      
+      <div className="grid gap-8 md:grid-cols-2">
+        <DetailedStats />
+        <UrgentNeedsStats />
+      </div>
+      
+      <div className="grid gap-8 md:grid-cols-2">
+        <UserEngagementStats />
+        <SponsorshipStats />
+      </div>
       
       {isAdmin && (
-        <AssistantStats />
+        <div className="mt-8">
+          <AssistantStats />
+        </div>
       )}
     </div>
   );
