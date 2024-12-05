@@ -31,15 +31,13 @@ function App() {
         <AuthProvider>
           <LanguageProvider>
             <Routes>
-              {/* Pages publiques */}
+              {/* Public routes */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
               </Route>
               
-              {/* Auth */}
-              <Route path="/login" element={<Login />} />
-              
-              {/* Pages principales */}
+              {/* Protected routes */}
               <Route path="/dashboard" element={
                 <MainLayout>
                   <Dashboard />
@@ -88,7 +86,7 @@ function App() {
                 </MainLayout>
               } />
 
-              {/* Routes Admin */}
+              {/* Admin routes */}
               <Route path="/admin/permissions" element={
                 <MainLayout>
                   <AdminPermissions />
