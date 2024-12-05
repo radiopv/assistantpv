@@ -11,9 +11,12 @@ export const commonTranslations = {
   add: "Ajouter",
   remove: "Retirer",
   update: "Mettre à jour",
-  loading: "Chargement...",
-  success: "Succès",
+  close: "Fermer",
+  grid: "Grille",
+  list: "Liste",
   error: "Erreur",
-  warning: "Avertissement",
-  info: "Information"
+  success: "Succès",
+  back: "Retour",
+  next: "Suivant",
+  language: "Langue"
 };

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { frenchTranslations } from '@/translations/fr';
-import { spanishTranslations } from '@/translations/es';
+import { commonTranslations } from '@/translations/fr/common';
+import { authTranslations } from '@/translations/fr/auth';
+import { dashboardTranslations } from '@/translations/fr/dashboard';
+import { sponsorshipTranslations } from '@/translations/fr/sponsorship';
 import { Translations } from '@/types/translations';
 
 type Language = 'fr' | 'es';
@@ -16,20 +18,12 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('fr');
-  const [translations, setTranslations] = useState<Translations>(frenchTranslations as Translations);
-
-  useEffect(() => {
-    const loadTranslations = async () => {
-      try {
-        const newTranslations = language === 'fr' ? frenchTranslations : spanishTranslations;
-        setTranslations(newTranslations as Translations);
-      } catch (error) {
-        console.error('Error loading translations:', error);
-      }
-    };
-
-    loadTranslations();
-  }, [language]);
+  const [translations, setTranslations] = useState<Translations>({
+    ...commonTranslations,
+    ...authTranslations,
+    ...dashboardTranslations,
+    ...sponsorshipTranslations
+  } as Translations);
 
   const t = (key: keyof Translations): string => {
     const translation = translations[key];
@@ -41,12 +35,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const addTranslation = (key: string, value: string, targetLanguage: Language) => {
-    if (targetLanguage === 'fr') {
-      (frenchTranslations as any)[key] = value;
-    } else {
-      (spanishTranslations as any)[key] = value;
-    }
-    
     if (targetLanguage === language) {
       setTranslations(prev => ({
         ...prev,

@@ -6,9 +6,12 @@ export const authTranslations = {
   password: "Mot de passe",
   forgotPassword: "Mot de passe oublié ?",
   resetPassword: "Réinitialiser le mot de passe",
+  confirmPassword: "Confirmer le mot de passe",
   name: "Nom",
   phone: "Téléphone",
   address: "Adresse",
   city: "Ville",
-  role: "Rôle"
+  role: "Rôle",
+  logout: "Se déconnecter",
+  user: "Utilisateur"
 };

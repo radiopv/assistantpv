@@ -49,6 +49,8 @@ export interface Translations {
   list: string;
   logout: string;
   user: string;
+  error: string;
+  success: string;
 
   // Child related
   childName: string;
@@ -86,46 +88,19 @@ export interface Translations {
   sortBy: string;
   date: string;
 
-  // Translation management
-  translationManager: string;
-  translationScanner: string;
-  scanMissingTranslations: string;
-  findUnusedTranslations: string;
-  detectEnglishText: string;
-  missingTranslations: string;
-  unusedTranslations: string;
-  englishTextDetected: string;
-  missingTranslationsFound: string;
-  unusedTranslationsFound: string;
-  englishTextFound: string;
-  pendingTranslations: string;
-  translationRequired: string;
-  translationApproved: string;
-  originalText: string;
-  enterTranslation: string;
-  approve: string;
-  translationError: string;
-  translationUpdated: string;
-  scanStarted: string;
-  scanError: string;
-  scanningTranslations: string;
-  scanAssistantSection: string;
-  frenchTranslations: string;
-  spanishTranslations: string;
-
-  // Admin
-  permissions: string;
-  travels: string;
-  statistics: string;
-  faq: string;
-
   // Dashboard
+  totalChildren: string;
+  sponsoredChildren: string;
+  urgentNeeds: string;
+  activeCities: string;
+  incompleteProfiles: string;
+  viewAllChildren: string;
+  viewSponsoredChildren: string;
+  viewUrgentNeeds: string;
+  viewCityStats: string;
+  viewIncompleteProfiles: string;
+  welcomeMessage: string;
   urgentNeedsByCity: string;
-  topCities: string;
-  sponsorshipStats: string;
-  activeSponsorships: string;
-  pendingSponsorships: string;
-  completedSponsorships: string;
 
   // Donations
   totalDonations: string;
@@ -138,10 +113,20 @@ export interface Translations {
   donationBy: string;
   selectMessageToRead: string;
 
-  // Sponsors
-  activeSponsors: string;
-  inactiveSponsors: string;
-  selectMessage: string;
+  // Sponsorship
+  becomeSponsor: string;
+  sponsorshipDescription: string;
+  fullName: string;
+  motivation: string;
+  facebookUrl: string;
+  longTermSponsorship: string;
+  acceptTerms: string;
+  sponsorshipTerminationNote: string;
+  submitting: string;
+  submitRequest: string;
+  pleaseAcceptTerms: string;
+  sponsorshipRequestSubmitted: string;
+  errorSubmittingRequest: string;
 
   // Profile
   profileUpdated: string;
@@ -153,13 +138,4 @@ export interface Translations {
   sponsorAlbum: string;
   sponsorAlbumDescription: string;
   errorMessage: string;
-
-  // Comments
-  addComment: string;
-  markAsNormal: string;
-  markAsUrgent: string;
-
-  // Confirmations
-  deleteConfirmation: string;
-  deleteWarning: string;
 }
