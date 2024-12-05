@@ -12,6 +12,7 @@ export interface SponsorshipRequest {
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
+  child_id?: string | null;
 }
 
 export interface Sponsorship {
@@ -26,3 +27,16 @@ export interface Sponsorship {
   created_at: string;
   updated_at: string;
 }
+
+export type Tables = {
+  sponsorship_requests: {
+    Row: SponsorshipRequest;
+    Insert: Omit<SponsorshipRequest, 'id' | 'created_at' | 'updated_at'>;
+    Update: Partial<Omit<SponsorshipRequest, 'id'>>;
+  };
+  sponsorships: {
+    Row: Sponsorship;
+    Insert: Omit<Sponsorship, 'id' | 'created_at' | 'updated_at'>;
+    Update: Partial<Omit<Sponsorship, 'id'>>;
+  };
+};

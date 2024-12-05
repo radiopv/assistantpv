@@ -9,12 +9,24 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+interface FormData {
+  full_name: string;
+  city: string;
+  phone: string;
+  email: string;
+  motivation: string;
+  facebook_url: string;
+  is_long_term: boolean;
+  is_one_time: boolean;
+  terms_accepted: boolean;
+}
+
 const BecomeSponsor = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     full_name: "",
     city: "",
     phone: "",
@@ -35,17 +47,17 @@ const BecomeSponsor = () => {
     if (name === 'is_one_time') {
       setFormData(prev => ({ 
         ...prev, 
-        [name]: !prev[name as keyof typeof prev],
-        is_long_term: prev[name as keyof typeof prev] // Si one_time devient true, long_term devient false et vice versa
+        is_one_time: !prev.is_one_time,
+        is_long_term: prev.is_one_time // If one_time becomes true, long_term becomes false
       }));
     } else if (name === 'is_long_term') {
       setFormData(prev => ({ 
         ...prev, 
-        [name]: !prev[name as keyof typeof prev],
-        is_one_time: prev[name as keyof typeof prev] // Si long_term devient true, one_time devient false et vice versa
+        is_long_term: !prev.is_long_term,
+        is_one_time: prev.is_long_term // If long_term becomes true, one_time becomes false
       }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: !prev[name as keyof typeof prev] }));
+      setFormData(prev => ({ ...prev, [name]: !prev[name as keyof FormData] }));
     }
   };
 
