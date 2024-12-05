@@ -20,13 +20,8 @@ const ActivityLog = () => {
       const { data, error } = await supabase
         .from('activity_logs')
         .select(`
-          id,
-          user_id,
-          action,
-          details,
-          created_at,
-          profiles!activity_logs_user_id_fkey (
-            id,
+          *,
+          profiles:user_id (
             role
           )
         `)
@@ -38,20 +33,23 @@ const ActivityLog = () => {
         throw error;
       }
       
-      console.log('Fetched data:', data);
+      console.log('Raw data from Supabase:', data);
       
       // Transform the data to match ActivityLogType
-      const transformedData = data.map(item => ({
-        id: item.id,
-        user_id: item.user_id,
-        action: item.action,
-        details: item.details,
-        created_at: item.created_at,
-        user: {
-          name: `Utilisateur ${item.user_id.slice(0, 8)}`,
-          role: item.profiles?.role || 'unknown'
-        }
-      }));
+      const transformedData = data.map(item => {
+        console.log('Processing item:', item);
+        return {
+          id: item.id,
+          user_id: item.user_id,
+          action: item.action,
+          details: item.details,
+          created_at: item.created_at,
+          user: {
+            name: `Utilisateur ${item.user_id.slice(0, 8)}`,
+            role: item.profiles?.role || 'unknown'
+          }
+        };
+      });
 
       console.log('Transformed data:', transformedData);
       return transformedData as ActivityLogType[];
