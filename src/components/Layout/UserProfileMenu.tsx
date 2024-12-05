@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,15 +13,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, MessageSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileForm } from "@/components/Profile/ProfileForm";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export const UserProfileMenu = () => {
   const { user, signOut } = useAuth();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -26,6 +31,31 @@ export const UserProfileMenu = () => {
     phone: "",
     city: "",
     photo_url: "",
+  });
+
+  const { data: unreadMessages } = useQuery({
+    queryKey: ['unread-messages'],
+    queryFn: async () => {
+      try {
+        const { count, error } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_read', false);
+        
+        if (error) {
+          console.warn('Messages table not accessible:', error.message);
+          return 0;
+        }
+        
+        return count || 0;
+      } catch (error) {
+        console.warn('Error fetching messages:', error);
+        return 0;
+      }
+    },
+    meta: {
+      errorMessage: "Erreur lors du chargement des messages"
+    }
   });
 
   useEffect(() => {
@@ -50,12 +80,34 @@ export const UserProfileMenu = () => {
     setIsProfileOpen(open);
   };
 
+  const handleMessagesClick = () => {
+    navigate('/messages');
+    toast.info("Redirection vers les messages");
+  };
+
   if (!user) {
     return null;
   }
 
   return (
     <div className="flex items-center gap-4">
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="relative"
+        onClick={handleMessagesClick}
+      >
+        <MessageSquare className="h-5 w-5" />
+        {unreadMessages && unreadMessages > 0 && (
+          <Badge 
+            variant="destructive" 
+            className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0"
+          >
+            {unreadMessages}
+          </Badge>
+        )}
+      </Button>
+
       <span className="text-sm text-gray-600">
         {t("welcome")}, {formData.name || t("user")}
       </span>
