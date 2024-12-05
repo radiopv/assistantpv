@@ -24,10 +24,8 @@ export const HeroSection = () => {
         throw error;
       }
 
-      // Ensure the content matches our type structure
       const content = data.content as Record<string, any>;
       
-      // Cast the data to match our type with proper content structure
       const typedData: HomepageSection = {
         ...data,
         content: {
@@ -51,16 +49,14 @@ export const HeroSection = () => {
   }
 
   const isMobile = window.innerWidth < 768;
-  const imageUrl = isMobile 
-    ? heroContent?.content?.mobileImage 
-    : undefined;
+  const mainImage = "/lovable-uploads/ccc3a025-c40a-41aa-a21c-fa19f639e444.png";
 
   return (
     <div className="relative flex flex-col md:flex-row items-center justify-between p-4 md:p-8 bg-cuba-gradient text-white">
       <img
-        src={heroContent?.content?.leftImage || '/placeholder.svg'}
-        alt="Left"
-        className="w-full md:w-1/4 h-48 md:h-96 object-cover rounded-lg mb-4 md:mb-0"
+        src={mainImage}
+        alt="Happy child with toys"
+        className="w-full md:w-1/3 h-auto md:h-[500px] object-cover object-top rounded-lg mb-4 md:mb-0"
       />
       <div className="md:w-1/3 text-center space-y-4">
         <h1 className="text-4xl font-bold">{heroContent?.title || t('sponsorshipTitle')}</h1>
