@@ -561,7 +561,7 @@ export type Database = {
           people_helped?: number;
           photos?: string[] | null;
           status?: string | null;
-          updated_at?: string | null;
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1368,7 +1368,7 @@ export type Database = {
           attempts?: number | null
           created_at?: string | null
           data?: Json | null
-          execute_at?: string
+          execute_at: string
           id: string
           last_attempt?: string | null
           status?: string | null
@@ -2011,7 +2011,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
-          user_id: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2475,4 +2475,3 @@ export type Database = {
 export type { Json } from './common';
 export type { Children } from './children';
 export type { SponsorshipRequests, Sponsorships } from './sponsorship';
-

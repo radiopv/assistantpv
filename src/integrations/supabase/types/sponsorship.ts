@@ -44,6 +44,15 @@ export interface SponsorshipRequests {
     city?: string | null
     is_long_term?: boolean | null
   }
+  Relationships: [
+    {
+      foreignKeyName: "sponsorship_requests_child_id_fkey"
+      columns: ["child_id"]
+      isOneToOne: false
+      referencedRelation: "children"
+      referencedColumns: ["id"]
+    }
+  ]
 }
 
 export interface Sponsorships {
@@ -98,4 +107,20 @@ export interface Sponsorships {
     termination_reason?: string | null
     updated_at?: string | null
   }
+  Relationships: [
+    {
+      foreignKeyName: "sponsorships_child_id_fkey"
+      columns: ["child_id"]
+      isOneToOne: false
+      referencedRelation: "children"
+      referencedColumns: ["id"]
+    },
+    {
+      foreignKeyName: "sponsorships_sponsor_id_fkey"
+      columns: ["sponsor_id"]
+      isOneToOne: false
+      referencedRelation: "sponsors"
+      referencedColumns: ["id"]
+    }
+  ]
 }
