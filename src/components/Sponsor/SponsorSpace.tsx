@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
+import { AlbumSection } from "./AlbumSection";
 
 interface SponsoredChild {
   id: string;
@@ -20,6 +21,7 @@ export const SponsorSpace = () => {
   const { t } = useLanguage();
   const [sponsoredChildren, setSponsoredChildren] = useState<SponsoredChild[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedChild, setSelectedChild] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSponsoredChildren = async () => {
@@ -44,6 +46,9 @@ export const SponsorSpace = () => {
 
         const children = data.map(item => item.children);
         setSponsoredChildren(children);
+        if (children.length > 0) {
+          setSelectedChild(children[0].id);
+        }
       } catch (error) {
         console.error('Error fetching sponsored children:', error);
       } finally {
@@ -76,21 +81,44 @@ export const SponsorSpace = () => {
         </TabsList>
 
         <TabsContent value="children" className="mt-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {sponsoredChildren.map((child) => (
-              <Card key={child.id} className="p-4">
-                <div className="aspect-square relative mb-4">
-                  <img
-                    src={child.photo_url || '/placeholder.svg'}
-                    alt={child.name}
-                    className="rounded-lg object-cover w-full h-full"
-                  />
-                </div>
-                <h3 className="font-semibold text-lg">{child.name}</h3>
-                <p className="text-sm text-gray-600">{child.city}</p>
-                <p className="text-sm text-gray-600">{child.age} ans</p>
-              </Card>
-            ))}
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <div className="grid gap-6">
+                {sponsoredChildren.map((child) => (
+                  <Card 
+                    key={child.id} 
+                    className={`p-4 cursor-pointer transition-colors ${
+                      selectedChild === child.id ? 'ring-2 ring-primary' : ''
+                    }`}
+                    onClick={() => setSelectedChild(child.id)}
+                  >
+                    <div className="flex gap-4">
+                      <div className="w-24 h-24">
+                        <img
+                          src={child.photo_url || '/placeholder.svg'}
+                          alt={child.name}
+                          className="rounded-lg object-cover w-full h-full"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg">{child.name}</h3>
+                        <p className="text-sm text-gray-600">{child.city}</p>
+                        <p className="text-sm text-gray-600">{child.age} ans</p>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              {selectedChild && user?.id && (
+                <AlbumSection 
+                  childId={selectedChild} 
+                  sponsorId={user.id} 
+                />
+              )}
+            </div>
           </div>
         </TabsContent>
 
