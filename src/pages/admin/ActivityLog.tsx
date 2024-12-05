@@ -16,6 +16,7 @@ const ActivityLog = () => {
   const { data: activities, isLoading, refetch } = useQuery({
     queryKey: ['activity-logs'],
     queryFn: async () => {
+      console.log('Fetching activity logs...');
       const { data, error } = await supabase
         .from('activity_logs')
         .select(`
@@ -24,13 +25,31 @@ const ActivityLog = () => {
           action,
           details,
           created_at,
-          user:profiles(name, role)
+          profiles:user_id (
+            id,
+            role
+          )
         `)
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (error) throw error;
-      return data as ActivityLogType[];
+      if (error) {
+        console.error('Error fetching activity logs:', error);
+        throw error;
+      }
+      
+      console.log('Fetched data:', data);
+      
+      // Transform the data to match ActivityLogType
+      const transformedData = data.map(item => ({
+        ...item,
+        user: {
+          name: `User ${item.user_id.slice(0, 8)}`, // Using truncated user_id as name for now
+          role: item.profiles?.role || 'unknown'
+        }
+      }));
+
+      return transformedData as ActivityLogType[];
     }
   });
 
@@ -126,6 +145,17 @@ const ActivityLog = () => {
       </ScrollArea>
     </div>
   );
+};
+
+const getActionIcon = (role: string) => {
+  switch (role) {
+    case 'assistant':
+      return <Activity className="h-5 w-5 text-blue-500" />;
+    case 'sponsor':
+      return <User className="h-5 w-5 text-green-500" />;
+    default:
+      return <Activity className="h-5 w-5 text-gray-500" />;
+  }
 };
 
 export default ActivityLog;
