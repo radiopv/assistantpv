@@ -174,16 +174,14 @@ export interface Translations {
   activityLog: string;
   sponsorSpace: string;
 
-  // Additional translation keys
-  filterByCity: string;
-  totalDonations: string;
-  citiesCovered: string;
-  phone: string;
-  errorMessage: string;
-  donationsTitle: string;
-  donationsSubtitle: string;
-  addDonation: string;
-  noDonationsFound: string;
-  donationBy: string;
-  selectMessageToRead: string;
+  // Travel related
+  dateSelected: string;
+  loading: string;
+  travelManagement: string;
+  visitCalendar: string;
+  upcomingVisits: string;
+  scheduleNewVisit: string;
+  scheduleVisit: string;
+  date: string;
+  status: string;
 }

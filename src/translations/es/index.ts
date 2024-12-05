@@ -6,6 +6,7 @@ import { sponsorshipTranslations } from './sponsorship';
 import { translationManagerTranslations } from './translation-manager';
 import { authTranslations } from './auth';
 import { adminTranslations } from './admin';
+import { travelTranslations } from './travels';
 
 export const spanishTranslations = {
   ...commonTranslations,
@@ -16,4 +17,5 @@ export const spanishTranslations = {
   ...translationManagerTranslations,
   ...authTranslations,
   ...adminTranslations,
+  ...travelTranslations
 };
