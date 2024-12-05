@@ -33,10 +33,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
+          
+          // Verify if profile exists, if not create it
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', parsedUser.id)
+            .single();
+            
+          if (profileError && profileError.code === 'PGRST116') {
+            // Profile doesn't exist, create it
+            const { error: createError } = await supabase
+              .from('profiles')
+              .insert([
+                { 
+                  id: parsedUser.id,
+                  role: parsedUser.role || 'sponsor'
+                }
+              ]);
+              
+            if (createError) {
+              console.error('Error creating profile:', createError);
+              throw createError;
+            }
+          } else if (profileError) {
+            console.error('Error checking profile:', profileError);
+            throw profileError;
+          }
+
           setUser(parsedUser);
           setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
           
-          // Redirection basée sur le rôle
           if (window.location.pathname === '/login') {
             if (parsedUser.role === 'admin' || parsedUser.role === 'assistant') {
               navigate('/dashboard');
@@ -74,6 +101,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
       
       if (data) {
+        // Create or update profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert([
+            { 
+              id: data.id,
+              role: data.role || 'sponsor'
+            }
+          ], { 
+            onConflict: 'id',
+            ignoreDuplicates: false 
+          });
+          
+        if (profileError) {
+          console.error('Error upserting profile:', profileError);
+          throw profileError;
+        }
+
         localStorage.setItem('user', JSON.stringify(data));
         setUser(data);
         setIsAssistant(['assistant', 'admin'].includes(data.role));
