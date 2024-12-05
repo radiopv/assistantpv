@@ -812,7 +812,11 @@ export type Database = {
           sponsorship_id: string | null
           status: string | null
           updated_at: string | null
-          visit_date: string
+          visit_date: string | null
+          visit_end_date: string | null
+          visit_start_date: string | null
+          wants_donation_pickup: boolean | null
+          wants_to_visit_child: boolean | null
         }
         Insert: {
           created_at?: string | null
@@ -821,7 +825,11 @@ export type Database = {
           sponsorship_id?: string | null
           status?: string | null
           updated_at?: string | null
-          visit_date: string
+          visit_date?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Update: {
           created_at?: string | null
@@ -830,7 +838,11 @@ export type Database = {
           sponsorship_id?: string | null
           status?: string | null
           updated_at?: string | null
-          visit_date?: string
+          visit_date?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Relationships: [
           {
