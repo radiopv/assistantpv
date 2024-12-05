@@ -32,7 +32,7 @@ export const DonationBasicInfo = ({
   const translations = {
     fr: {
       city: "Ville",
-      cityPlaceholder: "Entrez le nom de la ville",
+      cityPlaceholder: "Nom de la ville",
       peopleHelped: "Personnes aidées",
       peoplePlaceholder: "Nombre de personnes",
       assistantName: "Nom de l'assistant",
@@ -40,7 +40,7 @@ export const DonationBasicInfo = ({
     },
     es: {
       city: "Ciudad",
-      cityPlaceholder: "Ingrese el nombre de la ciudad",
+      cityPlaceholder: "Nombre de la ciudad",
       peopleHelped: "Personas ayudadas",
       peoplePlaceholder: "Número de personas",
       assistantName: "Nombre del asistente",
@@ -58,7 +58,7 @@ export const DonationBasicInfo = ({
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="city" className="text-sm font-medium flex items-center gap-2">
+        <Label htmlFor="city" className="flex items-center gap-2">
           <MapPin className="w-4 h-4 text-gray-500" />
           {t.city}
         </Label>
@@ -72,7 +72,7 @@ export const DonationBasicInfo = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="quantity" className="text-sm font-medium flex items-center gap-2">
+        <Label htmlFor="quantity" className="flex items-center gap-2">
           <Users className="w-4 h-4 text-gray-500" />
           {t.peopleHelped}
         </Label>
@@ -82,17 +82,20 @@ export const DonationBasicInfo = ({
           value={quantity}
           onChange={(e) => onQuantityChange(e.target.value)}
           className="text-base"
-          min="0"
           placeholder={t.peoplePlaceholder}
         />
       </div>
 
-      <div className="space-y-2 md:col-span-2">
-        <Label htmlFor="assistant" className="text-sm font-medium flex items-center gap-2">
+      <div className="space-y-2">
+        <Label htmlFor="assistant" className="flex items-center gap-2">
           <User className="w-4 h-4 text-gray-500" />
           {t.assistantName}
         </Label>
-        <Select value={assistantName} onValueChange={onAssistantNameChange}>
+        <Select 
+          value={assistantName} 
+          onValueChange={onAssistantNameChange}
+          defaultValue={assistantOptions[0]}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder={t.selectAssistant} />
           </SelectTrigger>
