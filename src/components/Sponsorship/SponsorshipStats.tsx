@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Users, Clock, CheckCircle } from "lucide-react";
+import { Sponsorship } from "@/types/supabase/tables/sponsorships";
 
 export const SponsorshipStats = () => {
   const { data: stats } = useQuery({
@@ -9,13 +10,13 @@ export const SponsorshipStats = () => {
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
         .from("sponsorships")
-        .select("id, status");
+        .select("*") as { data: Sponsorship[] | null, error: any };
 
       if (error) throw error;
 
-      const total = sponsorships.length;
-      const active = sponsorships.filter((s) => s.status === "active").length;
-      const pending = sponsorships.filter((s) => s.status === "pending").length;
+      const total = sponsorships?.length || 0;
+      const active = sponsorships?.filter((s) => s.status === "active").length || 0;
+      const pending = sponsorships?.filter((s) => s.status === "pending").length || 0;
 
       return { total, active, pending };
     },

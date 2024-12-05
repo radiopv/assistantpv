@@ -11,6 +11,24 @@ export interface Sponsorship {
   updated_at?: string;
 }
 
+export interface SponsorshipWithDetails {
+  id: string;
+  start_date: string;
+  status: "active" | "pending" | "ended";
+  child: {
+    id: string;
+    name: string;
+    photo_url: string | null;
+  };
+  sponsor: {
+    id: string;
+    name: string;
+    email: string | null;
+    phone: string | null;
+    address: string | null;
+  };
+}
+
 export type SponsorshipRow = Database["public"]["Tables"]["sponsorships"]["Row"];
 export type SponsorshipInsert = Database["public"]["Tables"]["sponsorships"]["Insert"];
 export type SponsorshipUpdate = Database["public"]["Tables"]["sponsorships"]["Update"];
