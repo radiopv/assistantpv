@@ -1,164 +1,98 @@
-import { useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link, useLocation } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Gift, 
+import {
+  Home,
+  Users,
+  Gift,
   MessageSquare,
   Settings,
-  Baby,
-  UserPlus,
-  Plane,
-  ChartBar,
+  Shield,
+  Heart,
   HelpCircle,
-  Languages,
+  Map,
+  BarChart2,
   Activity,
-  Heart
+  Languages
 } from "lucide-react";
-import { SidebarHeader } from "./Sidebar/SidebarHeader";
-import { SidebarSection } from "./Sidebar/SidebarSection";
-import { SidebarFooter } from "./Sidebar/SidebarFooter";
-import { useLanguage } from "@/contexts/LanguageContext";
 
-interface SidebarProps {
-  isMobile?: boolean;
-  onClose?: () => void;
-}
-
-const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
-  const { signOut, user } = useAuth();
+const Sidebar = () => {
   const { t } = useLanguage();
   const location = useLocation();
+  const { user } = useAuth();
 
   const isAdmin = user?.role === 'admin';
+  const isAssistant = user?.role === 'assistant';
   const isSponsor = user?.role === 'sponsor';
 
-  const assistantLinks = [
+  const menuItems = [
     {
-      href: "/dashboard",
-      label: t("dashboard"),
-      icon: LayoutDashboard,
-      show: user?.permissions?.dashboard || isAdmin,
+      title: t("dashboard"),
+      items: [
+        { icon: Home, label: t("dashboard"), path: "/dashboard" }
+      ]
     },
     {
-      href: "/children",
-      label: t("children"),
-      icon: Baby,
-      show: user?.permissions?.children || isAdmin,
+      title: t("assistant"),
+      show: isAssistant || isAdmin,
+      items: [
+        { icon: Users, label: t("children"), path: "/children" },
+        { icon: Gift, label: t("donations"), path: "/donations" },
+        { icon: MessageSquare, label: t("messages"), path: "/messages" }
+      ]
     },
     {
-      href: "/children/add",
-      label: t("addChild"),
-      icon: UserPlus,
-      show: user?.permissions?.edit_children || isAdmin,
+      title: t("sponsor"),
+      show: isSponsor || isAdmin,
+      items: [
+        { icon: Heart, label: t("sponsorSpace"), path: "/sponsor-space" },
+        { icon: MessageSquare, label: t("messages"), path: "/messages" }
+      ]
     },
     {
-      href: "/donations",
-      label: t("donations"),
-      icon: Gift,
-      show: user?.permissions?.donations || isAdmin,
-    },
-    {
-      href: "/messages",
-      label: t("messages"),
-      icon: MessageSquare,
-      show: true,
-    },
-  ];
-
-  const sponsorLinks = [
-    {
-      href: "/sponsor-space",
-      label: "Espace Parrain",
-      icon: Heart,
-      show: isAdmin || isSponsor,
-    },
-    {
-      href: "/sponsor-messages",
-      label: "Messages Parrain",
-      icon: MessageSquare,
-      show: isAdmin || isSponsor,
-    },
-  ];
-
-  const adminLinks = [
-    {
-      href: "/admin/permissions",
-      label: t("permissions"),
-      icon: Settings,
+      title: t("administration"),
       show: isAdmin,
-    },
-    {
-      href: "/admin/translations",
-      label: t("translationManager"),
-      icon: Languages,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/travels",
-      label: t("travels"),
-      icon: Plane,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/statistics",
-      label: t("statistics"),
-      icon: ChartBar,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/faq",
-      label: t("faq"),
-      icon: HelpCircle,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/activity",
-      label: "Journal d'activité",
-      icon: Activity,
-      show: isAdmin,
-    },
+      items: [
+        { icon: Shield, label: t("permissions"), path: "/admin/permissions" },
+        { icon: Languages, label: t("translations"), path: "/admin/translations" },
+        { icon: Map, label: t("travels"), path: "/admin/travels" },
+        { icon: BarChart2, label: t("statistics"), path: "/admin/statistics" },
+        { icon: HelpCircle, label: t("faq"), path: "/admin/faq" },
+        { icon: Activity, label: t("activityLog"), path: "/admin/activity" }
+      ]
+    }
   ];
 
   return (
-    <div className={cn(
-      "flex h-full flex-col border-r bg-white",
-      isMobile && "relative"
-    )}>
-      <SidebarHeader isMobile={isMobile} onClose={onClose} />
-      
-      <ScrollArea className="flex-1">
-        <div className="space-y-4 py-4">
-          <SidebarSection
-            title="Assistant"
-            links={assistantLinks}
-            currentPath={location.pathname}
-            onClose={onClose}
-          />
-
-          {(isAdmin || isSponsor) && (
-            <SidebarSection
-              title="Parrain"
-              links={sponsorLinks}
-              currentPath={location.pathname}
-              onClose={onClose}
-            />
-          )}
-          
-          {isAdmin && (
-            <SidebarSection
-              title="Administration"
-              links={adminLinks}
-              currentPath={location.pathname}
-              onClose={onClose}
-            />
-          )}
-        </div>
-      </ScrollArea>
-
-      <SidebarFooter onSignOut={signOut} onClose={onClose} />
+    <div className="h-full bg-white border-r p-4">
+      <nav className="space-y-8">
+        {menuItems.map((section, index) => 
+          (!section.show === undefined || section.show) && (
+            <div key={index}>
+              <h2 className="text-xs uppercase font-semibold text-gray-500 mb-4">
+                {section.title}
+              </h2>
+              <ul className="space-y-2">
+                {section.items.map((item, itemIndex) => (
+                  <li key={itemIndex}>
+                    <Link
+                      to={item.path}
+                      className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                        location.pathname === item.path
+                          ? "bg-primary text-white"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )
+        )}
+      </nav>
     </div>
   );
 };

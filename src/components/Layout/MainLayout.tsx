@@ -4,7 +4,6 @@ import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { useLocation } from "react-router-dom";
 
 interface MainLayoutProps {
   children?: ReactNode;
@@ -12,7 +11,6 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const { user } = useAuth();
-  const location = useLocation();
 
   if (!user) {
     return null;
@@ -20,7 +18,6 @@ const MainLayout = ({ children }: MainLayoutProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Desktop Sidebar */}
       <div className="hidden md:block w-64 fixed h-full">
         <Sidebar />
       </div>
