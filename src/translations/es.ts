@@ -119,5 +119,27 @@ export const spanishTranslations = {
   changesSaved: "Cambios guardados correctamente",
   profileUpdated: "Perfil actualizado correctamente",
   passwordChanged: "Contraseña cambiada correctamente",
-  emailSent: "Correo electrónico enviado correctamente"
+  emailSent: "Correo electrónico enviado correctamente",
+
+  // Translation management
+  translationScanner: "Escáner de traducciones",
+  scanMissingTranslations: "Buscar traducciones faltantes",
+  findUnusedTranslations: "Encontrar traducciones sin usar",
+  detectEnglishText: "Detectar texto en inglés",
+  missingTranslationsFound: "{{count}} traducciones faltantes encontradas",
+  unusedTranslationsFound: "{{count}} traducciones sin usar encontradas",
+  englishTextFound: "{{count}} textos en inglés encontrados",
+  pendingTranslations: "Traducciones pendientes",
+  approveTranslation: "Aprobar traducción",
+  rejectTranslation: "Rechazar traducción",
+  translationKey: "Clave de traducción",
+  translationValue: "Valor de traducción",
+  addTranslation: "Agregar traducción",
+  editTranslation: "Editar traducción",
+  deleteTranslation: "Eliminar traducción",
+  confirmDeleteTranslation: "¿Está seguro de que desea eliminar esta traducción?",
+  translationDeleted: "Traducción eliminada con éxito",
+  translationAdded: "Traducción agregada con éxito",
+  translationUpdated: "Traducción actualizada con éxito",
+  translationError: "Se produjo un error al modificar la traducción",
 };
