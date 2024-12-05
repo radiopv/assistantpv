@@ -46,7 +46,7 @@ export const ModuleEditor = ({ module, onClose, onSave }: ModuleEditorProps) => 
   };
 
   const renderFields = () => {
-    switch (editedModule.moduleType) {
+    switch (editedModule.module_type) {
       case 'hero':
         return (
           <>
@@ -121,7 +121,6 @@ export const ModuleEditor = ({ module, onClose, onSave }: ModuleEditorProps) => 
           </>
         );
 
-      // Add cases for other module types...
       default:
         return null;
     }

@@ -32,7 +32,14 @@ const HomeModules = () => {
     mutationFn: async (module: HomeModule) => {
       const { error } = await supabase
         .from('homepage_modules')
-        .update(module)
+        .update({
+          name: module.name,
+          is_active: module.is_active,
+          content: module.content,
+          order_index: module.order_index,
+          module_type: module.module_type,
+          settings: module.settings
+        })
         .eq('id', module.id);
       
       if (error) throw error;
@@ -55,7 +62,7 @@ const HomeModules = () => {
   });
 
   const reorderModulesMutation = useMutation({
-    mutationFn: async (updates: { id: string, order_index: number }[]) => {
+    mutationFn: async (updates: { id: string; order_index: number; module_type: string; name: string }[]) => {
       const { error } = await supabase
         .from('homepage_modules')
         .upsert(updates);
@@ -80,7 +87,9 @@ const HomeModules = () => {
 
     const updates = items.map((item, index) => ({
       id: item.id,
-      order_index: index + 1
+      order_index: index + 1,
+      module_type: item.module_type,
+      name: item.name
     }));
 
     reorderModulesMutation.mutate(updates);
@@ -89,7 +98,7 @@ const HomeModules = () => {
   const toggleModuleActive = (module: HomeModule) => {
     updateModuleMutation.mutate({
       ...module,
-      isActive: !module.isActive
+      is_active: !module.is_active
     });
   };
 
@@ -134,7 +143,7 @@ const HomeModules = () => {
                         </div>
                         <div className="flex items-center space-x-4">
                           <Switch
-                            checked={module.isActive}
+                            checked={module.is_active}
                             onCheckedChange={() => toggleModuleActive(module)}
                           />
                           <Button

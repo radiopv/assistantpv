@@ -23,10 +23,10 @@ export interface ModuleSettings {
 export interface HomeModule {
   id: string;
   name: string;
-  isActive: boolean;
-  orderIndex: number;
+  is_active: boolean;
+  order_index: number;
   content: ModuleContent;
-  moduleType: ModuleType;
+  module_type: ModuleType;
   settings: ModuleSettings;
   created_at?: string;
   updated_at?: string;
