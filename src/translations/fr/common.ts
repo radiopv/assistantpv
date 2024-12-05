@@ -31,5 +31,5 @@ export const commonTranslations = {
   sortBy: "Trier par",
   user: "Utilisateur",
   logout: "Déconnexion",
-  phone: "Téléphone",
+  phone: "Téléphone"
 };
