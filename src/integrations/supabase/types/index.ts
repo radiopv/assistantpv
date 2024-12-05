@@ -1,8 +1,9 @@
 import { Json } from './common';
 import { Children } from './children';
 import { SponsorshipTables } from './sponsorship';
+import { Database as HomepageDatabase } from './homepage';
 
-export type Database = {
+export type Database = HomepageDatabase & {
   public: {
     Tables: {
       children: Children;

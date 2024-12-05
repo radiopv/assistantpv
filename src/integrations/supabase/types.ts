@@ -606,6 +606,42 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_modules: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          module_type: string
+          name: string
+          order_index: number | null
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          module_type: string
+          name: string
+          order_index?: number | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          module_type?: string
+          name?: string
+          order_index?: number | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       homepage_sections: {
         Row: {
           content: Json | null
