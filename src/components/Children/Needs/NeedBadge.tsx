@@ -37,16 +37,17 @@ export const NeedBadge = ({
   const { t } = useLanguage();
 
   const getBadgeStyle = (isUrgent: boolean) => {
-    return isUrgent 
-      ? "bg-red-100 text-red-800 hover:bg-red-200" 
-      : "bg-blue-100 text-blue-800 hover:bg-blue-200";
+    if (isUrgent) {
+      return "bg-red-100 hover:bg-red-200 text-red-800 border-red-200";
+    }
+    return "bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-200";
   };
 
   return (
     <div className="relative">
       <Badge 
         variant="outline"
-        className={`cursor-pointer transition-colors px-3 py-1 ${getBadgeStyle(isUrgent)}`}
+        className={`cursor-pointer transition-colors px-3 py-1.5 text-sm font-medium ${getBadgeStyle(isUrgent)}`}
         onClick={onNeedClick}
       >
         {NEED_CATEGORIES[category as keyof typeof NEED_CATEGORIES]}
