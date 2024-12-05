@@ -30,9 +30,27 @@ const SponsorshipRequests = () => {
 
   const handleApprove = async (requestId: string) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.id) throw new Error('User not found');
+
+      // Check if profile exists, create if it doesn't
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (!existingProfile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ id: user.id, role: 'admin' }]);
+
+        if (profileError) throw profileError;
+      }
+
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: requestId,
-        admin_id: (await supabase.auth.getUser()).data.user?.id
+        admin_id: user.id
       });
 
       if (error) throw error;
@@ -55,9 +73,27 @@ const SponsorshipRequests = () => {
 
   const handleReject = async (requestId: string) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user?.id) throw new Error('User not found');
+
+      // Check if profile exists, create if it doesn't
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', user.id)
+        .single();
+
+      if (!existingProfile) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([{ id: user.id, role: 'admin' }]);
+
+        if (profileError) throw profileError;
+      }
+
       const { error } = await supabase.rpc('reject_sponsorship_request', {
         request_id: requestId,
-        admin_id: (await supabase.auth.getUser()).data.user?.id
+        admin_id: user.id
       });
 
       if (error) throw error;
