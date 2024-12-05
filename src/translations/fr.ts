@@ -24,6 +24,9 @@ export const frenchTranslations = {
   donations: "Dons",
   about: "À propos",
   contact: "Contact",
+  messages: "Messages",
+  editProfile: "Modifier le profil",
+  welcome: "Bienvenue",
 
   // Actions
   save: "Enregistrer",
@@ -65,6 +68,22 @@ export const frenchTranslations = {
   available: "Disponible",
   by: "par",
 
+  // Dashboard
+  totalChildren: "Total des enfants",
+  sponsoredChildren: "Enfants parrainés",
+  urgentNeeds: "Besoins urgents",
+  activeCities: "Villes actives",
+  incompleteProfiles: "Profils incomplets",
+  viewAllChildren: "Voir tous les enfants",
+  viewSponsoredChildren: "Voir les enfants parrainés",
+  viewUrgentNeeds: "Voir les besoins urgents",
+  viewCityStats: "Voir les statistiques par ville",
+  viewIncompleteProfiles: "Voir les profils incomplets",
+  welcomeMessage: "Bienvenue sur votre tableau de bord",
+  urgentNeedsByCity: "Besoins urgents par ville",
+  sponsorAlbum: "Album du parrain",
+  sponsorAlbumDescription: "Photos et vidéos partagées par le parrain",
+
   // Sponsorship
   becomeSponsor: "Devenir parrain",
   sponsorshipDescription: "Donnez de l'espoir et un avenir meilleur aux enfants cubains grâce à votre parrainage",
@@ -80,22 +99,6 @@ export const frenchTranslations = {
   sponsorshipRequestSubmitted: "Votre demande de parrainage a été envoyée avec succès",
   errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande",
 
-  // Time
-  years: "ans",
-  months: "mois",
-  days: "jours",
-  today: "Aujourd'hui",
-  yesterday: "Hier",
-  tomorrow: "Demain",
-
-  // Need categories and actions
-  normalNeed: "Besoin normal",
-  urgentNeed: "Besoin urgent",
-  addComment: "Ajouter un commentaire",
-  markAsUrgent: "Marquer comme urgent",
-  markAsNormal: "Marquer comme normal",
-  close: "Fermer",
-
   // Messages
   noData: "Aucune donnée disponible",
   confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
@@ -107,6 +110,22 @@ export const frenchTranslations = {
   pleaseWait: "Veuillez patienter...",
   required: "Requis",
   invalid: "Invalide",
+  selectMessageToRead: "Sélectionnez un message pour le lire",
+  donationBy: "Don par",
+
+  // Sponsors
+  activeSponsors: "Parrains actifs",
+  inactiveSponsors: "Parrains inactifs",
+  logout: "Se déconnecter",
+  user: "Utilisateur",
+
+  // Profile
+  profileUpdated: "Profil mis à jour",
+  profileUpdateSuccess: "Votre profil a été mis à jour avec succès",
+  profileUpdateError: "Une erreur est survenue lors de la mise à jour du profil",
+  childDeleted: "Enfant supprimé",
+  childDeleteSuccess: "L'enfant a été supprimé avec succès",
+  childDeleteError: "Une erreur est survenue lors de la suppression de l'enfant",
 
   // Translation management
   translationManager: "Gestionnaire de traductions",
@@ -133,12 +152,11 @@ export const frenchTranslations = {
   translationUpdated: "Traduction mise à jour avec succès",
   scanStarted: "Scan démarré",
   scanError: "Erreur lors du scan",
-  
+
   // Dashboard translations
   completedSponsorships: "Parrainages terminés",
   pendingSponsorships: "Parrainages en attente",
   activeSponsorships: "Parrainages actifs",
   sponsorshipStats: "Statistiques de parrainage",
-  topCities: "Villes principales",
-  urgentNeeds: "Besoins urgents"
+  topCities: "Villes principales"
 };
