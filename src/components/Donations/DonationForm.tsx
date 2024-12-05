@@ -9,12 +9,14 @@ import { DonationBasicInfo } from "./DonationBasicInfo";
 import { DonorInfo } from "./DonorInfo";
 import { PhotoUpload } from "./PhotoUpload";
 import { DonationSubmitButton } from "./DonationSubmitButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DonationFormProps {
   onDonationComplete?: () => void;
 }
 
 export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
+  const { language } = useLanguage();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [quantity, setQuantity] = useState("");
   const [city, setCity] = useState("");
@@ -25,6 +27,31 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
   const [photos, setPhotos] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  const translations = {
+    fr: {
+      categories: "Catégories",
+      comments: "Commentaires",
+      commentsPlaceholder: "Détails supplémentaires sur le don",
+      error: "Erreur",
+      errorMessage: "Veuillez sélectionner au moins une catégorie et remplir tous les champs obligatoires.",
+      donationRegistered: "Don enregistré",
+      successMessage: "Le don a été enregistré avec succès.",
+      errorSaving: "Une erreur est survenue lors de l'enregistrement du don."
+    },
+    es: {
+      categories: "Categorías",
+      comments: "Comentarios",
+      commentsPlaceholder: "Detalles adicionales sobre la donación",
+      error: "Error",
+      errorMessage: "Por favor, seleccione al menos una categoría y complete todos los campos obligatorios.",
+      donationRegistered: "Donación registrada",
+      successMessage: "La donación se ha registrado con éxito.",
+      errorSaving: "Ocurrió un error al guardar la donación."
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const handleCategorySelect = (categoryId: string) => {
     setSelectedCategories(prev => {
@@ -64,8 +91,8 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
     if (selectedCategories.length === 0 || !quantity || !city) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Veuillez sélectionner au moins une catégorie et remplir tous les champs obligatoires.",
+        title: t.error,
+        description: t.errorMessage,
       });
       return;
     }
@@ -119,8 +146,8 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       }
 
       toast({
-        title: "Don enregistré",
-        description: "Le don a été enregistré avec succès.",
+        title: t.donationRegistered,
+        description: t.successMessage,
       });
 
       setSelectedCategories([]);
@@ -135,8 +162,8 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'enregistrement du don.",
+        title: t.error,
+        description: t.errorSaving,
       });
       console.error('Error creating donation:', error);
     } finally {
@@ -148,7 +175,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
     <Card className="p-6">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <Label>Catégories</Label>
+          <Label>{t.categories}</Label>
           <DonationCategorySelect
             selectedCategories={selectedCategories}
             onSelectCategory={handleCategorySelect}
@@ -165,12 +192,12 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         />
 
         <div>
-          <Label htmlFor="comments">Commentaires</Label>
+          <Label htmlFor="comments">{t.comments}</Label>
           <Textarea
             id="comments"
             value={comments}
             onChange={(e) => setComments(e.target.value)}
-            placeholder="Détails supplémentaires sur le don"
+            placeholder={t.commentsPlaceholder}
             className="h-24"
           />
         </div>

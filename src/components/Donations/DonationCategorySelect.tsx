@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { DollarSign, Shirt, Utensils, BookOpen, HeartPulse, Package } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Category {
   id: string;
@@ -24,6 +25,7 @@ interface DonationCategorySelectProps {
 }
 
 export const DonationCategorySelect = ({ selectedCategories, onSelectCategory }: DonationCategorySelectProps) => {
+  const { language } = useLanguage();
   const { data: categories } = useQuery({
     queryKey: ['aid_categories'],
     queryFn: async () => {
@@ -58,7 +60,7 @@ export const DonationCategorySelect = ({ selectedCategories, onSelectCategory }:
             onClick={() => onSelectCategory(category.id)}
           >
             <Icon className="w-6 h-6" />
-            <span className="text-sm text-center">{category.name}</span>
+            <span className="text-sm text-center">{language === 'es' ? category.name : category.name}</span>
           </Button>
         );
       })}

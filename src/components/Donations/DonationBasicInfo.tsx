@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MapPin, Users, User } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DonationBasicInfoProps {
   city: string;
@@ -19,26 +20,49 @@ export const DonationBasicInfo = ({
   assistantName,
   onAssistantNameChange,
 }: DonationBasicInfoProps) => {
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      city: "Ville",
+      cityPlaceholder: "Entrez le nom de la ville",
+      peopleHelped: "Personnes aidées",
+      peoplePlaceholder: "Nombre de personnes",
+      assistantName: "Nom de l'assistant",
+      assistantPlaceholder: "Nom de l'assistant"
+    },
+    es: {
+      city: "Ciudad",
+      cityPlaceholder: "Ingrese el nombre de la ciudad",
+      peopleHelped: "Personas ayudadas",
+      peoplePlaceholder: "Número de personas",
+      assistantName: "Nombre del asistente",
+      assistantPlaceholder: "Nombre del asistente"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
+
   return (
     <>
       <div className="space-y-2">
         <Label htmlFor="city" className="text-sm font-medium flex items-center gap-2">
           <MapPin className="w-4 h-4 text-gray-500" />
-          Ville
+          {t.city}
         </Label>
         <Input
           id="city"
           value={city}
           onChange={(e) => onCityChange(e.target.value)}
           className="text-base"
-          placeholder="Entrez le nom de la ville"
+          placeholder={t.cityPlaceholder}
         />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="quantity" className="text-sm font-medium flex items-center gap-2">
           <Users className="w-4 h-4 text-gray-500" />
-          Personnes aidées
+          {t.peopleHelped}
         </Label>
         <Input
           id="quantity"
@@ -47,21 +71,21 @@ export const DonationBasicInfo = ({
           onChange={(e) => onQuantityChange(e.target.value)}
           className="text-base"
           min="0"
-          placeholder="Nombre de personnes"
+          placeholder={t.peoplePlaceholder}
         />
       </div>
 
       <div className="space-y-2 md:col-span-2">
         <Label htmlFor="assistant" className="text-sm font-medium flex items-center gap-2">
           <User className="w-4 h-4 text-gray-500" />
-          Nom de l'assistant
+          {t.assistantName}
         </Label>
         <Input
           id="assistant"
           value={assistantName}
           onChange={(e) => onAssistantNameChange(e.target.value)}
           className="text-base"
-          placeholder="Nom de l'assistant"
+          placeholder={t.assistantPlaceholder}
         />
       </div>
     </>
