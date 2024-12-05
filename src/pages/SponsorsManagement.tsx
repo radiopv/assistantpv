@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Search, Download, Upload, Filter } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,15 +17,21 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const SponsorsManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useLanguage();
+  const { toast } = useToast();
 
-  const { data: sponsors, isLoading } = useQuery({
+  // Ajout de logs pour debug
+  console.log("Rendering SponsorsManagement");
+
+  const { data: sponsors, isLoading, error } = useQuery({
     queryKey: ["sponsors"],
     queryFn: async () => {
+      console.log("Fetching sponsors data...");
       const { data, error } = await supabase
         .from("sponsors")
         .select(`
           *,
           sponsorships (
+            id,
             start_date,
             child:children (
               id,
@@ -37,11 +44,28 @@ const SponsorsManagement = () => {
 
       if (error) {
         console.error("Error fetching sponsors:", error);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger les parrains",
+        });
         throw error;
       }
+
+      console.log("Sponsors data received:", data);
       return data;
     },
   });
+
+  // Vérification des données reçues
+  if (error) {
+    console.error("Query error:", error);
+    return (
+      <div className="p-4 text-red-500">
+        Une erreur est survenue lors du chargement des parrains
+      </div>
+    );
+  }
 
   const filteredSponsors = sponsors?.filter(sponsor =>
     sponsor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -50,10 +74,22 @@ const SponsorsManagement = () => {
   );
 
   const handleExport = () => {
+    if (!sponsors?.length) {
+      toast({
+        variant: "destructive",
+        title: "Export impossible",
+        description: "Aucune donnée à exporter",
+      });
+      return;
+    }
     console.log("Export sponsors to CSV");
   };
 
   const handleImport = () => {
+    toast({
+      title: "Import",
+      description: "Fonctionnalité en cours de développement",
+    });
     console.log("Import sponsors from CSV");
   };
 
