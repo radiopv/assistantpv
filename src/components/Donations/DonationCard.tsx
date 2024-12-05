@@ -7,6 +7,7 @@ import { DonationDialog } from "./DonationDialog";
 import { DonationDetails } from "./DonationDetails";
 import { DonationCardHeader } from "./DonationCardHeader";
 import { DonationCardMedia } from "./DonationCardMedia";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface DonationCardProps {
   donation: {
@@ -26,6 +27,10 @@ interface DonationCardProps {
 export const DonationCard = ({ donation, onDelete, isAdmin = false, canDelete = false }: DonationCardProps) => {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Détermine si l'utilisateur peut supprimer en fonction de son rôle
+  const userCanDelete = user?.role === 'admin' || user?.role === 'assistant';
 
   const { data: donationPhotos, refetch: refetchPhotos } = useQuery({
     queryKey: ['donation-photos', donation.id],
@@ -149,7 +154,7 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false, canDelete = 
         <DonationCardHeader
           donation={donation}
           isAdmin={isAdmin}
-          canDelete={canDelete}
+          canDelete={userCanDelete}
           onEdit={() => setShowEditDialog(true)}
           onDelete={handleDelete}
         />
