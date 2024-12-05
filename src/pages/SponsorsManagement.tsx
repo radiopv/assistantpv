@@ -12,13 +12,16 @@ interface SponsorshipRequest {
   id: string;
   full_name: string;
   email: string;
-  phone: string;
-  city: string;
-  motivation: string;
-  facebook_url: string;
-  is_long_term: boolean;
+  phone: string | null;
+  motivation: string | null;
+  facebook_url: string | null;
   status: string;
-  created_at: string;
+  created_at: string | null;
+  child_id: string | null;
+  terms_accepted: boolean;
+  updated_at: string | null;
+  city?: string | null;
+  is_long_term?: boolean | null;
 }
 
 const SponsorshipManagement = () => {
@@ -141,7 +144,7 @@ const SponsorshipManagement = () => {
                     <div>
                       <h3 className="font-semibold">{request.full_name}</h3>
                       <p className="text-sm text-gray-600">{request.email}</p>
-                      <p className="text-sm text-gray-600">{request.city}</p>
+                      <p className="text-sm text-gray-600">{request.city || 'Ville non spécifiée'}</p>
                       <p className="text-sm text-gray-600">
                         {request.is_long_term ? "Parrainage à long terme" : "Parrainage unique"}
                       </p>
