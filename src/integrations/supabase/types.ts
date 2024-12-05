@@ -1789,6 +1789,7 @@ export type Database = {
           },
         ]
       }
+
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1802,6 +1803,8 @@ export type Database = {
           status: string
           terms_accepted: boolean
           updated_at: string | null
+          city: string | null
+          is_long_term: boolean | null
         }
         Insert: {
           child_id?: string | null
@@ -1815,6 +1818,8 @@ export type Database = {
           status: string
           terms_accepted?: boolean
           updated_at?: string | null
+          city?: string | null
+          is_long_term?: boolean | null
         }
         Update: {
           child_id?: string | null
@@ -1825,9 +1830,11 @@ export type Database = {
           id?: string
           motivation?: string | null
           phone?: string | null
-          status: string
+          status?: string
           terms_accepted?: boolean
           updated_at?: string | null
+          city?: string | null
+          is_long_term?: boolean | null
         }
         Relationships: [
           {
@@ -1836,9 +1843,10 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
+
       sponsorships: {
         Row: {
           auto_terminate_job_id: string | null
@@ -2559,3 +2567,4 @@ export type Database = {
     }
   }
 }
+
