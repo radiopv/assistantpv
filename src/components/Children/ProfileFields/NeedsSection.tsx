@@ -3,8 +3,9 @@ import { NeedsSelectionField } from "../FormFields/NeedsSelectionField";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "../FormFields/translations";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface NeedsSectionProps {
   child: any;
@@ -14,12 +15,12 @@ interface NeedsSectionProps {
 
 const NEED_CATEGORIES = {
   education: "Éducation",
-  jouet: "Jouets",
-  vetement: "Vêtements",
-  nourriture: "Nourriture",
-  medicament: "Médicaments",
-  hygiene: "Hygiène",
-  autre: "Autre"
+  jouet: "Juguetes",
+  vetement: "Ropa",
+  nourriture: "Alimentación",
+  medicament: "Medicamentos",
+  hygiene: "Higiene",
+  autre: "Otros"
 };
 
 export const NeedsSection = ({ child, editing, onChange }: NeedsSectionProps) => {
@@ -31,29 +32,40 @@ export const NeedsSection = ({ child, editing, onChange }: NeedsSectionProps) =>
     onChange('needs', needs);
   };
 
-  const getBadgeStyle = (isUrgent: boolean) => {
+  const getButtonStyle = (isUrgent: boolean) => {
     if (isUrgent) {
-      return "bg-red-100 hover:bg-red-200 text-red-800 border-red-200";
+      return "w-full bg-blue-600 text-white hover:bg-blue-700";
     }
-    return "bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-200";
+    return "w-full bg-gray-100 text-gray-900 hover:bg-gray-200";
   };
 
   const renderNeeds = () => {
     const needs = convertJsonToNeeds(child.needs);
     return (
-      <ScrollArea className="h-auto max-h-[200px]">
-        <div className="flex flex-wrap gap-2 p-2">
+      <ScrollArea className="h-auto max-h-[400px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 p-2">
           {needs.map((need, index) => (
-            <Badge
-              key={`${need.category}-${index}`}
-              variant="outline"
-              className={`px-3 py-1.5 text-sm font-medium ${getBadgeStyle(need.is_urgent)}`}
-            >
-              {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+            <div key={`${need.category}-${index}`} className="space-y-2">
+              <Button
+                variant="outline"
+                className={`${getButtonStyle(need.is_urgent)} justify-start px-4 py-2 h-auto`}
+              >
+                {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+              </Button>
               {need.is_urgent && (
-                <span className="ml-2 text-red-600">•</span>
+                <div className="flex items-center space-x-2 px-2">
+                  <Checkbox id={`urgent-${index}`} checked={true} disabled />
+                  <label htmlFor={`urgent-${index}`} className="text-sm text-gray-600">
+                    Besoin urgent pour : {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                  </label>
+                </div>
               )}
-            </Badge>
+              {need.description && (
+                <div className="px-2">
+                  <p className="text-sm text-gray-600">{need.description}</p>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </ScrollArea>
@@ -61,7 +73,7 @@ export const NeedsSection = ({ child, editing, onChange }: NeedsSectionProps) =>
   };
 
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-4">
       {!editing && renderNeeds()}
       {editing && (
         <>
