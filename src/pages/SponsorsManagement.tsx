@@ -45,7 +45,15 @@ const SponsorsManagement = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      
+      // Map the data to ensure all required fields are present and properly typed
+      return (data || []).map(request => ({
+        ...request,
+        is_long_term: Boolean(request.is_long_term),
+        is_one_time: Boolean(request.is_one_time || false), // Provide default value if missing
+        terms_accepted: Boolean(request.terms_accepted),
+        status: request.status || 'pending'
+      })) as SponsorshipRequest[];
     }
   });
 
