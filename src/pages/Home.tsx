@@ -6,7 +6,7 @@ import { UrgentNeedsSection } from "@/components/Home/UrgentNeedsSection";
 import { SponsorMemoriesSection } from "@/components/Home/SponsorMemoriesSection";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
-import { Heart, HandShake, ChartBar } from "lucide-react";
+import { Heart, Handshake, ChartBar } from "lucide-react";
 
 const Home = () => {
   const { t } = useLanguage();
@@ -54,7 +54,7 @@ const Home = () => {
               <SponsorshipStats />
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <HandShake className="w-12 h-12 mx-auto mb-4 text-primary" />
+              <Handshake className="w-12 h-12 mx-auto mb-4 text-primary" />
               <UserEngagementStats />
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
