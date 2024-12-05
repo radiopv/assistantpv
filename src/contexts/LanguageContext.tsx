@@ -42,9 +42,9 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const addTranslation = (key: string, value: string, targetLanguage: Language) => {
     if (targetLanguage === 'fr') {
-      frenchTranslations[key as keyof typeof frenchTranslations] = value;
+      (frenchTranslations as any)[key] = value;
     } else {
-      spanishTranslations[key as keyof typeof spanishTranslations] = value;
+      (spanishTranslations as any)[key] = value;
     }
     
     if (targetLanguage === language) {

@@ -31,6 +31,57 @@ export const TranslationScanner = () => {
     language: string;
   }>>([]);
 
+  const detectEnglishText = () => {
+    setScanning(true);
+    console.log("Scanning for English text...");
+    
+    // Regex pattern for English text detection
+    // Excludes common programming terms and short words
+    const englishPattern = /[a-zA-Z\s]{4,}/g;
+    const foundTexts: EnglishText[] = [];
+    const programTerms = new Set([
+      'function', 'const', 'let', 'var', 'return', 'import', 'export',
+      'class', 'interface', 'type', 'extends', 'implements'
+    ]);
+
+    const scanNode = (node: Node, location: string) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent?.trim();
+        if (text && englishPattern.test(text)) {
+          // Check if text is not already a translation key
+          if (!Object.keys(frenchTranslations).includes(text) && 
+              !Object.keys(spanishTranslations).includes(text) &&
+              !programTerms.has(text.toLowerCase())) {
+            console.log(`Found potential English text: "${text}" at ${location}`);
+            
+            // Add visual indicator
+            const parent = node.parentElement;
+            if (parent && !parent.querySelector('.translation-pending')) {
+              const indicator = document.createElement('span');
+              indicator.className = 'translation-pending ml-1';
+              indicator.textContent = '🔄';
+              indicator.title = 'Translation pending';
+              parent.appendChild(indicator);
+            }
+
+            foundTexts.push({ text, location });
+            setPendingTranslations(prev => [
+              ...prev,
+              { key: text, text, language: 'fr' },
+              { key: text, text, language: 'es' }
+            ]);
+          }
+        }
+      }
+      node.childNodes.forEach(child => scanNode(child, location));
+    };
+
+    scanNode(document.body, 'body');
+    setEnglishTexts(foundTexts);
+    console.log("Found", foundTexts.length, "English texts");
+    setScanning(false);
+  };
+
   const scanForMissingTranslations = () => {
     setScanning(true);
     console.log("Scanning for missing translations...");
@@ -78,43 +129,16 @@ export const TranslationScanner = () => {
     setScanning(false);
   };
 
-  const detectEnglishText = () => {
-    setScanning(true);
-    console.log("Scanning for English text...");
-    const englishPattern = /[a-zA-Z\s]{4,}/g;
-    const foundTexts: EnglishText[] = [];
-
-    const scanNode = (node: Node, location: string) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent?.trim();
-        if (text && englishPattern.test(text)) {
-          if (!Object.keys(frenchTranslations).includes(text) && 
-              !Object.keys(spanishTranslations).includes(text) &&
-              !text.includes('function') &&
-              !text.includes('const') &&
-              !text.includes('let') &&
-              !text.includes('var')) {
-            console.log(`Found potential English text: "${text}" at ${location}`);
-            foundTexts.push({ text, location });
-            setPendingTranslations(prev => [
-              ...prev,
-              { key: text, text, language: 'fr' },
-              { key: text, text, language: 'es' }
-            ]);
-          }
-        }
-      }
-      node.childNodes.forEach(child => scanNode(child, location));
-    };
-
-    scanNode(document.body, 'body');
-    setEnglishTexts(foundTexts);
-    console.log("Found", foundTexts.length, "English texts");
-    setScanning(false);
-  };
-
   const handleTranslationApprove = (key: string, value: string, language: string) => {
     console.log('Approved translation:', { key, value, language });
+    
+    // Remove the visual indicator after approval
+    document.querySelectorAll('.translation-pending').forEach(el => {
+      if (el.previousSibling?.textContent?.includes(key)) {
+        el.remove();
+      }
+    });
+
     setPendingTranslations(prev => prev.filter(t => t.key !== key));
   };
 
