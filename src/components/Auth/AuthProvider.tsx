@@ -2,8 +2,15 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
-import { AuthContextType } from "./types";
-import { useAuthHook } from "./useAuthHook";
+
+interface AuthContextType {
+  user: any;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  session: Session | null;
+  isAssistant: boolean;
+}
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -19,42 +26,53 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const {
-    user,
-    loading,
-    isAssistant,
-    signIn,
-    signOut,
-    checkAuth
-  } = useAuthHook();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const initAuth = async () => {
+    const checkUser = async () => {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setSession(currentSession);
+        const { data: { session: authSession } } = await supabase.auth.getSession();
+        setSession(authSession);
         
-        if (currentSession?.user?.email) {
-          await checkAuth(currentSession.user.email);
-        } else {
-          await checkAuth();
+        if (authSession?.user) {
+          const { data: sponsorData, error: sponsorError } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('id', authSession.user.id)
+            .single();
+
+          if (sponsorError) throw sponsorError;
+          setUser(sponsorData);
         }
       } catch (error) {
-        console.error('Error initializing auth:', error);
+        console.error('Error checking user session:', error);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
     };
 
-    initAuth();
+    checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-      console.log('Auth state changed:', event, newSession?.user?.email);
-      setSession(newSession);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, authSession) => {
+      setSession(authSession);
       
-      if (event === 'SIGNED_IN' && newSession?.user?.email) {
-        await checkAuth(newSession.user.email);
+      if (event === 'SIGNED_IN' && authSession?.user) {
+        const { data: sponsorData, error: sponsorError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', authSession.user.id)
+          .single();
+
+        if (sponsorError) throw sponsorError;
+        setUser(sponsorData);
+        setLoading(false);
       } else if (event === 'SIGNED_OUT') {
-        await checkAuth();
+        setUser(null);
+        setLoading(false);
       }
     });
 
@@ -62,6 +80,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       subscription.unsubscribe();
     };
   }, []);
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error signing in:', error);
+      throw error;
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
+  };
+
+  const isAssistant = user?.role === 'assistant';
 
   return (
     <AuthContext.Provider value={{ user, loading, signIn, signOut, session, isAssistant }}>
