@@ -167,5 +167,18 @@ export const spanishTranslations = {
   markAllAsRead: "Marcar todo como leído",
   newMessage: "Nuevo mensaje",
   newDonation: "Nueva donación",
-  newSponsorRequest: "Nueva solicitud de patrocinio"
+  newSponsorRequest: "Nueva solicitud de patrocinio",
+
+  // Dashboard translations
+  welcomeMessage: "Bienvenido a tu panel de control",
+  totalChildren: "Total niños",
+  sponsoredChildren: "Niños apadrinados",
+  urgentNeeds: "Necesidades urgentes",
+  activeCities: "Ciudades activas",
+  incompleteProfiles: "Perfiles incompletos",
+  viewAllChildren: "Ver todos los niños",
+  viewSponsoredChildren: "Ver niños apadrinados",
+  viewUrgentNeeds: "Ver necesidades urgentes",
+  viewCityStats: "Ver estadísticas por ciudad",
+  viewIncompleteProfiles: "Ver perfiles incompletos",
 };

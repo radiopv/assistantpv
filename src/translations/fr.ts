@@ -123,5 +123,18 @@ export const frenchTranslations = {
   completeProfile: "Complétez votre profil",
   fillInformation: "Remplissez les informations nécessaires pour devenir parrain",
   startSponsorship: "Commencez votre parrainage",
-  receiveUpdates: "Recevez des nouvelles régulières et suivez l'évolution de votre filleul"
+  receiveUpdates: "Recevez des nouvelles régulières et suivez l'évolution de votre filleul",
+
+  // Dashboard translations
+  welcomeMessage: "Bienvenue sur votre tableau de bord",
+  totalChildren: "Total enfants",
+  sponsoredChildren: "Enfants parrainés",
+  urgentNeeds: "Besoins urgents",
+  activeCities: "Villes actives",
+  incompleteProfiles: "Profils incomplets",
+  viewAllChildren: "Voir tous les enfants",
+  viewSponsoredChildren: "Voir les enfants parrainés",
+  viewUrgentNeeds: "Voir les besoins urgents",
+  viewCityStats: "Voir les statistiques par ville",
+  viewIncompleteProfiles: "Voir les profils incomplets",
 };

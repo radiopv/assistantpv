@@ -10,6 +10,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { DashboardStats } from "@/types/dashboard";
 
 interface DashboardHeaderProps {
   stats: DashboardStats;
