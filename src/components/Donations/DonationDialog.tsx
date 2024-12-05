@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Check, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DonationDialogProps {
   open: boolean;
@@ -23,12 +24,32 @@ interface DonationDialogProps {
 
 export const DonationDialog = ({ open, onClose, donation, onSave }: DonationDialogProps) => {
   const [editedDonation, setEditedDonation] = useState(donation);
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      editDonation: "Modifier le don",
+      comments: "Commentaires",
+      commentsPlaceholder: "Ajoutez des commentaires sur ce don...",
+      cancel: "Annuler",
+      save: "Enregistrer"
+    },
+    es: {
+      editDonation: "Modificar la donación",
+      comments: "Comentarios",
+      commentsPlaceholder: "Agregue comentarios sobre esta donación...",
+      cancel: "Cancelar",
+      save: "Guardar"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl w-full max-h-[90vh] flex flex-col">
         <DialogHeader className="border-b pb-4">
-          <DialogTitle className="text-xl font-semibold">Modifier le don</DialogTitle>
+          <DialogTitle className="text-xl font-semibold">{t.editDonation}</DialogTitle>
         </DialogHeader>
         
         <ScrollArea className="flex-1 px-1">
@@ -46,14 +67,14 @@ export const DonationDialog = ({ open, onClose, donation, onSave }: DonationDial
             
             <div className="space-y-2">
               <Label htmlFor="comments" className="text-sm font-medium">
-                Commentaires
+                {t.comments}
               </Label>
               <Textarea
                 id="comments"
                 value={editedDonation.comments || ''}
                 onChange={(e) => setEditedDonation({...editedDonation, comments: e.target.value})}
                 className="min-h-[120px] text-base resize-none"
-                placeholder="Ajoutez des commentaires sur ce don..."
+                placeholder={t.commentsPlaceholder}
               />
             </div>
           </div>
@@ -66,14 +87,14 @@ export const DonationDialog = ({ open, onClose, donation, onSave }: DonationDial
             className="flex items-center gap-2"
           >
             <X className="w-4 h-4" />
-            <span>Annuler</span>
+            <span>{t.cancel}</span>
           </Button>
           <Button
             onClick={() => onSave(editedDonation)}
             className="flex items-center gap-2"
           >
             <Check className="w-4 h-4" />
-            <span>Enregistrer</span>
+            <span>{t.save}</span>
           </Button>
         </div>
       </DialogContent>
