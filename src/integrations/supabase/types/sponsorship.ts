@@ -20,5 +20,14 @@ export type SponsorshipTables = {
     Row: SponsorshipRequest;
     Insert: Partial<SponsorshipRequest> & Pick<SponsorshipRequest, 'email' | 'full_name' | 'status'>;
     Update: Partial<SponsorshipRequest>;
+    Relationships: [
+      {
+        foreignKeyName: "sponsorship_requests_child_id_fkey";
+        columns: ["child_id"];
+        isOneToOne: false;
+        referencedRelation: "children";
+        referencedColumns: ["id"];
+      }
+    ];
   };
 };
