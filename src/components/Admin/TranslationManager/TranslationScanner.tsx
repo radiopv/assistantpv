@@ -33,26 +33,33 @@ export const TranslationScanner = () => {
 
   const scanForMissingTranslations = () => {
     setScanning(true);
+    console.log("Scanning for missing translations...");
     const missing: MissingTranslation[] = [];
     
+    // Check French translations in Spanish
     Object.keys(frenchTranslations).forEach(key => {
       if (!spanishTranslations[key]) {
         missing.push({ key, language: 'es' });
+        console.log(`Missing Spanish translation for key: ${key}`);
       }
     });
 
+    // Check Spanish translations in French
     Object.keys(spanishTranslations).forEach(key => {
       if (!frenchTranslations[key]) {
         missing.push({ key, language: 'fr' });
+        console.log(`Missing French translation for key: ${key}`);
       }
     });
 
     setMissingTranslations(missing);
+    console.log("Scan complete. Found", missing.length, "missing translations");
     setScanning(false);
   };
 
   const findUnusedTranslations = async () => {
     setScanning(true);
+    console.log("Scanning for unused translations...");
     const allKeys = new Set([
       ...Object.keys(frenchTranslations),
       ...Object.keys(spanishTranslations)
@@ -60,15 +67,20 @@ export const TranslationScanner = () => {
 
     const unused = Array.from(allKeys).filter(key => {
       const keyUsageCount = document.body.innerHTML.split(key).length - 1;
+      if (keyUsageCount === 0) {
+        console.log(`Found unused translation key: ${key}`);
+      }
       return keyUsageCount === 0;
     });
 
     setUnusedTranslations(unused);
+    console.log("Found", unused.length, "unused translations");
     setScanning(false);
   };
 
   const detectEnglishText = () => {
     setScanning(true);
+    console.log("Scanning for English text...");
     const englishPattern = /[a-zA-Z\s]{4,}/g;
     const foundTexts: EnglishText[] = [];
 
@@ -82,6 +94,7 @@ export const TranslationScanner = () => {
               !text.includes('const') &&
               !text.includes('let') &&
               !text.includes('var')) {
+            console.log(`Found potential English text: "${text}" at ${location}`);
             foundTexts.push({ text, location });
             setPendingTranslations(prev => [
               ...prev,
@@ -96,11 +109,11 @@ export const TranslationScanner = () => {
 
     scanNode(document.body, 'body');
     setEnglishTexts(foundTexts);
+    console.log("Found", foundTexts.length, "English texts");
     setScanning(false);
   };
 
   const handleTranslationApprove = (key: string, value: string, language: string) => {
-    // Here you would typically update your translation files
     console.log('Approved translation:', { key, value, language });
     setPendingTranslations(prev => prev.filter(t => t.key !== key));
   };
