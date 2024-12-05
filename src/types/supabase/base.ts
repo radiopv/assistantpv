@@ -175,7 +175,7 @@ export interface Database {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           child_id?: string | null
@@ -392,7 +392,7 @@ export interface Database {
           description?: string | null
           comments?: string | null
           story?: string | null
-          end_date?: string | null
+          end_date?: string
           gender: string
           id?: string
           is_sponsored?: boolean | null
@@ -565,94 +565,6 @@ export interface Database {
         }
         Relationships: []
       }
-      sponsorships: {
-        Row: {
-          id: string;
-          child_id: string;
-          sponsor_id: string;
-          start_date: string;
-          end_date: string | null;
-          status: 'active' | 'pending' | 'ended';
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          child_id: string;
-          sponsor_id: string;
-          start_date?: string;
-          end_date?: string | null;
-          status?: 'active' | 'pending' | 'ended';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          child_id?: string;
-          sponsor_id?: string;
-          start_date?: string;
-          end_date?: string | null;
-          status?: 'active' | 'pending' | 'ended';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "sponsorships_child_id_fkey";
-            columns: ["child_id"];
-            isOneToOne: false;
-            referencedRelation: "children";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "sponsorships_sponsor_id_fkey";
-            columns: ["sponsor_id"];
-            isOneToOne: false;
-            referencedRelation: "sponsors";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      
-      donations: {
-        Row: {
-          id: string;
-          assistant_name: string;
-          city: string;
-          comments: string | null;
-          created_at: string | null;
-          donation_date: string;
-          people_helped: number;
-          photos: string[] | null;
-          status: string | null;
-          updated_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          assistant_name: string;
-          city: string;
-          comments?: string | null;
-          created_at?: string | null;
-          donation_date: string;
-          people_helped: number;
-          photos?: string[] | null;
-          status?: string | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          assistant_name?: string;
-          city?: string;
-          comments?: string | null;
-          created_at?: string | null;
-          donation_date?: string;
-          people_helped?: number;
-          photos?: string[] | null;
-          status?: string | null;
-          updated_at?: string | null;
-        };
-        Relationships: [];
-      };
     };
     Views: {
       unified_media_browser: {
