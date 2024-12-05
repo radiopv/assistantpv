@@ -4,8 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { toast } from "sonner";
 
 interface Sender {
   name: string;
@@ -26,6 +29,27 @@ interface Message {
 export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Message) => void }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
+
+  const handleDeleteMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from("messages")
+        .delete()
+        .eq("id", messageId);
+
+      if (error) {
+        toast.error("Erreur lors de la suppression du message");
+        return;
+      }
+
+      setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
+      toast.success("Message supprimé avec succès");
+      onSelectMessage(null);
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      toast.error("Erreur lors de la suppression du message");
+    }
+  };
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -97,7 +121,6 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
           {messages.map((message) => (
             <div
               key={message.id}
-              onClick={() => onSelectMessage(message)}
               className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
             >
               <div className="flex items-center justify-between mb-2">
@@ -107,20 +130,34 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
                     {message.sender?.role}
                   </Badge>
                 </div>
-                <span className="text-sm text-gray-500">
-                  {formatDistanceToNow(new Date(message.created_at), {
-                    addSuffix: true,
-                    locale: fr,
-                  })}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">
+                    {formatDistanceToNow(new Date(message.created_at), {
+                      addSuffix: true,
+                      locale: fr,
+                    })}
+                  </span>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteMessage(message.id);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
-              <h3 className="font-medium mb-1">{message.subject}</h3>
-              <p className="text-sm text-gray-600 line-clamp-2">{message.content}</p>
-              {!message.is_read && (
-                <Badge className="mt-2" variant="default">
-                  Nouveau
-                </Badge>
-              )}
+              <div onClick={() => onSelectMessage(message)}>
+                <h3 className="font-medium mb-1">{message.subject}</h3>
+                <p className="text-sm text-gray-600 line-clamp-2">{message.content}</p>
+                {!message.is_read && (
+                  <Badge className="mt-2" variant="default">
+                    Nouveau
+                  </Badge>
+                )}
+              </div>
             </div>
           ))}
         </div>
