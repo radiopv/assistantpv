@@ -30,35 +30,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        
-        if (sessionError) {
-          throw sessionError;
+        // Get the sponsor data
+        const { data: sponsorData, error: sponsorError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('email', user?.email)
+          .single();
+
+        if (sponsorError) {
+          console.error('Error fetching sponsor:', sponsorError);
+          throw sponsorError;
         }
 
-        if (session?.user) {
-          // Get the sponsor data
-          const { data: sponsorData, error: sponsorError } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('email', session.user.email)
-            .single();
-
-          if (sponsorError) {
-            console.error('Error fetching sponsor:', sponsorError);
-            throw sponsorError;
-          }
-
-          if (sponsorData) {
-            setUser(sponsorData);
-            setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
-            
-            if (window.location.pathname === '/login') {
-              if (sponsorData.role === 'admin' || sponsorData.role === 'assistant') {
-                navigate('/dashboard');
-              } else {
-                navigate('/');
-              }
+        if (sponsorData) {
+          setUser(sponsorData);
+          setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
+          
+          if (window.location.pathname === '/login') {
+            if (sponsorData.role === 'admin' || sponsorData.role === 'assistant') {
+              navigate('/dashboard');
+            } else {
+              navigate('/');
             }
           }
         } else {
@@ -77,37 +69,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
-
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
-        const { data: sponsorData, error: sponsorError } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('email', session.user.email)
-          .single();
-
-        if (!sponsorError && sponsorData) {
-          setUser(sponsorData);
-          setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
-        }
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setIsAssistant(false);
-        navigate("/login");
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, [navigate]);
 
   const signIn = async (email: string, password: string) => {
     try {
       console.log('Attempting to sign in with:', { email });
       
-      // First, check if the sponsor exists
+      // Check if the sponsor exists and password matches
       const { data: sponsorData, error: sponsorError } = await supabase
         .from('sponsors')
         .select('*')
@@ -121,28 +89,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (sponsorData) {
-        // Create or sign in the Supabase auth user
-        const { error: authError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (authError) {
-          // If the user doesn't exist in auth, create them
-          if (authError.message.includes('Invalid login credentials')) {
-            const { error: signUpError } = await supabase.auth.signUp({
-              email,
-              password,
-            });
-
-            if (signUpError) {
-              throw signUpError;
-            }
-          } else {
-            throw authError;
-          }
-        }
-
         setUser(sponsorData);
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
         
@@ -175,7 +121,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
       setUser(null);
       setIsAssistant(false);
       toast({
