@@ -20,10 +20,13 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Need } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { logActivity } from "@/utils/activity-logger"; // New import
+import { useAuth } from "@/components/Auth/AuthProvider"; // New import
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export const DetailedStats = () => {
+  const { user } = useAuth(); // New line
   const { t } = useLanguage();
 
   const { data: urgentNeeds, isLoading: urgentLoading, error: urgentError } = useQuery({
@@ -35,6 +38,10 @@ export const DetailedStats = () => {
         .not('needs', 'is', null);
       
       if (error) throw error;
+
+      if (user) {
+        await logActivity(user.id, "A consulté les besoins urgents"); // New line
+      }
 
       return data.filter(child => {
         if (!child.needs) return false;

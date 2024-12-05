@@ -14,7 +14,8 @@ import {
   Plane,
   ChartBar,
   HelpCircle,
-  Languages
+  Languages,
+  Activity
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -107,6 +108,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       href: "/admin/faq",
       label: t("faq"),
       icon: HelpCircle,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/activity",
+      label: "Journal d'activité",
+      icon: Activity,
       show: isAdmin,
     },
   ];
