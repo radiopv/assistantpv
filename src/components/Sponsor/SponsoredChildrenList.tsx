@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Card } from "@/components/ui/card";
 import { SponsoredChild } from "@/types/sponsorship";
 
@@ -7,7 +8,7 @@ interface SponsoredChildrenListProps {
   onSelectChild: (childId: string) => void;
 }
 
-export const SponsoredChildrenList = ({ 
+export const SponsoredChildrenList = memo(({ 
   children, 
   selectedChild, 
   onSelectChild 
@@ -40,4 +41,6 @@ export const SponsoredChildrenList = ({
       ))}
     </div>
   );
-};
+});
+
+SponsoredChildrenList.displayName = 'SponsoredChildrenList';

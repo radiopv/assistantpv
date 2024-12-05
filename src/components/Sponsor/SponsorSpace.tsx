@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
@@ -11,6 +11,10 @@ export const SponsorSpace = () => {
   const { user } = useAuth();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const { sponsoredChildren, loading } = useSponsoredChildren(user?.id);
+
+  const handleSelectChild = useCallback((childId: string) => {
+    setSelectedChild(childId);
+  }, []);
 
   if (loading) {
     return (
@@ -35,7 +39,7 @@ export const SponsorSpace = () => {
           <ChildrenTab
             sponsoredChildren={sponsoredChildren}
             selectedChild={selectedChild}
-            onSelectChild={setSelectedChild}
+            onSelectChild={handleSelectChild}
             userId={user?.id || ''}
           />
         </TabsContent>

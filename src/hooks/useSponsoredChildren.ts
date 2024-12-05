@@ -15,17 +15,7 @@ export const useSponsoredChildren = (userId: string | undefined) => {
         
         const { data: sponsorships, error } = await supabase
           .from('sponsorships')
-          .select<'sponsorships', Sponsorship & { children: Child }>(`
-            child_id,
-            children (
-              id,
-              name,
-              photo_url,
-              city,
-              birth_date,
-              status
-            )
-          `)
+          .select('*, children(*)')
           .eq('sponsor_id', userId)
           .eq('status', 'active');
 
@@ -43,9 +33,10 @@ export const useSponsoredChildren = (userId: string | undefined) => {
 
         const children = sponsorships
           .map(sponsorship => {
-            if (!sponsorship.children) return null;
+            const child = sponsorship.children as Child;
+            if (!child) return null;
             
-            const birthDate = new Date(sponsorship.children.birth_date);
+            const birthDate = new Date(child.birth_date);
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
             const monthDiff = today.getMonth() - birthDate.getMonth();
@@ -54,12 +45,12 @@ export const useSponsoredChildren = (userId: string | undefined) => {
             }
 
             return {
-              id: sponsorship.children.id,
-              name: sponsorship.children.name,
-              photo_url: sponsorship.children.photo_url,
-              city: sponsorship.children.city || '',
+              id: child.id,
+              name: child.name,
+              photo_url: child.photo_url,
+              city: child.city || '',
               age: age,
-              status: sponsorship.children.status
+              status: child.status
             };
           })
           .filter((child): child is SponsoredChild => child !== null);
