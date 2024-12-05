@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
 import { AlbumSection } from "./AlbumSection";
-
-interface SponsoredChild {
-  id: string;
-  name: string;
-  photo_url: string;
-  city: string;
-  age: number;
-  status: string;
-}
+import { SponsoredChildrenList } from "./SponsoredChildrenList";
+import type { SponsoredChild } from "@/types/sponsorship";
 
 export const SponsorSpace = () => {
   const { user } = useAuth();
@@ -96,32 +88,11 @@ export const SponsorSpace = () => {
         <TabsContent value="children" className="mt-6">
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <div className="grid gap-6">
-                {sponsoredChildren.map((child) => (
-                  <Card 
-                    key={child.id} 
-                    className={`p-4 cursor-pointer transition-colors ${
-                      selectedChild === child.id ? 'ring-2 ring-primary' : ''
-                    }`}
-                    onClick={() => setSelectedChild(child.id)}
-                  >
-                    <div className="flex gap-4">
-                      <div className="w-24 h-24">
-                        <img
-                          src={child.photo_url || '/placeholder.svg'}
-                          alt={child.name}
-                          className="rounded-lg object-cover w-full h-full"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-lg">{child.name}</h3>
-                        <p className="text-sm text-gray-600">{child.city}</p>
-                        <p className="text-sm text-gray-600">{child.age} ans</p>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </div>
+              <SponsoredChildrenList
+                children={sponsoredChildren}
+                selectedChild={selectedChild}
+                onSelectChild={setSelectedChild}
+              />
             </div>
 
             <div>
@@ -136,15 +107,15 @@ export const SponsorSpace = () => {
         </TabsContent>
 
         <TabsContent value="messages" className="mt-6">
-          <Card className="p-4">
+          <div className="p-4 bg-white rounded-lg shadow">
             <p>Section messages en développement</p>
-          </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="documents" className="mt-6">
-          <Card className="p-4">
+          <div className="p-4 bg-white rounded-lg shadow">
             <p>Section documents en développement</p>
-          </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
