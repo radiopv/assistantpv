@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NeedBadgeProps {
@@ -14,13 +14,23 @@ interface NeedBadgeProps {
 }
 
 const NEED_CATEGORIES = {
-  education: "Éducation",
-  jouet: "Jouets",
-  vetement: "Vêtements",
-  nourriture: "Nourriture",
-  medicament: "Médicaments",
-  hygiene: "Hygiène",
-  autre: "Autre"
+  education: "Educación",
+  jouet: "Juguetes",
+  vetement: "Ropa",
+  nourriture: "Alimentación",
+  medicament: "Medicamentos",
+  hygiene: "Higiene",
+  autre: "Otros"
+};
+
+const CATEGORY_STYLES = {
+  education: "bg-yellow-400 hover:bg-yellow-500 text-black",
+  jouet: "bg-gray-100 hover:bg-gray-200 text-gray-900",
+  vetement: "bg-gray-100 hover:bg-gray-200 text-gray-900",
+  nourriture: "bg-blue-500 hover:bg-blue-600 text-white",
+  medicament: "bg-blue-600 hover:bg-blue-700 text-white",
+  hygiene: "bg-gray-100 hover:bg-gray-200 text-gray-900",
+  autre: "bg-gray-100 hover:bg-gray-200 text-gray-900"
 };
 
 export const NeedBadge = ({
@@ -36,22 +46,15 @@ export const NeedBadge = ({
 }: NeedBadgeProps) => {
   const { t } = useLanguage();
 
-  const getBadgeStyle = (isUrgent: boolean) => {
-    if (isUrgent) {
-      return "bg-red-100 hover:bg-red-200 text-red-800 border-red-200";
-    }
-    return "bg-blue-100 hover:bg-blue-200 text-blue-800 border-blue-200";
-  };
-
   return (
     <div className="relative">
-      <Badge 
-        variant="outline"
-        className={`cursor-pointer transition-colors px-3 py-1.5 text-sm font-medium ${getBadgeStyle(isUrgent)}`}
+      <Button 
+        variant="ghost"
+        className={`w-full justify-center px-4 py-2 rounded-md transition-colors ${CATEGORY_STYLES[category as keyof typeof CATEGORY_STYLES]}`}
         onClick={onNeedClick}
       >
         {NEED_CATEGORIES[category as keyof typeof NEED_CATEGORIES]}
-      </Badge>
+      </Button>
     </div>
   );
 };

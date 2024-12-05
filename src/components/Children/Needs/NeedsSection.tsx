@@ -1,7 +1,5 @@
-import { Badge } from "@/components/ui/badge";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { NeedBadge } from "./NeedBadge";
 import { Need } from "@/types/needs";
+import { NeedBadge } from "./NeedBadge";
 
 interface NeedsSectionProps {
   needs: Need[];
@@ -22,11 +20,10 @@ export const NeedsSection = ({
   onCommentSubmit,
   onClose
 }: NeedsSectionProps) => {
-  const { t } = useLanguage();
-
   return (
     <div>
-      <div className="flex flex-wrap gap-2">
+      <h3 className="text-sm font-medium text-gray-700 mb-2">Necesidades del niño</h3>
+      <div className="grid grid-cols-1 gap-2">
         {needs.map((need, index) => (
           <NeedBadge
             key={`${need.category}-${index}`}
