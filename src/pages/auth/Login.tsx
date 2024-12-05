@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,29 +29,29 @@ const Login = () => {
       if (error) throw error;
 
       if (!sponsor) {
-        throw new Error("Email ou mot de passe incorrect");
+        throw new Error(t("invalidCredentials"));
       }
 
       if (sponsor.password_hash !== password) {
-        throw new Error("Email ou mot de passe incorrect");
+        throw new Error(t("invalidCredentials"));
       }
 
       if (!['admin', 'assistant'].includes(sponsor.role)) {
-        throw new Error("Accès non autorisé");
+        throw new Error(t("unauthorizedAccess"));
       }
 
       localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
-        title: "Connexion réussie",
-        description: "Bienvenue dans l'espace administration",
+        title: t("loginSuccess"),
+        description: t("welcomeAdmin"),
       });
       
       navigate("/dashboard");
     } catch (error: any) {
       toast({
-        title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue",
+        title: t("loginError"),
+        description: error.message || t("genericError"),
         variant: "destructive",
       });
     } finally {
@@ -61,26 +63,26 @@ const Login = () => {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 space-y-6 bg-white">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Administration</h1>
-          <p className="text-gray-600">Connectez-vous pour accéder à l'espace administration</p>
+          <h1 className="text-2xl font-bold">{t("administration")}</h1>
+          <p className="text-gray-600">{t("loginDescription")}</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("email")}</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="votre@email.com"
+              placeholder={t("emailPlaceholder")}
               className="w-full"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Mot de passe</Label>
+            <Label htmlFor="password">{t("password")}</Label>
             <Input
               id="password"
               type="password"
@@ -97,12 +99,12 @@ const Login = () => {
             className="w-full"
             disabled={loading}
           >
-            {loading ? "Connexion en cours..." : "Se connecter"}
+            {loading ? t("loggingIn") : t("login")}
           </Button>
         </form>
 
         <p className="text-center text-sm text-gray-600">
-          Cette section est réservée aux administrateurs et assistants
+          {t("adminOnlySection")}
         </p>
       </Card>
     </div>

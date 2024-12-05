@@ -33,6 +33,82 @@ export interface Translations {
   user: string;
   logout: string;
 
+  // Auth related
+  login: string;
+  loggingIn: string;
+  loginSuccess: string;
+  loginError: string;
+  loginDescription: string;
+  administration: string;
+  adminOnlySection: string;
+  email: string;
+  emailPlaceholder: string;
+  password: string;
+  invalidCredentials: string;
+  unauthorizedAccess: string;
+  welcomeAdmin: string;
+  genericError: string;
+
+  // Translation manager related
+  translationManager: string;
+  translationScanner: string;
+  scanMissingTranslations: string;
+  findUnusedTranslations: string;
+  detectEnglishText: string;
+  missingTranslations: string;
+  unusedTranslations: string;
+  englishTextDetected: string;
+  missingTranslationsFound: string;
+  unusedTranslationsFound: string;
+  englishTextFound: string;
+  pendingTranslations: string;
+  translationRequired: string;
+  translationApproved: string;
+  originalText: string;
+  enterTranslation: string;
+  approve: string;
+  translationError: string;
+  translationUpdated: string;
+  scanStarted: string;
+  scanError: string;
+  scanningTranslations: string;
+  scanAssistantSection: string;
+  frenchTranslations: string;
+  spanishTranslations: string;
+
+  // Navigation related
+  dashboard: string;
+  children: string;
+  donations: string;
+  messages: string;
+  settings: string;
+  permissions: string;
+  travels: string;
+  statistics: string;
+  faq: string;
+  profile: string;
+  editProfile: string;
+  welcome: string;
+
+  // Dashboard related
+  totalChildren: string;
+  viewAllChildren: string;
+  sponsoredChildren: string;
+  viewSponsoredChildren: string;
+  urgentNeeds: string;
+  viewUrgentNeeds: string;
+  activeCities: string;
+  viewCityStats: string;
+  incompleteProfiles: string;
+  viewIncompleteProfiles: string;
+  welcomeMessage: string;
+  urgentNeedsByCity: string;
+  topCities: string;
+  sponsorshipStats: string;
+  activeSponsorships: string;
+  pendingSponsorships: string;
+  completedSponsorships: string;
+
   // Children related
   addChild: string;
   editChild: string;
@@ -68,16 +144,27 @@ export interface Translations {
   childDeleted: string;
   childDeleteSuccess: string;
   childDeleteError: string;
+  addComment: string;
+  markAsNormal: string;
+  markAsUrgent: string;
+  deleteConfirmation: string;
+  deleteWarning: string;
+  selectMessage: string;
 
-  // Donations related
-  donationsTitle: string;
-  donationsSubtitle: string;
-  addDonation: string;
-  noDonationsFound: string;
-  totalDonations: string;
-  citiesCovered: string;
-  filterByCity: string;
-  donationBy: string;
-  selectMessageToRead: string;
-  errorMessage: string;
+  // Sponsor related
+  activeSponsors: string;
+  inactiveSponsors: string;
+  pleaseAcceptTerms: string;
+  sponsorshipRequestSubmitted: string;
+  errorSubmittingRequest: string;
+  becomeSponsor: string;
+  sponsorshipDescription: string;
+  fullName: string;
+  facebookUrl: string;
+  motivation: string;
+  longTermSponsorship: string;
+  acceptTerms: string;
+  sponsorshipTerminationNote: string;
+  submitting: string;
+  submitRequest: string;
 }
