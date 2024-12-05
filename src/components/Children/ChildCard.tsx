@@ -125,14 +125,12 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
             <h4 className="font-medium text-sm text-gray-700">{t("needs")}</h4>
             <div className="flex items-center gap-2 text-xs">
               <span className="flex items-center">
-                <Badge variant="default" className="mr-1 px-1">
-                  {t("normalNeed")}
-                </Badge>
+                <div className="w-3 h-3 rounded-full bg-blue-500 mr-1"></div>
+                {t("normalNeed")}
               </span>
               <span className="flex items-center">
-                <Badge variant="destructive" className="mr-1 px-1">
-                  {t("urgentNeed")}
-                </Badge>
+                <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                {t("urgentNeed")}
               </span>
             </div>
           </div>
@@ -141,7 +139,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
               <div key={`${need.category}-${index}`} className="relative">
                 <Badge 
                   variant={need.is_urgent ? "destructive" : "default"}
-                  className="cursor-pointer hover:opacity-80 transition-opacity px-3 py-1"
+                  className="cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => handleNeedClick(need.category)}
                 >
                   {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
