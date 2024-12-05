@@ -181,4 +181,22 @@ export const spanishTranslations = {
   viewUrgentNeeds: "Ver necesidades urgentes",
   viewCityStats: "Ver estadísticas por ciudad",
   viewIncompleteProfiles: "Ver perfiles incompletos",
+
+  // Children filters translations
+  searchPlaceholder: "Buscar niños...",
+  city: "Ciudad",
+  allCities: "Todas las ciudades",
+  gender: "Género",
+  allGenders: "Todos los géneros",
+  masculine: "Masculino",
+  feminine: "Femenino",
+  age: "Edad",
+  allAges: "Todas las edades",
+  years: "años",
+  status: "Estado",
+  allStatus: "Todos los estados",
+  available: "Disponible",
+  sponsored: "Apadrinado",
+  pending: "Pendiente",
+  urgent: "Urgente"
 };
