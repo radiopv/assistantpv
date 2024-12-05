@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import { HomepageSection } from "@/types/homepage";
 
 const HomeContent = () => {
   const { toast } = useToast();
@@ -23,7 +24,7 @@ const HomeContent = () => {
         .single();
       
       if (error) throw error;
-      return data;
+      return data as HomepageSection;
     }
   });
 
@@ -82,8 +83,8 @@ const HomeContent = () => {
 
   const handleEdit = () => {
     setFormData({
-      title: heroSection.title,
-      subtitle: heroSection.subtitle,
+      title: heroSection.title || '',
+      subtitle: heroSection.subtitle || '',
       ctaText: heroSection.content.ctaText,
       leftImage: heroSection.content.leftImage,
       rightImage: heroSection.content.rightImage,

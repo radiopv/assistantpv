@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { HomepageSection } from "@/types/homepage";
 
 export const HeroSection = () => {
   const { t } = useLanguage();
@@ -22,7 +23,7 @@ export const HeroSection = () => {
         console.error('Error fetching hero content:', error);
         throw error;
       }
-      return data;
+      return data as HomepageSection;
     }
   });
 
