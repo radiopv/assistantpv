@@ -74,12 +74,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       show: isAdmin,
     },
     {
-      href: "/admin/sponsors",
-      label: t("sponsors"),
-      icon: Users,
-      show: isAdmin,
-    },
-    {
       href: "/admin/translations",
       label: t("translationManager"),
       icon: Languages,
