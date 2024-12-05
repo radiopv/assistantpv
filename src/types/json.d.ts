@@ -5,3 +5,5 @@ type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+
+export { Json }

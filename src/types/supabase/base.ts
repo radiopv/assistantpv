@@ -1,4 +1,4 @@
-import { Json } from "./json";
+import { Json } from "../json";
 
 export interface Database {
   public: {
@@ -535,3 +535,4 @@ export interface Database {
     };
   };
 }
+
