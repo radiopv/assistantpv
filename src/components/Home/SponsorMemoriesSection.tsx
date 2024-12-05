@@ -14,17 +14,18 @@ export const SponsorMemoriesSection = () => {
   const { t } = useLanguage();
 
   const { data: sponsorPhotos, isLoading } = useQuery({
-    queryKey: ['sponsor-photos'],
+    queryKey: ['featured-sponsor-photos'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('album_media')
         .select('*')
-        .eq('is_public', true)
+        .eq('is_featured', true)
+        .eq('type', 'image')
         .order('created_at', { ascending: false })
         .limit(10);
       
       if (error) {
-        console.error('Error fetching sponsor photos:', error);
+        console.error('Error fetching featured sponsor photos:', error);
         throw error;
       }
       return data;
