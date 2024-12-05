@@ -928,21 +928,21 @@ export interface Database {
         }
         Insert: {
           child_count?: number | null
-          city_name: string
+          city_name: string;
           created_at?: string | null
           id?: number
-          latitude: number
-          longitude: number
+          latitude: number;
+          longitude: number;
           sponsored_count?: number | null
           updated_at?: string | null
         }
         Update: {
           child_count?: number | null
-          city_name?: string
+          city_name?: string;
           created_at?: string | null
           id?: number
-          latitude?: number
-          longitude?: number
+          latitude?: number;
+          longitude?: number;
           sponsored_count?: number | null
           updated_at?: string | null
         }
@@ -1019,7 +1019,7 @@ export interface Database {
           is_private?: boolean | null
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Relationships: [
           {
@@ -1540,7 +1540,7 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string
           secondary_color?: string
-          site_name?: string
+          site_name: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1601,7 +1601,7 @@ export interface Database {
           id?: string
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Relationships: [
           {
@@ -1702,51 +1702,49 @@ export interface Database {
       }
       sponsorships: {
         Row: {
-          id: string
-          child_id: string
-          sponsor_id: string
-          start_date: string
-          end_date?: string | null
+          id: string;
+          child_id: string;
+          sponsor_id: string;
+          start_date: string;
+          end_date?: string | null;
           status: "active" | "pending" | "ended";
           created_at?: string;
           updated_at?: string;
         }
         Insert: {
-          id?: string
-          child_id: string
-          sponsor_id: string
-          start_date: string
-          end_date?: string | null
+          child_id: string;
+          sponsor_id: string;
+          start_date: string;
+          end_date?: string | null;
           status?: "active" | "pending" | "ended";
           created_at?: string | null;
           updated_at?: string | null;
         }
         Update: {
-          id?: string
-          child_id?: string
-          sponsor_id?: string
-          start_date?: string
-          end_date?: string | null
+          child_id?: string;
+          sponsor_id?: string;
+          start_date?: string;
+          end_date?: string | null;
           status?: "active" | "pending" | "ended";
           created_at?: string | null;
           updated_at?: string | null;
         }
         Relationships: [
           {
-            foreignKeyName: "sponsorships_child_id_fkey"
-            columns: ["child_id"]
-            referencedRelation: "children"
-            referencedColumns: ["id"]
+            foreignKeyName: "sponsorships_child_id_fkey";
+            columns: ["child_id"];
+            referencedRelation: "children";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "sponsorships_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
+            foreignKeyName: "sponsorships_sponsor_id_fkey";
+            columns: ["sponsor_id"];
+            referencedRelation: "sponsors";
+            referencedColumns: ["id"];
           }
-        ]
-      }
-    }
+        ];
+      };
+    };
     Views: {
       donation_items_with_categories: {
         Row: {

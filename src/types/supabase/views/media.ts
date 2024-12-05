@@ -7,9 +7,6 @@ export interface MediaBrowserView {
   metadata: Record<string, any>;
   created_at?: string;
   updated_at?: string;
-}
-
-export interface UnifiedMediaView extends MediaBrowserView {
   title?: string;
   description?: string;
   is_featured?: boolean;

@@ -9,7 +9,7 @@ export const SponsorshipStats = () => {
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
         .from("sponsorships")
-        .select("status");
+        .select("id, status");
 
       if (error) throw error;
 
