@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { RequestsList } from "@/components/Sponsorship/RequestsList/RequestsList";
+import { SponsorsList } from "@/components/Sponsors/SponsorsList";
 import { useToast } from "@/components/ui/use-toast";
 import type { SponsorshipRequest } from "@/integrations/supabase/types/sponsorship";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -11,6 +12,28 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const SponsorsManagement = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
+
+  const { data: sponsors, isLoading: sponsorsLoading } = useQuery({
+    queryKey: ['sponsors'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sponsors')
+        .select(`
+          *,
+          sponsorships (
+            child (
+              id,
+              name,
+              photo_url
+            )
+          )
+        `)
+        .order('name');
+
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   const { data: requests, isLoading: requestsLoading } = useQuery({
     queryKey: ['sponsorship-requests'],
@@ -21,18 +44,8 @@ const SponsorsManagement = () => {
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching requests:', error);
-        throw error;
-      }
-
-      return (data || []).map(request => ({
-        ...request,
-        is_long_term: Boolean(request.is_long_term),
-        is_one_time: Boolean(request.is_one_time),
-        terms_accepted: Boolean(request.terms_accepted),
-        status: request.status || 'pending'
-      })) as SponsorshipRequest[];
+      if (error) throw error;
+      return data || [];
     }
   });
 
@@ -82,7 +95,7 @@ const SponsorsManagement = () => {
     }
   };
 
-  if (requestsLoading) {
+  if (sponsorsLoading || requestsLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-8 h-8 animate-spin" />
@@ -96,15 +109,25 @@ const SponsorsManagement = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">{t("sponsorshipManagement")}</h1>
 
-      <Tabs defaultValue="requests" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+      <Tabs defaultValue="sponsors" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="sponsors">
+            {t("sponsors")}
+          </TabsTrigger>
           <TabsTrigger value="requests">
             {t("pendingRequests")} ({pendingRequests.length})
           </TabsTrigger>
-          <TabsTrigger value="active">
-            {t("activeSponsors")}
+          <TabsTrigger value="become-sponsor">
+            {t("becomeSponsorRequests")}
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="sponsors" className="mt-6">
+          <SponsorsList 
+            sponsors={sponsors || []} 
+            isLoading={sponsorsLoading} 
+          />
+        </TabsContent>
 
         <TabsContent value="requests" className="mt-6">
           <RequestsList
@@ -114,10 +137,10 @@ const SponsorsManagement = () => {
           />
         </TabsContent>
 
-        <TabsContent value="active" className="mt-6">
+        <TabsContent value="become-sponsor" className="mt-6">
           <Card className="p-4">
             <p className="text-center text-gray-500">
-              {t("activeSponsorsComingSoon")}
+              {t("becomeSponsorRequestsComingSoon")}
             </p>
           </Card>
         </TabsContent>
