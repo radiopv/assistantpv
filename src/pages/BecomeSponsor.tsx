@@ -22,6 +22,7 @@ const BecomeSponsor = () => {
     motivation: "",
     facebook_url: "",
     is_long_term: true,
+    is_one_time: false,
     terms_accepted: false
   });
 
@@ -31,7 +32,21 @@ const BecomeSponsor = () => {
   };
 
   const handleCheckboxChange = (name: string) => {
-    setFormData(prev => ({ ...prev, [name]: !prev[name as keyof typeof prev] }));
+    if (name === 'is_one_time') {
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: !prev[name as keyof typeof prev],
+        is_long_term: prev[name as keyof typeof prev] // Si one_time devient true, long_term devient false et vice versa
+      }));
+    } else if (name === 'is_long_term') {
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: !prev[name as keyof typeof prev],
+        is_one_time: prev[name as keyof typeof prev] // Si long_term devient true, one_time devient false et vice versa
+      }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: !prev[name as keyof typeof prev] }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -161,6 +176,15 @@ const BecomeSponsor = () => {
                 onCheckedChange={() => handleCheckboxChange('is_long_term')}
               />
               <Label htmlFor="is_long_term">{t("longTermSponsorship")}</Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="is_one_time"
+                checked={formData.is_one_time}
+                onCheckedChange={() => handleCheckboxChange('is_one_time')}
+              />
+              <Label htmlFor="is_one_time">Je souhaite un parrainage ponctuel (une seule fois)</Label>
             </div>
 
             <div className="flex items-center space-x-2">
