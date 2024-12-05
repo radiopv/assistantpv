@@ -60,7 +60,7 @@ export type Database = {
           title?: string | null
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Update: {
           child_id?: string | null
@@ -493,7 +493,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           donation_id?: string | null
-          id?: string | null
+          id?: string
           quantity?: number
           updated_at?: string | null
         }
@@ -795,7 +795,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           question: string
-          updated_at?: string | null
+          updated_at: string | null
         }
         Update: {
           answer?: string
@@ -1269,7 +1269,7 @@ export type Database = {
           is_read?: boolean | null
           link?: string | null
           recipient_id?: string | null
-          title?: string
+          title: string
           type: string
           updated_at?: string | null
         }
@@ -1456,7 +1456,7 @@ export type Database = {
           execute_at: string
           id: string
           last_attempt?: string | null
-          status?: string | null
+          status?: string
           task_type: string
           updated_at?: string | null
         }
@@ -1884,7 +1884,7 @@ export type Database = {
           is_anonymous?: boolean | null
           sponsor_id?: string | null
           sponsorships?: string | null
-          start_date?: string
+          start_date: string
           status: string
           termination_comment?: string | null
           termination_date?: string | null
@@ -2014,7 +2014,7 @@ export type Database = {
           source_table: string
           tags?: string[] | null
           thumbnail_url?: string | null
-          title?: string | null
+          title?: string
           type: string
           updated_at?: string | null
           url: string
@@ -2063,7 +2063,7 @@ export type Database = {
           created_at?: string | null
           earned_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
           updated_at?: string | null
@@ -2102,6 +2102,38 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      activity_logs: {
+        Row: {
+          id: string
+          user_id: string
+          action: string
+          details: Json | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          action: string
+          details?: Json | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          action?: string
+          details?: Json | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
     Views: {

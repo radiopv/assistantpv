@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Activity, User } from "lucide-react";
-import { ActivityLog } from "@/types/activity";
+import { type ActivityLogType } from "@/types/activity";
 
 const ActivityLog = () => {
   const { toast } = useToast();
@@ -30,7 +30,7 @@ const ActivityLog = () => {
         .limit(100);
 
       if (error) throw error;
-      return data as ActivityLog[];
+      return data as ActivityLogType[];
     }
   });
 
