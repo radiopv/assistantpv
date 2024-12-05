@@ -7,6 +7,7 @@ interface SidebarLinkType {
   label: string;
   icon: LucideIcon;
   show: boolean;
+  subItems?: SidebarLinkType[];
 }
 
 interface SidebarSectionProps {
@@ -29,14 +30,26 @@ export const SidebarSection = ({
       <h2 className="mb-2 px-4 text-lg font-semibold">{title}</h2>
       <div className="space-y-1">
         {links.filter(link => link.show).map((link) => (
-          <SidebarLink
-            key={link.href}
-            href={link.href}
-            label={link.label}
-            icon={link.icon}
-            isActive={currentPath === link.href}
-            onClose={onClose}
-          />
+          <div key={link.href}>
+            <SidebarLink
+              href={link.href}
+              label={link.label}
+              icon={link.icon}
+              isActive={currentPath === link.href}
+              onClose={onClose}
+            />
+            {link.subItems && link.subItems.filter(subItem => subItem.show).map((subItem) => (
+              <SidebarLink
+                key={subItem.href}
+                href={subItem.href}
+                label={subItem.label}
+                icon={subItem.icon}
+                isActive={currentPath === subItem.href}
+                onClose={onClose}
+                className="pl-8"
+              />
+            ))}
+          </div>
         ))}
       </div>
     </div>

@@ -14,7 +14,8 @@ import {
   ChartBar,
   HelpCircle,
   Languages,
-  Activity
+  Activity,
+  PlusCircle
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -57,6 +58,14 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       label: t("donations"),
       icon: Gift,
       show: user?.permissions?.donations || isAdmin,
+      subItems: [
+        {
+          href: "/donations/add",
+          label: t("addDonation"),
+          icon: PlusCircle,
+          show: user?.permissions?.donations || isAdmin,
+        }
+      ]
     },
     {
       href: "/messages",

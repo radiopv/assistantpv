@@ -9,6 +9,7 @@ interface SidebarLinkProps {
   icon: LucideIcon;
   isActive: boolean;
   onClose?: () => void;
+  className?: string;
 }
 
 export const SidebarLink = ({ 
@@ -16,7 +17,8 @@ export const SidebarLink = ({
   label, 
   icon: Icon, 
   isActive, 
-  onClose 
+  onClose,
+  className
 }: SidebarLinkProps) => {
   return (
     <Link 
@@ -27,7 +29,8 @@ export const SidebarLink = ({
         variant={isActive ? "secondary" : "ghost"}
         className={cn(
           "w-full justify-start min-h-[44px]",
-          isActive && "bg-primary/10"
+          isActive && "bg-primary/10",
+          className
         )}
       >
         <Icon className="mr-2 h-5 w-5" />
