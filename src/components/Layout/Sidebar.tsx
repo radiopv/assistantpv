@@ -46,12 +46,14 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       label: t("children"),
       icon: Baby,
       show: user?.permissions?.children || isAdmin,
-    },
-    {
-      href: "/children/add",
-      label: t("addChild"),
-      icon: UserPlus,
-      show: user?.permissions?.edit_children || isAdmin,
+      subItems: [
+        {
+          href: "/children/add",
+          label: t("addChild"),
+          icon: UserPlus,
+          show: user?.permissions?.edit_children || isAdmin,
+        }
+      ]
     },
     {
       href: "/donations",
