@@ -25,7 +25,10 @@ export const frenchTranslations = {
   faq: "Questions fréquentes",
   activity: "Journal d'activité",
   permissions: "Permissions",
-  
+  translationManager: "Gestionnaire de traductions",
+  addChild: "Ajouter un enfant",
+  addDonation: "Ajouter un don",
+
   // Common actions
   save: "Enregistrer",
   cancel: "Annuler",
@@ -38,7 +41,6 @@ export const frenchTranslations = {
   search: "Rechercher",
   filter: "Filtrer",
   view: "Voir",
-  add: "Ajouter",
   remove: "Supprimer",
   update: "Mettre à jour",
   
