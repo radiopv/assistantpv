@@ -18,4 +18,11 @@ export const commonTranslations = {
   info: "Information",
   close: "Fermer",
   testimonials: "Témoignages de nos parrains",
+  changeALife: "Changez une vie",
+  sponsorshipDescription: "Aidez un enfant cubain à avoir un meilleur avenir",
+  becomeSponsor: "Devenir parrain",
+  childrenWithNeeds: "Enfants ayant des besoins",
+  sponsorMemories: "Souvenirs des parrains",
+  joinUs: "Rejoignez-nous",
+  joinUsDescription: "Ensemble, nous pouvons faire la différence dans la vie de ces enfants",
 };

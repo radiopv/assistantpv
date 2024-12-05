@@ -5,23 +5,10 @@ import { HeroSection } from "@/components/Home/HeroSection";
 import { UrgentNeedsSection } from "@/components/Home/UrgentNeedsSection";
 import { SponsorMemoriesSection } from "@/components/Home/SponsorMemoriesSection";
 import { TestimonialsSection } from "@/components/Home/TestimonialsSection";
-import { Heart, Handshake, ChartBar } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { DashboardStats } from "@/types/dashboard";
 
 const Home = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-
-  const { data: stats } = useQuery<DashboardStats>({
-    queryKey: ['dashboard-stats'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_dashboard_statistics');
-      if (error) throw error;
-      return data as DashboardStats;
-    }
-  });
 
   return (
     <div className="min-h-screen">
@@ -50,30 +37,6 @@ const Home = () => {
                 alt="Children" 
                 className="rounded-lg shadow-xl animate-fade-in"
               />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section Impact avec statistiques */}
-      <section className="py-16 bg-cuba-offwhite">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">{t("ourImpact")}</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <Heart className="w-12 h-12 mx-auto mb-4 text-secondary" />
-              <h3 className="text-2xl font-bold mb-2">{stats?.children?.sponsored || 0}</h3>
-              <p className="text-gray-600">{t("sponsoredChildren")}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <Handshake className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <h3 className="text-2xl font-bold mb-2">{stats?.sponsors || 0}</h3>
-              <p className="text-gray-600">{t("activeSponsors")}</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-              <ChartBar className="w-12 h-12 mx-auto mb-4 text-accent" />
-              <h3 className="text-2xl font-bold mb-2">{stats?.cities || 0}</h3>
-              <p className="text-gray-600">{t("citiesCovered")}</p>
             </div>
           </div>
         </div>
