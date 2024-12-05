@@ -22,6 +22,7 @@ import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
 import Travels from "./pages/admin/Travels";
 import TranslationsPage from "./pages/admin/Translations";
+import { DonationForm } from "./components/Donations/DonationForm";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,6 +79,7 @@ const AppRoutes = () => (
       <Route path="/children/:id" element={<ProtectedRoute requiredPermission="children"><ChildProfile /></ProtectedRoute>} />
       <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
       <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
+      <Route path="/donations/add" element={<ProtectedRoute requiredPermission="donations"><DonationForm /></ProtectedRoute>} />
       <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
