@@ -11,6 +11,8 @@ export const useAuthHook = () => {
 
   const checkAuth = async (userEmail?: string) => {
     try {
+      console.log('Checking auth for email:', userEmail);
+      
       if (!userEmail) {
         setLoading(false);
         return;
@@ -28,6 +30,7 @@ export const useAuthHook = () => {
       }
 
       if (sponsorData) {
+        console.log('Found sponsor data:', sponsorData);
         setUser(sponsorData);
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
         
@@ -39,6 +42,7 @@ export const useAuthHook = () => {
           }
         }
       } else {
+        console.log('No sponsor found for email:', userEmail);
         setUser(null);
         if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
           navigate("/login");
@@ -70,6 +74,7 @@ export const useAuthHook = () => {
       }
 
       if (sponsorData) {
+        console.log('Sign in successful:', sponsorData);
         setUser(sponsorData);
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
         
@@ -84,6 +89,7 @@ export const useAuthHook = () => {
           navigate('/');
         }
       } else {
+        console.log('Invalid credentials for:', email);
         toast({
           title: "Erreur de connexion",
           description: "Email ou mot de passe incorrect",
