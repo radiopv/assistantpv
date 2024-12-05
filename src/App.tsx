@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider } from "@/components/Auth/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import MainLayout from "@/components/Layout/MainLayout";
+import PublicLayout from "@/components/Layout/PublicLayout";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Login from "@/pages/auth/Login";
@@ -19,6 +20,7 @@ import AdminStatistics from "@/pages/admin/Statistics";
 import AdminFAQ from "@/pages/admin/FAQ";
 import ActivityLog from "@/pages/admin/ActivityLog";
 import Travels from "@/pages/sponsor/Travels";
+import Home from "@/pages/Home";
 
 const queryClient = new QueryClient();
 
@@ -29,8 +31,10 @@ function App() {
         <AuthProvider>
           <LanguageProvider>
             <Routes>
-              {/* Page d'accueil */}
-              <Route path="/" element={<Index />} />
+              {/* Pages publiques */}
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<Home />} />
+              </Route>
               
               {/* Auth */}
               <Route path="/login" element={<Login />} />
@@ -114,9 +118,6 @@ function App() {
                   <ActivityLog />
                 </MainLayout>
               } />
-
-              {/* Redirection par défaut */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
             <Toaster />
           </LanguageProvider>
