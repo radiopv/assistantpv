@@ -49,6 +49,10 @@ export const UrgentNeedsSection = () => {
     );
   }
 
+  if (!urgentChildren?.length) {
+    return null;
+  }
+
   return (
     <section className="py-12 px-4 bg-cuba-offwhite">
       <h2 className="text-3xl font-bold text-center mb-8">{t('urgentNeeds')}</h2>
