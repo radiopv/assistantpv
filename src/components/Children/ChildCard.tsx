@@ -53,6 +53,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
     console.log("Need category:", needCategory);
     console.log("Comment:", comment);
     console.log("Is urgent:", isUrgent);
+    // Here you would implement the logic to save the comment and update urgent status
     setSelectedNeed(null);
     setComment("");
   };
@@ -123,12 +124,16 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           <div className="flex justify-between items-center mb-2">
             <h4 className="font-medium text-sm text-gray-700">{t("needs")}</h4>
             <div className="flex items-center gap-2 text-xs">
-              <Badge variant="default" className="text-xs">
-                {t("normalNeed")}
-              </Badge>
-              <Badge variant="destructive" className="text-xs">
-                {t("urgentNeed")}
-              </Badge>
+              <span className="flex items-center">
+                <Badge variant="default" className="mr-1 px-1">
+                  {t("normalNeed")}
+                </Badge>
+              </span>
+              <span className="flex items-center">
+                <Badge variant="destructive" className="mr-1 px-1">
+                  {t("urgentNeed")}
+                </Badge>
+              </span>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -136,7 +141,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
               <div key={`${need.category}-${index}`} className="relative">
                 <Badge 
                   variant={need.is_urgent ? "destructive" : "default"}
-                  className="cursor-pointer hover:opacity-80 transition-opacity"
+                  className="cursor-pointer hover:opacity-80 transition-opacity px-3 py-1"
                   onClick={() => handleNeedClick(need.category)}
                 >
                   {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
