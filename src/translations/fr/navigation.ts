@@ -10,5 +10,6 @@ export const navigationTranslations = {
   contact: "Contact",
   messages: "Messages",
   editProfile: "Modifier le profil",
-  welcome: "Bienvenue"
+  welcome: "Bienvenue",
+  homeContent: "Contenu d'accueil"
 };

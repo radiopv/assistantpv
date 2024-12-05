@@ -13,7 +13,8 @@ import {
   Map,
   BarChart2,
   Activity,
-  Languages
+  Languages,
+  LayoutDashboard
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -58,7 +59,8 @@ const Sidebar = () => {
         { icon: Languages, label: t("translations"), path: "/admin/translations" },
         { icon: BarChart2, label: t("statistics"), path: "/admin/statistics" },
         { icon: HelpCircle, label: t("faq"), path: "/admin/faq" },
-        { icon: Activity, label: t("activityLog"), path: "/admin/activity" }
+        { icon: Activity, label: t("activityLog"), path: "/admin/activity" },
+        { icon: LayoutDashboard, label: t("homeContent"), path: "/admin/home-content" }
       ]
     }
   ];
