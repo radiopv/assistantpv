@@ -8,15 +8,7 @@ export const logActivity = async (userId: string | null, action: string, details
       return;
     }
 
-    // First check if the user exists in auth.users
-    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(userId);
-    
-    if (authError || !authUser) {
-      console.error('User not found in auth.users table:', userId);
-      return;
-    }
-
-    // Then check if user exists in profiles
+    // Check if user exists in profiles
     const { data: userExists, error: userCheckError } = await supabase
       .from('profiles')
       .select('id')
@@ -30,7 +22,7 @@ export const logActivity = async (userId: string | null, action: string, details
 
     if (!userExists) {
       console.warn('User not found in profiles table:', userId);
-      // Only create profile if user exists in auth.users
+      // Create profile if it doesn't exist
       const { error: insertError } = await supabase
         .from('profiles')
         .insert([{ 

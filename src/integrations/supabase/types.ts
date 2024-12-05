@@ -1059,6 +1059,7 @@ export type Database = {
           full_name: string
           id: string
           is_long_term: boolean | null
+          is_one_time: boolean | null
           motivation: string | null
           phone: string | null
           status: string | null
@@ -1074,6 +1075,7 @@ export type Database = {
           full_name: string
           id?: string
           is_long_term?: boolean | null
+          is_one_time?: boolean | null
           motivation?: string | null
           phone?: string | null
           status?: string | null
@@ -1089,6 +1091,7 @@ export type Database = {
           full_name?: string
           id?: string
           is_long_term?: boolean | null
+          is_one_time?: boolean | null
           motivation?: string | null
           phone?: string | null
           status?: string | null
