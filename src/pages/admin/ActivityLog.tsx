@@ -8,18 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Activity, User } from "lucide-react";
-
-interface ActivityLog {
-  id: string;
-  user_id: string;
-  action: string;
-  details: any;
-  created_at: string;
-  user: {
-    name: string;
-    role: string;
-  };
-}
+import { ActivityLog } from "@/types/activity";
 
 const ActivityLog = () => {
   const { toast } = useToast();
@@ -30,7 +19,11 @@ const ActivityLog = () => {
       const { data, error } = await supabase
         .from('activity_logs')
         .select(`
-          *,
+          id,
+          user_id,
+          action,
+          details,
+          created_at,
           user:profiles(name, role)
         `)
         .order('created_at', { ascending: false })

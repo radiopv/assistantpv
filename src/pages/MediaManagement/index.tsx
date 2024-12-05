@@ -5,18 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { MediaCard } from "./MediaCard";
 import { MediaDialog } from "./MediaDialog";
 import { useState } from "react";
-
-interface UnifiedMedia {
-  id: string;
-  url: string;
-  thumbnail_url?: string;
-  source_table: string;
-  type: string;
-  title?: string;
-  description?: string;
-  category: string;
-  created_at?: string;
-}
+import { UnifiedMedia } from "@/types/media";
 
 const MediaManagement = () => {
   const { toast } = useToast();
@@ -26,7 +15,6 @@ const MediaManagement = () => {
     queryKey: ['unified-media'],
     queryFn: async () => {
       try {
-        // Fetch all media from different tables
         const [donationPhotos, donationVideos, albumMedia, sponsorPhotos] = await Promise.all([
           supabase.from('donation_photos').select('*'),
           supabase.from('donation_videos').select('*'),
@@ -34,11 +22,9 @@ const MediaManagement = () => {
           supabase.from('sponsors').select('id, photo_url').not('photo_url', 'is', null)
         ]);
 
-        console.log('Fetched media:', { donationPhotos, donationVideos, albumMedia, sponsorPhotos });
-
         const unifiedMedia: UnifiedMedia[] = [
           ...(donationPhotos.data || []).map(photo => ({
-            id: photo.id,
+            id: String(photo.id),
             url: photo.url,
             source_table: 'donation_photos',
             type: 'image',
@@ -46,7 +32,7 @@ const MediaManagement = () => {
             created_at: photo.created_at
           })),
           ...(donationVideos.data || []).map(video => ({
-            id: video.id,
+            id: String(video.id),
             url: video.url,
             thumbnail_url: video.thumbnail_url,
             source_table: 'donation_videos',
@@ -55,7 +41,7 @@ const MediaManagement = () => {
             created_at: video.created_at
           })),
           ...(albumMedia.data || []).map(media => ({
-            id: media.id,
+            id: String(media.id),
             url: media.url,
             source_table: 'album_media',
             type: media.type || 'image',
@@ -63,12 +49,12 @@ const MediaManagement = () => {
             created_at: media.created_at
           })),
           ...(sponsorPhotos.data || []).map(sponsor => ({
-            id: sponsor.id,
+            id: String(sponsor.id),
             url: sponsor.photo_url,
             source_table: 'sponsors',
             type: 'image',
             category: 'Sponsors',
-            created_at: sponsor.created_at
+            created_at: new Date().toISOString()
           }))
         ];
 
