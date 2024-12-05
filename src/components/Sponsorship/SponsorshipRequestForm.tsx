@@ -4,9 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SponsorshipRequestFormProps {
-  onSubmit: (formData: any) => void;
+  onSubmit: (formData: any) => Promise<void>;
   loading: boolean;
   translations: any;
 }
@@ -27,6 +28,8 @@ export const SponsorshipRequestForm = ({
     is_one_time: false,
     terms_accepted: false
   });
+
+  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -51,9 +54,37 @@ export const SponsorshipRequestForm = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    if (!formData.terms_accepted) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Veuillez accepter les conditions de parrainage",
+      });
+      return;
+    }
+
+    if (!formData.email || !formData.full_name) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+      });
+      return;
+    }
+
+    try {
+      await onSubmit(formData);
+    } catch (error: any) {
+      console.error('Error submitting form:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: error.message || "Une erreur est survenue lors de l'envoi du formulaire",
+      });
+    }
   };
 
   return (

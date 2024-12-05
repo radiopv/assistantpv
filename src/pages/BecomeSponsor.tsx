@@ -32,15 +32,6 @@ const BecomeSponsor = () => {
   });
 
   const handleSubmit = async (formData: any) => {
-    if (!formData.terms_accepted) {
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: t("pleaseAcceptTerms"),
-      });
-      return;
-    }
-
     setLoading(true);
     try {
       const { error } = await supabase
@@ -113,11 +104,13 @@ const BecomeSponsor = () => {
           />
         </Card>
 
-        <SponsorshipRequestForm
-          onSubmit={handleSubmit}
-          loading={loading}
-          translations={t}
-        />
+        <Card className="p-6">
+          <SponsorshipRequestForm
+            onSubmit={handleSubmit}
+            loading={loading}
+            translations={t}
+          />
+        </Card>
       </div>
     </div>
   );
