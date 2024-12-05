@@ -5,7 +5,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SponsorshipWithDetails } from "@/types/supabase/tables/sponsorships";
+
+interface Sponsorship {
+  id: string;
+  child: {
+    id: string;
+    name: string;
+    photo_url: string;
+  };
+  sponsor: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+  };
+  start_date: string;
+  status: string;
+}
 
 export const SponsorshipList = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,7 +43,7 @@ export const SponsorshipList = () => {
         .order("start_date", { ascending: false });
 
       if (error) throw error;
-      return data as unknown as SponsorshipWithDetails[];
+      return data as Sponsorship[];
     },
   });
 

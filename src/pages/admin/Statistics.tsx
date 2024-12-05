@@ -1,4 +1,4 @@
-import DetailedStats from "@/components/Dashboard/DetailedStats";
+import { DetailedStats } from "@/components/Dashboard/DetailedStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
 import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
