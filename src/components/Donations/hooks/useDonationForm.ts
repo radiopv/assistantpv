@@ -51,6 +51,7 @@ export const useDonationForm = (onDonationComplete?: () => void) => {
     setSelectedCategories([]);
     setQuantity("");
     setCity("");
+    setAssistantName("Vitia et Pancho");
     setComments("");
     setDonorName("");
     setIsAnonymous(false);
@@ -70,6 +71,7 @@ export const useDonationForm = (onDonationComplete?: () => void) => {
 
     try {
       setLoading(true);
+      console.log('Submitting form with assistant name:', assistantName);
 
       let photoUrls: string[] = [];
       if (photos && photos.length > 0) {
@@ -125,12 +127,12 @@ export const useDonationForm = (onDonationComplete?: () => void) => {
       onDonationComplete?.();
 
     } catch (error: any) {
+      console.error('Error creating donation:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
         description: "Une erreur est survenue lors de l'enregistrement du don.",
       });
-      console.error('Error creating donation:', error);
     } finally {
       setLoading(false);
     }
