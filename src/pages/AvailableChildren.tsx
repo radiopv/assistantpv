@@ -26,7 +26,13 @@ const AvailableChildren = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
-        .select('*')
+        .select(`
+          *,
+          sponsorships (
+            id,
+            status
+          )
+        `)
         .order('name');
 
       if (error) throw error;
@@ -45,7 +51,10 @@ const AvailableChildren = () => {
     const matchesCity = selectedCity === "all" || child.city === selectedCity;
     const matchesGender = selectedGender === "all" || child.gender === selectedGender;
     const matchesAge = selectedAge === "all" || differenceInYears(new Date(), parseISO(child.birth_date)) === parseInt(selectedAge);
-    const matchesStatus = selectedStatus === "available" ? !child.is_sponsored : child.is_sponsored;
+    
+    // Check if child has active sponsorship
+    const hasActiveSponsor = child.sponsorships?.some(s => s.status === 'active');
+    const matchesStatus = selectedStatus === "available" ? !hasActiveSponsor : hasActiveSponsor;
     
     return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
   });
