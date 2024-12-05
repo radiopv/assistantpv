@@ -1,18 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
@@ -20,13 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Need } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { logActivity } from "@/utils/activity-logger"; // New import
-import { useAuth } from "@/components/Auth/AuthProvider"; // New import
-
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+import { logActivity } from "@/utils/activity-logger";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const DetailedStats = () => {
-  const { user } = useAuth(); // New line
+  const { user } = useAuth();
   const { t } = useLanguage();
 
   const { data: urgentNeeds, isLoading: urgentLoading, error: urgentError } = useQuery({
@@ -40,7 +26,7 @@ export const DetailedStats = () => {
       if (error) throw error;
 
       if (user) {
-        await logActivity(user.id, "A consulté les besoins urgents"); // New line
+        await logActivity(user.id, "A consulté les besoins urgents");
       }
 
       return data.filter(child => {
@@ -48,49 +34,6 @@ export const DetailedStats = () => {
         const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
         return Array.isArray(needs) && needs.some((need: Need) => need.is_urgent);
       });
-    }
-  });
-
-  const { data: cityStats, isLoading: cityLoading, error: cityError } = useQuery({
-    queryKey: ['city-donations'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('children')
-        .select('city')
-        .not('city', 'is', null);
-      
-      if (error) throw error;
-
-      const cityCounts = data.reduce((acc: any, child) => {
-        acc[child.city] = (acc[child.city] || 0) + 1;
-        return acc;
-      }, {});
-
-      return Object.entries(cityCounts)
-        .map(([city, count]) => ({ city, count }))
-        .sort((a, b) => (b.count as number) - (a.count as number))
-        .slice(0, 5);
-    }
-  });
-
-  const { data: sponsorshipStats, isLoading: sponsorshipLoading, error: sponsorshipError } = useQuery({
-    queryKey: ['sponsorship-stats'],
-    queryFn: async () => {
-      const { data: sponsorships, error } = await supabase
-        .from('sponsorships')
-        .select('status, created_at')
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      if (error) throw error;
-
-      const stats = {
-        active: sponsorships?.filter(s => s.status === 'active').length || 0,
-        pending: sponsorships?.filter(s => s.status === 'pending').length || 0,
-        ended: sponsorships?.filter(s => s.status === 'ended').length || 0
-      };
-
-      return stats;
     }
   });
 
@@ -109,7 +52,7 @@ export const DetailedStats = () => {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4">
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">{t('urgentNeeds')}</h3>
           <div className="h-[300px]">
@@ -142,62 +85,6 @@ export const DetailedStats = () => {
                   })}
                 </div>
               </ScrollArea>
-            )}
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t('topCities')}</h3>
-          <div className="h-[300px]">
-            {cityError ? renderError(t('error')) :
-             cityLoading ? renderSkeleton() : (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={cityStats}
-                    dataKey="count"
-                    nameKey="city"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={100}
-                    label
-                  >
-                    {cityStats?.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </Card>
-
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t('sponsorshipStats')}</h3>
-          <div className="space-y-4">
-            {sponsorshipError ? renderError(t('error')) :
-             sponsorshipLoading ? (
-              <div className="space-y-2">
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-full" />
-                <Skeleton className="h-8 w-full" />
-              </div>
-            ) : (
-              <>
-                <div className="flex justify-between items-center p-3 bg-green-100 rounded">
-                  <span>{t('activeSponsorships')}</span>
-                  <span className="font-bold">{sponsorshipStats?.active}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-yellow-100 rounded">
-                  <span>{t('pendingSponsorships')}</span>
-                  <span className="font-bold">{sponsorshipStats?.pending}</span>
-                </div>
-                <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
-                  <span>{t('completedSponsorships')}</span>
-                  <span className="font-bold">{sponsorshipStats?.ended}</span>
-                </div>
-              </>
             )}
           </div>
         </Card>
