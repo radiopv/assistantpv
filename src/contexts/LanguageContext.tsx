@@ -1,52 +1,49 @@
-import React, { createContext, useContext, useState } from 'react';
-import { frenchTranslations } from '@/translations/fr';
-import { spanishTranslations } from '@/translations/es';
-import { englishTranslations } from '@/translations/en';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { frenchTranslations } from '../translations/fr';
+import { spanishTranslations } from '../translations/es';
 
-type Language = 'fr' | 'es' | 'en';
+type Language = 'fr' | 'es';
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
-  addTranslation: (key: string, value: string, language: Language) => void;
 }
+
+const translations = {
+  fr: frenchTranslations,
+  es: spanishTranslations
+};
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>('fr');
-  const [translations, setTranslations] = useState({
-    fr: frenchTranslations,
-    es: spanishTranslations,
-    en: englishTranslations
-  });
+
+  useEffect(() => {
+    const detectLanguage = () => {
+      const browserLang = navigator.language.toLowerCase();
+      if (browserLang.startsWith('es')) {
+        setLanguage('es');
+      } else if (browserLang.startsWith('fr')) {
+        setLanguage('fr');
+      }
+    };
+
+    detectLanguage();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('preferredLanguage', language);
+  }, [language]);
 
   const t = (key: string): string => {
-    // Essayer d'abord la langue sélectionnée
-    const translation = translations[language][key as keyof typeof translations[typeof language]];
-    if (translation) return translation;
-
-    // Si pas trouvé, essayer l'anglais comme fallback
-    const englishTranslation = translations.en[key as keyof typeof translations['en']];
-    if (englishTranslation) return englishTranslation;
-
-    // Si toujours pas trouvé, retourner la clé
-    return key;
-  };
-
-  const addTranslation = (key: string, value: string, lang: Language) => {
-    setTranslations(prev => ({
-      ...prev,
-      [lang]: {
-        ...prev[lang],
-        [key]: value
-      }
-    }));
+    const currentTranslations = translations[language];
+    return currentTranslations[key as keyof typeof currentTranslations] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, addTranslation }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );

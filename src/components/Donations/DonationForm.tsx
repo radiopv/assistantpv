@@ -9,7 +9,6 @@ import { DonationBasicInfo } from "./DonationBasicInfo";
 import { DonorInfo } from "./DonorInfo";
 import { PhotoUpload } from "./PhotoUpload";
 import { DonationSubmitButton } from "./DonationSubmitButton";
-import { DonationItem, AidCategory } from "@/integrations/supabase/types/donations";
 
 interface DonationFormProps {
   onDonationComplete?: () => void;

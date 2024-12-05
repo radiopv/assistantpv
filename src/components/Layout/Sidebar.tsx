@@ -1,102 +1,144 @@
-import { Link, useLocation } from "react-router-dom";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import {
-  Home,
-  Users,
-  Gift,
+import { 
+  LayoutDashboard, 
+  Users, 
+  Gift, 
   MessageSquare,
   Settings,
-  Shield,
-  Heart,
+  Baby,
+  UserPlus,
+  Plane,
+  ChartBar,
   HelpCircle,
-  Map,
-  BarChart2,
-  Activity,
   Languages,
-  LayoutDashboard,
-  UserPlus
+  Activity
 } from "lucide-react";
+import { SidebarHeader } from "./Sidebar/SidebarHeader";
+import { SidebarSection } from "./Sidebar/SidebarSection";
+import { SidebarFooter } from "./Sidebar/SidebarFooter";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const Sidebar = () => {
+interface SidebarProps {
+  isMobile?: boolean;
+  onClose?: () => void;
+}
+
+const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
+  const { signOut, user } = useAuth();
   const { t } = useLanguage();
   const location = useLocation();
-  const { user } = useAuth();
 
   const isAdmin = user?.role === 'admin';
-  const isAssistant = user?.role === 'assistant';
-  const isSponsor = user?.role === 'sponsor';
 
-  const menuItems = [
+  const assistantLinks = [
     {
-      title: t("dashboard"),
-      items: [
-        { icon: Home, label: t("dashboard"), path: "/dashboard" }
-      ]
+      href: "/dashboard",
+      label: t("dashboard"),
+      icon: LayoutDashboard,
+      show: user?.permissions?.dashboard || isAdmin,
     },
     {
-      title: t("assistant"),
-      show: isAssistant || isAdmin,
-      items: [
-        { icon: Users, label: t("children"), path: "/children" },
-        { icon: Gift, label: t("donations"), path: "/donations" },
-        { icon: MessageSquare, label: t("messages"), path: "/messages" }
-      ]
+      href: "/children",
+      label: t("children"),
+      icon: Baby,
+      show: user?.permissions?.children || isAdmin,
     },
     {
-      title: t("sponsor"),
-      show: isSponsor || isAdmin,
-      items: [
-        { icon: Heart, label: t("sponsorSpace"), path: "/sponsor-space" },
-        { icon: Map, label: t("travels"), path: "/sponsor/travels" },
-        { icon: MessageSquare, label: t("messages"), path: "/messages" }
-      ]
+      href: "/children/add",
+      label: t("addChild"),
+      icon: UserPlus,
+      show: user?.permissions?.edit_children || isAdmin,
     },
     {
-      title: t("administration"),
+      href: "/donations",
+      label: t("donations"),
+      icon: Gift,
+      show: user?.permissions?.donations || isAdmin,
+    },
+    {
+      href: "/messages",
+      label: t("messages"),
+      icon: MessageSquare,
+      show: true,
+    },
+  ];
+
+  const adminLinks = [
+    {
+      href: "/admin/permissions",
+      label: t("permissions"),
+      icon: Settings,
       show: isAdmin,
-      items: [
-        { icon: Shield, label: t("permissions"), path: "/admin/permissions" },
-        { icon: Languages, label: t("translations"), path: "/admin/translations" },
-        { icon: BarChart2, label: t("statistics"), path: "/admin/statistics" },
-        { icon: HelpCircle, label: t("faq"), path: "/admin/faq" },
-        { icon: Activity, label: t("activityLog"), path: "/admin/activity" },
-        { icon: LayoutDashboard, label: t("homeContent"), path: "/admin/home-content" },
-        { icon: UserPlus, label: "Demandes de parrainage", path: "/admin/sponsorship-requests" }
-      ]
-    }
+    },
+    {
+      href: "/admin/sponsors",
+      label: t("sponsors"),
+      icon: Users,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/translations",
+      label: t("translationManager"),
+      icon: Languages,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/travels",
+      label: t("travels"),
+      icon: Plane,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/statistics",
+      label: t("statistics"),
+      icon: ChartBar,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/faq",
+      label: t("faq"),
+      icon: HelpCircle,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/activity",
+      label: "Journal d'activité",
+      icon: Activity,
+      show: isAdmin,
+    },
   ];
 
   return (
-    <div className="h-full bg-white border-r p-4">
-      <nav className="space-y-8">
-        {menuItems.map((section, index) => 
-          (!section.show === undefined || section.show) && (
-            <div key={index}>
-              <h2 className="text-xs uppercase font-semibold text-gray-500 mb-4">
-                {section.title}
-              </h2>
-              <ul className="space-y-2">
-                {section.items.map((item, itemIndex) => (
-                  <li key={itemIndex}>
-                    <Link
-                      to={item.path}
-                      className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-                        location.pathname === item.path
-                          ? "bg-primary text-white"
-                          : "text-gray-700 hover:bg-gray-100"
-                      }`}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      <span>{item.label}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        )}
-      </nav>
+    <div className={cn(
+      "flex h-full flex-col border-r bg-white",
+      isMobile && "relative"
+    )}>
+      <SidebarHeader isMobile={isMobile} onClose={onClose} />
+      
+      <ScrollArea className="flex-1">
+        <div className="space-y-4 py-4">
+          <SidebarSection
+            title="Assistant"
+            links={assistantLinks}
+            currentPath={location.pathname}
+            onClose={onClose}
+          />
+          
+          {isAdmin && (
+            <SidebarSection
+              title="Administration"
+              links={adminLinks}
+              currentPath={location.pathname}
+              onClose={onClose}
+            />
+          )}
+        </div>
+      </ScrollArea>
+
+      <SidebarFooter onSignOut={signOut} onClose={onClose} />
     </div>
   );
 };

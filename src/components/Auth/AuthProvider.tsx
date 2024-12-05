@@ -1,116 +1,96 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
-  user: any;
+  user: any | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  session: Session | null;
   isAssistant: boolean;
+  session: any | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  signIn: async () => {},
   signOut: async () => {},
-  session: null,
   isAssistant: false,
+  session: null,
 });
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
-
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<Session | null>(null);
+  const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkUser = async () => {
+    const checkAuth = async () => {
       try {
-        const { data: { session: authSession } } = await supabase.auth.getSession();
-        setSession(authSession);
-        
-        if (authSession?.user) {
-          const { data: sponsorData, error: sponsorError } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('id', authSession.user.id)
-            .single();
-
-          if (sponsorError) throw sponsorError;
-          setUser(sponsorData);
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
+          
+          // Redirection basée sur le rôle
+          if (window.location.pathname === '/login') {
+            if (parsedUser.role === 'admin' || parsedUser.role === 'assistant') {
+              navigate('/dashboard');
+            } else {
+              navigate('/');
+            }
+          }
+        } else {
+          setUser(null);
+          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
+            navigate("/login");
+          }
         }
       } catch (error) {
-        console.error('Error checking user session:', error);
+        console.error('Error checking auth:', error);
         setUser(null);
+        navigate("/login");
       } finally {
         setLoading(false);
       }
     };
 
-    checkUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, authSession) => {
-      setSession(authSession);
-      
-      if (event === 'SIGNED_IN' && authSession?.user) {
-        const { data: sponsorData, error: sponsorError } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', authSession.user.id)
-          .single();
-
-        if (sponsorError) throw sponsorError;
-        setUser(sponsorData);
-        setLoading(false);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setLoading(false);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error signing in:', error);
-      throw error;
-    }
-  };
+    checkAuth();
+  }, [navigate]);
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      navigate('/');
+      localStorage.removeItem('user');
+      setUser(null);
+      setIsAssistant(false);
+      toast({
+        title: "Déconnexion réussie",
+        description: "À bientôt !",
+      });
+      navigate("/login");
     } catch (error) {
-      console.error('Error signing out:', error);
-      throw error;
+      console.error("Error signing out:", error);
+      toast({
+        title: "Erreur lors de la déconnexion",
+        description: "Veuillez réessayer",
+        variant: "destructive",
+      });
     }
   };
 
-  const isAssistant = user?.role === 'assistant';
-
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut, session, isAssistant }}>
-      {children}
+    <AuthContext.Provider value={{ user, loading, signOut, isAssistant, session: user }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

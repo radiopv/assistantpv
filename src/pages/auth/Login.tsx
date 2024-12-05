@@ -1,70 +1,95 @@
-import { useAuth } from "@/components/Auth/AuthProvider";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { toast } from "@/components/ui/use-toast";
+import { Label } from "@/components/ui/label";
 
 const Login = () => {
-  const { t } = useLanguage();
-  const { signIn } = useAuth();
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await signIn(email, password);
-    } catch (error) {
-      console.error("Login error:", error);
+      const { data: sponsor, error } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (error) throw error;
+
+      if (!sponsor) {
+        throw new Error("Email ou mot de passe incorrect");
+      }
+
+      if (sponsor.password_hash !== password) {
+        throw new Error("Email ou mot de passe incorrect");
+      }
+
+      if (!['admin', 'assistant'].includes(sponsor.role)) {
+        throw new Error("Accès non autorisé");
+      }
+
+      localStorage.setItem('user', JSON.stringify(sponsor));
+
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue dans l'espace administration",
+      });
+      
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({
+        title: "Erreur de connexion",
+        description: error.message || "Une erreur est survenue",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
-        <div>
-          <h2 className="text-center text-3xl font-extrabold text-gray-900">
-            {t("login")}
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            {t("loginDescription")}
-          </p>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md p-8 space-y-6 bg-white">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Administration</h1>
+          <p className="text-gray-600">Connectez-vous pour accéder à l'espace administration</p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                {t("email")}
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("emailPlaceholder")}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                {t("password")}
-              </label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("password")}
-                required
-              />
-            </div>
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="votre@email.com"
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Mot de passe</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+              className="w-full"
+            />
           </div>
 
           <Button
@@ -72,10 +97,14 @@ const Login = () => {
             className="w-full"
             disabled={loading}
           >
-            {loading ? t("loggingIn") : t("login")}
+            {loading ? "Connexion en cours..." : "Se connecter"}
           </Button>
         </form>
-      </div>
+
+        <p className="text-center text-sm text-gray-600">
+          Cette section est réservée aux administrateurs et assistants
+        </p>
+      </Card>
     </div>
   );
 };

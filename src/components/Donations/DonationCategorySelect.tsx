@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { DollarSign, Shirt, Utensils, BookOpen, HeartPulse, Package } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { AidCategory } from "@/integrations/supabase/types/donations";
 
 interface Category {
   id: string;
@@ -34,7 +33,7 @@ export const DonationCategorySelect = ({ selectedCategories, onSelectCategory }:
         .order('name');
       
       if (error) throw error;
-      return data as AidCategory[];
+      return data;
     }
   });
 

@@ -11,8 +11,8 @@ import { Activity, User } from "lucide-react";
 import { type ActivityLogType } from "@/types/activity";
 import { Database } from "@/integrations/supabase/types";
 
-type ActivityLogWithSponsor = Database['public']['Tables']['activity_logs']['Row'] & {
-  sponsors: Database['public']['Tables']['sponsors']['Row'] | null;
+type ActivityLogWithProfile = Database['public']['Tables']['activity_logs']['Row'] & {
+  profiles: Database['public']['Tables']['profiles']['Row'] | null;
 };
 
 const ActivityLog = () => {
@@ -26,10 +26,9 @@ const ActivityLog = () => {
         .from('activity_logs')
         .select(`
           *,
-          sponsors (
+          profiles:user_id (
             id,
-            role,
-            name
+            role
           )
         `)
         .order('created_at', { ascending: false })
@@ -43,7 +42,7 @@ const ActivityLog = () => {
       console.log('Raw data from Supabase:', data);
       
       // Transform the data to match ActivityLogType
-      const transformedData = (data as unknown as ActivityLogWithSponsor[]).map(item => {
+      const transformedData = (data as unknown as ActivityLogWithProfile[]).map(item => {
         console.log('Processing item:', item);
         return {
           id: item.id,
@@ -52,8 +51,8 @@ const ActivityLog = () => {
           details: item.details,
           created_at: item.created_at,
           user: {
-            name: item.sponsors?.name || `Utilisateur ${item.user_id.slice(0, 8)}`,
-            role: item.sponsors?.role || 'visitor'
+            name: `Utilisateur ${item.user_id.slice(0, 8)}`,
+            role: item.profiles?.role || 'visitor'
           }
         };
       });

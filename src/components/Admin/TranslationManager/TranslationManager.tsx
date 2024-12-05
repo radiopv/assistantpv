@@ -39,8 +39,11 @@ export const TranslationManager = () => {
 
   const handleSave = () => {
     try {
+      // Here you would typically save to a backend
+      // For now, we'll just show the current state
       console.log('Current translations:', translations);
       
+      // Check for duplicate keys
       const frKeys = Object.keys(translations.fr);
       const esKeys = Object.keys(translations.es);
       const hasDuplicates = frKeys.length !== new Set(frKeys).size || 
