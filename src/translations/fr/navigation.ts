@@ -1,0 +1,15 @@
+export const navigationTranslations = {
+  profile: "Profil",
+  settings: "Paramètres",
+  notifications: "Notifications",
+  messages: "Messages",
+  dashboard: "Tableau de bord",
+  children: "Enfants",
+  sponsors: "Parrains",
+  donations: "Dons",
+  reports: "Rapports",
+  analytics: "Analyses",
+  help: "Aide",
+  about: "À propos",
+  contact: "Contact",
+};
