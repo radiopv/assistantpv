@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 import { NeedsSection } from "./Needs/NeedsSection";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface ChildCardProps {
   child: any;
@@ -29,6 +30,7 @@ const formatAge = (birthDate: string) => {
 
 export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
   const { t } = useLanguage();
+  const { isAssistant } = useAuth();
   const [selectedNeed, setSelectedNeed] = useState<string | null>(null);
   const [comment, setComment] = useState("");
 
@@ -43,6 +45,10 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
     console.log("Is urgent:", isUrgent);
     setSelectedNeed(null);
     setComment("");
+  };
+
+  const handleBecomeSponsor = () => {
+    window.location.href = `/become-sponsor/${child.id}`;
   };
 
   return (
@@ -114,13 +120,24 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
             {t("profile")}
           </Button>
 
-          <Button 
-            className="flex-1 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
-            variant="outline"
-            onClick={() => onSponsorClick(child)}
-          >
-            {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
-          </Button>
+          {isAssistant ? (
+            <Button 
+              className="flex-1 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
+              variant="outline"
+              onClick={() => onSponsorClick(child)}
+            >
+              {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
+            </Button>
+          ) : (
+            !child.is_sponsored && (
+              <Button 
+                className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                onClick={handleBecomeSponsor}
+              >
+                {t("becomeSponsor")}
+              </Button>
+            )
+          )}
         </div>
       </div>
     </Card>
