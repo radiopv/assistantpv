@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export const logActivity = async (userId: string | null, action: string, details?: any) => {
   try {
@@ -8,12 +8,20 @@ export const logActivity = async (userId: string | null, action: string, details
       return;
     }
 
-    // Check if user exists in profiles
+    // First check if the user exists in auth.users
+    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(userId);
+    
+    if (authError || !authUser) {
+      console.error('User not found in auth.users table:', userId);
+      return;
+    }
+
+    // Then check if user exists in profiles
     const { data: userExists, error: userCheckError } = await supabase
       .from('profiles')
       .select('id')
       .eq('id', userId)
-      .maybeSingle(); // Using maybeSingle() instead of single()
+      .maybeSingle();
 
     if (userCheckError) {
       console.error('Error checking user profile:', userCheckError);
@@ -21,10 +29,16 @@ export const logActivity = async (userId: string | null, action: string, details
     }
 
     if (!userExists) {
-      console.warn('User not found in profiles table, creating profile:', userId);
+      console.warn('User not found in profiles table:', userId);
+      // Only create profile if user exists in auth.users
       const { error: insertError } = await supabase
         .from('profiles')
-        .insert([{ id: userId, role: 'pending-sponsor' }]);
+        .insert([{ 
+          id: userId, 
+          role: 'pending-sponsor',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }]);
         
       if (insertError) {
         console.error('Error creating profile:', insertError);

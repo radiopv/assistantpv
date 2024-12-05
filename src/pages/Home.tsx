@@ -44,7 +44,7 @@ const Home = () => {
         .select('*')
         .order('id');
       if (error) throw error;
-      return data as HomeContent[];
+      return data;
     }
   });
 
@@ -55,24 +55,31 @@ const Home = () => {
         .from('home_images')
         .select('*');
       if (error) throw error;
-      return data as HomeImage[];
+      return data;
     }
   });
 
   const { data: urgentChildren, isLoading: isLoadingChildren } = useQuery({
     queryKey: ['urgent-children'],
     queryFn: async () => {
+      // Modified query to properly filter urgent needs
       const { data, error } = await supabase
         .from('children')
         .select('*')
         .eq('status', 'available')
-        .contains('needs', [{ is_urgent: true }])
+        .not('needs', 'is', null)
         .limit(5);
+
       if (error) {
         console.error('Error fetching urgent children:', error);
         throw error;
       }
-      return data;
+
+      // Filter children with urgent needs in JavaScript
+      return data?.filter(child => {
+        const needs = convertJsonToNeeds(child.needs);
+        return needs.some(need => need.is_urgent);
+      });
     }
   });
 
