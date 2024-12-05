@@ -1,0 +1,21 @@
+export const commonTranslations = {
+  save: "Guardar",
+  cancel: "Cancelar",
+  edit: "Editar",
+  delete: "Eliminar",
+  confirm: "Confirmar",
+  submit: "Enviar",
+  search: "Buscar",
+  filter: "Filtrar",
+  view: "Ver",
+  add: "Agregar",
+  remove: "Eliminar",
+  update: "Actualizar",
+  loading: "Cargando...",
+  success: "Éxito",
+  error: "Error",
+  warning: "Advertencia",
+  info: "Información",
+  back: "Volver",
+  next: "Siguiente"
+};

@@ -12,9 +12,11 @@ interface LanguageContextType {
   addTranslation: (key: string, text: string, language: Language) => void;
 }
 
-const translations = {
+type TranslationType = typeof frenchTranslations;
+
+const translations: Record<Language, TranslationType> = {
   fr: frenchTranslations,
-  es: spanishTranslations
+  es: spanishTranslations as TranslationType
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -42,7 +44,6 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
   const addTranslation = async (key: string, text: string, language: Language) => {
     try {
-      // Mettre à jour la base de données avec la nouvelle traduction
       const response = await fetch('/api/translations', {
         method: 'POST',
         headers: {
@@ -58,11 +59,10 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
 
-      // Mettre à jour le state local
       translations[language] = {
         ...translations[language],
         [key]: text
-      } as typeof translations[typeof language];
+      } as TranslationType;
 
       setPendingTranslations(prev => {
         const newSet = new Set(prev);
@@ -84,12 +84,8 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     if (!translation) {
       console.log(`Missing translation for key: ${key} in language: ${language}`);
       
-      // Si le texte semble être en anglais (plus de 3 caractères, contient des lettres)
       if (key.length > 3 && /[a-zA-Z]/.test(key)) {
-        // Ajouter à la liste des traductions en attente
         setPendingTranslations(prev => new Set(prev).add(key));
-        
-        // Retourner le texte en anglais avec un style spécial
         return `${key} 🔄`;
       }
       
