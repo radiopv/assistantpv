@@ -6,9 +6,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { RequestsList } from "@/components/Sponsorship/RequestsList/RequestsList";
 import { useToast } from "@/components/ui/use-toast";
 import type { SponsorshipRequest } from "@/integrations/supabase/types/sponsorship";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const SponsorsManagement = () => {
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const { data: requests, isLoading: requestsLoading } = useQuery({
     queryKey: ['sponsorship-requests'],
@@ -23,7 +25,14 @@ const SponsorsManagement = () => {
         console.error('Error fetching requests:', error);
         throw error;
       }
-      return data as SponsorshipRequest[];
+
+      // Ensure all required fields are present with correct types
+      return (data || []).map(request => ({
+        ...request,
+        is_long_term: Boolean(request.is_long_term),
+        is_one_time: Boolean(request.is_one_time),
+        terms_accepted: Boolean(request.terms_accepted)
+      })) as SponsorshipRequest[];
     }
   });
 
@@ -37,15 +46,15 @@ const SponsorsManagement = () => {
       if (error) throw error;
 
       toast({
-        title: "Succès",
-        description: "La demande de parrainage a été approuvée",
+        title: t("success"),
+        description: t("sponsorshipRequestApproved"),
       });
     } catch (error) {
       console.error('Error approving request:', error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'approbation de la demande",
+        title: t("error"),
+        description: t("sponsorshipRequestApprovalError"),
       });
     }
   };
@@ -60,15 +69,15 @@ const SponsorsManagement = () => {
       if (error) throw error;
 
       toast({
-        title: "Succès",
-        description: "La demande de parrainage a été rejetée",
+        title: t("success"),
+        description: t("sponsorshipRequestRejected"),
       });
     } catch (error) {
       console.error('Error rejecting request:', error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors du rejet de la demande",
+        title: t("error"),
+        description: t("sponsorshipRequestRejectionError"),
       });
     }
   };
@@ -85,15 +94,15 @@ const SponsorsManagement = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Gestion des Parrainages</h1>
+      <h1 className="text-2xl font-bold">{t("sponsorshipManagement")}</h1>
 
       <Tabs defaultValue="requests" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="requests">
-            Demandes en attente ({pendingRequests.length})
+            {t("pendingRequests")} ({pendingRequests.length})
           </TabsTrigger>
           <TabsTrigger value="active">
-            Parrainages actifs
+            {t("activeSponsors")}
           </TabsTrigger>
         </TabsList>
 
@@ -108,7 +117,7 @@ const SponsorsManagement = () => {
         <TabsContent value="active" className="mt-6">
           <Card className="p-4">
             <p className="text-center text-gray-500">
-              La gestion des parrainages actifs sera développée prochainement.
+              {t("activeSponsorsComingSoon")}
             </p>
           </Card>
         </TabsContent>
