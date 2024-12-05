@@ -56,6 +56,8 @@ export const spanishTranslations = {
   sponsored: "Apadrinado",
   available: "Disponible",
   by: "por",
+  addSponsor: "Agregar padrino",
+  editOrRemoveSponsor: "Editar o eliminar padrino",
   
   // Time related
   years: "años",
@@ -65,21 +67,6 @@ export const spanishTranslations = {
   yesterday: "Ayer",
   tomorrow: "Mañana",
   
-  // Sponsorship
-  becomeSponsor: "Convertirse en padrino",
-  sponsorshipDescription: "Brinde esperanza y un futuro mejor a los niños cubanos a través de su patrocinio",
-  fullName: "Nombre completo",
-  motivation: "Motivación",
-  facebookUrl: "URL de Facebook",
-  longTermSponsorship: "Deseo un patrocinio a largo plazo",
-  acceptTerms: "Acepto las condiciones de patrocinio",
-  sponsorshipTerminationNote: "Podrá finalizar su patrocinio en cualquier momento desde su espacio de padrino, sin preguntas. El niño volverá a estar disponible para patrocinio.",
-  submitting: "Enviando...",
-  submitRequest: "Enviar mi solicitud",
-  pleaseAcceptTerms: "Por favor, acepte las condiciones de patrocinio",
-  sponsorshipRequestSubmitted: "Su solicitud de patrocinio se ha enviado con éxito",
-  errorSubmittingRequest: "Se produjo un error al enviar su solicitud",
-
   // Messages and notifications
   success: "Éxito",
   error: "Error",
@@ -107,26 +94,6 @@ export const spanishTranslations = {
   story: "Historia",
   needs: "Necesidades",
 
-  // Need categories and actions
-  normalNeed: "Necesidad normal",
-  urgentNeed: "Necesidad urgente",
-  addComment: "Añadir comentario",
-  markAsUrgent: "Marcar como urgente",
-  markAsNormal: "Marcar como normal",
-  close: "Cerrar",
-  
-  // Error messages
-  errorOccurred: "Ha ocurrido un error",
-  tryAgain: "Por favor, inténtalo de nuevo",
-  sessionExpired: "Tu sesión ha expirado",
-  pleaseSignIn: "Por favor, inicia sesión de nuevo",
-  
-  // Success messages
-  changesSaved: "Cambios guardados correctamente",
-  profileUpdated: "Perfil actualizado correctamente",
-  passwordChanged: "Contraseña cambiada correctamente",
-  emailSent: "Correo electrónico enviado correctamente",
-
   // Children filters translations
   searchPlaceholder: "Buscar niños...",
   city: "Ciudad",
@@ -139,8 +106,6 @@ export const spanishTranslations = {
   allAges: "Todas las edades",
   status: "Estado",
   allStatus: "Todos los estados",
-  available: "Disponible",
-  sponsored: "Apadrinado",
   pending: "Pendiente",
   urgent: "Urgente"
 };
