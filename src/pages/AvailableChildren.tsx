@@ -7,6 +7,7 @@ import { ChildCard } from "@/components/Children/AvailableChildrenList/ChildCard
 import { useState } from "react";
 import { differenceInYears, parseISO } from "date-fns";
 import { Loader2 } from "lucide-react";
+import { convertJsonToNeeds } from "@/types/needs";
 
 const AvailableChildren = () => {
   const navigate = useNavigate();
@@ -27,7 +28,12 @@ const AvailableChildren = () => {
         .order('name');
 
       if (error) throw error;
-      return data;
+      
+      // Convert needs from Json to Need[]
+      return data.map(child => ({
+        ...child,
+        needs: convertJsonToNeeds(child.needs)
+      }));
     }
   });
 

@@ -30,11 +30,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        if (!user?.email) {
+          setLoading(false);
+          return;
+        }
+
         // Get the sponsor data
         const { data: sponsorData, error: sponsorError } = await supabase
           .from('sponsors')
           .select('*')
-          .eq('email', user?.email)
+          .eq('email', user.email)
           .single();
 
         if (sponsorError) {
@@ -69,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
-  }, [navigate]);
+  }, [navigate, user?.email]);
 
   const signIn = async (email: string, password: string) => {
     try {
