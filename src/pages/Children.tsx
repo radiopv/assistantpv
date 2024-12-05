@@ -100,7 +100,7 @@ const Children = () => {
           onClick={() => navigate('/children/add')}
           className="w-full sm:w-auto min-h-[44px]"
         >
-          Ajouter un parrain
+          Ajouter un enfant
         </Button>
       </div>
 
