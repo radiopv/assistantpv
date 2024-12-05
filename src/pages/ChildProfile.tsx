@@ -85,6 +85,15 @@ const ChildProfile = () => {
 
   const handleDelete = async () => {
     try {
+      // First, delete any sponsorships for this child
+      const { error: sponsorshipError } = await supabase
+        .from('sponsorships')
+        .delete()
+        .eq('child_id', id);
+
+      if (sponsorshipError) throw sponsorshipError;
+
+      // Then delete the child
       const { error } = await supabase
         .from('children')
         .delete()
@@ -98,6 +107,7 @@ const ChildProfile = () => {
       });
       navigate('/children');
     } catch (err: any) {
+      console.error('Error deleting child:', err);
       toast({
         variant: "destructive",
         title: t("error"),

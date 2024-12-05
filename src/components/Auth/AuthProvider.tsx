@@ -1,14 +1,12 @@
-import { createContext, useContext, useEffect } from "react";
-import { useAuthHook } from "./useAuthHook";
-import type { Sponsor } from "@/types/auth";
+import { createContext, useContext, useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
-  user: Sponsor | null;
+  user: any;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  isAssistant: boolean;
-  session: Sponsor | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,35 +14,89 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signIn: async () => {},
   signOut: async () => {},
-  isAssistant: false,
-  session: null,
 });
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading, isAssistant, signIn, signOut, checkAuth } = useAuthHook();
-
-  useEffect(() => {
-    // Check auth on mount and when user email changes
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      checkAuth(parsedUser.email);
-    } else {
-      checkAuth(user?.email);
-    }
-  }, [user?.email]);
-
-  return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut, isAssistant, session: user }}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+export const useAuth = () => {
+  return useContext(AuthContext);
 };
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const { data: sponsorData, error: sponsorError } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          if (sponsorError) throw sponsorError;
+          setUser(sponsorData);
+        }
+      } catch (error) {
+        console.error('Error checking user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        const { data: sponsorData, error: sponsorError } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (sponsorError) throw sponsorError;
+        setUser(sponsorData);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing in:', error);
+      throw error;
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
