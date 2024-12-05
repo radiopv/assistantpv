@@ -170,12 +170,7 @@ export interface Translations {
 
   // Admin section
   assistant: string;
-  administration: string;
-  permissions: string;
   translations: string;
-  travels: string;
-  statistics: string;
-  faq: string;
   activityLog: string;
   sponsorSpace: string;
 
