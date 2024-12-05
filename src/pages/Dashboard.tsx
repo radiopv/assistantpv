@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
 import { toast } from "sonner";
 import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
-import { DetailedStats } from "@/components/Dashboard/DetailedStats";
+import DetailedStats from "@/components/Dashboard/DetailedStats";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";

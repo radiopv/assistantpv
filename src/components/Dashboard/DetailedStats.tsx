@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Need } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Sponsorship } from "@/types/supabase/tables/sponsorships";
 
@@ -39,9 +38,9 @@ const DetailedStats = () => {
       <h2 className="text-lg font-bold">{t("sponsorshipStats")}</h2>
       <ScrollArea>
         <div>
-          <p>{t("activeSponsorships")}: {sponsorshipStats.active}</p>
-          <p>{t("pendingSponsorships")}: {sponsorshipStats.pending}</p>
-          <p>{t("endedSponsorships")}: {sponsorshipStats.ended}</p>
+          <p>{t("activeSponsorships")}: {sponsorshipStats?.active}</p>
+          <p>{t("pendingSponsorships")}: {sponsorshipStats?.pending}</p>
+          <p>{t("endedSponsorships")}: {sponsorshipStats?.ended}</p>
         </div>
       </ScrollArea>
     </Card>

@@ -1,11 +1,3 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
-
 export interface Database {
   public: {
     Tables: {
@@ -535,6 +527,7 @@ export interface Database {
         }
         Relationships: []
       }
+
       donation_photos: {
         Row: {
           created_at: string
@@ -570,6 +563,7 @@ export interface Database {
           },
         ]
       }
+
       donation_videos: {
         Row: {
           created_at: string | null
@@ -911,7 +905,7 @@ export interface Database {
           redirect_url?: string | null
           status: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Relationships: []
       }
@@ -928,21 +922,21 @@ export interface Database {
         }
         Insert: {
           child_count?: number | null
-          city_name: string;
+          city_name: string
           created_at?: string | null
           id?: number
-          latitude: number;
-          longitude: number;
+          latitude: number
+          longitude: number
           sponsored_count?: number | null
           updated_at?: string | null
         }
         Update: {
           child_count?: number | null
-          city_name?: string;
+          city_name?: string
           created_at?: string | null
           id?: number
-          latitude?: number;
-          longitude?: number;
+          latitude?: number
+          longitude?: number
           sponsored_count?: number | null
           updated_at?: string | null
         }
@@ -1092,7 +1086,7 @@ export interface Database {
           created_at?: string | null
           created_by?: string | null
           created_by_role?: string
-          id: string
+          id?: string
           is_global?: boolean | null
           name?: string
           subject?: string
@@ -1201,7 +1195,7 @@ export interface Database {
           is_read?: boolean | null
           message_id?: string | null
           recipient_id?: string | null
-          updated_at?: string
+          updated_at?: string;
         }
         Relationships: [
           {
@@ -1302,9 +1296,9 @@ export interface Database {
           created_at?: string | null
           id?: string
           is_visible?: boolean | null
-          page_id?: string
+          page_id?: string;
           required_role?: string | null
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1378,7 +1372,7 @@ export interface Database {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string;
         }
         Update: {
           browser_notifications?: boolean | null
@@ -1391,7 +1385,7 @@ export interface Database {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -1455,19 +1449,19 @@ export interface Database {
           id: string
           last_attempt?: string | null
           status?: string | null
-          task_type: string
-          updated_at?: string | null
+          task_type: string;
+          updated_at?: string | null;
         }
         Update: {
           attempts?: number | null
           created_at?: string | null
           data?: Json | null
-          execute_at?: string
-          id: string
-          last_attempt?: string | null
-          status?: string | null
-          task_type?: string
-          updated_at?: string | null
+          execute_at?: string;
+          id: string;
+          last_attempt?: string | null;
+          status?: string | null;
+          task_type?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1491,8 +1485,8 @@ export interface Database {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date: string
+          updated_at?: string;
+          visit_date: string;
         }
         Update: {
           created_at?: string | null
@@ -1502,8 +1496,8 @@ export interface Database {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date?: string
+          updated_at?: string;
+          visit_date?: string;
         }
         Relationships: [
           {
@@ -1538,10 +1532,10 @@ export interface Database {
           created_at?: string | null
           id?: string
           logo_url?: string | null
-          primary_color?: string
-          secondary_color?: string
-          site_name: string
-          updated_at?: string | null
+          primary_color?: string;
+          secondary_color?: string;
+          site_name?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1569,9 +1563,9 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          min_points?: number
+          min_points?: number;
           name?: string
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1592,7 +1586,7 @@ export interface Database {
           id?: string
           type: string
           updated_at?: string | null
-          url: string
+          url: string;
         }
         Update: {
           child_id?: string | null
@@ -1601,7 +1595,7 @@ export interface Database {
           id?: string
           type: string
           updated_at?: string | null
-          url?: string
+          url: string;
         }
         Relationships: [
           {
@@ -1706,39 +1700,43 @@ export interface Database {
           child_id: string;
           sponsor_id: string;
           start_date: string;
-          end_date?: string | null;
+          end_date?: string;
           status: "active" | "pending" | "ended";
           created_at?: string;
           updated_at?: string;
-        }
+        };
         Insert: {
+          id?: string;
           child_id: string;
           sponsor_id: string;
           start_date: string;
-          end_date?: string | null;
-          status?: "active" | "pending" | "ended";
-          created_at?: string | null;
-          updated_at?: string | null;
-        }
+          end_date?: string;
+          status: "active" | "pending" | "ended";
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
+          id?: string;
           child_id?: string;
           sponsor_id?: string;
           start_date?: string;
-          end_date?: string | null;
+          end_date?: string;
           status?: "active" | "pending" | "ended";
-          created_at?: string | null;
-          updated_at?: string | null;
-        }
+          created_at?: string;
+          updated_at?: string;
+        };
         Relationships: [
           {
             foreignKeyName: "sponsorships_child_id_fkey";
             columns: ["child_id"];
+            isOneToOne: false;
             referencedRelation: "children";
             referencedColumns: ["id"];
           },
           {
             foreignKeyName: "sponsorships_sponsor_id_fkey";
             columns: ["sponsor_id"];
+            isOneToOne: false;
             referencedRelation: "sponsors";
             referencedColumns: ["id"];
           }
@@ -1808,21 +1806,6 @@ export interface Database {
           sponsor_stats: Json | null
         }
         Relationships: []
-      }
-      unified_media_browser: {
-        Row: {
-          id: string;
-          url: string;
-          source_table: string;
-          type: "image" | "video";
-          category: string;
-          metadata: Record<string, any>;
-          created_at?: string;
-          updated_at?: string;
-          title?: string;
-          description?: string;
-          is_featured?: boolean;
-        }
       }
     }
     Functions: {
