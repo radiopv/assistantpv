@@ -3,9 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
-import { useState, useMemo } from "react";
-import { toast } from "sonner";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -18,23 +16,9 @@ import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { convertJsonToNeeds } from "@/types/needs";
 
-interface HomeContent {
-  id: number;
-  title: string;
-  content: string;
-}
-
-interface HomeImage {
-  id: string;
-  url: string;
-  position: string;
-  is_mobile: boolean;
-}
-
 const Home = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
 
   const { data: homeContent, isLoading: isLoadingContent } = useQuery({
     queryKey: ['home-content'],
@@ -62,7 +46,7 @@ const Home = () => {
   const { data: urgentChildren, isLoading: isLoadingChildren } = useQuery({
     queryKey: ['urgent-children'],
     queryFn: async () => {
-      // Modified query to properly filter urgent needs
+      // First get all available children with needs
       const { data, error } = await supabase
         .from('children')
         .select('*')
@@ -75,7 +59,7 @@ const Home = () => {
         throw error;
       }
 
-      // Filter children with urgent needs in JavaScript
+      // Then filter those with urgent needs in JavaScript
       return data?.filter(child => {
         const needs = convertJsonToNeeds(child.needs);
         return needs.some(need => need.is_urgent);
@@ -92,6 +76,7 @@ const Home = () => {
         .eq('is_public', true)
         .order('created_at', { ascending: false })
         .limit(10);
+      
       if (error) {
         console.error('Error fetching sponsor photos:', error);
         throw error;
@@ -156,13 +141,15 @@ const Home = () => {
                   />
                   <h3 className="font-semibold text-lg mb-2">{child.name}</h3>
                   <div className="space-y-2">
-                    {convertJsonToNeeds(child.needs).map((need, index) => (
-                      <Badge
-                        key={index}
-                        variant={need.is_urgent ? "destructive" : "secondary"}
-                      >
-                        {need.category}
-                      </Badge>
+                    {convertJsonToNeeds(child.needs)
+                      .filter(need => need.is_urgent)
+                      .map((need, index) => (
+                        <Badge
+                          key={index}
+                          variant="destructive"
+                        >
+                          {need.category}
+                        </Badge>
                     ))}
                   </div>
                   <Button
