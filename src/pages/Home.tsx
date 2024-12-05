@@ -5,12 +5,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { toast } from "sonner";
 
 const Home = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
-  const { data: featuredChildren, isLoading } = useQuery({
+  const { data: featuredChildren, isLoading, error, refetch } = useQuery({
     queryKey: ['featured-children'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -21,8 +22,26 @@ const Home = () => {
       
       if (error) throw error;
       return data;
+    },
+    meta: {
+      errorMessage: t('error'),
+      onError: (error: Error) => {
+        console.error('Error fetching featured children:', error);
+        toast.error(t('error'));
+      }
     }
   });
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{t('error')}</p>
+          <Button onClick={() => refetch()}>{t('tryAgain')}</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
