@@ -110,4 +110,5 @@ export const spanishTranslations = {
   peopleHelped: "Personas ayudadas",
   grid: "Cuadrícula",
   list: "Lista",
+  editOrRemoveSponsor: "Modificar o eliminar padrino",
 };

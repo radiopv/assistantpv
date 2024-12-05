@@ -66,6 +66,9 @@ export const frenchTranslations = {
   sponsorAlbumDescription: "Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.",
   addSponsor: "Ajouter un parrain",
 
+  // New translation for the button
+  editOrRemoveSponsor: "Modifier ou supprimer un parrain",
+
   // Profile Section
   welcome: "Bienvenue",
   editProfile: "Modifier le profil",
