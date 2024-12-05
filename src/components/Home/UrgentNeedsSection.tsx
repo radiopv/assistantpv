@@ -26,9 +26,10 @@ export const UrgentNeedsSection = () => {
         .from('children')
         .select('*')
         .eq('status', 'available')
+        .is('sponsor_name', null)
         .not('needs', 'is', null)
-        .eq('is_sponsored', false)
-        .limit(10);
+        .not('needs', 'eq', '[]')
+        .not('needs', 'eq', '{}');
 
       if (error) {
         console.error('Error fetching children:', error);
