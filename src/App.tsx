@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/components/Auth/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
-import { Router } from "@/Router";
+import { Router } from "./Router";
 import "./App.css";
 
 const queryClient = new QueryClient();
