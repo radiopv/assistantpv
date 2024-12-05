@@ -31,7 +31,8 @@ const SponsorsManagement = () => {
         ...request,
         is_long_term: Boolean(request.is_long_term),
         is_one_time: Boolean(request.is_one_time),
-        terms_accepted: Boolean(request.terms_accepted)
+        terms_accepted: Boolean(request.terms_accepted),
+        status: request.status || 'pending'
       })) as SponsorshipRequest[];
     }
   });
