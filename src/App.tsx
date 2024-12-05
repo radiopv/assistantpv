@@ -6,7 +6,14 @@ import { Toaster } from "@/components/ui/sonner";
 import { Router } from "./Router";
 import "./App.css";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 function App() {
   return (

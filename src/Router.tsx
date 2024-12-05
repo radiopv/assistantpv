@@ -29,7 +29,9 @@ export const Router = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return null;
+    return <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+    </div>;
   }
 
   return (
@@ -42,7 +44,7 @@ export const Router = () => {
           element={
             user ? (
               <Navigate 
-                to={user.role === 'admin' || user.role === 'assistant' ? '/dashboard' : '/'} 
+                to={user.role === 'admin' || user.role === 'assistant' ? '/dashboard' : '/sponsor-space'} 
                 replace 
               />
             ) : (
