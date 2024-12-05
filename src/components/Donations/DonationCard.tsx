@@ -1,13 +1,12 @@
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
 import { DonationDialog } from "./DonationDialog";
 import { DonationDetails } from "./DonationDetails";
 import { DonationCardHeader } from "./DonationCardHeader";
 import { DonationCardMedia } from "./DonationCardMedia";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { useDonationDelete } from "./hooks/useDonationDelete";
+import { useDonationMedia } from "./hooks/useDonationMedia";
+import { useDonationEdit } from "./hooks/useDonationEdit";
 
 interface DonationCardProps {
   donation: {
@@ -24,129 +23,18 @@ interface DonationCardProps {
   canDelete?: boolean;
 }
 
-export const DonationCard = ({ donation, onDelete, isAdmin = false, canDelete = false }: DonationCardProps) => {
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const { toast } = useToast();
+export const DonationCard = ({ 
+  donation, 
+  onDelete, 
+  isAdmin = false
+}: DonationCardProps) => {
   const { user } = useAuth();
+  const { handleDelete } = useDonationDelete(onDelete);
+  const { photos, videos, refetchPhotos, refetchVideos } = useDonationMedia(donation.id);
+  const { showEditDialog, setShowEditDialog, handleSaveEdit } = useDonationEdit();
 
   // Détermine si l'utilisateur peut supprimer en fonction de son rôle
   const userCanDelete = user?.role === 'admin' || user?.role === 'assistant';
-
-  const { data: donationPhotos, refetch: refetchPhotos } = useQuery({
-    queryKey: ['donation-photos', donation.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('donation_photos')
-        .select('*')
-        .eq('donation_id', donation.id);
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const { data: donationVideos, refetch: refetchVideos } = useQuery({
-    queryKey: ['donation-videos', donation.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('donation_videos')
-        .select('*')
-        .eq('donation_id', donation.id);
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const handleDelete = async () => {
-    try {
-      // Supprimer les photos associées
-      const { error: photosError } = await supabase
-        .from('donation_photos')
-        .delete()
-        .eq('donation_id', donation.id);
-
-      if (photosError) throw photosError;
-
-      // Supprimer les vidéos associées
-      const { error: videosError } = await supabase
-        .from('donation_videos')
-        .delete()
-        .eq('donation_id', donation.id);
-
-      if (videosError) throw videosError;
-
-      // Supprimer les items du don
-      const { error: itemsError } = await supabase
-        .from('donation_items')
-        .delete()
-        .eq('donation_id', donation.id);
-
-      if (itemsError) throw itemsError;
-
-      // Supprimer les donneurs associés
-      const { error: donorsError } = await supabase
-        .from('donors')
-        .delete()
-        .eq('donation_id', donation.id);
-
-      if (donorsError) throw donorsError;
-
-      // Finalement, supprimer le don
-      const { error: donationError } = await supabase
-        .from('donations')
-        .delete()
-        .eq('id', donation.id);
-
-      if (donationError) throw donationError;
-
-      toast({
-        title: "Don supprimé",
-        description: "Le don a été supprimé avec succès.",
-      });
-
-      if (onDelete) {
-        onDelete();
-      }
-    } catch (error) {
-      console.error('Error deleting donation:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression du don.",
-      });
-    }
-  };
-
-  const handleSaveEdit = async (editedDonation: any) => {
-    try {
-      const { error } = await supabase
-        .from('donations')
-        .update({
-          city: editedDonation.city,
-          people_helped: editedDonation.people_helped,
-          assistant_name: editedDonation.assistant_name,
-          comments: editedDonation.comments,
-          status: editedDonation.status
-        })
-        .eq('id', donation.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Don modifié",
-        description: "Les modifications ont été enregistrées avec succès.",
-      });
-
-      setShowEditDialog(false);
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la modification du don.",
-      });
-    }
-  };
 
   return (
     <Card className="p-4">
@@ -156,7 +44,7 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false, canDelete = 
           isAdmin={isAdmin}
           canDelete={userCanDelete}
           onEdit={() => setShowEditDialog(true)}
-          onDelete={handleDelete}
+          onDelete={() => handleDelete(donation.id)}
         />
 
         <DonationDetails donation={donation} />
@@ -170,8 +58,8 @@ export const DonationCard = ({ donation, onDelete, isAdmin = false, canDelete = 
 
         <DonationCardMedia
           donationId={donation.id}
-          photos={donationPhotos || []}
-          videos={donationVideos || []}
+          photos={photos}
+          videos={videos}
           onPhotosUpdate={refetchPhotos}
           onVideosUpdate={refetchVideos}
         />
