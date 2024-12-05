@@ -33,19 +33,25 @@ const SponsorshipRequests = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user?.id) throw new Error('User not found');
 
-      // Check if profile exists, create if it doesn't
-      const { data: existingProfile } = await supabase
-        .from('profiles')
+      // Check if sponsor exists, create if it doesn't
+      const { data: existingSponsor } = await supabase
+        .from('sponsors')
         .select('id')
         .eq('id', user.id)
         .single();
 
-      if (!existingProfile) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([{ id: user.id, role: 'admin' }]);
+      if (!existingSponsor) {
+        const { error: sponsorError } = await supabase
+          .from('sponsors')
+          .insert([{ 
+            id: user.id, 
+            role: 'admin',
+            name: 'Admin', // Required field
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }]);
 
-        if (profileError) throw profileError;
+        if (sponsorError) throw sponsorError;
       }
 
       const { error } = await supabase.rpc('approve_sponsorship_request', {
@@ -76,19 +82,25 @@ const SponsorshipRequests = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user?.id) throw new Error('User not found');
 
-      // Check if profile exists, create if it doesn't
-      const { data: existingProfile } = await supabase
-        .from('profiles')
+      // Check if sponsor exists, create if it doesn't
+      const { data: existingSponsor } = await supabase
+        .from('sponsors')
         .select('id')
         .eq('id', user.id)
         .single();
 
-      if (!existingProfile) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert([{ id: user.id, role: 'admin' }]);
+      if (!existingSponsor) {
+        const { error: sponsorError } = await supabase
+          .from('sponsors')
+          .insert([{ 
+            id: user.id, 
+            role: 'admin',
+            name: 'Admin', // Required field
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }]);
 
-        if (profileError) throw profileError;
+        if (sponsorError) throw sponsorError;
       }
 
       const { error } = await supabase.rpc('reject_sponsorship_request', {
