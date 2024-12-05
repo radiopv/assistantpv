@@ -11,9 +11,16 @@ import { spanishTranslations } from "@/translations/es";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TranslationScanner } from "./TranslationScanner";
 
+type TranslationType = {
+  [key: string]: string;
+};
+
 export const TranslationManager = () => {
   const { t } = useLanguage();
-  const [translations, setTranslations] = useState({
+  const [translations, setTranslations] = useState<{
+    fr: TranslationType;
+    es: TranslationType;
+  }>({
     fr: { ...frenchTranslations },
     es: { ...spanishTranslations }
   });

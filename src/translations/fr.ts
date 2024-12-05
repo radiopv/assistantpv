@@ -1,4 +1,4 @@
-export const fr = {
+export const frenchTranslations = {
   // Auth
   signIn: "Se connecter",
   signUp: "S'inscrire",
@@ -68,7 +68,7 @@ export const fr = {
   // Sponsorship
   sponsor: "Parrain",
   addSponsor: "Ajouter un parrain",
-  editOrRemoveSponsor: "Modifier ou retirer le parrain",
+  editOrRemoveSponsor: "Modifier ou supprimer le parrain",
   sponsorName: "Nom du parrain",
   sponsorEmail: "Email du parrain",
   sponsorPhone: "Téléphone du parrain",

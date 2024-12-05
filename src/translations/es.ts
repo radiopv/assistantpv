@@ -1,4 +1,4 @@
-export const es = {
+export const spanishTranslations = {
   // Auth
   signIn: "Iniciar sesión",
   signUp: "Registrarse",
@@ -62,7 +62,7 @@ export const es = {
   // Sponsorship
   sponsor: "Padrino",
   addSponsor: "Agregar padrino",
-  editOrRemoveSponsor: "Editar o eliminar padrino",
+  editOrRemoveSponsor: "Modificar o eliminar padrino",
   sponsorshipStatus: "Estado del apadrinamiento",
   sponsorshipDate: "Fecha de apadrinamiento",
   sponsorshipDuration: "Duración del apadrinamiento",
