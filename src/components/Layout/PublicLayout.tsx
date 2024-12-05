@@ -22,7 +22,7 @@ const PublicLayout = () => {
     },
     {
       href: "/available-children",
-      label: "Enfants disponibles",
+      label: "Devenir parrain",
       icon: Users,
     },
   ];
