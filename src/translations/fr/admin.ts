@@ -1,12 +1,10 @@
 export const adminTranslations = {
-  // Admin section
-  assistant: "Assistant",
-  administration: "Administration",
-  permissions: "Permissions",
-  translations: "Traductions",
+  permissions: "Gestion des permissions",
+  translationManager: "Gestion des traductions",
   travels: "Voyages",
   statistics: "Statistiques",
   faq: "FAQ",
   activityLog: "Journal d'activité",
-  sponsorSpace: "Espace Parrain",
+  administration: "Administration",
+  translations: "Traductions"
 };

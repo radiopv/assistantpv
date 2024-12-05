@@ -7,5 +7,8 @@ export const navigationTranslations = {
   sponsors: "Parrains",
   donations: "Dons",
   about: "À propos",
-  contact: "Contact"
+  contact: "Contact",
+  messages: "Messages",
+  editProfile: "Modifier le profil",
+  welcome: "Bienvenue"
 };
