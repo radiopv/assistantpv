@@ -1,5 +1,5 @@
 export interface Translations {
-  // Common
+  // Common translations
   save: string;
   cancel: string;
   edit: string;
@@ -20,8 +20,15 @@ export interface Translations {
   back: string;
   next: string;
   language: string;
-
-  // Auth
+  months: string;
+  years: string;
+  age: string;
+  city: string;
+  gender: string;
+  status: string;
+  date: string;
+  
+  // Auth related
   signIn: string;
   signUp: string;
   signOut: string;
@@ -33,8 +40,9 @@ export interface Translations {
   name: string;
   phone: string;
   address: string;
-  city: string;
   role: string;
+  user: string;
+  logout: string;
 
   // Navigation
   home: string;
@@ -50,7 +58,61 @@ export interface Translations {
   editProfile: string;
   welcome: string;
 
-  // Translation Manager
+  // Children related
+  addChild: string;
+  editChild: string;
+  deleteChild: string;
+  childName: string;
+  childAge: string;
+  childGender: string;
+  masculine: string;
+  feminine: string;
+  birthDate: string;
+  description: string;
+  story: string;
+  needs: string;
+  comments: string;
+  photo: string;
+  sponsored: string;
+  available: string;
+  pending: string;
+  urgent: string;
+  sponsor: string;
+  addSponsor: string;
+  editOrRemoveSponsor: string;
+  allCities: string;
+  allGenders: string;
+  allAges: string;
+  allStatus: string;
+  searchPlaceholder: string;
+  manageDonations: string;
+
+  // Profile related
+  profileUpdated: string;
+  profileUpdateSuccess: string;
+  profileUpdateError: string;
+  childDeleted: string;
+  childDeleteSuccess: string;
+  childDeleteError: string;
+  sponsorAlbum: string;
+  sponsorAlbumDescription: string;
+
+  // Donations related
+  donationsTitle: string;
+  donationsSubtitle: string;
+  addDonation: string;
+  noDonationsFound: string;
+  totalDonations: string;
+  peopleHelped: string;
+  citiesCovered: string;
+  filterByCity: string;
+  sortBy: string;
+  donationBy: string;
+
+  // Messages related
+  selectMessageToRead: string;
+
+  // Translation management
   translationManager: string;
   translationScanner: string;
   scanMissingTranslations: string;
@@ -68,64 +130,5 @@ export interface Translations {
   originalText: string;
   enterTranslation: string;
   approve: string;
-  translationError: string;
-  translationUpdated: string;
-  scanStarted: string;
-  scanError: string;
-  scanningTranslations: string;
-  scanAssistantSection: string;
-  frenchTranslations: string;
-  spanishTranslations: string;
-
-  // Dashboard
-  totalChildren: string;
-  sponsoredChildren: string;
-  urgentNeeds: string;
-  activeCities: string;
-  incompleteProfiles: string;
-  viewAllChildren: string;
-  viewSponsoredChildren: string;
-  viewUrgentNeeds: string;
-  viewCityStats: string;
-  viewIncompleteProfiles: string;
-  welcomeMessage: string;
-  urgentNeedsByCity: string;
-  topCities: string;
-  sponsorshipStats: string;
-  activeSponsorships: string;
-  pendingSponsorships: string;
-  completedSponsorships: string;
-
-  // Admin
-  permissions: string;
-  travels: string;
-  statistics: string;
-  faq: string;
-
-  // Sponsors
-  activeSponsors: string;
-  inactiveSponsors: string;
-
-  // Children
-  addComment: string;
-  markAsNormal: string;
-  markAsUrgent: string;
-  deleteConfirmation: string;
-  deleteWarning: string;
-  selectMessage: string;
-
-  // Sponsorship
-  becomeSponsor: string;
-  sponsorshipDescription: string;
-  fullName: string;
-  motivation: string;
-  facebookUrl: string;
-  longTermSponsorship: string;
-  acceptTerms: string;
-  sponsorshipTerminationNote: string;
-  submitting: string;
-  submitRequest: string;
-  pleaseAcceptTerms: string;
-  sponsorshipRequestSubmitted: string;
-  errorSubmittingRequest: string;
+  errorMessage: string;
 }

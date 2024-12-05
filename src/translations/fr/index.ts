@@ -1,19 +1,11 @@
+import { commonTranslations } from './common';
 import { childrenTranslations } from './children';
 import { donationsTranslations } from './donations';
-import { translationManagerTranslations } from './translation-manager';
-import { commonTranslations } from './common';
-import { authTranslations } from './auth';
-import { navigationTranslations } from './navigation';
-import { adminTranslations } from './admin';
-import { sponsorshipTranslations } from './sponsorship';
+import { messagesTranslations } from './messages';
 
 export const frenchTranslations = {
   ...commonTranslations,
-  ...authTranslations,
-  ...navigationTranslations,
-  ...adminTranslations,
-  ...sponsorshipTranslations,
   ...childrenTranslations,
   ...donationsTranslations,
-  ...translationManagerTranslations
+  ...messagesTranslations
 };

@@ -18,5 +18,12 @@ export const commonTranslations = {
   success: "Succès",
   back: "Retour",
   next: "Suivant",
-  language: "Langue"
+  language: "Langue",
+  months: "mois",
+  years: "ans",
+  age: "Âge",
+  city: "Ville",
+  gender: "Genre",
+  status: "Statut",
+  date: "Date",
 };
