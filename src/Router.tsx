@@ -29,7 +29,7 @@ export const Router = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return null; // Or a loading spinner
+    return null;
   }
 
   return (
@@ -37,7 +37,19 @@ export const Router = () => {
       {/* Public Routes */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={user ? <Navigate to={user.role === 'admin' || user.role === 'assistant' ? '/dashboard' : '/'} /> : <Login />} />
+        <Route 
+          path="/login" 
+          element={
+            user ? (
+              <Navigate 
+                to={user.role === 'admin' || user.role === 'assistant' ? '/dashboard' : '/'} 
+                replace 
+              />
+            ) : (
+              <Login />
+            )
+          } 
+        />
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/become-sponsor/:childId" element={<BecomeSponsor />} />
       </Route>
