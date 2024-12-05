@@ -24,13 +24,21 @@ export const HeroSection = () => {
         throw error;
       }
 
-      // Cast the content to ensure it matches our type
-      const typedData = {
+      // Ensure the content matches our type structure
+      const content = data.content as Record<string, any>;
+      
+      // Cast the data to match our type with proper content structure
+      const typedData: HomepageSection = {
         ...data,
-        content: data.content as HomepageSection['content']
+        content: {
+          ctaText: content.ctaText || '',
+          leftImage: content.leftImage || '',
+          rightImage: content.rightImage || '',
+          mobileImage: content.mobileImage || ''
+        }
       };
       
-      return typedData as HomepageSection;
+      return typedData;
     }
   });
 
