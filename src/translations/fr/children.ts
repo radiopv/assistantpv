@@ -23,7 +23,7 @@ export const childrenTranslations = {
   allGenders: "Tous les genres",
   allAges: "Tous les âges",
   allStatus: "Tous les statuts",
-  searchPlaceholder: "Rechercher...",
+  searchPlaceholder: "Rechercher un enfant...",
   manageDonations: "Gérer les dons",
   sponsorAlbum: "Album du parrain",
   sponsorAlbumDescription: "Photos et vidéos partagées par le parrain",
@@ -37,4 +37,9 @@ export const childrenTranslations = {
   availableChildrenDescription: "Découvrez les enfants qui attendent un parrain ou une marraine. Chaque enfant a sa propre histoire et ses propres besoins.",
   becomeSponsor: "Devenir parrain/marraine",
   years: "ans",
+  city: "Ville",
+  allCities: "Toutes les villes",
+  gender: "Genre",
+  age: "Âge",
+  status: "Statut"
 };

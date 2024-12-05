@@ -23,6 +23,7 @@ import Travels from "@/pages/sponsor/Travels";
 import Home from "@/pages/Home";
 import HomeContent from "@/pages/admin/HomeContent";
 import AvailableChildren from "@/pages/AvailableChildren";
+import BecomeSponsor from "@/pages/BecomeSponsor";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/available-children" element={<AvailableChildren />} />
+                <Route path="/become-sponsor/:childId" element={<BecomeSponsor />} />
               </Route>
               
               {/* Protected routes */}
