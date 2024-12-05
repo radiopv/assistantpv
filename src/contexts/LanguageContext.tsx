@@ -3,6 +3,10 @@ import { commonTranslations } from '@/translations/fr/common';
 import { authTranslations } from '@/translations/fr/auth';
 import { dashboardTranslations } from '@/translations/fr/dashboard';
 import { sponsorshipTranslations } from '@/translations/fr/sponsorship';
+import { adminTranslations } from '@/translations/fr/admin';
+import { childrenTranslations } from '@/translations/fr/children';
+import { donationsTranslations } from '@/translations/fr/donations';
+import { translationManagerTranslations } from '@/translations/fr/translation-manager';
 import { Translations } from '@/types/translations';
 
 type Language = 'fr' | 'es';
@@ -22,14 +26,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     ...commonTranslations,
     ...authTranslations,
     ...dashboardTranslations,
-    ...sponsorshipTranslations
+    ...sponsorshipTranslations,
+    ...adminTranslations,
+    ...childrenTranslations,
+    ...donationsTranslations,
+    ...translationManagerTranslations
   } as Translations);
 
   const t = (key: keyof Translations): string => {
     const translation = translations[key];
     if (!translation) {
-      console.warn(`Translation missing for key: ${key}`);
-      return `Traduction indisponible: ${key}`;
+      console.warn(`Missing translation for key: ${key}`);
+      return key; // Return the key itself instead of "Traduction indisponible"
     }
     return translation;
   };

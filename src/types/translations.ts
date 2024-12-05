@@ -1,4 +1,26 @@
 export interface Translations {
+  // Common
+  save: string;
+  cancel: string;
+  edit: string;
+  delete: string;
+  confirm: string;
+  submit: string;
+  search: string;
+  filter: string;
+  view: string;
+  add: string;
+  remove: string;
+  update: string;
+  close: string;
+  grid: string;
+  list: string;
+  error: string;
+  success: string;
+  back: string;
+  next: string;
+  language: string;
+
   // Auth
   signIn: string;
   signUp: string;
@@ -27,66 +49,33 @@ export interface Translations {
   messages: string;
   editProfile: string;
   welcome: string;
-  back: string;
-  next: string;
-  language: string;
 
-  // Common actions
-  save: string;
-  cancel: string;
-  edit: string;
-  delete: string;
-  confirm: string;
-  submit: string;
-  search: string;
-  filter: string;
-  view: string;
-  add: string;
-  remove: string;
-  update: string;
-  close: string;
-  grid: string;
-  list: string;
-  logout: string;
-  user: string;
-  error: string;
-  success: string;
-
-  // Child related
-  childName: string;
-  childAge: string;
-  childGender: string;
-  childLocation: string;
-  childDescription: string;
-  childStory: string;
-  childNeeds: string;
-  sponsored: string;
-  available: string;
-  by: string;
-  addChild: string;
-  months: string;
-  years: string;
-  age: string;
-  sponsor: string;
-  editOrRemoveSponsor: string;
-  addSponsor: string;
-  masculine: string;
-  feminine: string;
-  allAges: string;
-  allStatus: string;
-  pending: string;
-  urgent: string;
-  manageDonations: string;
-
-  // Search and filters
-  searchPlaceholder: string;
-  filterByCity: string;
-  allCities: string;
-  gender: string;
-  allGenders: string;
-  status: string;
-  sortBy: string;
-  date: string;
+  // Translation Manager
+  translationManager: string;
+  translationScanner: string;
+  scanMissingTranslations: string;
+  findUnusedTranslations: string;
+  detectEnglishText: string;
+  missingTranslations: string;
+  unusedTranslations: string;
+  englishTextDetected: string;
+  missingTranslationsFound: string;
+  unusedTranslationsFound: string;
+  englishTextFound: string;
+  pendingTranslations: string;
+  translationRequired: string;
+  translationApproved: string;
+  originalText: string;
+  enterTranslation: string;
+  approve: string;
+  translationError: string;
+  translationUpdated: string;
+  scanStarted: string;
+  scanError: string;
+  scanningTranslations: string;
+  scanAssistantSection: string;
+  frenchTranslations: string;
+  spanishTranslations: string;
 
   // Dashboard
   totalChildren: string;
@@ -101,17 +90,29 @@ export interface Translations {
   viewIncompleteProfiles: string;
   welcomeMessage: string;
   urgentNeedsByCity: string;
+  topCities: string;
+  sponsorshipStats: string;
+  activeSponsorships: string;
+  pendingSponsorships: string;
+  completedSponsorships: string;
 
-  // Donations
-  totalDonations: string;
-  peopleHelped: string;
-  citiesCovered: string;
-  donationsTitle: string;
-  donationsSubtitle: string;
-  addDonation: string;
-  noDonationsFound: string;
-  donationBy: string;
-  selectMessageToRead: string;
+  // Admin
+  permissions: string;
+  travels: string;
+  statistics: string;
+  faq: string;
+
+  // Sponsors
+  activeSponsors: string;
+  inactiveSponsors: string;
+
+  // Children
+  addComment: string;
+  markAsNormal: string;
+  markAsUrgent: string;
+  deleteConfirmation: string;
+  deleteWarning: string;
+  selectMessage: string;
 
   // Sponsorship
   becomeSponsor: string;
@@ -127,15 +128,4 @@ export interface Translations {
   pleaseAcceptTerms: string;
   sponsorshipRequestSubmitted: string;
   errorSubmittingRequest: string;
-
-  // Profile
-  profileUpdated: string;
-  profileUpdateSuccess: string;
-  profileUpdateError: string;
-  childDeleted: string;
-  childDeleteSuccess: string;
-  childDeleteError: string;
-  sponsorAlbum: string;
-  sponsorAlbumDescription: string;
-  errorMessage: string;
 }
