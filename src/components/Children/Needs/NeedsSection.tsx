@@ -21,9 +21,18 @@ export const NeedsSection = ({
   onClose
 }: NeedsSectionProps) => {
   return (
-    <div>
-      <h3 className="text-sm font-medium text-gray-700 mb-2 text-center">Necesidades del niño</h3>
-      <div className="grid grid-cols-1 gap-2">
+    <div className="relative py-4">
+      {/* Top separator */}
+      <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+      
+      <h3 className="text-sm font-semibold text-primary mb-3 text-center relative">
+        {/* Decorative elements */}
+        <span className="absolute left-0 top-1/2 h-px w-12 bg-gradient-to-r from-transparent to-primary/20 transform -translate-y-1/2" />
+        <span className="relative px-4">Necesidades del niño</span>
+        <span className="absolute right-0 top-1/2 h-px w-12 bg-gradient-to-l from-transparent to-primary/20 transform -translate-y-1/2" />
+      </h3>
+
+      <div className="grid grid-cols-1 gap-2 px-2">
         {needs.map((need, index) => (
           <NeedBadge
             key={`${need.category}-${index}`}
@@ -39,6 +48,9 @@ export const NeedsSection = ({
           />
         ))}
       </div>
+
+      {/* Bottom separator */}
+      <div className="absolute bottom-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
     </div>
   );
 };
