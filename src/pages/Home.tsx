@@ -5,66 +5,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { toast } from "sonner";
-import { ErrorAlert } from "@/components/ErrorAlert";
 
 const Home = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
-  const { data: featuredChildren, isLoading, error, refetch } = useQuery({
+  const { data: featuredChildren, isLoading } = useQuery({
     queryKey: ['featured-children'],
     queryFn: async () => {
-      console.log('Fetching featured children...');
       const { data, error } = await supabase
         .from('children')
         .select('*')
         .eq('status', 'available')
         .limit(3);
       
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-      console.log('Featured children data:', data);
+      if (error) throw error;
       return data;
-    },
-    meta: {
-      errorMessage: t('error'),
-      onError: (error: Error) => {
-        console.error('Error fetching featured children:', error);
-        toast.error(t('error'));
-      }
     }
   });
-
-  if (error) {
-    console.error('Rendering error state:', error);
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <ErrorAlert 
-            message={t('error')} 
-            retry={() => {
-              console.log('Retrying fetch...');
-              refetch();
-            }} 
-          />
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    console.log('Rendering loading state...');
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  console.log('Rendering main content with data:', featuredChildren);
 
   return (
     <div className="min-h-screen">
@@ -91,30 +49,36 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">{t("childrenWaitingSponsorship")}</h2>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredChildren?.map((child) => (
-              <Card key={child.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <img
-                  src={child.photo_url || "/placeholder.svg"}
-                  alt={child.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{child.name}</h3>
-                  <p className="text-gray-600 mb-4">
-                    {child.age} {t("years")} • {child.city}
-                  </p>
-                  <Button 
-                    variant="outline" 
-                    className="w-full"
-                    onClick={() => navigate(`/children/${child.id}`)}
-                  >
-                    {t("learnMore")}
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="flex justify-center">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredChildren?.map((child) => (
+                <Card key={child.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <img
+                    src={child.photo_url || "/placeholder.svg"}
+                    alt={child.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2">{child.name}</h3>
+                    <p className="text-gray-600 mb-4">
+                      {child.age} {t("years")} • {child.city}
+                    </p>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => navigate(`/children/${child.id}`)}
+                    >
+                      {t("learnMore")}
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
           
           <div className="text-center mt-8">
             <Button 
