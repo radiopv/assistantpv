@@ -64,6 +64,7 @@ export const frenchTranslations = {
   childDeleteError: "Une erreur est survenue lors de la suppression de l'enfant.",
   sponsorAlbum: "Photos de l'album parrain",
   sponsorAlbumDescription: "Ces photos seront visibles dans l'espace parrain. Elles permettent de partager des moments de la vie de l'enfant avec son parrain.",
+  addSponsor: "Ajouter un parrain",
 
   // Profile Section
   welcome: "Bienvenue",

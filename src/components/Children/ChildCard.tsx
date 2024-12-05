@@ -131,7 +131,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
             variant="outline"
             onClick={() => onSponsorClick(child)}
           >
-            {child.is_sponsored ? t("edit") : t("addChild")}
+            {child.is_sponsored ? t("edit") : t("addSponsor")}
           </Button>
         </div>
       </div>
