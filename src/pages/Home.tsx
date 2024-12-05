@@ -6,6 +6,7 @@ import { UrgentNeedsSection } from "@/components/Home/UrgentNeedsSection";
 import { SponsorMemoriesSection } from "@/components/Home/SponsorMemoriesSection";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
+import { TestimonialsSection } from "@/components/Home/TestimonialsSection";
 import { Heart, Handshake, ChartBar } from "lucide-react";
 
 const Home = () => {
@@ -82,6 +83,14 @@ const Home = () => {
       </section>
 
       {/* Section Témoignages */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">{t("testimonials")}</h2>
+          <TestimonialsSection />
+        </div>
+      </section>
+
+      {/* Section Souvenirs des Parrains */}
       <section className="py-16 bg-beach-gradient">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">{t("sponsorMemories")}</h2>

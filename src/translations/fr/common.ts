@@ -16,5 +16,6 @@ export const commonTranslations = {
   error: "Erreur",
   warning: "Avertissement",
   info: "Information",
-  close: "Fermer"
+  close: "Fermer",
+  testimonials: "Témoignages de nos parrains",
 };
