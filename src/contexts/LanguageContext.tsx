@@ -43,7 +43,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const addTranslation = async (key: string, text: string, language: Language) => {
     try {
       // Mettre à jour la base de données avec la nouvelle traduction
-      const { error } = await fetch('/api/translations', {
+      const response = await fetch('/api/translations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,13 +55,14 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
         }),
       });
 
-      if (error) throw error;
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
 
       // Mettre à jour le state local
       translations[language] = {
         ...translations[language],
         [key]: text
-      };
+      } as typeof translations[typeof language];
 
       setPendingTranslations(prev => {
         const newSet = new Set(prev);
