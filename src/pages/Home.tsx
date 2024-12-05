@@ -68,7 +68,10 @@ const Home = () => {
         .eq('status', 'available')
         .contains('needs', [{ is_urgent: true }])
         .limit(5);
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching urgent children:', error);
+        throw error;
+      }
       return data;
     }
   });
@@ -80,10 +83,12 @@ const Home = () => {
         .from('album_media')
         .select('*')
         .eq('is_public', true)
-        .eq('is_approved', true)
         .order('created_at', { ascending: false })
         .limit(10);
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching sponsor photos:', error);
+        throw error;
+      }
       return data;
     }
   });
