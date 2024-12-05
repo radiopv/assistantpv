@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log('Attempting to sign in with:', { email });
       
+      // First, check if the sponsor exists
       const { data: sponsorData, error: sponsorError } = await supabase
         .from('sponsors')
         .select('*')
@@ -78,6 +79,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (sponsorData) {
+        // Create or update profile
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: sponsorData.id,
+            role: sponsorData.role || 'sponsor'
+          }, {
+            onConflict: 'id'
+          });
+
+        if (profileError) {
+          console.error('Error creating/updating profile:', profileError);
+          // Continue anyway as this shouldn't block login
+        }
+
         localStorage.setItem('user', JSON.stringify(sponsorData));
         setUser(sponsorData);
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));

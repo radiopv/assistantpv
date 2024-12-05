@@ -1,6 +1,9 @@
 import { Routes, Route } from "react-router-dom";
-import MainLayout from "@/components/Layout/MainLayout";
-import PublicLayout from "@/components/Layout/PublicLayout";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { MainLayout } from "@/components/Layout/MainLayout";
+import { PublicLayout } from "@/components/Layout/PublicLayout";
+
+// Page imports
 import Home from "@/pages/Home";
 import Login from "@/pages/auth/Login";
 import Dashboard from "@/pages/Dashboard";
@@ -18,7 +21,6 @@ import FAQ from "@/pages/admin/FAQ";
 import ActivityLog from "@/pages/admin/ActivityLog";
 import HomeContent from "@/pages/admin/HomeContent";
 import Travels from "@/pages/sponsor/Travels";
-import { useAuth } from "./components/Auth/AuthProvider";
 
 export const Router = () => {
   const { user } = useAuth();
@@ -29,7 +31,6 @@ export const Router = () => {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/children/:id" element={<ChildProfile />} />
         <Route path="/children" element={<Children />} />
         <Route path="/donations" element={<Donations />} />
       </Route>
@@ -39,6 +40,8 @@ export const Router = () => {
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/add-child" element={<AddChild />} />
+          <Route path="/children/add" element={<AddChild />} />
+          <Route path="/children/:id" element={<ChildProfile />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/sponsor-space" element={<SponsorSpace />} />
           <Route path="/settings" element={<Settings />} />
