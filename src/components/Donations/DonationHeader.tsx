@@ -1,6 +1,7 @@
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DonationHeaderProps {
   donation: {
@@ -11,12 +12,30 @@ interface DonationHeaderProps {
 }
 
 export const DonationHeader = ({ donation }: DonationHeaderProps) => {
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      donationBy: "Don par",
+      completed: "Complété",
+      inProgress: "En cours"
+    },
+    es: {
+      donationBy: "Donación por",
+      completed: "Completado",
+      inProgress: "En progreso"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
+  const locale = language === 'es' ? es : fr;
+
   return (
     <div className="flex justify-between items-start">
       <div>
-        <h3 className="font-semibold">Don par {donation.assistant_name}</h3>
+        <h3 className="font-semibold">{t.donationBy} {donation.assistant_name}</h3>
         <p className="text-sm text-gray-600">
-          {format(new Date(donation.donation_date), 'dd MMMM yyyy', { locale: fr })}
+          {format(new Date(donation.donation_date), 'dd MMMM yyyy', { locale })}
         </p>
       </div>
       <span
@@ -27,7 +46,7 @@ export const DonationHeader = ({ donation }: DonationHeaderProps) => {
             : "bg-yellow-100 text-yellow-800"
         )}
       >
-        {donation.status === "completed" ? "Complété" : "En cours"}
+        {donation.status === "completed" ? t.completed : t.inProgress}
       </span>
     </div>
   );

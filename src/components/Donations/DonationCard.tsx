@@ -7,6 +7,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { useDonationDelete } from "./hooks/useDonationDelete";
 import { useDonationMedia } from "./hooks/useDonationMedia";
 import { useDonationEdit } from "./hooks/useDonationEdit";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DonationCardProps {
   donation: {
@@ -29,9 +30,21 @@ export const DonationCard = ({
   isAdmin = false
 }: DonationCardProps) => {
   const { user } = useAuth();
+  const { language } = useLanguage();
   const { handleDelete } = useDonationDelete(onDelete);
   const { photos, videos, refetchPhotos, refetchVideos } = useDonationMedia(donation.id);
   const { showEditDialog, setShowEditDialog, handleSaveEdit } = useDonationEdit();
+
+  const translations = {
+    fr: {
+      comments: "Commentaires"
+    },
+    es: {
+      comments: "Comentarios"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   // Détermine si l'utilisateur peut supprimer en fonction de son rôle
   const userCanDelete = user?.role === 'admin' || user?.role === 'assistant';
@@ -51,7 +64,7 @@ export const DonationCard = ({
         
         {donation.comments && (
           <div>
-            <p className="text-gray-500">Commentaires</p>
+            <p className="text-gray-500">{t.comments}</p>
             <p className="text-sm">{donation.comments}</p>
           </div>
         )}

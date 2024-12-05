@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Edit, Trash2 } from "lucide-react";
 import { DonationHeader } from "./DonationHeader";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -35,6 +36,29 @@ export const DonationCardHeader = ({
   onEdit,
   onDelete,
 }: DonationCardHeaderProps) => {
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      edit: "Modifier",
+      delete: "Supprimer",
+      areYouSure: "Êtes-vous sûr ?",
+      deleteWarning: "Cette action est irréversible. Le don et toutes les données associées seront définitivement supprimés.",
+      cancel: "Annuler",
+      confirm: "Confirmer"
+    },
+    es: {
+      edit: "Editar",
+      delete: "Eliminar",
+      areYouSure: "¿Está seguro?",
+      deleteWarning: "Esta acción es irreversible. La donación y todos los datos asociados se eliminarán permanentemente.",
+      cancel: "Cancelar",
+      confirm: "Confirmar"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
+
   return (
     <div className="flex justify-between items-start">
       <DonationHeader donation={donation} />
@@ -46,7 +70,7 @@ export const DonationCardHeader = ({
           className="flex items-center gap-2"
         >
           <Edit className="w-4 h-4" />
-          Modifier
+          {t.edit}
         </Button>
         {(isAdmin || canDelete) && onDelete && (
           <AlertDialog>
@@ -57,21 +81,20 @@ export const DonationCardHeader = ({
                 className="flex items-center gap-2"
               >
                 <Trash2 className="w-4 h-4" />
-                Supprimer
+                {t.delete}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                <AlertDialogTitle>{t.areYouSure}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Cette action est irréversible. Le don et toutes les données
-                  associées seront définitivement supprimés.
+                  {t.deleteWarning}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
                 <AlertDialogAction onClick={onDelete}>
-                  Confirmer
+                  {t.confirm}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
