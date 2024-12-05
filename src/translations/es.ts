@@ -1,30 +1,18 @@
-export const spanishTranslations = {
-  // Auth
-  signIn: "Iniciar sesión",
-  signUp: "Registrarse",
-  signOut: "Cerrar sesión",
+export default {
+  // Auth related
+  login: "Iniciar sesión",
+  logout: "Cerrar sesión",
   email: "Correo electrónico",
   password: "Contraseña",
   forgotPassword: "¿Olvidaste tu contraseña?",
   resetPassword: "Restablecer contraseña",
-  confirmPassword: "Confirmar contraseña",
   
-  // Navigation and common sections
-  home: "Inicio",
-  profile: "Perfil",
-  settings: "Configuración",
-  dashboard: "Panel de control",
-  sponsors: "Padrinos",
+  // Navigation
+  dashboard: "Panel",
+  children: "Niños",
   donations: "Donaciones",
   messages: "Mensajes",
-  about: "Acerca de",
-  contact: "Contacto",
-  children: "Niños",
-  statistics: "Estadísticas",
-  travels: "Viajes",
-  faq: "Preguntas frecuentes",
-  activity: "Registro de actividad",
-  permissions: "Permisos",
+  settings: "Ajustes",
   
   // Common actions
   save: "Guardar",
@@ -34,25 +22,26 @@ export const spanishTranslations = {
   confirm: "Confirmar",
   back: "Volver",
   next: "Siguiente",
-  submit: "Enviar",
+  previous: "Anterior",
   search: "Buscar",
   filter: "Filtrar",
-  view: "Ver",
-  add: "Agregar",
-  remove: "Eliminar",
-  update: "Actualizar",
+  clear: "Limpiar",
+  upload: "Subir",
+  download: "Descargar",
   
-  // Child related
-  addChild: "Agregar niño",
-  editChild: "Editar niño",
-  deleteChild: "Eliminar niño",
-  childName: "Nombre del niño",
-  childAge: "Edad del niño",
-  childGender: "Género del niño",
-  childLocation: "Ubicación del niño",
-  childDescription: "Descripción del niño",
-  childStory: "Historia del niño",
-  childNeeds: "Necesidades del niño",
+  // Profile related
+  profile: "Perfil",
+  name: "Nombre",
+  age: "Edad",
+  gender: "Género",
+  male: "Masculino",
+  female: "Femenino",
+  birthDate: "Fecha de nacimiento",
+  address: "Dirección",
+  phone: "Teléfono",
+  
+  // Sponsorship status
+  sponsor: "Padrino",
   sponsored: "Apadrinado",
   available: "Disponible",
   by: "por",
@@ -62,7 +51,6 @@ export const spanishTranslations = {
   // Time related
   years: "años",
   months: "meses",
-  days: "días",
   today: "Hoy",
   yesterday: "Ayer",
   tomorrow: "Mañana",
@@ -73,35 +61,28 @@ export const spanishTranslations = {
   warning: "Advertencia",
   info: "Información",
   loading: "Cargando...",
-  noResults: "Sin resultados",
-  confirmDelete: "¿Estás seguro de que deseas eliminar?",
+  noResults: "No se encontraron resultados",
+  noData: "No hay datos disponibles",
   
-  // Form fields
-  required: "Requerido",
-  optional: "Opcional",
-  invalidEmail: "Correo electrónico inválido",
-  invalidPassword: "Contraseña inválida",
-  passwordMismatch: "Las contraseñas no coinciden",
+  // Form validation
+  required: "Este campo es obligatorio",
+  invalid: "Este campo no es válido",
+  minLength: "Este campo debe tener al menos {0} caracteres",
+  maxLength: "Este campo debe tener como máximo {0} caracteres",
   
-  // Content sections
+  // Child profile
+  photo: "Foto",
   description: "Descripción",
-  details: "Detalles",
-  summary: "Resumen",
+  city: "Ciudad",
   comments: "Comentarios",
-  photos: "Fotos",
-  documents: "Documentos",
-  history: "Historial",
   story: "Historia",
   needs: "Necesidades",
 
   // Children filters translations
   searchPlaceholder: "Buscar niños...",
-  city: "Ciudad",
   allCities: "Todas las ciudades",
   gender: "Género",
   allGenders: "Todos los géneros",
-  masculine: "Masculino",
-  feminine: "Femenino",
   age: "Edad",
   allAges: "Todas las edades",
   status: "Estado",

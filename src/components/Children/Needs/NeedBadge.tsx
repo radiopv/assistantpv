@@ -13,16 +13,6 @@ interface NeedBadgeProps {
   onClose?: () => void;
 }
 
-const NEED_CATEGORIES = {
-  education: "Educación",
-  jouet: "Juguetes",
-  vetement: "Ropa",
-  nourriture: "Alimentación",
-  medicament: "Medicamentos",
-  hygiene: "Higiene",
-  autre: "Otros"
-};
-
 const CATEGORY_STYLES = {
   education: "bg-yellow-400 hover:bg-yellow-500 text-black",
   jouet: "bg-gray-100 hover:bg-gray-200 text-gray-900",
@@ -46,6 +36,27 @@ export const NeedBadge = ({
 }: NeedBadgeProps) => {
   const { t } = useLanguage();
 
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case 'education':
+        return 'Educación';
+      case 'jouet':
+        return 'Juguetes';
+      case 'vetement':
+        return 'Ropa';
+      case 'nourriture':
+        return 'Alimentación';
+      case 'medicament':
+        return 'Medicamentos';
+      case 'hygiene':
+        return 'Higiene';
+      case 'autre':
+        return 'Otros';
+      default:
+        return category;
+    }
+  };
+
   return (
     <div className="relative">
       <Button 
@@ -53,7 +64,7 @@ export const NeedBadge = ({
         className={`w-full justify-center px-4 py-2 rounded-md transition-colors ${CATEGORY_STYLES[category as keyof typeof CATEGORY_STYLES]}`}
         onClick={onNeedClick}
       >
-        {NEED_CATEGORIES[category as keyof typeof NEED_CATEGORIES]}
+        {getCategoryLabel(category)}
         {isUrgent && <span className="ml-2 text-red-600 font-bold">(!)</span>}
       </Button>
     </div>
