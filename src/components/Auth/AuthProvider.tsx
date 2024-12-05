@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface AuthContextType {
   user: any | null;
   loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   isAssistant: boolean;
   session: any | null;
@@ -14,6 +15,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  signIn: async () => {},
   signOut: async () => {},
   isAssistant: false,
   session: null,
@@ -60,6 +62,49 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkAuth();
   }, [navigate]);
 
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('email', email)
+        .eq('password_hash', password)
+        .single();
+
+      if (error) throw error;
+      
+      if (data) {
+        localStorage.setItem('user', JSON.stringify(data));
+        setUser(data);
+        setIsAssistant(['assistant', 'admin'].includes(data.role));
+        
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue !",
+        });
+
+        if (data.role === 'admin' || data.role === 'assistant') {
+          navigate('/dashboard');
+        } else {
+          navigate('/');
+        }
+      } else {
+        toast({
+          title: "Erreur de connexion",
+          description: "Email ou mot de passe incorrect",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error signing in:", error);
+      toast({
+        title: "Erreur de connexion",
+        description: "Une erreur est survenue",
+        variant: "destructive",
+      });
+    }
+  };
+
   const signOut = async () => {
     try {
       localStorage.removeItem('user');
@@ -81,7 +126,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut, isAssistant, session: user }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut, isAssistant, session: user }}>
       {!loading && children}
     </AuthContext.Provider>
   );
