@@ -8,7 +8,7 @@ type Language = 'fr' | 'es';
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: keyof Translations) => string;
+  t: (key: string) => string;
   addTranslation: (key: string, value: string, language: Language) => void;
 }
 
@@ -21,10 +21,10 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     es: spanishTranslations
   });
 
-  const t = (key: keyof Translations): string => {
-    const translation = translations[language][key];
+  const t = (key: string): string => {
+    const translation = translations[language][key as keyof typeof translations[typeof language]];
     if (!translation) {
-      console.warn(`Missing translation for key: ${key} in ${language}`);
+      // Au lieu de logger une erreur, on retourne simplement la clé
       return key;
     }
     return translation;
