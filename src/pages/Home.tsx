@@ -8,17 +8,18 @@ import { TestimonialsSection } from "@/components/Home/TestimonialsSection";
 import { Heart, Handshake, ChartBar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { DashboardStats } from "@/types/dashboard";
 
 const Home = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<DashboardStats>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_dashboard_statistics');
       if (error) throw error;
-      return data;
+      return data as DashboardStats;
     }
   });
 
