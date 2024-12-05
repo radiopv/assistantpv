@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInYears, parseISO } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Need } from "@/types/needs";
+import { Need, convertJsonToNeeds } from "@/types/needs";
 
 const AvailableChildren = () => {
   const navigate = useNavigate();
@@ -105,11 +105,11 @@ const AvailableChildren = () => {
                 </div>
               </div>
 
-              {Array.isArray(child.needs) && child.needs.length > 0 && (
+              {child.needs && (
                 <div>
                   <h4 className="font-medium mb-2">{t("needs")}</h4>
                   <div className="flex flex-wrap gap-2">
-                    {(child.needs as Need[]).map((need, index) => (
+                    {convertJsonToNeeds(child.needs).map((need, index) => (
                       <Badge 
                         key={`${need.category}-${index}`}
                         variant={need.is_urgent ? "destructive" : "secondary"}
