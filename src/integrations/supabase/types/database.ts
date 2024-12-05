@@ -962,7 +962,7 @@ export type Database = {
           id?: string;
           last_checked?: string | null;
           page_url?: string;
-          redirect_url?: string | null;
+          redirect_url?: string;
           status?: string;
           updated_at?: string | null;
           url?: string;
@@ -1286,7 +1286,7 @@ export type Database = {
           created_at?: string | null;
           description?: string | null;
           id?: string;
-          name?: string;
+          name: string;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -1517,7 +1517,7 @@ export type Database = {
           created_at?: string | null;
           data?: Json | null;
           execute_at?: string;
-          id?: string;
+          id: string;
           last_attempt?: string | null;
           status?: string | null;
           task_type?: string;
@@ -1653,7 +1653,7 @@ export type Database = {
           created_at?: string | null;
           description?: string | null;
           id?: string;
-          type?: string;
+          type: string;
           updated_at?: string | null;
           url?: string;
         };
