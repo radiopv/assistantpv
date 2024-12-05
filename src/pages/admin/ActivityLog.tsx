@@ -9,6 +9,14 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Activity, User } from "lucide-react";
 import { type ActivityLogType } from "@/types/activity";
+import { Database } from "@/integrations/supabase/types";
+
+type ActivityLogWithProfile = Database['public']['Tables']['activity_logs']['Row'] & {
+  profiles: {
+    id: string;
+    role: string;
+  } | null;
+};
 
 const ActivityLog = () => {
   const { toast } = useToast();
@@ -41,7 +49,7 @@ const ActivityLog = () => {
       console.log('Raw data from Supabase:', data);
       
       // Transform the data to match ActivityLogType
-      const transformedData = data.map(item => {
+      const transformedData = (data as ActivityLogWithProfile[]).map(item => {
         console.log('Processing item:', item);
         return {
           id: item.id,
