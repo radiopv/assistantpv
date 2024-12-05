@@ -94,7 +94,6 @@ export const DonationBasicInfo = ({
         <Select 
           value={assistantName} 
           onValueChange={onAssistantNameChange}
-          defaultValue={assistantOptions[0]}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder={t.selectAssistant} />
