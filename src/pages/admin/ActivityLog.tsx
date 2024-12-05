@@ -12,10 +12,7 @@ import { type ActivityLogType } from "@/types/activity";
 import { Database } from "@/integrations/supabase/types";
 
 type ActivityLogWithProfile = Database['public']['Tables']['activity_logs']['Row'] & {
-  profiles: {
-    id: string;
-    role: string;
-  } | null;
+  profiles: Database['public']['Tables']['profiles']['Row'] | null;
 };
 
 const ActivityLog = () => {
@@ -28,11 +25,7 @@ const ActivityLog = () => {
       const { data, error } = await supabase
         .from('activity_logs')
         .select(`
-          id,
-          user_id,
-          action,
-          details,
-          created_at,
+          *,
           profiles:user_id (
             id,
             role
@@ -49,7 +42,7 @@ const ActivityLog = () => {
       console.log('Raw data from Supabase:', data);
       
       // Transform the data to match ActivityLogType
-      const transformedData = (data as ActivityLogWithProfile[]).map(item => {
+      const transformedData = (data as unknown as ActivityLogWithProfile[]).map(item => {
         console.log('Processing item:', item);
         return {
           id: item.id,
