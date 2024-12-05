@@ -1,15 +1,6 @@
 import { Database } from "../base";
 
-export interface Sponsorship {
-  id: string;
-  child_id: string;
-  sponsor_id: string;
-  start_date: string;
-  end_date?: string;
-  status: "active" | "pending" | "ended";
-  created_at?: string;
-  updated_at?: string;
-}
+export type Sponsorship = Database["public"]["Tables"]["sponsorships"]["Row"];
 
 export interface SponsorshipWithDetails extends Sponsorship {
   child: {
