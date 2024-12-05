@@ -47,7 +47,10 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       errorMessage: "Por favor, seleccione al menos una categoría y complete todos los campos obligatorios.",
       donationRegistered: "Donación registrada",
       successMessage: "La donación se ha registrado con éxito.",
-      errorSaving: "Ocurrió un error al guardar la donación."
+      errorSaving: "Ocurrió un error al guardar la donación.",
+      photos: "Fotos",
+      submit: "Enviar donación",
+      loading: "Enviando..."
     }
   };
 

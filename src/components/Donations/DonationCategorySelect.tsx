@@ -46,6 +46,28 @@ export const DonationCategorySelect = ({ selectedCategories, onSelectCategory }:
     return defaultCategory.icon;
   };
 
+  const getCategoryName = (category: any) => {
+    if (language === 'es') {
+      switch (category.name.toLowerCase()) {
+        case 'monétaire':
+          return 'Monetario';
+        case 'vêtements':
+          return 'Ropa';
+        case 'nourriture':
+          return 'Alimentos';
+        case 'éducation':
+          return 'Educación';
+        case 'médical':
+          return 'Médico';
+        case 'autre':
+          return 'Otro';
+        default:
+          return category.name;
+      }
+    }
+    return category.name;
+  };
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-2">
       {categories?.map((category) => {
@@ -60,7 +82,7 @@ export const DonationCategorySelect = ({ selectedCategories, onSelectCategory }:
             onClick={() => onSelectCategory(category.id)}
           >
             <Icon className="w-6 h-6" />
-            <span className="text-sm text-center">{language === 'es' ? category.name : category.name}</span>
+            <span className="text-sm text-center">{getCategoryName(category)}</span>
           </Button>
         );
       })}
