@@ -32,5 +32,12 @@ export const childrenTranslations = {
   profileUpdateError: "Une erreur est survenue lors de la mise à jour du profil",
   childDeleted: "Enfant supprimé",
   childDeleteSuccess: "L'enfant a été supprimé avec succès",
-  childDeleteError: "Une erreur est survenue lors de la suppression de l'enfant"
+  childDeleteError: "Une erreur est survenue lors de la suppression de l'enfant",
+  availableChildren: "Enfants disponibles au parrainage",
+  availableChildrenDescription: "Découvrez les enfants qui attendent un parrain ou une marraine. Chaque enfant a sa propre histoire et ses propres besoins.",
+  becomeSponsor: "Devenir parrain/marraine",
+  description: "Description",
+  story: "Histoire",
+  needs: "Besoins",
+  years: "ans",
 };

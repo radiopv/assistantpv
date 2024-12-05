@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { Menu, LayoutDashboard } from "lucide-react";
+import { Menu, LayoutDashboard, Users } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -19,6 +19,11 @@ const PublicLayout = () => {
       href: "/",
       label: "Accueil",
       icon: LayoutDashboard,
+    },
+    {
+      href: "/available-children",
+      label: "Enfants disponibles",
+      icon: Users,
     },
   ];
 

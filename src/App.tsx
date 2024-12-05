@@ -22,6 +22,7 @@ import ActivityLog from "@/pages/admin/ActivityLog";
 import Travels from "@/pages/sponsor/Travels";
 import Home from "@/pages/Home";
 import HomeContent from "@/pages/admin/HomeContent";
+import AvailableChildren from "@/pages/AvailableChildren";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ function App() {
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/available-children" element={<AvailableChildren />} />
               </Route>
               
               {/* Protected routes */}
