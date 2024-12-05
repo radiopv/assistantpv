@@ -14,7 +14,8 @@ import {
   BarChart2,
   Activity,
   Languages,
-  LayoutDashboard
+  LayoutDashboard,
+  UserPlus
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -60,7 +61,8 @@ const Sidebar = () => {
         { icon: BarChart2, label: t("statistics"), path: "/admin/statistics" },
         { icon: HelpCircle, label: t("faq"), path: "/admin/faq" },
         { icon: Activity, label: t("activityLog"), path: "/admin/activity" },
-        { icon: LayoutDashboard, label: t("homeContent"), path: "/admin/home-content" }
+        { icon: LayoutDashboard, label: t("homeContent"), path: "/admin/home-content" },
+        { icon: UserPlus, label: "Demandes de parrainage", path: "/admin/sponsorship-requests" }
       ]
     }
   ];

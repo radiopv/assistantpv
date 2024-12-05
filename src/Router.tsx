@@ -20,6 +20,7 @@ import Statistics from "@/pages/admin/Statistics";
 import FAQ from "@/pages/admin/FAQ";
 import ActivityLog from "@/pages/admin/ActivityLog";
 import HomeContent from "@/pages/admin/HomeContent";
+import SponsorshipRequests from "@/pages/admin/SponsorshipRequests";
 import Travels from "@/pages/sponsor/Travels";
 import AvailableChildren from "@/pages/AvailableChildren";
 import BecomeSponsor from "@/pages/BecomeSponsor";
@@ -55,6 +56,7 @@ export const Router = () => {
           <Route path="/admin/faq" element={<FAQ />} />
           <Route path="/admin/activity" element={<ActivityLog />} />
           <Route path="/admin/home-content" element={<HomeContent />} />
+          <Route path="/admin/sponsorship-requests" element={<SponsorshipRequests />} />
           <Route path="/sponsor/travels" element={<Travels />} />
         </Route>
       )}
