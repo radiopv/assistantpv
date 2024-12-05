@@ -7,9 +7,7 @@ import { ErrorAlert } from "@/components/ErrorAlert";
 import { toast } from "sonner";
 import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
 import { DetailedStats } from "@/components/Dashboard/DetailedStats";
-import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
-import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DashboardStats } from "@/types/dashboard";
@@ -90,29 +88,9 @@ const Dashboard = () => {
       <DashboardHeader stats={stats} />
       <DetailedStats />
       
-      <div className="space-y-8">
-        {isAdmin && (
-          <>
-            <SponsorshipStats />
-            <div className="grid gap-4 md:grid-cols-2">
-              <UserEngagementStats />
-            </div>
-            <AssistantStats />
-          </>
-        )}
-        
-        {user?.role === 'assistant' && (
-          <>
-            <AssistantStats />
-          </>
-        )}
-        
-        {user?.role === 'sponsor' && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <UserEngagementStats />
-          </div>
-        )}
-      </div>
+      {isAdmin && (
+        <AssistantStats />
+      )}
     </div>
   );
 };
