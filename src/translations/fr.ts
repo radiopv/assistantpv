@@ -143,5 +143,14 @@ export const frenchTranslations = {
   available: "Disponible",
   sponsored: "Parrainé",
   pending: "En attente",
-  urgent: "Urgent"
+  urgent: "Urgent",
+
+  // Delete child related
+  childDeleted: "Enfant supprimé",
+  childDeleteSuccess: "L'enfant a été supprimé avec succès",
+  childDeleteError: "Une erreur est survenue lors de la suppression de l'enfant",
+  confirmDeleteChild: "Êtes-vous sûr de vouloir supprimer cet enfant ?",
+  confirmDeleteChildDescription: "Cette action est irréversible. Toutes les données associées à cet enfant seront supprimées définitivement.",
+  delete: "Supprimer",
+  cancel: "Annuler"
 };
