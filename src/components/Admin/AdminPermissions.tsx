@@ -30,6 +30,7 @@ const pagePermissions: Permission[] = [
   { page: "donations", label: "Dons", description: "Accès aux dons" },
   { page: "media", label: "Médias", description: "Accès à la gestion des médias" },
   { page: "messages", label: "Messages", description: "Accès aux messages" },
+  { page: "sponsor_space", label: "Espace Parrain", description: "Accès à l'espace parrain" },
 ];
 
 const actionPermissions: Permission[] = [
@@ -39,6 +40,7 @@ const actionPermissions: Permission[] = [
   { page: "delete_donations", label: "Supprimer les dons", description: "Autoriser la suppression des dons" },
   { page: "edit_media", label: "Modifier les médias", description: "Autoriser la modification des médias" },
   { page: "delete_media", label: "Supprimer des médias", description: "Autoriser la suppression des médias" },
+  { page: "view_sponsored_children", label: "Voir les enfants parrainés", description: "Autoriser la visualisation des enfants parrainés" },
 ];
 
 export const AdminPermissions = () => {

@@ -32,6 +32,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   const location = useLocation();
 
   const isAdmin = user?.role === 'admin';
+  const isSponsor = user?.role === 'sponsor';
 
   const assistantLinks = [
     {
@@ -102,6 +103,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       label: "Journal d'activité",
       icon: Activity,
       show: isAdmin,
+    },
+    {
+      href: "/sponsor-space",
+      label: "Espace Parrain",
+      icon: Users,
+      show: isAdmin || isSponsor,
     },
   ];
 
