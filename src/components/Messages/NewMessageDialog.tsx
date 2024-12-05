@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, Send, Users } from "lucide-react";
 
 interface Recipient {
   id: string;
@@ -34,7 +34,6 @@ export const NewMessageDialog = () => {
 
     let query = supabase.from("sponsors").select("id, name, role");
 
-    // Filtrer les destinataires en fonction du rôle de l'utilisateur
     if (userData?.role === "sponsor") {
       query = query.in("role", ["admin", "assistant"]);
     } else if (userData?.role === "assistant") {
@@ -102,7 +101,10 @@ export const NewMessageDialog = () => {
       if (isOpen) loadRecipients();
     }}>
       <DialogTrigger asChild>
-        <Button>Nouveau message</Button>
+        <Button className="gap-2">
+          <Send className="h-4 w-4" />
+          Nouveau message
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
@@ -110,7 +112,10 @@ export const NewMessageDialog = () => {
         </DialogHeader>
         <div className="space-y-4 mt-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Destinataire</label>
+            <label className="text-sm font-medium flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Destinataire
+            </label>
             <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionner un destinataire" />
@@ -145,8 +150,9 @@ export const NewMessageDialog = () => {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Annuler
             </Button>
-            <Button onClick={handleSubmit} disabled={loading}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button onClick={handleSubmit} disabled={loading} className="gap-2">
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+              <Send className="h-4 w-4" />
               Envoyer
             </Button>
           </div>

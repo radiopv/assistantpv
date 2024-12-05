@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Mail, MailOpen, User } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -48,6 +48,25 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
     } catch (error) {
       console.error("Error deleting message:", error);
       toast.error("Erreur lors de la suppression du message");
+    }
+  };
+
+  const markAsRead = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from("messages")
+        .update({ is_read: true })
+        .eq("id", messageId);
+
+      if (error) throw error;
+
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === messageId ? { ...msg, is_read: true } : msg
+        )
+      );
+    } catch (error) {
+      console.error("Error marking message as read:", error);
     }
   };
 
@@ -121,10 +140,11 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
           {messages.map((message) => (
             <div
               key={message.id}
-              className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+              className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-gray-500" />
                   <span className="font-semibold">{message.sender?.name}</span>
                   <Badge variant={message.sender?.role === "admin" ? "destructive" : "secondary"}>
                     {message.sender?.role}
@@ -140,6 +160,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
                   <Button
                     variant="destructive"
                     size="icon"
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteMessage(message.id);
@@ -149,11 +170,26 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
                   </Button>
                 </div>
               </div>
-              <div onClick={() => onSelectMessage(message)}>
-                <h3 className="font-medium mb-1">{message.subject}</h3>
-                <p className="text-sm text-gray-600 line-clamp-2">{message.content}</p>
+              <div 
+                onClick={() => {
+                  onSelectMessage(message);
+                  if (!message.is_read) {
+                    markAsRead(message.id);
+                  }
+                }}
+                className="space-y-2"
+              >
+                <div className="flex items-center gap-2">
+                  {message.is_read ? (
+                    <MailOpen className="h-4 w-4 text-gray-400" />
+                  ) : (
+                    <Mail className="h-4 w-4 text-primary" />
+                  )}
+                  <h3 className="font-medium">{message.subject}</h3>
+                </div>
+                <p className="text-sm text-gray-600 line-clamp-2 pl-6">{message.content}</p>
                 {!message.is_read && (
-                  <Badge className="mt-2" variant="default">
+                  <Badge className="ml-6" variant="default">
                     Nouveau
                   </Badge>
                 )}
