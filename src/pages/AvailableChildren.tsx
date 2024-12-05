@@ -1,16 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
-import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
+import { ChildCard } from "@/components/Children/AvailableChildrenList/ChildCard";
+import { useState } from "react";
 import { differenceInYears, parseISO } from "date-fns";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Need, convertJsonToNeeds } from "@/types/needs";
+import { Loader2 } from "lucide-react";
 
 const AvailableChildren = () => {
   const navigate = useNavigate();
@@ -19,7 +15,7 @@ const AvailableChildren = () => {
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
   const [selectedAge, setSelectedAge] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("available");
+  const [selectedStatus] = useState("available");
 
   const { data: children, isLoading } = useQuery({
     queryKey: ['available-children'],
@@ -27,6 +23,7 @@ const AvailableChildren = () => {
       const { data, error } = await supabase
         .from('children')
         .select('*')
+        .eq('is_sponsored', false)
         .order('name');
 
       if (error) throw error;
@@ -46,11 +43,12 @@ const AvailableChildren = () => {
     const matchesGender = selectedGender === "all" || child.gender === selectedGender;
     const matchesAge = selectedAge === "all" || differenceInYears(new Date(), parseISO(child.birth_date)) === parseInt(selectedAge);
     
-    // Use sponsor_name to determine if child is sponsored
-    const matchesStatus = selectedStatus === "available" ? !child.sponsor_name : !!child.sponsor_name;
-    
-    return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
+    return matchesSearch && matchesCity && matchesGender && matchesAge;
   });
+
+  const handleViewProfile = (id: string) => {
+    navigate(`/become-sponsor/${id}`);
+  };
 
   if (isLoading) {
     return (
@@ -81,79 +79,18 @@ const AvailableChildren = () => {
         onCityChange={setSelectedCity}
         onGenderChange={setSelectedGender}
         onAgeChange={setSelectedAge}
-        onStatusChange={setSelectedStatus}
+        onStatusChange={() => {}}
         cities={cities}
         ages={ages}
       />
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredChildren?.map((child) => (
-          <Card key={child.id} className="overflow-hidden">
-            <div className="aspect-video relative">
-              <img
-                src={child.photo_url || "/placeholder.svg"}
-                alt={child.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            <div className="p-4 space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold">{child.name}</h3>
-                <div className="mt-1 text-sm text-gray-600">
-                  <p>{differenceInYears(new Date(), parseISO(child.birth_date))} {t("years")}</p>
-                  <p>{child.city}</p>
-                  <p>{child.gender === 'M' ? t("masculine") : t("feminine")}</p>
-                  {child.sponsor_name && (
-                    <p className="text-blue-600 font-medium mt-2">
-                      {t("sponsor")}: {child.sponsor_name}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {child.needs && (
-                <div>
-                  <h4 className="font-medium mb-2">{t("needs")}</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {convertJsonToNeeds(child.needs).map((need, index) => (
-                      <Badge 
-                        key={`${need.category}-${index}`}
-                        variant={need.is_urgent ? "destructive" : "secondary"}
-                      >
-                        {need.category}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {child.description && (
-                <div>
-                  <h4 className="font-medium mb-2">{t("description")}</h4>
-                  <ScrollArea className="h-24">
-                    <p className="text-sm text-gray-600">{child.description}</p>
-                  </ScrollArea>
-                </div>
-              )}
-
-              {child.story && (
-                <div>
-                  <h4 className="font-medium mb-2">{t("story")}</h4>
-                  <ScrollArea className="h-24">
-                    <p className="text-sm text-gray-600">{child.story}</p>
-                  </ScrollArea>
-                </div>
-              )}
-
-              <Button 
-                className="w-full"
-                onClick={() => navigate(`/become-sponsor/${child.id}`)}
-              >
-                {t("becomeSponsor")}
-              </Button>
-            </div>
-          </Card>
+          <ChildCard
+            key={child.id}
+            child={child}
+            onViewProfile={handleViewProfile}
+          />
         ))}
       </div>
     </div>

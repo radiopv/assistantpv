@@ -21,6 +21,7 @@ import FAQ from "@/pages/admin/FAQ";
 import ActivityLog from "@/pages/admin/ActivityLog";
 import HomeContent from "@/pages/admin/HomeContent";
 import Travels from "@/pages/sponsor/Travels";
+import AvailableChildren from "@/pages/AvailableChildren";
 
 export const Router = () => {
   const { user } = useAuth();
@@ -31,6 +32,7 @@ export const Router = () => {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/available-children" element={<AvailableChildren />} />
       </Route>
 
       {/* Protected Routes */}
