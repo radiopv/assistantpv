@@ -26,7 +26,7 @@ import { useAuth } from "@/components/Auth/AuthProvider"; // New import
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
 export const DetailedStats = () => {
-  const { user } = useAuth(); // New line
+  const { user } = useAuth();
   const { t } = useLanguage();
 
   const { data: urgentNeeds, isLoading: urgentLoading, error: urgentError } = useQuery({
@@ -39,8 +39,9 @@ export const DetailedStats = () => {
       
       if (error) throw error;
 
-      if (user) {
-        await logActivity(user.id, "A consulté les besoins urgents"); // New line
+      // Only log activity if user exists
+      if (user?.id) {
+        await logActivity(user.id, "A consulté les besoins urgents");
       }
 
       return data.filter(child => {
