@@ -36,7 +36,7 @@ export type Database = {
             foreignKeyName: "activity_logs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
         ]
