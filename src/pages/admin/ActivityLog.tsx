@@ -26,7 +26,7 @@ const ActivityLog = () => {
         .from('activity_logs')
         .select(`
           *,
-          profiles:user_id (
+          profiles (
             id,
             role
           )
