@@ -20,7 +20,30 @@ const Donations = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<string>("date");
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      donationsTitle: "Dons",
+      donationsSubtitle: "Gérez et suivez tous les dons effectués",
+      close: "Fermer",
+      addDonation: "Ajouter un don",
+      noDonationsFound: "Aucun don trouvé",
+      loading: "Chargement...",
+      error: "Une erreur est survenue"
+    },
+    es: {
+      donationsTitle: "Donaciones",
+      donationsSubtitle: "Gestione y realice un seguimiento de todas las donaciones realizadas",
+      close: "Cerrar",
+      addDonation: "Agregar donación",
+      noDonationsFound: "No se encontraron donaciones",
+      loading: "Cargando...",
+      error: "Ha ocurrido un error"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
   
   const { data: donations, isLoading, error, refetch } = useQuery({
     queryKey: ['donations'],
@@ -86,7 +109,7 @@ const Donations = () => {
     return (
       <div className="space-y-6">
         <ErrorAlert 
-          message={t('errorMessage')}
+          message={t.error}
           retry={() => refetch()}
         />
       </div>
@@ -119,15 +142,15 @@ const Donations = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('donationsTitle')}</h1>
-          <p className="text-gray-600 mt-2">{t('donationsSubtitle')}</p>
+          <h1 className="text-3xl font-bold text-gray-900">{t.donationsTitle}</h1>
+          <p className="text-gray-600 mt-2">{t.donationsSubtitle}</p>
         </div>
         <Button 
           className="bg-primary hover:bg-primary/90"
           onClick={() => setShowForm(!showForm)}
         >
           <Plus className="w-4 h-4 mr-2" />
-          {showForm ? t('close') : t('addDonation')}
+          {showForm ? t.close : t.addDonation}
         </Button>
       </div>
 
@@ -167,7 +190,7 @@ const Donations = () => {
             </div>
           ) : (
             <p className="text-center text-gray-600">
-              {t('noDonationsFound')}
+              {t.noDonationsFound}
             </p>
           )}
         </div>
