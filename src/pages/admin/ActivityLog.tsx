@@ -52,7 +52,7 @@ const ActivityLog = () => {
           created_at: item.created_at,
           user: {
             name: `Utilisateur ${item.user_id.slice(0, 8)}`,
-            role: item.profiles?.role || 'unknown'
+            role: item.profiles?.role || 'visitor'
           }
         };
       });
