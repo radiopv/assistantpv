@@ -906,6 +906,10 @@ export type Database = {
           status: string | null
           total_points: number | null
           updated_at: string | null
+          visit_end_date: string | null
+          visit_start_date: string | null
+          wants_donation_pickup: boolean | null
+          wants_to_visit_child: boolean | null
         }
         Insert: {
           address?: string | null
@@ -931,6 +935,10 @@ export type Database = {
           status?: string | null
           total_points?: number | null
           updated_at?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Update: {
           address?: string | null
@@ -956,6 +964,10 @@ export type Database = {
           status?: string | null
           total_points?: number | null
           updated_at?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Relationships: []
       }

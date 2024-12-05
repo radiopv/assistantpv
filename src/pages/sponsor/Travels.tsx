@@ -1,14 +1,13 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
-import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { toast } from "sonner";
 
 const Travels = () => {
   const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>(new Date());
@@ -32,7 +31,8 @@ const Travels = () => {
               email
             ),
             children (
-              name
+              name,
+              city
             )
           )
         `)
@@ -63,7 +63,7 @@ const Travels = () => {
   };
 
   const handleSubmit = async () => {
-    if (!validateDates()) return;
+    if (!validateDates() || !user) return;
 
     try {
       const { error } = await supabase
@@ -71,10 +71,10 @@ const Travels = () => {
         .update({
           wants_to_visit_child: wantsToVisitChild,
           wants_donation_pickup: wantsDonationPickup,
-          visit_start_date: selectedStartDate,
-          visit_end_date: selectedEndDate
+          visit_start_date: selectedStartDate.toISOString(),
+          visit_end_date: selectedEndDate.toISOString()
         })
-        .eq('id', user?.id);
+        .eq('id', user.id);
 
       if (error) throw error;
 
@@ -82,9 +82,9 @@ const Travels = () => {
       const { error: notifError } = await supabase
         .from('notifications')
         .insert({
-          type: 'new_visit_request',
           title: t("newVisitRequest"),
           content: t("newVisitRequestContent"),
+          type: 'visit_request',
           recipient_role: 'assistant'
         });
 
@@ -93,7 +93,7 @@ const Travels = () => {
       toast.success(t("visitRequestSubmitted"));
       setIsDialogOpen(false);
     } catch (error) {
-      console.error('Error updating visit preferences:', error);
+      console.error('Error scheduling visit:', error);
       toast.error(t("error"));
     }
   };
@@ -105,73 +105,64 @@ const Travels = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold mb-6">{t("travelManagement")}</h1>
-      
+    <div className="space-y-6">
       {isAssistant ? (
-        // Vue pour les assistants
-        <Card className="p-4">
-          <h2 className="text-lg font-semibold mb-4">{t("scheduledVisits")}</h2>
+        <div>
+          <h2 className="text-2xl font-bold mb-4">{t("scheduledVisits")}</h2>
           <div className="space-y-4">
-            {travels?.map((travel) => (
-              <div key={travel.id} className="p-4 border rounded-lg">
-                <div className="flex justify-between items-start">
+            {travels?.map((visit) => (
+              <div key={visit.id} className="bg-white p-4 rounded-lg shadow">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="font-medium">
-                      {travel.sponsorships?.sponsors?.name} → {travel.sponsorships?.children?.name}
+                    <p className="font-semibold">
+                      {visit.sponsorships.sponsors.name}
                     </p>
                     <p className="text-sm text-gray-600">
-                      {t("startDate")}: {new Date(travel.visit_start_date).toLocaleDateString()}
+                      {visit.sponsorships.sponsors.email}
                     </p>
-                    <p className="text-sm text-gray-600">
-                      {t("endDate")}: {new Date(travel.visit_end_date).toLocaleDateString()}
-                    </p>
-                    <div className="mt-2 space-y-1">
-                      {travel.wants_to_visit_child && (
-                        <p className="text-sm text-blue-600">{t("wantsToVisitChild")}</p>
-                      )}
-                      {travel.wants_donation_pickup && (
-                        <p className="text-sm text-green-600">{t("wantsDonationPickup")}</p>
-                      )}
-                    </div>
                   </div>
-                  <span className={`px-2 py-1 rounded text-sm ${
-                    travel.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    travel.status === 'approved' ? 'bg-green-100 text-green-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {travel.status}
-                  </span>
+                  <div>
+                    <p>
+                      {new Date(visit.visit_start_date).toLocaleDateString()} - {new Date(visit.visit_end_date).toLocaleDateString()}
+                    </p>
+                    {visit.wants_to_visit_child && (
+                      <p className="text-sm text-blue-600">
+                        {t("wantsToVisitChild")}
+                      </p>
+                    )}
+                    {visit.wants_donation_pickup && (
+                      <p className="text-sm text-green-600">
+                        {t("wantsDonationPickup")}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        </Card>
+        </div>
       ) : (
-        // Vue pour les parrains
-        <>
-          <Card className="p-4">
-            <h2 className="text-lg font-semibold mb-4">{t("scheduleNewVisit")}</h2>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>{t("scheduleVisit")}</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{t("scheduleNewVisit")}</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">{t("startDate")}</label>
+        <div>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>{t("scheduleVisit")}</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("scheduleVisit")}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    {t("date")}
+                  </label>
+                  <div className="grid grid-cols-2 gap-4">
                     <Calendar
                       mode="single"
                       selected={selectedStartDate}
                       onSelect={setSelectedStartDate}
                       className="rounded-md border"
                     />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-2">{t("endDate")}</label>
                     <Calendar
                       mode="single"
                       selected={selectedEndDate}
@@ -179,13 +170,15 @@ const Travels = () => {
                       className="rounded-md border"
                     />
                   </div>
+                </div>
+                <div className="space-y-2">
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="visitChild"
                       checked={wantsToVisitChild}
                       onCheckedChange={(checked) => setWantsToVisitChild(checked as boolean)}
                     />
-                    <label htmlFor="visitChild" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    <label htmlFor="visitChild">
                       {t("visitChild")}
                     </label>
                   </div>
@@ -195,37 +188,18 @@ const Travels = () => {
                       checked={wantsDonationPickup}
                       onCheckedChange={(checked) => setWantsDonationPickup(checked as boolean)}
                     />
-                    <label htmlFor="meetAssistant" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    <label htmlFor="meetAssistant">
                       {t("meetAssistant")}
                     </label>
                   </div>
-                  <Button onClick={handleSubmit} className="w-full">
-                    {t("submitVisit")}
-                  </Button>
                 </div>
-              </DialogContent>
-            </Dialog>
-          </Card>
-
-          <Card className="p-4">
-            <h2 className="text-lg font-semibold mb-4">{t("upcomingVisits")}</h2>
-            <div className="space-y-4">
-              {travels?.map((travel) => (
-                <div key={travel.id} className="p-4 border rounded-lg">
-                  <p className="font-medium">
-                    {travel.sponsorships?.sponsors?.name} → {travel.sponsorships?.children?.name}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {t("date")}: {new Date(travel.visit_date).toLocaleDateString()}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {t("status")}: {travel.status}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </>
+                <Button onClick={handleSubmit}>
+                  {t("submitVisit")}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       )}
     </div>
   );

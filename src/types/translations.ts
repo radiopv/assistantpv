@@ -49,6 +49,45 @@ export interface Translations {
   welcomeAdmin: string;
   genericError: string;
 
+  // Navigation
+  dashboard: string;
+  children: string;
+  donations: string;
+  messages: string;
+  settings: string;
+  permissions: string;
+  travels: string;
+  statistics: string;
+  faq: string;
+  profile: string;
+  editProfile: string;
+  welcome: string;
+
+  // Translation manager related
+  translationManager: string;
+  translationScanner: string;
+  scanMissingTranslations: string;
+  findUnusedTranslations: string;
+  detectEnglishText: string;
+  missingTranslations: string;
+  unusedTranslations: string;
+  englishTextDetected: string;
+  missingTranslationsFound: string;
+  unusedTranslationsFound: string;
+  englishTextFound: string;
+  pendingTranslations: string;
+  translationRequired: string;
+  translationApproved: string;
+  originalText: string;
+  enterTranslation: string;
+  approve: string;
+  translationError: string;
+  translationUpdated: string;
+  scanStarted: string;
+  scanError: string;
+  scanningTranslations: string;
+  scanAssistantSection: string;
+
   // Travel related translations
   dateSelected: string;
   loading: string;
@@ -71,6 +110,7 @@ export interface Translations {
   newVisitRequest: string;
   newVisitRequestContent: string;
   visitRequestSubmitted: string;
+  date: string;
 
   // Children related
   sponsored: string;
@@ -142,4 +182,16 @@ export interface Translations {
   childDeleteError: string;
   sponsorAlbum: string;
   sponsorAlbumDescription: string;
+
+  // Donations related
+  filterByCity: string;
+  totalDonations: string;
+  citiesCovered: string;
+  errorMessage: string;
+  donationsTitle: string;
+  donationsSubtitle: string;
+  addDonation: string;
+  noDonationsFound: string;
+  donationBy: string;
+  selectMessageToRead: string;
 }
