@@ -1,5 +1,5 @@
 export const frenchTranslations = {
-  // Auth
+  // Auth related
   signIn: "Se connecter",
   signUp: "S'inscrire",
   signOut: "Se déconnecter",
@@ -53,8 +53,7 @@ export const frenchTranslations = {
   childDescription: "Description de l'enfant",
   childStory: "Histoire de l'enfant",
   childNeeds: "Besoins de l'enfant",
-  sponsored: "Parrainé",
-  available: "Disponible",
+  manageDonations: "Gérer les dons et les parrainages",
   by: "par",
   
   // Time related
@@ -139,6 +138,8 @@ export const frenchTranslations = {
   allAges: "Tous les âges",
   status: "Statut",
   allStatus: "Tous les statuts",
+  
+  // Status translations (moved to a dedicated section to avoid duplicates)
   available: "Disponible",
   sponsored: "Parrainé",
   pending: "En attente",
