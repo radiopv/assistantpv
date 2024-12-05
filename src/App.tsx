@@ -15,10 +15,10 @@ import SponsorSpacePage from "@/pages/SponsorSpace";
 import Index from "@/pages/Index";
 import AdminPermissions from "@/pages/admin/Permissions";
 import AdminTranslations from "@/pages/admin/Translations";
-import AdminTravels from "@/pages/admin/Travels";
 import AdminStatistics from "@/pages/admin/Statistics";
 import AdminFAQ from "@/pages/admin/FAQ";
 import ActivityLog from "@/pages/admin/ActivityLog";
+import Travels from "@/pages/sponsor/Travels";
 
 const queryClient = new QueryClient();
 
@@ -78,6 +78,12 @@ function App() {
                 </MainLayout>
               } />
 
+              <Route path="/sponsor/travels" element={
+                <MainLayout>
+                  <Travels />
+                </MainLayout>
+              } />
+
               {/* Routes Admin */}
               <Route path="/admin/permissions" element={
                 <MainLayout>
@@ -88,12 +94,6 @@ function App() {
               <Route path="/admin/translations" element={
                 <MainLayout>
                   <AdminTranslations />
-                </MainLayout>
-              } />
-
-              <Route path="/admin/travels" element={
-                <MainLayout>
-                  <AdminTravels />
                 </MainLayout>
               } />
 

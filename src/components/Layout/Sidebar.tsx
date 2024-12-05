@@ -46,6 +46,7 @@ const Sidebar = () => {
       show: isSponsor || isAdmin,
       items: [
         { icon: Heart, label: t("sponsorSpace"), path: "/sponsor-space" },
+        { icon: Map, label: t("travels"), path: "/sponsor/travels" },
         { icon: MessageSquare, label: t("messages"), path: "/messages" }
       ]
     },
@@ -55,7 +56,6 @@ const Sidebar = () => {
       items: [
         { icon: Shield, label: t("permissions"), path: "/admin/permissions" },
         { icon: Languages, label: t("translations"), path: "/admin/translations" },
-        { icon: Map, label: t("travels"), path: "/admin/travels" },
         { icon: BarChart2, label: t("statistics"), path: "/admin/statistics" },
         { icon: HelpCircle, label: t("faq"), path: "/admin/faq" },
         { icon: Activity, label: t("activityLog"), path: "/admin/activity" }
