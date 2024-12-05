@@ -20,7 +20,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [quantity, setQuantity] = useState("");
   const [city, setCity] = useState("");
-  const [assistantName, setAssistantName] = useState("Assistant");
+  const [assistantName, setAssistantName] = useState("Vitia et Pancho");
   const [comments, setComments] = useState("");
   const [donorName, setDonorName] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
