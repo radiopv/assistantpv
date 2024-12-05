@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { frenchTranslations } from '../translations/fr';
 import { spanishTranslations } from '../translations/es';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 type Language = 'fr' | 'es';
 
@@ -45,14 +45,10 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     if (!translation) {
       console.log(`Missing translation for key: ${key} in language: ${language}`);
       
-      // Notify developers about missing translation
-      toast({
-        title: "Missing Translation",
-        description: `Key "${key}" is missing in ${language} translations`,
-        variant: "destructive",
-      });
-      
-      return "Traduction indisponible";
+      // Return the unavailable translation message in the current language
+      return language === 'fr' ? 
+        translations.fr.translationUnavailable || "Traduction indisponible" : 
+        translations.es.translationUnavailable || "Traducción no disponible";
     }
     
     return translation;
