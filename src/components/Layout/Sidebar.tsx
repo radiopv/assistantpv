@@ -8,7 +8,6 @@ import {
   Gift, 
   MessageSquare,
   Settings,
-  Image,
   Baby,
   UserPlus,
   Plane,
@@ -73,12 +72,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       label: t("permissions"),
       icon: Settings,
       show: isAdmin,
-    },
-    {
-      href: "/admin/media",
-      label: t("media"),
-      icon: Image,
-      show: user?.permissions?.media || isAdmin,
     },
     {
       href: "/admin/sponsors",

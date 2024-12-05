@@ -13,8 +13,6 @@ import Children from "./pages/Children";
 import AddChild from "./pages/AddChild";
 import ChildProfile from "./pages/ChildProfile";
 import Donations from "./pages/Donations";
-import MediaManagement from "./pages/MediaManagement";
-import SponsorsManagement from "./pages/SponsorsManagement";
 import Messages from "./pages/Messages";
 import Settings from "./pages/Settings";
 import Login from "./pages/auth/Login";
@@ -23,6 +21,7 @@ import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
 import Travels from "./pages/admin/Travels";
 import TranslationsPage from "./pages/admin/Translations";
+import SponsorsManagement from "./pages/SponsorsManagement";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -81,7 +80,6 @@ const AppRoutes = () => (
       <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
-      <Route path="/admin/media" element={<ProtectedRoute requiredPermission="media"><MediaManagement /></ProtectedRoute>} />
       <Route path="/admin/sponsors" element={<ProtectedRoute requireAdmin><SponsorsManagement /></ProtectedRoute>} />
       <Route path="/admin/translations" element={<ProtectedRoute><TranslationsPage /></ProtectedRoute>} />
       <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
