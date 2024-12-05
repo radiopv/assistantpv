@@ -35,10 +35,10 @@ const HomeModules = () => {
         .update({
           name: module.name,
           is_active: module.is_active,
-          content: module.content,
+          content: module.content as any, // Type assertion to handle Json compatibility
           order_index: module.order_index,
           module_type: module.module_type,
-          settings: module.settings
+          settings: module.settings as any // Type assertion to handle Json compatibility
         })
         .eq('id', module.id);
       
@@ -65,7 +65,12 @@ const HomeModules = () => {
     mutationFn: async (updates: { id: string; order_index: number; module_type: string; name: string }[]) => {
       const { error } = await supabase
         .from('homepage_modules')
-        .upsert(updates);
+        .upsert(updates.map(update => ({
+          id: update.id,
+          order_index: update.order_index,
+          module_type: update.module_type,
+          name: update.name
+        })));
       
       if (error) throw error;
     },

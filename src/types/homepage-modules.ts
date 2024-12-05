@@ -12,12 +12,14 @@ export interface ModuleContent {
     description: string;
     icon?: string;
   }>;
+  [key: string]: any; // Add index signature to make it compatible with Json type
 }
 
 export interface ModuleSettings {
   displayMode?: 'full' | 'compact';
   autoRotate?: boolean;
   itemsToShow?: number;
+  [key: string]: any; // Add index signature to make it compatible with Json type
 }
 
 export interface HomeModule {
