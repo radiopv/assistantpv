@@ -14,7 +14,8 @@ import {
   ChartBar,
   HelpCircle,
   Languages,
-  Activity
+  Activity,
+  Heart
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -67,6 +68,21 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
     },
   ];
 
+  const sponsorLinks = [
+    {
+      href: "/sponsor-space",
+      label: "Espace Parrain",
+      icon: Heart,
+      show: isAdmin || isSponsor,
+    },
+    {
+      href: "/sponsor-messages",
+      label: "Messages Parrain",
+      icon: MessageSquare,
+      show: isAdmin || isSponsor,
+    },
+  ];
+
   const adminLinks = [
     {
       href: "/admin/permissions",
@@ -104,12 +120,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       icon: Activity,
       show: isAdmin,
     },
-    {
-      href: "/sponsor-space",
-      label: "Espace Parrain",
-      icon: Users,
-      show: isAdmin || isSponsor,
-    },
   ];
 
   return (
@@ -127,6 +137,15 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
             currentPath={location.pathname}
             onClose={onClose}
           />
+
+          {(isAdmin || isSponsor) && (
+            <SidebarSection
+              title="Parrain"
+              links={sponsorLinks}
+              currentPath={location.pathname}
+              onClose={onClose}
+            />
+          )}
           
           {isAdmin && (
             <SidebarSection
