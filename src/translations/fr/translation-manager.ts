@@ -1,4 +1,5 @@
 export const translationManagerTranslations = {
+  // Translation management
   translationManager: "Gestionnaire de traductions",
   translationScanner: "Scanner de traductions",
   scanMissingTranslations: "Scanner les traductions manquantes",
@@ -16,12 +17,11 @@ export const translationManagerTranslations = {
   originalText: "Texte original",
   enterTranslation: "Entrer la traduction",
   approve: "Approuver",
-  translationError: "Erreur lors de la mise à jour des traductions",
-  translationUpdated: "Traductions mises à jour avec succès",
+  translationUnavailable: "Traduction indisponible",
+  scanAssistantSection: "Scanner les traductions",
+  scanningTranslations: "Scan en cours...",
+  translationError: "Erreur lors de la modification de la traduction",
+  translationUpdated: "Traduction mise à jour avec succès",
   scanStarted: "Scan démarré",
   scanError: "Erreur lors du scan",
-  scanningTranslations: "Scan des traductions en cours...",
-  scanAssistantSection: "Scanner la section assistant",
-  frenchTranslations: "Traductions françaises",
-  spanishTranslations: "Traductions espagnoles"
 };

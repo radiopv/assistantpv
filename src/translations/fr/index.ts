@@ -15,5 +15,5 @@ export const frenchTranslations = {
   ...sponsorshipTranslations,
   ...translationManagerTranslations,
   ...authTranslations,
-  ...adminTranslations
+  ...adminTranslations,
 };
