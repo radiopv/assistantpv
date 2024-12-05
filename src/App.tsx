@@ -22,6 +22,7 @@ import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
 import Travels from "./pages/admin/Travels";
 import TranslationsPage from "./pages/admin/Translations";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -63,29 +64,34 @@ const ProtectedRoute = ({ children, requiredPermission, requireAdmin }: {
 const AppRoutes = () => (
   <Routes>
     {/* Public Routes */}
-    <Route element={<PublicLayout />}>
+    <Route path="/" element={<PublicLayout />}>
       <Route index element={<Home />} />
-      <Route path="/become-sponsor" element={<BecomeSponsor />} />
+      <Route path="become-sponsor" element={<BecomeSponsor />} />
     </Route>
 
     {/* Auth Routes */}
     <Route path="/login" element={<Login />} />
 
     {/* Protected Routes */}
-    <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-      <Route path="/dashboard" element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
-      <Route path="/children" element={<ProtectedRoute requiredPermission="children"><Children /></ProtectedRoute>} />
-      <Route path="/children/:id" element={<ProtectedRoute requiredPermission="children"><ChildProfile /></ProtectedRoute>} />
-      <Route path="/children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
-      <Route path="/donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
-      <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-      <Route path="/admin/permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
-      <Route path="/admin/translations" element={<ProtectedRoute><TranslationsPage /></ProtectedRoute>} />
-      <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
-      <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
-      <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
+    <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+      <Route path="dashboard" element={<ProtectedRoute requiredPermission="dashboard"><Dashboard /></ProtectedRoute>} />
+      <Route path="children" element={<ProtectedRoute requiredPermission="children"><Children /></ProtectedRoute>} />
+      <Route path="children/:id" element={<ProtectedRoute requiredPermission="children"><ChildProfile /></ProtectedRoute>} />
+      <Route path="children/add" element={<ProtectedRoute requiredPermission="edit_children"><AddChild /></ProtectedRoute>} />
+      <Route path="donations" element={<ProtectedRoute requiredPermission="donations"><Donations /></ProtectedRoute>} />
+      <Route path="messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+      <Route path="settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      <Route path="admin">
+        <Route path="permissions" element={<ProtectedRoute requireAdmin><AdminPermissions /></ProtectedRoute>} />
+        <Route path="translations" element={<ProtectedRoute requireAdmin><TranslationsPage /></ProtectedRoute>} />
+        <Route path="faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
+        <Route path="statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
+        <Route path="travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
+      </Route>
     </Route>
+
+    {/* Fallback route */}
+    <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
 );
 
