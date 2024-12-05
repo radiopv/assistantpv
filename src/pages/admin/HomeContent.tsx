@@ -24,7 +24,14 @@ const HomeContent = () => {
         .single();
       
       if (error) throw error;
-      return data as HomepageSection;
+      
+      // Cast the content to ensure it matches our type
+      const typedData = {
+        ...data,
+        content: data.content as HomepageSection['content']
+      };
+      
+      return typedData as HomepageSection;
     }
   });
 

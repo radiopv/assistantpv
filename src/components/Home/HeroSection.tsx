@@ -28,9 +28,9 @@ export const HeroSection = () => {
       const typedData = {
         ...data,
         content: data.content as HomepageSection['content']
-      } as HomepageSection;
+      };
       
-      return typedData;
+      return typedData as HomepageSection;
     }
   });
 
