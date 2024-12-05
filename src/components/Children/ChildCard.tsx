@@ -46,63 +46,51 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
   };
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="relative">
         <img
           src={child.photo_url || "/placeholder.svg"}
           alt={child.name}
-          className="w-full h-48 object-cover"
+          className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <div className="absolute top-2 right-2">
-          <span
-            className={`inline-block px-2 py-1 rounded-full text-xs ${
-              !child.is_sponsored
-                ? "bg-green-100 text-green-800"
-                : "bg-blue-100 text-blue-800"
-            }`}
-          >
-            {child.is_sponsored ? t("sponsored") : t("available")}
-          </span>
+        <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/50 to-transparent">
+          <div className="flex justify-between items-start">
+            <h3 className="font-semibold text-lg text-white">{child.name}</h3>
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                !child.is_sponsored
+                  ? "bg-green-100 text-green-800"
+                  : "bg-blue-100 text-blue-800"
+              }`}
+            >
+              {child.is_sponsored ? t("sponsored") : t("available")}
+            </span>
+          </div>
         </div>
       </div>
 
       <div className="p-4 space-y-4">
-        <div>
-          <h3 className="font-semibold text-lg">{child.name}</h3>
-          <div className="mt-2 space-y-1 text-sm text-gray-600">
-            <p>{formatAge(child.birth_date)}</p>
-            <p>{child.city}</p>
-            {child.is_sponsored && child.sponsor_name && (
-              <p className="font-medium text-blue-600">
-                {t("sponsored")} {t("by")}: {child.sponsor_name}
-              </p>
-            )}
+        <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+          <div>
+            <p className="text-gray-400">{t("age")}</p>
+            <p className="font-medium">{formatAge(child.birth_date)}</p>
           </div>
+          <div>
+            <p className="text-gray-400">{t("city")}</p>
+            <p className="font-medium">{child.city}</p>
+          </div>
+          {child.is_sponsored && child.sponsor_name && (
+            <div className="col-span-2">
+              <p className="text-gray-400">{t("sponsor")}</p>
+              <p className="font-medium text-blue-600">{child.sponsor_name}</p>
+            </div>
+          )}
         </div>
 
         {child.description && (
           <div>
-            <h4 className="font-medium text-sm text-gray-700 mb-1">{t("description")}</h4>
             <ScrollArea className="h-20">
               <p className="text-sm text-gray-600">{child.description}</p>
-            </ScrollArea>
-          </div>
-        )}
-
-        {child.story && (
-          <div>
-            <h4 className="font-medium text-sm text-gray-700 mb-1">{t("story")}</h4>
-            <ScrollArea className="h-20">
-              <p className="text-sm text-gray-600">{child.story}</p>
-            </ScrollArea>
-          </div>
-        )}
-
-        {child.comments && (
-          <div>
-            <h4 className="font-medium text-sm text-gray-700 mb-1">{t("comments")}</h4>
-            <ScrollArea className="h-20">
-              <p className="text-sm text-gray-600">{child.comments}</p>
             </ScrollArea>
           </div>
         )}
@@ -119,7 +107,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
         
         <div className="flex gap-2 pt-2">
           <Button 
-            className="flex-1" 
+            className="flex-1 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
             variant="outline"
             onClick={() => onViewProfile(child.id)}
           >
@@ -127,6 +115,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           </Button>
 
           <Button 
+            className="flex-1 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
             variant="outline"
             onClick={() => onSponsorClick(child)}
           >
