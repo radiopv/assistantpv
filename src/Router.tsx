@@ -31,14 +31,14 @@ export const Router = () => {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/children" element={<Children />} />
-        <Route path="/donations" element={<Donations />} />
       </Route>
 
       {/* Protected Routes */}
       {user && (
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/children" element={<Children />} />
+          <Route path="/donations" element={<Donations />} />
           <Route path="/add-child" element={<AddChild />} />
           <Route path="/children/add" element={<AddChild />} />
           <Route path="/children/:id" element={<ChildProfile />} />
