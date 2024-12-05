@@ -1,3 +1,4 @@
+import { type Json } from './json';
 import type { SponsorshipTables } from './sponsorship';
 
 export type Database = {
