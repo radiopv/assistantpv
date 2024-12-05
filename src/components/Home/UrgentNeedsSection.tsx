@@ -27,7 +27,8 @@ export const UrgentNeedsSection = () => {
         .select('*')
         .eq('status', 'available')
         .not('needs', 'is', null)
-        .limit(5);
+        .eq('is_sponsored', false)
+        .limit(10);
 
       if (error) {
         console.error('Error fetching children:', error);
