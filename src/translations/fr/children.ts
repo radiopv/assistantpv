@@ -36,8 +36,5 @@ export const childrenTranslations = {
   availableChildren: "Enfants disponibles au parrainage",
   availableChildrenDescription: "Découvrez les enfants qui attendent un parrain ou une marraine. Chaque enfant a sa propre histoire et ses propres besoins.",
   becomeSponsor: "Devenir parrain/marraine",
-  description: "Description",
-  story: "Histoire",
-  needs: "Besoins",
   years: "ans",
 };
