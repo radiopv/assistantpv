@@ -21,6 +21,7 @@ import AdminFAQ from "@/pages/admin/FAQ";
 import ActivityLog from "@/pages/admin/ActivityLog";
 import Travels from "@/pages/sponsor/Travels";
 import Home from "@/pages/Home";
+import HomeContent from "@/pages/admin/HomeContent";
 
 const queryClient = new QueryClient();
 
@@ -114,6 +115,12 @@ function App() {
               <Route path="/admin/activity" element={
                 <MainLayout>
                   <ActivityLog />
+                </MainLayout>
+              } />
+
+              <Route path="/admin/home-content" element={
+                <MainLayout>
+                  <HomeContent />
                 </MainLayout>
               } />
             </Routes>
