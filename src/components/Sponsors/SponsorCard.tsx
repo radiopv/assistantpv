@@ -43,7 +43,6 @@ export const SponsorCard = ({ sponsor, onEdit, onViewAlbum, onStatusChange }: Sp
 
       if (error) throw error;
 
-      // Call the onStatusChange prop to update the UI immediately
       onStatusChange(sponsor.id, field, newValue);
 
       toast({

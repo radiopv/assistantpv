@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -16,7 +15,6 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
   const [sponsors, setSponsors] = useState(initialSponsors);
   const [editingSponsor, setEditingSponsor] = useState<any>(null);
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   const handleStatusChange = (sponsorId: string, field: string, value: boolean) => {
     setSponsors(prevSponsors => 
@@ -47,8 +45,8 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
   return (
     <Tabs defaultValue="active" className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-6">
-        <TabsTrigger value="active">{t("activeSponsors")}</TabsTrigger>
-        <TabsTrigger value="inactive">{t("inactiveSponsors")}</TabsTrigger>
+        <TabsTrigger value="active">Parrains actifs</TabsTrigger>
+        <TabsTrigger value="inactive">Parrains inactifs</TabsTrigger>
       </TabsList>
 
       <TabsContent value="active">
