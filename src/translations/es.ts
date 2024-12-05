@@ -1,8 +1,11 @@
 export const spanishTranslations = {
   estado: "Estado",
+  confirmDeleteChild: "¿Confirmar eliminación del niño?",
+  confirmDeleteChildDescription: "¿Está seguro de que desea eliminar este niño?",
   childDeleted: "Niño eliminado",
-  childDeleteSuccess: "El niño ha sido eliminado con éxito",
-  childDeleteError: "Ocurrió un error al eliminar al niño",
-  confirmDeleteChild: "¿Está seguro de que desea eliminar a este niño?",
-  confirmDeleteChildDescription: "Esta acción es irreversible. Todos los datos asociados a este niño serán eliminados permanentemente."
+  childDeleteSuccess: "El niño ha sido eliminado con éxito.",
+  childDeleteError: "Error al eliminar el niño.",
+  delete: "Eliminar",
+  cancel: "Cancelar",
+  // ... (all other existing translations)
 };

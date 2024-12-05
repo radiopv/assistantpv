@@ -96,6 +96,8 @@ const ChildProfile = () => {
 
   const handleDelete = async () => {
     try {
+      console.log('Starting deletion process for child:', id);
+      
       // First, delete related records in album_media
       const { error: albumError } = await supabase
         .from('album_media')
@@ -106,6 +108,8 @@ const ChildProfile = () => {
         console.error('Error deleting album media:', albumError);
         throw albumError;
       }
+      
+      console.log('Successfully deleted album media');
 
       // Then delete the child record
       const { error } = await supabase
@@ -117,6 +121,8 @@ const ChildProfile = () => {
         console.error('Error deleting child:', error);
         throw error;
       }
+      
+      console.log('Successfully deleted child');
 
       toast({
         title: t("childDeleted"),
