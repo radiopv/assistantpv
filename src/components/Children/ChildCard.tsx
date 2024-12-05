@@ -53,7 +53,6 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
     console.log("Need category:", needCategory);
     console.log("Comment:", comment);
     console.log("Is urgent:", isUrgent);
-    // Here you would implement the logic to save the comment and update urgent status
     setSelectedNeed(null);
     setComment("");
   };
