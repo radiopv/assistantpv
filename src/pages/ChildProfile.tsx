@@ -11,6 +11,16 @@ import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { Card } from "@/components/ui/card";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ChildProfile = () => {
   const { id } = useParams();
@@ -21,6 +31,7 @@ const ChildProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [child, setChild] = useState<any>(null);
   const [editing, setEditing] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     loadChild();
@@ -85,12 +96,27 @@ const ChildProfile = () => {
 
   const handleDelete = async () => {
     try {
+      // First, delete related records in album_media
+      const { error: albumError } = await supabase
+        .from('album_media')
+        .delete()
+        .eq('child_id', id);
+
+      if (albumError) {
+        console.error('Error deleting album media:', albumError);
+        throw albumError;
+      }
+
+      // Then delete the child record
       const { error } = await supabase
         .from('children')
         .delete()
         .eq('id', id);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting child:', error);
+        throw error;
+      }
 
       toast({
         title: t("childDeleted"),
@@ -98,6 +124,7 @@ const ChildProfile = () => {
       });
       navigate('/children');
     } catch (err: any) {
+      console.error('Error in deletion process:', err);
       toast({
         variant: "destructive",
         title: t("error"),
@@ -154,7 +181,7 @@ const ChildProfile = () => {
         onBack={() => navigate('/children')}
         onEdit={() => setEditing(true)}
         onSave={handleUpdate}
-        onDelete={handleDelete}
+        onDelete={() => setShowDeleteDialog(true)}
       />
 
       <div className="grid gap-6">
@@ -176,6 +203,23 @@ const ChildProfile = () => {
           </div>
         </Card>
       </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet enfant ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. Toutes les données associées à cet enfant seront supprimées définitivement.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
