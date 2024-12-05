@@ -1,8 +1,11 @@
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Carousel,
   CarouselContent,
@@ -12,7 +15,8 @@ import {
 } from "@/components/ui/carousel";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface HomeContent {
   id: number;
@@ -30,6 +34,7 @@ interface HomeImage {
 const Home = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const { data: homeContent, isLoading: isLoadingContent } = useQuery({
     queryKey: ['home-content'],
@@ -139,7 +144,7 @@ const Home = () => {
                   />
                   <h3 className="font-semibold text-lg mb-2">{child.name}</h3>
                   <div className="space-y-2">
-                    {child.needs?.map((need: any, index: number) => (
+                    {convertJsonToNeeds(child.needs).map((need, index) => (
                       <Badge
                         key={index}
                         variant={need.is_urgent ? "destructive" : "secondary"}
