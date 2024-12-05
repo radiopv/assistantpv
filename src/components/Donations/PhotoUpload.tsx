@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PhotoUploadProps {
   donationId?: string;
@@ -23,6 +24,34 @@ export const PhotoUpload = ({
 }: PhotoUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      addPhotos: "Ajouter des photos",
+      noFileSelected: "Aucun fichier n'a été sélectionné",
+      chooseFiles: "Choisir des fichiers",
+      upload: "Upload",
+      uploading: "Upload en cours...",
+      photosAdded: "Photos ajoutées",
+      photosAddedSuccess: "Les photos ont été ajoutées avec succès.",
+      error: "Erreur",
+      uploadError: "Une erreur est survenue lors de l'upload."
+    },
+    es: {
+      addPhotos: "Agregar fotos",
+      noFileSelected: "Ningún archivo seleccionado",
+      chooseFiles: "Seleccionar archivos",
+      upload: "Subir",
+      uploading: "Subiendo...",
+      photosAdded: "Fotos agregadas",
+      photosAddedSuccess: "Las fotos se han agregado con éxito.",
+      error: "Error",
+      uploadError: "Ocurrió un error durante la subida."
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -75,16 +104,16 @@ export const PhotoUpload = ({
       await Promise.all(uploadPromises);
 
       toast({
-        title: "Photos ajoutées",
-        description: "Les photos ont été ajoutées avec succès.",
+        title: t.photosAdded,
+        description: t.photosAddedSuccess,
       });
 
       onUploadComplete?.();
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'upload.",
+        title: t.error,
+        description: t.uploadError,
       });
       console.error("Upload error:", error);
     } finally {
@@ -94,7 +123,7 @@ export const PhotoUpload = ({
 
   return (
     <div className="space-y-4">
-      <Label htmlFor="photo">Ajouter des photos</Label>
+      <Label htmlFor="photo">{t.addPhotos}</Label>
       <Input
         id="photo"
         type="file"
@@ -105,7 +134,7 @@ export const PhotoUpload = ({
       />
       <Button disabled={uploading}>
         <Upload className="w-4 h-4 mr-2" />
-        {uploading ? "Upload en cours..." : "Upload"}
+        {uploading ? t.uploading : t.upload}
       </Button>
     </div>
   );
