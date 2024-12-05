@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useAuth } from "@supabase/auth-helpers-react";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const Travels = () => {
   const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>(new Date());
@@ -17,7 +17,7 @@ const Travels = () => {
   const [wantsDonationPickup, setWantsDonationPickup] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { t } = useLanguage();
-  const user = useAuth();
+  const { user } = useAuth();
 
   const { data: travels, isLoading } = useQuery({
     queryKey: ['travels'],
@@ -98,7 +98,7 @@ const Travels = () => {
     }
   };
 
-  const isAssistant = user?.user_metadata?.role === 'assistant';
+  const isAssistant = user?.role === 'assistant';
 
   if (isLoading) {
     return <div>{t("loading")}</div>;
