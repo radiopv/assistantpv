@@ -1,8 +1,44 @@
 import { Json } from "../json";
+import { Profile, ProfileInsert, ProfileUpdate } from "./tables/profiles";
+import { Sponsorship, SponsorshipRequest } from "./tables/sponsorships";
+import { UnifiedMediaBrowser } from "./views/unified-media-browser";
 
 export interface Database {
   public: {
     Tables: {
+      profiles: {
+        Row: Profile;
+        Insert: ProfileInsert;
+        Update: ProfileUpdate;
+        Relationships: [];
+      };
+      sponsorships: {
+        Row: Sponsorship;
+        Insert: Omit<Sponsorship, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Sponsorship, 'id'>>;
+        Relationships: [
+          {
+            foreignKeyName: "sponsorships_child_id_fkey";
+            columns: ["child_id"];
+            isOneToOne: false;
+            referencedRelation: "children";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sponsorships_sponsor_id_fkey";
+            columns: ["sponsor_id"];
+            isOneToOne: false;
+            referencedRelation: "sponsors";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      sponsorship_requests: {
+        Row: SponsorshipRequest;
+        Insert: Omit<SponsorshipRequest, 'id' | 'created_at' | 'updated_at' | 'status'>;
+        Update: Partial<Omit<SponsorshipRequest, 'id'>>;
+        Relationships: [];
+      };
       aid_categories: {
         Row: {
           created_at: string | null
@@ -620,15 +656,7 @@ export interface Database {
     };
     Views: {
       unified_media_browser: {
-        Row: {
-          id: string;
-          url: string;
-          type: string;
-          source_table: string;
-          category: string;
-          metadata: Json;
-          created_at: string;
-        };
+        Row: UnifiedMediaBrowser;
       };
       donation_items_with_categories: {
         Row: {

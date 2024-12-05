@@ -1,5 +1,19 @@
 import { Database } from "../base";
 
-export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-export type ProfileInsert = Database["public"]["Tables"]["profiles"]["Insert"];
-export type ProfileUpdate = Database["public"]["Tables"]["profiles"]["Update"];
+export interface Profile {
+  id: string;
+  role: string;
+  updated_at: string | null;
+}
+
+export interface ProfileInsert {
+  id: string;
+  role?: string;
+  updated_at?: string | null;
+}
+
+export interface ProfileUpdate {
+  id?: string;
+  role?: string;
+  updated_at?: string | null;
+}
