@@ -4,14 +4,23 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { HeroSection } from "@/components/Home/HeroSection";
 import { UrgentNeedsSection } from "@/components/Home/UrgentNeedsSection";
 import { SponsorMemoriesSection } from "@/components/Home/SponsorMemoriesSection";
-import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
-import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { TestimonialsSection } from "@/components/Home/TestimonialsSection";
 import { Heart, Handshake, ChartBar } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+
+  const { data: stats } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_dashboard_statistics');
+      if (error) throw error;
+      return data;
+    }
+  });
 
   return (
     <div className="min-h-screen">
@@ -52,32 +61,27 @@ const Home = () => {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
               <Heart className="w-12 h-12 mx-auto mb-4 text-secondary" />
-              <SponsorshipStats />
+              <h3 className="text-2xl font-bold mb-2">{stats?.children?.sponsored || 0}</h3>
+              <p className="text-gray-600">{t("sponsoredChildren")}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
               <Handshake className="w-12 h-12 mx-auto mb-4 text-primary" />
-              <UserEngagementStats />
+              <h3 className="text-2xl font-bold mb-2">{stats?.sponsors || 0}</h3>
+              <p className="text-gray-600">{t("activeSponsors")}</p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-lg text-center">
               <ChartBar className="w-12 h-12 mx-auto mb-4 text-accent" />
-              <div className="mt-4">
-                <Button 
-                  onClick={() => navigate("/children")}
-                  variant="outline"
-                  className="w-full"
-                >
-                  {t("seeAllChildren")}
-                </Button>
-              </div>
+              <h3 className="text-2xl font-bold mb-2">{stats?.cities || 0}</h3>
+              <p className="text-gray-600">{t("citiesCovered")}</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Section Besoins Urgents */}
+      {/* Section Enfants avec Besoins */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">{t("urgentNeeds")}</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">{t("childrenWithNeeds")}</h2>
           <UrgentNeedsSection />
         </div>
       </section>
