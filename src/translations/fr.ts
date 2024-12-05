@@ -1,4 +1,4 @@
-export default {
+export const frenchTranslations = {
   welcome: "Bienvenue",
   login: "Connexion",
   logout: "Déconnexion",
@@ -65,7 +65,6 @@ export default {
   unlike: "Ne plus aimer",
   comment: "Commenter",
   reply: "Répondre",
-  edit: "Modifier",
   update: "Mettre à jour",
   create: "Créer",
   read: "Lire",
@@ -90,13 +89,10 @@ export default {
   pending: "En attente",
   completed: "Terminé",
   failed: "Échoué",
-  error: "Erreur",
   warning: "Avertissement",
   info: "Information",
-  success: "Succès",
   try_again: "Réessayer",
   learn_more: "En savoir plus",
-  loading: "Chargement...",
   processing: "Traitement en cours...",
   please_wait: "Veuillez patienter...",
   confirm_delete: "Confirmer la suppression",
@@ -110,16 +106,10 @@ export default {
   items: "éléments",
   first: "Premier",
   last: "Dernier",
-  next: "Suivant",
-  previous: "Précédent",
   page: "Page",
   per_page: "Par page",
-  search: "Rechercher",
-  filter: "Filtrer",
-  sort: "Trier",
   asc: "Croissant",
   desc: "Décroissant",
-  actions: "Actions",
   apply: "Appliquer",
   reset: "Réinitialiser",
   save_changes: "Enregistrer les modifications",
@@ -164,7 +154,5 @@ export default {
   childDeleteSuccess: "L'enfant a été supprimé avec succès",
   childDeleteError: "Une erreur est survenue lors de la suppression de l'enfant",
   confirmDeleteChild: "Êtes-vous sûr de vouloir supprimer cet enfant ?",
-  confirmDeleteChildDescription: "Cette action est irréversible. Toutes les données associées à cet enfant seront supprimées définitivement.",
-  delete: "Supprimer",
-  cancel: "Annuler"
+  confirmDeleteChildDescription: "Cette action est irréversible. Toutes les données associées à cet enfant seront supprimées définitivement."
 };
