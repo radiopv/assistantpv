@@ -73,15 +73,27 @@ export const NeedBadge = ({
     setShowDialog(false);
   };
 
+  const handleUrgentToggle = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent button click when clicking checkbox
+    setIsUrgentLocal(!isUrgentLocal);
+    if (onSubmit) onSubmit(!isUrgentLocal);
+  };
+
   return (
     <>
       <Button 
         variant="ghost"
-        className={`w-full justify-between px-4 py-2 rounded-md transition-colors ${CATEGORY_STYLES[category as keyof typeof CATEGORY_STYLES]}`}
+        className={`w-full flex items-center justify-between px-4 py-2 rounded-md transition-colors ${CATEGORY_STYLES[category as keyof typeof CATEGORY_STYLES]}`}
         onClick={handleClick}
       >
         <span>{getCategoryLabel(category)}</span>
-        {isUrgent && <span className="text-red-600 font-bold">(!)</span>}
+        <div className="flex items-center gap-2" onClick={handleUrgentToggle}>
+          <Checkbox 
+            checked={isUrgentLocal}
+            className="data-[state=checked]:bg-red-500 data-[state=checked]:border-red-500"
+          />
+          {isUrgentLocal && <span className="text-red-600 font-bold">(!)</span>}
+        </div>
       </Button>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -98,16 +110,6 @@ export const NeedBadge = ({
                 placeholder="Ajouter un commentaire..."
                 className="mt-1"
               />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="urgent"
-                checked={isUrgentLocal}
-                onCheckedChange={(checked) => setIsUrgentLocal(checked as boolean)}
-              />
-              <label htmlFor="urgent" className="text-sm text-gray-600">
-                Marquer comme urgent
-              </label>
             </div>
             <div className="flex justify-end space-x-2">
               <Button variant="outline" onClick={() => setShowDialog(false)}>
