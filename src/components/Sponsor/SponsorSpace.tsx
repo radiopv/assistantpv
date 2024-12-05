@@ -26,10 +26,13 @@ export const SponsorSpace = () => {
   useEffect(() => {
     const fetchSponsoredChildren = async () => {
       try {
-        const { data, error } = await supabase
+        console.log("Fetching sponsored children for user:", user?.id);
+        
+        const { data: sponsorships, error: sponsorshipsError } = await supabase
           .from('sponsorships')
           .select(`
             child_id,
+            status,
             children (
               id,
               name,
@@ -42,9 +45,19 @@ export const SponsorSpace = () => {
           .eq('sponsor_id', user?.id)
           .eq('status', 'active');
 
-        if (error) throw error;
+        if (sponsorshipsError) {
+          console.error('Error fetching sponsorships:', sponsorshipsError);
+          throw sponsorshipsError;
+        }
 
-        const children = data.map(item => item.children);
+        console.log("Sponsorships data:", sponsorships);
+
+        const children = sponsorships
+          .map(sponsorship => sponsorship.children)
+          .filter(child => child !== null);
+
+        console.log("Processed children:", children);
+
         setSponsoredChildren(children);
         if (children.length > 0) {
           setSelectedChild(children[0].id);
