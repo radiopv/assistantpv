@@ -1,3 +1,5 @@
+import { Play } from "lucide-react";
+
 interface DonationMediaProps {
   photos: any[];
   videos: any[];
@@ -39,21 +41,16 @@ export const DonationMedia = ({ photos, videos, onPhotoDelete, onVideoDelete }: 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {videos.map((video) => (
               <div key={video.id} className="relative group">
-                {video.thumbnail_url ? (
-                  <img
-                    src={video.thumbnail_url}
-                    alt={video.title || `Vidéo ${video.id}`}
-                    className="h-24 w-full object-cover rounded-md cursor-pointer"
+                <div className="relative h-24 w-full">
+                  <video
+                    src={video.url}
+                    className="h-full w-full object-cover rounded-md cursor-pointer"
                     onClick={() => window.open(video.url, '_blank')}
                   />
-                ) : (
-                  <div 
-                    className="h-24 w-full bg-gray-200 rounded-md flex items-center justify-center cursor-pointer"
-                    onClick={() => window.open(video.url, '_blank')}
-                  >
-                    <span className="text-sm text-gray-600">Voir la vidéo</span>
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <Play className="w-8 h-8 text-white" />
                   </div>
-                )}
+                </div>
                 <button
                   onClick={() => onVideoDelete(video.id)}
                   className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
