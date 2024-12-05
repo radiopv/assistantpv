@@ -25,7 +25,7 @@ const ActivityLog = () => {
           action,
           details,
           created_at,
-          profiles:user_id (
+          profiles (
             id,
             role
           )
@@ -49,6 +49,7 @@ const ActivityLog = () => {
         }
       }));
 
+      console.log('Transformed data:', transformedData);
       return transformedData as ActivityLogType[];
     }
   });
@@ -145,17 +146,6 @@ const ActivityLog = () => {
       </ScrollArea>
     </div>
   );
-};
-
-const getActionIcon = (role: string) => {
-  switch (role) {
-    case 'assistant':
-      return <Activity className="h-5 w-5 text-blue-500" />;
-    case 'sponsor':
-      return <User className="h-5 w-5 text-green-500" />;
-    default:
-      return <Activity className="h-5 w-5 text-gray-500" />;
-  }
 };
 
 export default ActivityLog;
