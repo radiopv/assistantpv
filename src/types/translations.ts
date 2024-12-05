@@ -167,4 +167,17 @@ export interface Translations {
   sponsorshipTerminationNote: string;
   submitting: string;
   submitRequest: string;
+
+  // Additional translation keys
+  filterByCity: string;
+  totalDonations: string;
+  citiesCovered: string;
+  phone: string;
+  errorMessage: string;
+  donationsTitle: string;
+  donationsSubtitle: string;
+  addDonation: string;
+  noDonationsFound: string;
+  donationBy: string;
+  selectMessageToRead: string;
 }

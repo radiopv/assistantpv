@@ -7,6 +7,6 @@ export const donationsTranslations = {
   citiesCovered: "Villes couvertes",
   filterByCity: "Filtrer par ville",
   donationBy: "Don par",
-  selectMessageToRead: "Sélectionnez un message pour le lire",
-  errorMessage: "Une erreur est survenue"
+  errorMessage: "Une erreur est survenue",
+  selectMessageToRead: "Sélectionnez un message pour le lire"
 };

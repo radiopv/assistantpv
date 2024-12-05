@@ -30,5 +30,6 @@ export const commonTranslations = {
   allCities: "Toutes les villes",
   sortBy: "Trier par",
   user: "Utilisateur",
-  logout: "Déconnexion"
+  logout: "Déconnexion",
+  phone: "Téléphone",
 };
