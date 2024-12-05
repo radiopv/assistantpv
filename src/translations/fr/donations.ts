@@ -4,9 +4,9 @@ export const donationsTranslations = {
   addDonation: "Ajouter un don",
   noDonationsFound: "Aucun don trouvé",
   totalDonations: "Total des dons",
-  peopleHelped: "Personnes aidées",
   citiesCovered: "Villes couvertes",
   filterByCity: "Filtrer par ville",
-  sortBy: "Trier par",
-  donationBy: "Don par"
+  donationBy: "Don par",
+  selectMessageToRead: "Sélectionnez un message pour le lire",
+  errorMessage: "Une erreur est survenue"
 };

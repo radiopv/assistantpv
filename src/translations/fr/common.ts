@@ -26,4 +26,9 @@ export const commonTranslations = {
   gender: "Genre",
   status: "Statut",
   date: "Date",
+  peopleHelped: "Personnes aidées",
+  allCities: "Toutes les villes",
+  sortBy: "Trier par",
+  user: "Utilisateur",
+  logout: "Se déconnecter"
 };

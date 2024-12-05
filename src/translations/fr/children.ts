@@ -20,7 +20,6 @@ export const childrenTranslations = {
   sponsor: "Parrain",
   addSponsor: "Ajouter un parrain",
   editOrRemoveSponsor: "Modifier ou retirer le parrain",
-  allCities: "Toutes les villes",
   allGenders: "Tous les genres",
   allAges: "Tous les âges",
   allStatus: "Tous les statuts",

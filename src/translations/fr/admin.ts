@@ -1,20 +1,16 @@
 export const adminTranslations = {
-  permissions: "Gestion des permissions",
-  translationManager: "Gestion des traductions",
+  permissions: "Permissions",
   travels: "Voyages",
   statistics: "Statistiques",
   faq: "FAQ",
-  activityLog: "Journal d'activité",
-  sponsorshipManagement: "Gestion des parrainages",
-  needsManagement: "Gestion des besoins",
-  
-  // Admin pages
-  permissionsManagement: "Gestion des permissions",
-  userPermissions: "Permissions utilisateur",
-  roleManagement: "Gestion des rôles",
-  translationScanner: "Scanner de traductions",
-  travelPlanning: "Planification des voyages",
-  statisticsOverview: "Vue d'ensemble des statistiques",
-  faqManagement: "Gestion de la FAQ",
-  activityMonitoring: "Suivi des activités"
+  activeSponsors: "Parrains actifs",
+  inactiveSponsors: "Parrains inactifs",
+  translationError: "Erreur de traduction",
+  translationUpdated: "Traduction mise à jour",
+  scanStarted: "Scan démarré",
+  scanError: "Erreur lors du scan",
+  scanningTranslations: "Scan des traductions en cours",
+  scanAssistantSection: "Section assistant de scan",
+  frenchTranslations: "Traductions françaises",
+  spanishTranslations: "Traductions espagnoles"
 };
