@@ -20,8 +20,13 @@ const ActivityLog = () => {
       const { data, error } = await supabase
         .from('activity_logs')
         .select(`
-          *,
+          id,
+          user_id,
+          action,
+          details,
+          created_at,
           profiles:user_id (
+            id,
             role
           )
         `)
