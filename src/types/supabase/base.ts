@@ -132,6 +132,45 @@ export interface Database {
           updated_at?: string
         }
       }
+      donations: {
+        Row: {
+          id: string;
+          assistant_name: string;
+          city: string;
+          comments: string | null;
+          created_at: string | null;
+          donation_date: string;
+          people_helped: number;
+          photos: string[] | null;
+          status: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          assistant_name: string;
+          city: string;
+          comments?: string | null;
+          created_at?: string | null;
+          donation_date: string;
+          people_helped: number;
+          photos?: string[] | null;
+          status?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          assistant_name?: string;
+          city?: string;
+          comments?: string | null;
+          created_at?: string | null;
+          donation_date?: string;
+          people_helped?: number;
+          photos?: string[] | null;
+          status?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       unified_media_browser: {
@@ -535,4 +574,3 @@ export interface Database {
     };
   };
 }
-
