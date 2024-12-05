@@ -18,22 +18,51 @@ export const DetailedStats = () => {
   const { data: urgentNeeds, isLoading: urgentLoading, error: urgentError } = useQuery({
     queryKey: ['urgent-needs'],
     queryFn: async () => {
+      console.log('Fetching urgent needs...');
       const { data, error } = await supabase
         .from('children')
         .select('id, name, needs')
         .not('needs', 'is', null);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching urgent needs:', error);
+        throw error;
+      }
 
       if (user) {
         await logActivity(user.id, "A consulté les besoins urgents");
       }
 
-      return data.filter(child => {
+      // Filter children with urgent needs and log the process
+      const childrenWithUrgentNeeds = data.filter(child => {
         if (!child.needs) return false;
-        const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
-        return Array.isArray(needs) && needs.some((need: Need) => need.is_urgent);
+        
+        try {
+          const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
+          console.log('Processing child:', child.name, 'needs:', needs);
+          
+          if (!Array.isArray(needs)) {
+            console.log('Needs is not an array for child:', child.name);
+            return false;
+          }
+          
+          const hasUrgentNeeds = needs.some((need: Need) => {
+            const isUrgent = need.is_urgent === true;
+            if (isUrgent) {
+              console.log('Found urgent need for child:', child.name, 'need:', need);
+            }
+            return isUrgent;
+          });
+          
+          return hasUrgentNeeds;
+        } catch (e) {
+          console.error('Error processing needs for child:', child.name, e);
+          return false;
+        }
       });
+
+      console.log('Total children with urgent needs:', childrenWithUrgentNeeds.length);
+      return childrenWithUrgentNeeds;
     }
   });
 
@@ -83,6 +112,11 @@ export const DetailedStats = () => {
                       </div>
                     );
                   })}
+                  {(!urgentNeeds || urgentNeeds.length === 0) && (
+                    <div className="text-center text-gray-500">
+                      {t('noUrgentNeeds')}
+                    </div>
+                  )}
                 </div>
               </ScrollArea>
             )}
