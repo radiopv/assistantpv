@@ -127,61 +127,6 @@ export const spanishTranslations = {
   passwordChanged: "Contraseña cambiada correctamente",
   emailSent: "Correo electrónico enviado correctamente",
 
-  // Assistant specific
-  translationManager: "Gestor de traducciones",
-  addDonation: "Agregar donación",
-  scanAssistantSection: "Escanear sección",
-  scanningTranslations: "Escaneando traducciones...",
-  scanStarted: "Escaneo iniciado",
-  scanError: "Error durante el escaneo",
-  
-  // Translation manager
-  missingTranslations: "Traducciones faltantes",
-  unusedTranslations: "Traducciones no utilizadas",
-  englishTextDetected: "Texto en inglés detectado",
-  translationError: "Error en las traducciones",
-  translationUpdated: "Traducciones actualizadas",
-  translationRequired: "Traducción requerida",
-  translationApproved: "Traducción aprobada",
-  originalText: "Texto original",
-  enterTranslation: "Introducir traducción",
-  approve: "Aprobar",
-  pendingTranslations: "Traducciones pendientes",
-  frenchTranslations: "Traducciones al francés",
-  spanishTranslations: "Traducciones al español",
-
-  // Assistant dashboard
-  urgentNeedsByCity: "Necesidades urgentes por ciudad",
-  activeSponsors: "Padrinos activos",
-  pendingRequests: "Solicitudes pendientes",
-  activeSponsorsComingSoon: "Lista de padrinos activos próximamente",
-  sponsorshipManagement: "Gestión de patrocinios",
-  sponsorshipRequestApproved: "Solicitud de patrocinio aprobada",
-  sponsorshipRequestRejected: "Solicitud de patrocinio rechazada",
-  sponsorshipRequestApprovalError: "Error al aprobar la solicitud",
-  sponsorshipRequestRejectionError: "Error al rechazar la solicitud",
-
-  // Assistant notifications
-  notificationsTitle: "Notificaciones",
-  noNotifications: "No hay notificaciones",
-  markAllAsRead: "Marcar todo como leído",
-  newMessage: "Nuevo mensaje",
-  newDonation: "Nueva donación",
-  newSponsorRequest: "Nueva solicitud de patrocinio",
-
-  // Dashboard translations
-  welcomeMessage: "Bienvenido a tu panel de control",
-  totalChildren: "Total niños",
-  sponsoredChildren: "Niños apadrinados",
-  urgentNeeds: "Necesidades urgentes",
-  activeCities: "Ciudades activas",
-  incompleteProfiles: "Perfiles incompletos",
-  viewAllChildren: "Ver todos los niños",
-  viewSponsoredChildren: "Ver niños apadrinados",
-  viewUrgentNeeds: "Ver necesidades urgentes",
-  viewCityStats: "Ver estadísticas por ciudad",
-  viewIncompleteProfiles: "Ver perfiles incompletos",
-
   // Children filters translations
   searchPlaceholder: "Buscar niños...",
   city: "Ciudad",
@@ -192,7 +137,6 @@ export const spanishTranslations = {
   feminine: "Femenino",
   age: "Edad",
   allAges: "Todas las edades",
-  years: "años",
   status: "Estado",
   allStatus: "Todos los estados",
   available: "Disponible",

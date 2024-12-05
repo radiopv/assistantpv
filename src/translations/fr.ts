@@ -137,7 +137,6 @@ export const frenchTranslations = {
   feminine: "Féminin",
   age: "Âge",
   allAges: "Tous les âges",
-  years: "ans",
   status: "Statut",
   allStatus: "Tous les statuts",
   available: "Disponible",

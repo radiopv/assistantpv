@@ -54,6 +54,7 @@ export const NeedBadge = ({
         onClick={onNeedClick}
       >
         {NEED_CATEGORIES[category as keyof typeof NEED_CATEGORIES]}
+        {isUrgent && <span className="ml-2 text-red-600 font-bold">(!)</span>}
       </Button>
     </div>
   );
