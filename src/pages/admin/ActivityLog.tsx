@@ -12,7 +12,7 @@ import { type ActivityLogType } from "@/types/activity";
 import { Database } from "@/integrations/supabase/types";
 
 type ActivityLogWithSponsor = Database['public']['Tables']['activity_logs']['Row'] & {
-  sponsors: Database['public']['Tables']['sponsors']['Row'] | null;
+  sponsor: Database['public']['Tables']['sponsors']['Row'] | null;
 };
 
 const ActivityLog = () => {
@@ -26,7 +26,7 @@ const ActivityLog = () => {
         .from('activity_logs')
         .select(`
           *,
-          sponsors:user_id (
+          sponsor:user_id (
             id,
             role,
             name
@@ -51,8 +51,8 @@ const ActivityLog = () => {
           details: item.details,
           created_at: item.created_at,
           user: {
-            name: item.sponsors?.name || `Utilisateur ${item.user_id.slice(0, 8)}`,
-            role: item.sponsors?.role || 'visitor'
+            name: item.sponsor?.name || `Utilisateur ${item.user_id.slice(0, 8)}`,
+            role: item.sponsor?.role || 'visitor'
           }
         };
       });
