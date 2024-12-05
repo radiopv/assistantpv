@@ -142,7 +142,7 @@ const SponsorshipRequestForm = () => {
         <Label>Type de parrainage *</Label>
         <RadioGroup
           defaultValue="long_term"
-          onValueChange={(value) => setFormData(prev => ({ ...prev, sponsorship_type: value }))}
+          onValueChange={(value: SponsorshipType) => setFormData(prev => ({ ...prev, sponsorship_type: value }))}
           className="flex flex-col space-y-2"
         >
           <div className="flex items-center space-x-2">
