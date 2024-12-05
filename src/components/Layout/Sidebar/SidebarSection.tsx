@@ -1,44 +1,120 @@
+import { useTranslation } from "react-i18next";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { SidebarLink } from "./SidebarLink";
-import { LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  LayoutDashboard,
+  Users,
+  Gift,
+  Settings,
+  MessageSquare,
+  FileText,
+  Home,
+  Globe,
+  Camera,
+  Calendar
+} from "lucide-react";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
-interface SidebarLinkType {
+interface SidebarLinkProps {
   href: string;
+  icon: React.ElementType;
   label: string;
-  icon: LucideIcon;
-  show: boolean;
+  isActive?: boolean;
 }
 
-interface SidebarSectionProps {
-  title: string;
-  links: SidebarLinkType[];
-  currentPath: string;
-  onClose?: () => void;
-  className?: string;
-}
+const SidebarLink = ({ href, icon: Icon, label, isActive }: SidebarLinkProps) => (
+  <Link to={href}>
+    <Button
+      variant="ghost"
+      className={cn(
+        "w-full justify-start gap-2",
+        isActive && "bg-accent text-accent-foreground"
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </Button>
+  </Link>
+);
 
-export const SidebarSection = ({ 
-  title, 
-  links, 
-  currentPath, 
-  onClose,
-  className 
-}: SidebarSectionProps) => {
+export const SidebarSection = () => {
+  const { t } = useTranslation();
+  const location = useLocation();
+  const { isAssistant } = useAuth();
+
+  const adminLinks = [
+    {
+      href: '/admin/dashboard',
+      icon: LayoutDashboard,
+      label: t('dashboard')
+    },
+    {
+      href: '/admin/sponsors',
+      icon: Users,
+      label: t('sponsors')
+    },
+    {
+      href: '/admin/donations',
+      icon: Gift,
+      label: t('donations')
+    },
+    {
+      href: '/admin/settings',
+      icon: Settings,
+      label: t('settings')
+    },
+    {
+      href: '/admin/messages',
+      icon: MessageSquare,
+      label: t('messages')
+    },
+    {
+      href: '/admin/documents',
+      icon: FileText,
+      label: t('documents')
+    },
+    {
+      href: '/admin/home-modules',
+      icon: LayoutDashboard,
+      label: t('Page d\'accueil')
+    }
+  ];
+
+  const assistantLinks = [
+    {
+      href: '/',
+      icon: Home,
+      label: t('home')
+    },
+    {
+      href: '/visits',
+      icon: Calendar,
+      label: t('visits')
+    },
+    {
+      href: '/media',
+      icon: Camera,
+      label: t('media')
+    },
+    {
+      href: '/translations',
+      icon: Globe,
+      label: t('translations')
+    }
+  ];
+
+  const links = isAssistant ? assistantLinks : adminLinks;
+
   return (
-    <div className={cn("px-3 py-2", className)}>
-      <h2 className="mb-2 px-4 text-lg font-semibold">{title}</h2>
-      <div className="space-y-1">
-        {links.filter(link => link.show).map((link) => (
-          <SidebarLink
-            key={link.href}
-            href={link.href}
-            label={link.label}
-            icon={link.icon}
-            isActive={currentPath === link.href}
-            onClose={onClose}
-          />
-        ))}
-      </div>
+    <div className="flex flex-col gap-2">
+      {links.map((link) => (
+        <SidebarLink
+          key={link.href}
+          {...link}
+          isActive={location.pathname === link.href}
+        />
+      ))}
     </div>
   );
 };
