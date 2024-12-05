@@ -1,4 +1,4 @@
-export default {
+export const spanishTranslations = {
   // Auth related
   login: "Iniciar sesión",
   logout: "Cerrar sesión",
@@ -32,21 +32,15 @@ export default {
   // Profile related
   profile: "Perfil",
   name: "Nombre",
-  age: "Edad",
-  gender: "Género",
-  male: "Masculino",
-  female: "Femenino",
   birthDate: "Fecha de nacimiento",
   address: "Dirección",
   phone: "Teléfono",
   
   // Sponsorship status
   sponsor: "Padrino",
-  sponsored: "Apadrinado",
-  available: "Disponible",
-  by: "por",
   addSponsor: "Agregar padrino",
   editOrRemoveSponsor: "Editar o eliminar padrino",
+  by: "por",
   
   // Time related
   years: "años",
@@ -81,12 +75,20 @@ export default {
   // Children filters translations
   searchPlaceholder: "Buscar niños...",
   allCities: "Todas las ciudades",
-  gender: "Género",
+  masculine: "Masculino",
+  feminine: "Femenino",
   allGenders: "Todos los géneros",
-  age: "Edad",
   allAges: "Todas las edades",
-  status: "Estado",
   allStatus: "Todos los estados",
   pending: "Pendiente",
-  urgent: "Urgente"
+  urgent: "Urgente",
+  
+  // Status translations
+  available: "Disponible",
+  sponsored: "Apadrinado",
+  
+  // Common fields
+  gender: "Género",
+  age: "Edad",
+  status: "Estado"
 };
