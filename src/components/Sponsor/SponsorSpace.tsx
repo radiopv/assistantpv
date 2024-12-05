@@ -22,6 +22,7 @@ export const SponsorSpace = () => {
       try {
         if (!user?.id) return;
         
+        // Modifions la requête pour récupérer correctement les enfants parrainés
         const { data: sponsorships, error } = await supabase
           .from('sponsorships')
           .select(`
@@ -64,8 +65,11 @@ export const SponsorSpace = () => {
             }
 
             return {
-              ...sponsorship.children,
-              age // Add the calculated age to match SponsoredChild type
+              id: sponsorship.children.id,
+              name: sponsorship.children.name,
+              photo_url: sponsorship.children.photo_url,
+              city: sponsorship.children.city,
+              age: age
             };
           })
           .filter((child): child is SponsoredChild => child !== null);
