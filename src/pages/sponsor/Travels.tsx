@@ -6,9 +6,15 @@ import { Calendar } from "@/components/ui/calendar";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Travels = () => {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>(new Date());
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>(new Date());
+  const [wantsToVisitChild, setWantsToVisitChild] = useState(false);
+  const [wantsDonationPickup, setWantsDonationPickup] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { t } = useLanguage();
 
   const { data: travels, isLoading } = useQuery({
@@ -35,9 +41,26 @@ const Travels = () => {
     }
   });
 
-  const handleDateSelect = (date: Date | undefined) => {
-    setSelectedDate(date);
-    toast.success(t("dateSelected"));
+  const handleSubmit = async () => {
+    try {
+      const { error } = await supabase
+        .from('sponsors')
+        .update({
+          wants_to_visit_child: wantsToVisitChild,
+          wants_donation_pickup: wantsDonationPickup,
+          visit_start_date: selectedStartDate,
+          visit_end_date: selectedEndDate
+        })
+        .eq('id', (await supabase.auth.getUser()).data.user?.id);
+
+      if (error) throw error;
+
+      toast.success(t("dateSelected"));
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error('Error updating visit preferences:', error);
+      toast.error(t("error"));
+    }
   };
 
   if (isLoading) {
@@ -53,8 +76,8 @@ const Travels = () => {
           <h2 className="text-lg font-semibold mb-4">{t("visitCalendar")}</h2>
           <Calendar
             mode="single"
-            selected={selectedDate}
-            onSelect={handleDateSelect}
+            selected={selectedStartDate}
+            onSelect={setSelectedStartDate}
             className="rounded-md border"
           />
         </Card>
@@ -81,7 +104,59 @@ const Travels = () => {
 
       <Card className="p-4">
         <h2 className="text-lg font-semibold mb-4">{t("scheduleNewVisit")}</h2>
-        <Button>{t("scheduleVisit")}</Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>{t("scheduleVisit")}</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t("scheduleNewVisit")}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">{t("startDate")}</label>
+                <Calendar
+                  mode="single"
+                  selected={selectedStartDate}
+                  onSelect={setSelectedStartDate}
+                  className="rounded-md border"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">{t("endDate")}</label>
+                <Calendar
+                  mode="single"
+                  selected={selectedEndDate}
+                  onSelect={setSelectedEndDate}
+                  className="rounded-md border"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="visitChild"
+                  checked={wantsToVisitChild}
+                  onCheckedChange={(checked) => setWantsToVisitChild(checked as boolean)}
+                />
+                <label htmlFor="visitChild" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  {t("visitChild")}
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="meetAssistant"
+                  checked={wantsDonationPickup}
+                  onCheckedChange={(checked) => setWantsDonationPickup(checked as boolean)}
+                />
+                <label htmlFor="meetAssistant" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  {t("meetAssistant")}
+                </label>
+              </div>
+              <Button onClick={handleSubmit} className="w-full">
+                {t("submitVisit")}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </Card>
     </div>
   );

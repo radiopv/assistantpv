@@ -26,12 +26,12 @@ export interface Translations {
   city: string;
   gender: string;
   status: string;
-  date: string;
   peopleHelped: string;
   allCities: string;
   sortBy: string;
   user: string;
   logout: string;
+  phone: string;
 
   // Auth related
   login: string;
@@ -73,8 +73,6 @@ export interface Translations {
   scanError: string;
   scanningTranslations: string;
   scanAssistantSection: string;
-  frenchTranslations: string;
-  spanishTranslations: string;
 
   // Navigation related
   dashboard: string;
@@ -90,90 +88,6 @@ export interface Translations {
   editProfile: string;
   welcome: string;
 
-  // Dashboard related
-  totalChildren: string;
-  viewAllChildren: string;
-  sponsoredChildren: string;
-  viewSponsoredChildren: string;
-  urgentNeeds: string;
-  viewUrgentNeeds: string;
-  activeCities: string;
-  viewCityStats: string;
-  incompleteProfiles: string;
-  viewIncompleteProfiles: string;
-  welcomeMessage: string;
-  urgentNeedsByCity: string;
-  topCities: string;
-  sponsorshipStats: string;
-  activeSponsorships: string;
-  pendingSponsorships: string;
-  completedSponsorships: string;
-
-  // Children related
-  addChild: string;
-  editChild: string;
-  deleteChild: string;
-  childName: string;
-  childAge: string;
-  childGender: string;
-  masculine: string;
-  feminine: string;
-  birthDate: string;
-  description: string;
-  story: string;
-  needs: string;
-  comments: string;
-  photo: string;
-  sponsored: string;
-  available: string;
-  pending: string;
-  urgent: string;
-  sponsor: string;
-  addSponsor: string;
-  editOrRemoveSponsor: string;
-  allGenders: string;
-  allAges: string;
-  allStatus: string;
-  searchPlaceholder: string;
-  manageDonations: string;
-  sponsorAlbum: string;
-  sponsorAlbumDescription: string;
-  profileUpdated: string;
-  profileUpdateSuccess: string;
-  profileUpdateError: string;
-  childDeleted: string;
-  childDeleteSuccess: string;
-  childDeleteError: string;
-  addComment: string;
-  markAsNormal: string;
-  markAsUrgent: string;
-  deleteConfirmation: string;
-  deleteWarning: string;
-  selectMessage: string;
-
-  // Sponsor related
-  activeSponsors: string;
-  inactiveSponsors: string;
-  pleaseAcceptTerms: string;
-  sponsorshipRequestSubmitted: string;
-  errorSubmittingRequest: string;
-  becomeSponsor: string;
-  sponsorshipDescription: string;
-  fullName: string;
-  facebookUrl: string;
-  motivation: string;
-  longTermSponsorship: string;
-  acceptTerms: string;
-  sponsorshipTerminationNote: string;
-  submitting: string;
-  submitRequest: string;
-
-  // Admin section
-  assistant: string;
-  translations: string;
-  activityLog: string;
-  sponsorSpace: string;
-
   // Travel related
   dateSelected: string;
   loading: string;
@@ -182,6 +96,21 @@ export interface Translations {
   upcomingVisits: string;
   scheduleNewVisit: string;
   scheduleVisit: string;
-  date: string;
-  status: string;
+  startDate: string;
+  endDate: string;
+  visitChild: string;
+  meetAssistant: string;
+  submitVisit: string;
+
+  // Donations related
+  filterByCity: string;
+  totalDonations: string;
+  citiesCovered: string;
+  errorMessage: string;
+  donationsTitle: string;
+  donationsSubtitle: string;
+  addDonation: string;
+  noDonationsFound: string;
+  donationBy: string;
+  selectMessageToRead: string;
 }
