@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Activity, User } from "lucide-react";
@@ -25,7 +25,7 @@ const ActivityLog = () => {
           action,
           details,
           created_at,
-          profiles (
+          profiles!activity_logs_user_id_fkey (
             id,
             role
           )
@@ -42,9 +42,13 @@ const ActivityLog = () => {
       
       // Transform the data to match ActivityLogType
       const transformedData = data.map(item => ({
-        ...item,
+        id: item.id,
+        user_id: item.user_id,
+        action: item.action,
+        details: item.details,
+        created_at: item.created_at,
         user: {
-          name: `User ${item.user_id.slice(0, 8)}`, // Using truncated user_id as name for now
+          name: `Utilisateur ${item.user_id.slice(0, 8)}`,
           role: item.profiles?.role || 'unknown'
         }
       }));
