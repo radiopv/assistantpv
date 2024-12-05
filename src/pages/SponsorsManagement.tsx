@@ -26,7 +26,6 @@ const SponsorsManagement = () => {
         throw error;
       }
 
-      // Ensure all required fields are present with correct types
       return (data || []).map(request => ({
         ...request,
         is_long_term: Boolean(request.is_long_term),
