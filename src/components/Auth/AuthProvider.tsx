@@ -2,15 +2,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
-
-interface AuthContextType {
-  user: any;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  session: Session | null;
-  isAssistant: boolean;
-}
+import { AuthContextType } from "./types";
+import { useAuthHook } from "./useAuthHook";
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -26,53 +19,42 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    user,
+    loading,
+    isAssistant,
+    signIn,
+    signOut,
+    checkAuth
+  } = useAuthHook();
   const [session, setSession] = useState<Session | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const checkUser = async () => {
+    const initAuth = async () => {
       try {
-        const { data: { session: authSession } } = await supabase.auth.getSession();
-        setSession(authSession);
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        setSession(currentSession);
         
-        if (authSession?.user) {
-          const { data: sponsorData, error: sponsorError } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('id', authSession.user.id)
-            .single();
-
-          if (sponsorError) throw sponsorError;
-          setUser(sponsorData);
+        if (currentSession?.user?.email) {
+          await checkAuth(currentSession.user.email);
+        } else {
+          await checkAuth();
         }
       } catch (error) {
-        console.error('Error checking user session:', error);
-        setUser(null);
-      } finally {
-        setLoading(false);
+        console.error('Error initializing auth:', error);
       }
     };
 
-    checkUser();
+    initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, authSession) => {
-      setSession(authSession);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      console.log('Auth state changed:', event, newSession?.user?.email);
+      setSession(newSession);
       
-      if (event === 'SIGNED_IN' && authSession?.user) {
-        const { data: sponsorData, error: sponsorError } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', authSession.user.id)
-          .single();
-
-        if (sponsorError) throw sponsorError;
-        setUser(sponsorData);
-        setLoading(false);
+      if (event === 'SIGNED_IN' && newSession?.user?.email) {
+        await checkAuth(newSession.user.email);
       } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-        setLoading(false);
+        await checkAuth();
       }
     });
 
@@ -80,33 +62,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       subscription.unsubscribe();
     };
   }, []);
-
-  const signIn = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error signing in:', error);
-      throw error;
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing out:', error);
-      throw error;
-    }
-  };
-
-  const isAssistant = user?.role === 'assistant';
 
   return (
     <AuthContext.Provider value={{ user, loading, signIn, signOut, session, isAssistant }}>
