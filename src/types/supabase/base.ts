@@ -1,44 +1,14 @@
-import { Json } from "../json";
-import { Profile, ProfileInsert, ProfileUpdate } from "./tables/profiles";
-import { Sponsorship, SponsorshipRequest } from "./tables/sponsorships";
-import { UnifiedMediaBrowser } from "./views/unified-media-browser";
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
 
 export interface Database {
   public: {
     Tables: {
-      profiles: {
-        Row: Profile;
-        Insert: ProfileInsert;
-        Update: ProfileUpdate;
-        Relationships: [];
-      };
-      sponsorships: {
-        Row: Sponsorship;
-        Insert: Omit<Sponsorship, 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<Sponsorship, 'id'>>;
-        Relationships: [
-          {
-            foreignKeyName: "sponsorships_child_id_fkey";
-            columns: ["child_id"];
-            isOneToOne: false;
-            referencedRelation: "children";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "sponsorships_sponsor_id_fkey";
-            columns: ["sponsor_id"];
-            isOneToOne: false;
-            referencedRelation: "sponsors";
-            referencedColumns: ["id"];
-          }
-        ];
-      };
-      sponsorship_requests: {
-        Row: SponsorshipRequest;
-        Insert: Omit<SponsorshipRequest, 'id' | 'created_at' | 'updated_at' | 'status'>;
-        Update: Partial<Omit<SponsorshipRequest, 'id'>>;
-        Relationships: [];
-      };
       aid_categories: {
         Row: {
           created_at: string | null
@@ -90,7 +60,7 @@ export interface Database {
           title?: string | null
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Update: {
           child_id?: string | null
@@ -175,7 +145,7 @@ export interface Database {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           child_id?: string | null
@@ -392,7 +362,7 @@ export interface Database {
           description?: string | null
           comments?: string | null
           story?: string | null
-          end_date?: string
+          end_date?: string | null
           gender: string
           id?: string
           is_sponsored?: boolean | null
@@ -524,8 +494,8 @@ export interface Database {
           created_at?: string | null
           donation_id?: string | null
           id?: string | null
-          quantity?: number
-          updated_at?: string | null
+          quantity?: number;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -561,25 +531,372 @@ export interface Database {
           longitude?: number
           name?: string
           type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      donation_photos: {
+        Row: {
+          created_at: string
+          donation_id: string | null
+          id: number
+          title: string | null
+          url: string | null
+          is_featured: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          donation_id?: string | null
+          id?: number
+          title?: string | null
+          url?: string | null
+          is_featured?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          donation_id?: string | null
+          id?: number
+          title?: string | null
+          url?: string | null
+          is_featured?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_donation_id"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      donation_videos: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          donation_id: string | null
+          id: string
+          is_featured: boolean | null
+          mime_type: string | null
+          thumbnail: string | null
+          thumbnail_url: string | null
+          title: string | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          donation_id?: string | null
+          id?: string
+          is_featured?: boolean | null
+          mime_type?: string | null
+          thumbnail?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          donation_id?: string | null
+          id?: string
+          is_featured?: boolean | null
+          mime_type?: string | null
+          thumbnail?: string | null
+          thumbnail_url?: string | null
+          title?: string | null
+          updated_at?: string | null
+          url?: string;
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donation_videos_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      donations: {
+        Row: {
+          assistant_name: string
+          city: string
+          comments: string | null
+          created_at: string | null
+          donation_date: string
+          id: string
+          people_helped: number
+          photos: string[] | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assistant_name: string
+          city: string
+          comments?: string | null
+          created_at?: string | null
+          donation_date: string
+          id?: string
+          people_helped: number
+          photos?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assistant_name?: string
+          city?: string
+          comments?: string | null
+          created_at?: string | null
+          donation_date?: string
+          id?: string
+          people_helped?: number
+          photos?: string[] | null
+          status?: string | null
           updated_at?: string | null
         }
         Relationships: []
       }
-    };
+      sponsors: {
+        Row: {
+          address: string | null
+          city: string | null
+          created_at: string | null
+          current_level_id: string | null
+          email: string | null
+          facebook_url: string | null
+          force_password_change: boolean | null
+          id: string
+          is_active: boolean | null
+          is_anonymous: boolean | null
+          last_login: string | null
+          name: string
+          password_hash: string | null
+          permissions: Json | null
+          phone: string | null
+          photo_url: string | null
+          privacy_settings: Json | null
+          role: string | null
+          show_name_publicly: boolean | null
+          total_points: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_level_id?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          force_password_change?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_anonymous?: boolean | null
+          last_login?: string | null
+          name: string
+          password_hash?: string | null
+          permissions?: Json | null
+          phone?: string | null
+          photo_url?: string | null
+          privacy_settings?: Json | null
+          role?: string | null
+          show_name_publicly?: boolean | null
+          total_points?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_level_id?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          force_password_change?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_anonymous?: boolean | null
+          last_login?: string | null
+          name?: string
+          password_hash?: string | null
+          permissions?: Json | null
+          phone?: string | null
+          photo_url?: string | null
+          privacy_settings?: Json | null
+          role?: string | null
+          show_name_publicly?: boolean | null
+          total_points?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsors_current_level_id_fkey"
+            columns: ["current_level_id"]
+            isOneToOne: false
+            referencedRelation: "sponsor_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsorship_audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          performed_by: string | null
+          sponsorship_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          performed_by?: string | null
+          sponsorship_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          performed_by?: string | null
+          sponsorship_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_audit_logs_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_audit_logs_sponsorship_id_fkey"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsorship_notes: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          note_type: string | null
+          sponsorship_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note_type?: string | null
+          sponsorship_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note_type?: string | null
+          sponsorship_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_notes_sponsorship_id_fkey"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsorship_requests: {
+        Row: {
+          id: string
+          full_name: string
+          email: string
+          phone?: string
+          city: string
+          facebook_url?: string
+          motivation?: string
+          sponsorship_type: 'long_term' | 'one_time';
+          status: 'pending' | 'approved' | 'rejected';
+          terms_accepted: boolean;
+          created_at?: string;
+          updated_at?: string;
+        }
+        Insert: {
+          full_name: string
+          email: string
+          phone?: string
+          city: string
+          facebook_url?: string
+          motivation?: string
+          sponsorship_type: 'long_term' | 'one_time';
+          status?: 'pending';
+          terms_accepted: boolean;
+        }
+        Update: {
+          full_name?: string
+          email?: string
+          phone?: string
+          city?: string
+          facebook_url?: string
+          motivation?: string
+          sponsorship_type?: 'long_term' | 'one_time';
+          status?: 'pending' | 'approved' | 'rejected';
+          terms_accepted?: boolean;
+        }
+        Relationships: []
+      }
+    }
     Views: {
       unified_media_browser: {
-        Row: UnifiedMediaBrowser;
-      };
+        Row: {
+          id: string
+          url: string
+          type: string
+          source_table: string
+          category: string
+          metadata: Json
+          created_at: string | null
+        }
+      }
       donation_items_with_categories: {
         Row: {
-          category_id: string | null;
-          category_name: string | null;
-          description: string | null;
-          donation_id: string | null;
-          id: string | null;
-          quantity: number | null;
-        };
-      };
+          category_id: string | null
+          category_name: string | null
+          description: string | null
+          donation_id: string | null
+          id: string
+          quantity: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donation_items_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       donation_statistics: {
         Row: {
           completed_donations: number | null
@@ -588,16 +905,32 @@ export interface Database {
           total_donations: number | null
           total_people_helped: number | null
         }
+        Relationships: []
       }
       donation_videos_with_details: {
         Row: {
-          id: string
-          url: string
-          title: string | null
-          description: string | null
-          thumbnail_url: string | null
+          assistant_name: string | null
+          city: string | null
           created_at: string | null
+          description: string | null
+          donation_date: string | null
+          donation_id: string | null
+          id: string | null
+          is_featured: boolean | null
+          thumbnail_url: string | null
+          title: string | null
+          updated_at: string | null
+          url: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "donation_videos_donation_id_fkey"
+            columns: ["donation_id"]
+            isOneToOne: false
+            referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       statistics_summary: {
         Row: {
@@ -606,8 +939,9 @@ export interface Database {
           refresh_timestamp: string | null
           sponsor_stats: Json | null
         }
+        Relationships: []
       }
-    };
+    }
     Functions: {
       add_assistant: {
         Args: {
@@ -768,7 +1102,7 @@ export interface Database {
         Returns: {
           month: string
           donations: number
-          people_helped: number
+          people_helped: number;
           success_rate: number
         }[]
       }
@@ -954,9 +1288,15 @@ export interface Database {
           sponsor_id: string
         }[]
       }
-    };
+    }
     Enums: {
-      user_role: "admin" | "assistant" | "sponsor" | "visitor";
-    };
-  };
+      user_role: "admin" | "assistant" | "sponsor" | "visitor"
+    }
+    CompositeTypes: {
+      email_template: {
+        subject: string | null
+        html: string | null
+      }
+    }
+  }
 }
