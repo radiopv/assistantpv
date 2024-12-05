@@ -1,5 +1,6 @@
 export const frenchTranslations = {
   // Auth related
+  login: "Se connecter",
   signIn: "Se connecter",
   signUp: "S'inscrire",
   signOut: "Se déconnecter",
@@ -45,9 +46,6 @@ export const frenchTranslations = {
   update: "Mettre à jour",
   
   // Child related
-  addChild: "Ajouter un enfant",
-  editChild: "Modifier un enfant",
-  deleteChild: "Supprimer un enfant",
   childName: "Nom de l'enfant",
   childAge: "Âge de l'enfant",
   childGender: "Genre de l'enfant",
@@ -141,7 +139,7 @@ export const frenchTranslations = {
   status: "Statut",
   allStatus: "Tous les statuts",
   
-  // Status translations (moved to a dedicated section to avoid duplicates)
+  // Status translations
   available: "Disponible",
   sponsored: "Parrainé",
   pending: "En attente",

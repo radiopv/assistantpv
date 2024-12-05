@@ -43,7 +43,6 @@ export const spanishTranslations = {
   download: "Descargar",
   
   // Profile related
-  profile: "Perfil",
   name: "Nombre",
   birthDate: "Fecha de nacimiento",
   address: "Dirección",
