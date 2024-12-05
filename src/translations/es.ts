@@ -154,5 +154,16 @@ export const spanishTranslations = {
   activeSponsorships: "Patrocinios activos",
   sponsorshipStats: "Estadísticas de patrocinio",
   topCities: "Ciudades principales",
-  urgentNeeds: "Necesidades urgentes"
+  urgentNeeds: "Necesidades urgentes",
+
+  // Admin section
+  assistant: "Asistente",
+  administration: "Administración",
+  permissions: "Permisos",
+  translations: "Traducciones",
+  travels: "Viajes",
+  statistics: "Estadísticas",
+  faq: "FAQ",
+  activityLog: "Registro de actividad",
+  sponsorSpace: "Espacio del Padrino",
 };

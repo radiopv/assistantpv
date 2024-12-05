@@ -168,6 +168,17 @@ export interface Translations {
   submitting: string;
   submitRequest: string;
 
+  // Admin section
+  assistant: string;
+  administration: string;
+  permissions: string;
+  translations: string;
+  travels: string;
+  statistics: string;
+  faq: string;
+  activityLog: string;
+  sponsorSpace: string;
+
   // Additional translation keys
   filterByCity: string;
   totalDonations: string;
