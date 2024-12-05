@@ -51,8 +51,24 @@ export const SponsorSpace = () => {
         console.log("Sponsorships data:", sponsorships);
 
         const children = sponsorships
-          .map(sponsorship => sponsorship.children)
-          .filter(child => child !== null);
+          .map(sponsorship => {
+            if (!sponsorship.children) return null;
+            
+            // Calculate age from birth_date
+            const birthDate = new Date(sponsorship.children.birth_date);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+              age--;
+            }
+
+            return {
+              ...sponsorship.children,
+              age // Add the calculated age to match SponsoredChild type
+            };
+          })
+          .filter((child): child is SponsoredChild => child !== null);
 
         console.log("Processed children:", children);
 
