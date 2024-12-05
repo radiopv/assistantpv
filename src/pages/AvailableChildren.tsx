@@ -52,10 +52,6 @@ const AvailableChildren = () => {
     return matchesSearch && matchesCity && matchesGender && matchesAge;
   });
 
-  const handleViewProfile = (id: string) => {
-    navigate(`/become-sponsor/${id}`);
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -95,7 +91,6 @@ const AvailableChildren = () => {
           <ChildCard
             key={child.id}
             child={child}
-            onViewProfile={handleViewProfile}
           />
         ))}
       </div>
