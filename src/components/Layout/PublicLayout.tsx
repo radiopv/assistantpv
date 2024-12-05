@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { LanguageSelector } from "@/components/LanguageSelector";
-import { Menu, LayoutDashboard, Users } from "lucide-react";
+import { Menu, LayoutDashboard, Users, LogIn } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -26,6 +26,18 @@ const PublicLayout = () => {
       icon: Users,
     },
   ];
+
+  const getRedirectPath = (role: string) => {
+    switch (role) {
+      case 'admin':
+      case 'assistant':
+        return '/dashboard';
+      case 'sponsor':
+        return '/sponsor-space';
+      default:
+        return '/';
+    }
+  };
 
   const isAdminOrAssistant = user?.role === 'admin' || user?.role === 'assistant';
 
@@ -65,11 +77,21 @@ const PublicLayout = () => {
                           Administration
                         </Button>
                       </Link>
-                    ) : null
+                    ) : (
+                      <Link to={getRedirectPath(user?.role)}>
+                        <Button className="w-full">
+                          <LogIn className="mr-2 h-4 w-4" />
+                          Mon espace
+                        </Button>
+                      </Link>
+                    )
                   ) : (
                     !isLoginPage && (
                       <Link to="/login">
-                        <Button className="w-full">Administration</Button>
+                        <Button className="w-full">
+                          <LogIn className="mr-2 h-4 w-4" />
+                          Connexion
+                        </Button>
                       </Link>
                     )
                   )}
@@ -113,11 +135,21 @@ const PublicLayout = () => {
                       Administration
                     </Button>
                   </Link>
-                ) : null
+                ) : (
+                  <Link to={getRedirectPath(user?.role)}>
+                    <Button>
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Mon espace
+                    </Button>
+                  </Link>
+                )
               ) : (
                 !isLoginPage && (
                   <Link to="/login">
-                    <Button>Administration</Button>
+                    <Button>
+                      <LogIn className="mr-2 h-4 w-4" />
+                      Connexion
+                    </Button>
                   </Link>
                 )
               )}
