@@ -75,7 +75,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
       toast({
         title: "Traduction manquante",
         description: `La clé "${key}" n'a pas de traduction en ${language === 'fr' ? 'français' : 'espagnol'}.`,
-        variant: "destructive",
+        variant: "warning",
       });
 
       // Retourne le message par défaut
