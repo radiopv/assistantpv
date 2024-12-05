@@ -26,21 +26,6 @@ export const NeedsSection = ({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-2">
-        <h4 className="font-medium text-sm text-gray-700">{t("needs")}</h4>
-        <div className="flex items-center gap-2 text-xs">
-          <span className="flex items-center">
-            <Badge variant="default" className="mr-1 px-1">
-              {t("normalNeed")}
-            </Badge>
-          </span>
-          <span className="flex items-center">
-            <Badge variant="destructive" className="mr-1 px-1">
-              {t("urgentNeed")}
-            </Badge>
-          </span>
-        </div>
-      </div>
       <div className="flex flex-wrap gap-2">
         {needs.map((need, index) => (
           <NeedBadge
