@@ -22,7 +22,7 @@ export const NeedsSection = ({
 }: NeedsSectionProps) => {
   return (
     <div>
-      <h3 className="text-sm font-medium text-gray-700 mb-2">Necesidades del niño</h3>
+      <h3 className="text-sm font-medium text-gray-700 mb-2 text-center">Necesidades del niño</h3>
       <div className="grid grid-cols-1 gap-2">
         {needs.map((need, index) => (
           <NeedBadge

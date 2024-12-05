@@ -1,5 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 interface NeedBadgeProps {
   category: string;
@@ -35,6 +39,8 @@ export const NeedBadge = ({
   onClose,
 }: NeedBadgeProps) => {
   const { t } = useLanguage();
+  const [isUrgentLocal, setIsUrgentLocal] = useState(isUrgent);
+  const [showDialog, setShowDialog] = useState(false);
 
   const getCategoryLabel = (category: string) => {
     switch (category) {
@@ -57,16 +63,63 @@ export const NeedBadge = ({
     }
   };
 
+  const handleClick = () => {
+    setShowDialog(true);
+    if (onNeedClick) onNeedClick();
+  };
+
+  const handleSubmit = () => {
+    if (onSubmit) onSubmit(isUrgentLocal);
+    setShowDialog(false);
+  };
+
   return (
-    <div className="relative">
+    <>
       <Button 
         variant="ghost"
-        className={`w-full justify-center px-4 py-2 rounded-md transition-colors ${CATEGORY_STYLES[category as keyof typeof CATEGORY_STYLES]}`}
-        onClick={onNeedClick}
+        className={`w-full justify-between px-4 py-2 rounded-md transition-colors ${CATEGORY_STYLES[category as keyof typeof CATEGORY_STYLES]}`}
+        onClick={handleClick}
       >
-        {getCategoryLabel(category)}
-        {isUrgent && <span className="ml-2 text-red-600 font-bold">(!)</span>}
+        <span>{getCategoryLabel(category)}</span>
+        {isUrgent && <span className="text-red-600 font-bold">(!)</span>}
       </Button>
-    </div>
+
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{getCategoryLabel(category)}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-gray-600">Commentaire</label>
+              <Textarea
+                value={comment}
+                onChange={(e) => onCommentChange?.(e.target.value)}
+                placeholder="Ajouter un commentaire..."
+                className="mt-1"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="urgent"
+                checked={isUrgentLocal}
+                onCheckedChange={(checked) => setIsUrgentLocal(checked as boolean)}
+              />
+              <label htmlFor="urgent" className="text-sm text-gray-600">
+                Marquer comme urgent
+              </label>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowDialog(false)}>
+                Annuler
+              </Button>
+              <Button onClick={handleSubmit}>
+                Enregistrer
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
