@@ -89,20 +89,26 @@ const ChildProfile = () => {
       const { error: sponsorshipError } = await supabase
         .from('sponsorships')
         .delete()
-        .eq('child_id', id);
+        .match({ child_id: id });
 
-      if (sponsorshipError) throw sponsorshipError;
+      if (sponsorshipError) {
+        console.error('Error deleting sponsorships:', sponsorshipError);
+        throw sponsorshipError;
+      }
 
       // Then delete the child
       const { error } = await supabase
         .from('children')
         .delete()
-        .eq('id', id);
+        .match({ id });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting child:', error);
+        throw error;
+      }
 
       toast({
-        title: t("childDeleted"),
+        title: t("success"),
         description: t("childDeleteSuccess"),
       });
       navigate('/children');

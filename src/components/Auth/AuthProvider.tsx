@@ -7,6 +7,8 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  session: any;
+  isAssistant: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -14,6 +16,8 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signIn: async () => {},
   signOut: async () => {},
+  session: null,
+  isAssistant: false,
 });
 
 export const useAuth = () => {
@@ -23,17 +27,20 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
+        const { data: { session: authSession } } = await supabase.auth.getSession();
+        setSession(authSession);
+        
+        if (authSession?.user) {
           const { data: sponsorData, error: sponsorError } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', session.user.id)
+            .eq('id', authSession.user.id)
             .single();
 
           if (sponsorError) throw sponsorError;
@@ -48,12 +55,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, authSession) => {
+      setSession(authSession);
+      
+      if (event === 'SIGNED_IN' && authSession?.user) {
         const { data: sponsorData, error: sponsorError } = await supabase
           .from('sponsors')
           .select('*')
-          .eq('id', session.user.id)
+          .eq('id', authSession.user.id)
           .single();
 
         if (sponsorError) throw sponsorError;
@@ -94,8 +103,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const isAssistant = user?.role === 'assistant';
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signOut, session, isAssistant }}>
       {children}
     </AuthContext.Provider>
   );
