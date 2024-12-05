@@ -9,29 +9,39 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: keyof Translations) => string;
+  addTranslation: (key: string, value: string, language: Language) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<Language>('fr');
-
-  const translations = {
-    fr: frenchTranslations as Translations,
-    es: spanishTranslations as Translations
-  };
+  const [translations, setTranslations] = useState({
+    fr: frenchTranslations,
+    es: spanishTranslations
+  });
 
   const t = (key: keyof Translations): string => {
     const translation = translations[language][key];
     if (!translation) {
-      console.warn(`Missing translation for key: ${key}`);
+      console.warn(`Missing translation for key: ${key} in ${language}`);
       return key;
     }
     return translation;
   };
 
+  const addTranslation = (key: string, value: string, lang: Language) => {
+    setTranslations(prev => ({
+      ...prev,
+      [lang]: {
+        ...prev[lang],
+        [key]: value
+      }
+    }));
+  };
+
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, addTranslation }}>
       {children}
     </LanguageContext.Provider>
   );
