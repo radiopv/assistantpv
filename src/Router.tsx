@@ -22,6 +22,7 @@ import ActivityLog from "@/pages/admin/ActivityLog";
 import HomeContent from "@/pages/admin/HomeContent";
 import Travels from "@/pages/sponsor/Travels";
 import AvailableChildren from "@/pages/AvailableChildren";
+import BecomeSponsor from "@/pages/BecomeSponsor";
 
 export const Router = () => {
   const { user } = useAuth();
@@ -33,6 +34,7 @@ export const Router = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/available-children" element={<AvailableChildren />} />
+        <Route path="/become-sponsor/:childId" element={<BecomeSponsor />} />
       </Route>
 
       {/* Protected Routes */}

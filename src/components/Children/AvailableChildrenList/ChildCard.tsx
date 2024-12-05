@@ -1,10 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 import { differenceInYears, parseISO } from "date-fns";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Need } from "@/types/needs";
 
 interface ChildCardProps {
   child: {
@@ -14,66 +12,50 @@ interface ChildCardProps {
     city: string;
     photo_url: string;
     description?: string;
-    needs?: Need[];
+    needs?: any[];
     gender: string;
   };
-  onViewProfile: (id: string) => void;
 }
 
-export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
-  const { t } = useLanguage();
+export const ChildCard = ({ child }: ChildCardProps) => {
+  const navigate = useNavigate();
   const age = differenceInYears(new Date(), parseISO(child.birth_date));
 
   return (
     <Card className="overflow-hidden group">
-      <div className="relative">
+      <div className="aspect-square relative">
         <img
           src={child.photo_url || "/placeholder.svg"}
           alt={child.name}
-          className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full object-cover"
         />
       </div>
-      
-      <div className="p-4 space-y-4">
-        <div>
-          <h3 className="font-semibold text-lg">{child.name}</h3>
-          <div className="mt-1 text-sm text-gray-600">
-            <p>{age} {t("years")}</p>
-            <p>{child.city}</p>
-            <p>{child.gender === 'M' ? t("masculine") : t("feminine")}</p>
-          </div>
+      <div className="p-4">
+        <h3 className="font-semibold text-lg">{child.name}</h3>
+        <div className="mt-2 space-y-1 text-sm text-gray-600">
+          <p>{age} ans</p>
+          <p>{child.city}</p>
+          <p>{child.gender === 'male' ? 'Garçon' : 'Fille'}</p>
         </div>
-
+        
         {child.needs && child.needs.length > 0 && (
-          <div>
-            <h4 className="font-medium mb-2">{t("needs")}</h4>
-            <div className="flex flex-wrap gap-2">
-              {child.needs.map((need, index) => (
-                <Badge 
-                  key={`${need.category}-${index}`}
-                  variant={need.is_urgent ? "destructive" : "secondary"}
-                >
-                  {need.category}
-                </Badge>
-              ))}
-            </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {child.needs.map((need: any, index: number) => (
+              <Badge 
+                key={`${need.category}-${index}`}
+                variant={need.is_urgent ? "destructive" : "secondary"}
+              >
+                {need.category}
+              </Badge>
+            ))}
           </div>
         )}
-
-        {child.description && (
-          <div>
-            <h4 className="font-medium mb-2">{t("description")}</h4>
-            <ScrollArea className="h-24">
-              <p className="text-sm text-gray-600">{child.description}</p>
-            </ScrollArea>
-          </div>
-        )}
-
+        
         <Button 
-          className="w-full"
-          onClick={() => onViewProfile(child.id)}
+          className="w-full mt-4" 
+          onClick={() => navigate(`/become-sponsor/${child.id}`)}
         >
-          {t("becomeSponsor")}
+          Parrainer cet enfant
         </Button>
       </div>
     </Card>
