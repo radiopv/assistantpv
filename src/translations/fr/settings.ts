@@ -1,9 +1,16 @@
 export const settingsTranslations = {
-  terms: "Conditions",
-  privacy: "Confidentialité",
+  settings: "Paramètres",
   language: "Langue",
   theme: "Thème",
   light: "Clair",
   dark: "Sombre",
   system: "Système",
+  preferences: "Préférences",
+  options: "Options",
+  advanced: "Avancé",
+  basic: "Basique",
+  general: "Général",
+  security: "Sécurité",
+  privacy: "Confidentialité",
+  account: "Compte",
 };

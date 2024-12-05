@@ -6,4 +6,6 @@ export const validationTranslations = {
   invalidUrl: "URL invalide",
   passwordTooShort: "Mot de passe trop court",
   passwordMismatch: "Les mots de passe ne correspondent pas",
+  errorOccurred: "Une erreur est survenue",
+  tryAgain: "Réessayer",
 };

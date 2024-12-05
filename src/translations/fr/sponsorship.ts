@@ -8,4 +8,5 @@ export const sponsorshipTranslations = {
   endDate: "Date de fin",
   sponsorships: "Parrainages",
   isSponsored: "Est parrainé",
+  sponsors: "Parrains",
 };

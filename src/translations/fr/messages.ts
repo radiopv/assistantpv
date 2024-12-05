@@ -1,7 +1,7 @@
 export const messageTranslations = {
-  error: "Erreur",
-  success: "Succès",
-  loading: "Chargement...",
-  errorOccurred: "Une erreur est survenue",
-  tryAgain: "Réessayer",
+  messages: "Messages",
+  notifications: "Notifications",
+  send: "Envoyer",
+  receive: "Recevoir",
+  reply: "Répondre",
 };
