@@ -98,8 +98,8 @@ export const TranslationScanner = () => {
             foundTexts.push({ text, location });
             setPendingTranslations(prev => [
               ...prev,
-              { key: `key_${Date.now()}_${foundTexts.length}`, text, language: 'fr' },
-              { key: `key_${Date.now()}_${foundTexts.length}`, text, language: 'es' }
+              { key: text, text, language: 'fr' },
+              { key: text, text, language: 'es' }
             ]);
           }
         }

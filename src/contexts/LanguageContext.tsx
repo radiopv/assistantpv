@@ -9,6 +9,7 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  addTranslation: (key: string, text: string, language: Language) => void;
 }
 
 const translations = {
@@ -20,6 +21,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const [language, setLanguage] = useState<Language>('fr');
+  const [pendingTranslations, setPendingTranslations] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const detectLanguage = () => {
@@ -38,6 +40,42 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     localStorage.setItem('preferredLanguage', language);
   }, [language]);
 
+  const addTranslation = async (key: string, text: string, language: Language) => {
+    try {
+      // Mettre à jour la base de données avec la nouvelle traduction
+      const { error } = await fetch('/api/translations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key,
+          text,
+          language
+        }),
+      });
+
+      if (error) throw error;
+
+      // Mettre à jour le state local
+      translations[language] = {
+        ...translations[language],
+        [key]: text
+      };
+
+      setPendingTranslations(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(key);
+        return newSet;
+      });
+
+      toast.success('Traduction ajoutée avec succès');
+    } catch (err) {
+      console.error('Erreur lors de l\'ajout de la traduction:', err);
+      toast.error('Erreur lors de l\'ajout de la traduction');
+    }
+  };
+
   const t = (key: string): string => {
     const currentTranslations = translations[language];
     const translation = currentTranslations[key as keyof typeof currentTranslations];
@@ -45,7 +83,15 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     if (!translation) {
       console.log(`Missing translation for key: ${key} in language: ${language}`);
       
-      // Return the unavailable translation message in the current language
+      // Si le texte semble être en anglais (plus de 3 caractères, contient des lettres)
+      if (key.length > 3 && /[a-zA-Z]/.test(key)) {
+        // Ajouter à la liste des traductions en attente
+        setPendingTranslations(prev => new Set(prev).add(key));
+        
+        // Retourner le texte en anglais avec un style spécial
+        return `${key} 🔄`;
+      }
+      
       return language === 'fr' ? 
         translations.fr.translationUnavailable || "Traduction indisponible" : 
         translations.es.translationUnavailable || "Traducción no disponible";
@@ -55,7 +101,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   };
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, addTranslation }}>
       {children}
     </LanguageContext.Provider>
   );

@@ -16,7 +16,7 @@ interface TranslationApprovalProps {
 }
 
 export const TranslationApproval = ({ translations, onApprove }: TranslationApprovalProps) => {
-  const { t } = useLanguage();
+  const { t, addTranslation } = useLanguage();
   const [editedTranslations, setEditedTranslations] = useState<Record<string, string>>({});
 
   const handleTranslationChange = (key: string, value: string) => {
@@ -34,6 +34,9 @@ export const TranslationApproval = ({ translations, onApprove }: TranslationAppr
     }
     onApprove(key, translationValue, language);
     toast.success(t("translationApproved"));
+
+    // Ajouter la traduction au contexte
+    addTranslation(key, translationValue, language as 'fr' | 'es');
   };
 
   return (
