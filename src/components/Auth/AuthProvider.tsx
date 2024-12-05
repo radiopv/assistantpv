@@ -63,16 +63,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { data, error } = await supabase
+      console.log('Attempting to sign in with:', { email });
+      
+      const { data: sponsorData, error: sponsorError } = await supabase
         .from('sponsors')
         .select('*')
         .eq('email', email)
-        .eq('password_hash', password);
+        .eq('password_hash', password)
+        .single();
 
-      if (error) throw error;
-      
-      if (data && data.length > 0) {
-        const sponsorData = data[0];
+      if (sponsorError) {
+        console.error('Error fetching sponsor:', sponsorError);
+        throw sponsorError;
+      }
+
+      if (sponsorData) {
         localStorage.setItem('user', JSON.stringify(sponsorData));
         setUser(sponsorData);
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
