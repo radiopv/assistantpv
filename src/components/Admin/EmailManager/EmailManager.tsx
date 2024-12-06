@@ -1,66 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { Resend } from 'resend';
+import { resendClient } from "@/lib/email";
+import { EmailForm } from "./EmailForm";
 
 const EmailManager = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
-  const [subject, setSubject] = useState("");
-  const [content, setContent] = useState("");
-  const [template, setTemplate] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedSponsors, setSelectedSponsors] = useState<"all" | "active" | "pending">("all");
-  const [resendClient, setResendClient] = useState<Resend | null>(null);
 
-  useEffect(() => {
-    const apiKey = import.meta.env.VITE_RESEND_API_KEY;
-    if (!apiKey) {
-      console.error('Missing Resend API key. Please add VITE_RESEND_API_KEY to your .env file');
-      toast({
-        title: t("error"),
-        description: "Missing Resend API key configuration",
-        variant: "destructive",
-      });
-      return;
-    }
-    setResendClient(new Resend(apiKey));
-  }, []);
-
-  const emailTemplates = {
-    welcome: {
-      subject: t("welcomeEmailSubject"),
-      content: t("welcomeEmailContent"),
-    },
-    update: {
-      subject: t("updateEmailSubject"),
-      content: t("updateEmailContent"),
-    },
-    reminder: {
-      subject: t("reminderEmailSubject"),
-      content: t("reminderEmailContent"),
-    },
-  };
-
-  const handleTemplateChange = (value: string) => {
-    setTemplate(value);
-    if (value in emailTemplates) {
-      const selectedTemplate = emailTemplates[value as keyof typeof emailTemplates];
-      setSubject(selectedTemplate.subject);
-      setContent(selectedTemplate.content);
-    }
-  };
-
-  const getSponsorsEmails = async () => {
+  const getSponsorsEmails = async (sponsorType: "all" | "active" | "pending") => {
     let query = supabase.from('sponsors').select('email');
     
-    switch (selectedSponsors) {
+    switch (sponsorType) {
       case "active":
         query = query.eq('status', 'active');
         break;
@@ -77,16 +31,7 @@ const EmailManager = () => {
     return data.map(sponsor => sponsor.email);
   };
 
-  const handleSendEmails = async () => {
-    if (!resendClient) {
-      toast({
-        title: t("error"),
-        description: "Email service not configured",
-        variant: "destructive",
-      });
-      return;
-    }
-
+  const handleSendEmails = async (subject: string, content: string, sponsorType: "all" | "active" | "pending") => {
     if (!subject || !content) {
       toast({
         title: t("error"),
@@ -98,7 +43,7 @@ const EmailManager = () => {
 
     setLoading(true);
     try {
-      const emails = await getSponsorsEmails();
+      const emails = await getSponsorsEmails(sponsorType);
       
       // Send emails in batches of 10
       const batchSize = 10;
@@ -133,72 +78,11 @@ const EmailManager = () => {
   return (
     <Card className="p-6 space-y-6">
       <h2 className="text-2xl font-bold">{t("emailManager")}</h2>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            {t("selectTemplate")}
-          </label>
-          <Select onValueChange={handleTemplateChange} value={template}>
-            <SelectTrigger>
-              <SelectValue placeholder={t("selectTemplate")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="welcome">{t("welcomeTemplate")}</SelectItem>
-              <SelectItem value="update">{t("updateTemplate")}</SelectItem>
-              <SelectItem value="reminder">{t("reminderTemplate")}</SelectItem>
-              <SelectItem value="custom">{t("customTemplate")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            {t("selectRecipients")}
-          </label>
-          <Select onValueChange={(value: "all" | "active" | "pending") => setSelectedSponsors(value)} value={selectedSponsors}>
-            <SelectTrigger>
-              <SelectValue placeholder={t("selectRecipients")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">{t("allSponsors")}</SelectItem>
-              <SelectItem value="active">{t("activeSponsors")}</SelectItem>
-              <SelectItem value="pending">{t("pendingSponsors")}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            {t("emailSubject")}
-          </label>
-          <Input
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-            placeholder={t("enterEmailSubject")}
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            {t("emailContent")}
-          </label>
-          <Textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder={t("enterEmailContent")}
-            className="min-h-[200px]"
-          />
-        </div>
-
-        <Button 
-          onClick={handleSendEmails} 
-          disabled={loading || !resendClient}
-          className="w-full"
-        >
-          {loading ? t("sendingEmails") : t("sendEmails")}
-        </Button>
-      </div>
+      <EmailForm 
+        onSend={handleSendEmails}
+        loading={loading}
+        disabled={false}
+      />
     </Card>
   );
 };
