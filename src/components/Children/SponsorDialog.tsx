@@ -31,12 +31,17 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
         sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
       };
 
+      console.log('Update data:', updateData);
+
       const { error } = await supabase
         .from('children')
         .update(updateData)
         .eq('id', childId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       toast.success(t("sponsorUpdateSuccess"));
       queryClient.invalidateQueries({ queryKey: ['children'] });
