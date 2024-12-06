@@ -50,31 +50,31 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-start">
+    <div className="space-y-6 max-w-full overflow-hidden px-2 sm:px-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard')}</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{t('dashboard')}</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             {t('welcomeMessage')}
           </p>
         </div>
         <NotificationBar />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {dashboardStats.map(({ label, value, color, link, tooltip }) => (
           <TooltipProvider key={label}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Card 
-                  className="p-6 hover:shadow-lg transition-all cursor-pointer transform hover:scale-105 duration-200"
+                  className="p-4 sm:p-6 hover:shadow-lg transition-all cursor-pointer transform hover:scale-105 duration-200 w-full"
                   onClick={() => navigate(link)}
                 >
                   <div className="flex items-center gap-4">
-                    <div className={`${color} p-3 rounded-lg w-3 h-3`} />
+                    <div className={`${color} p-2 sm:p-3 rounded-lg w-2 h-2 sm:w-3 sm:h-3`} />
                     <div>
-                      <p className="text-sm font-medium text-gray-600">{label}</p>
-                      <p className="text-2xl font-bold text-gray-900">{value}</p>
+                      <p className="text-xs sm:text-sm font-medium text-gray-600">{label}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900">{value}</p>
                     </div>
                   </div>
                 </Card>

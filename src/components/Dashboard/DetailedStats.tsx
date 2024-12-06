@@ -63,12 +63,12 @@ export const DetailedStats = () => {
   );
 
   return (
-    <Card className="p-6 bg-white shadow-lg rounded-lg">
-      <h3 className="text-xl font-semibold mb-4 text-gray-800">{t('urgentNeeds')}</h3>
-      <div className="h-[300px]">
+    <Card className="p-4 sm:p-6 bg-white shadow-lg rounded-lg overflow-hidden">
+      <h3 className="text-base sm:text-xl font-semibold mb-4 text-gray-800">{t('urgentNeeds')}</h3>
+      <div className="h-[300px] -mx-4 sm:mx-0">
         {urgentError ? renderError(t('error')) : 
          urgentLoading ? renderSkeleton() : (
-          <ScrollArea className="h-full pr-4">
+          <ScrollArea className="h-full px-4 sm:pr-4">
             <div className="space-y-4">
               {urgentNeeds?.map((child) => {
                 const needs = typeof child.needs === 'string' 
@@ -78,14 +78,14 @@ export const DetailedStats = () => {
                 const urgentNeeds = needs.filter((need: Need) => need.is_urgent);
 
                 return (
-                  <div key={child.id} className="p-4 bg-red-50 rounded-lg border border-red-100 hover:shadow-md transition-shadow">
-                    <p className="font-medium text-gray-900 mb-2">{child.name}</p>
+                  <div key={child.id} className="p-3 sm:p-4 bg-red-50 rounded-lg border border-red-100 hover:shadow-md transition-shadow">
+                    <p className="font-medium text-gray-900 mb-2 text-sm sm:text-base">{child.name}</p>
                     <div className="flex flex-wrap gap-2">
                       {urgentNeeds.map((need: Need, index: number) => (
                         <Badge 
                           key={`${need.category}-${index}`}
                           variant="destructive"
-                          className="px-3 py-1"
+                          className="px-2 py-1 text-xs sm:text-sm sm:px-3"
                         >
                           {need.category}
                         </Badge>
