@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { sendEmail } from "@/api/email";
-import { ChildRequest } from "@/integrations/supabase/types/child-requests";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 
 export const ChildAssignmentValidation = () => {
   const { toast } = useToast();
@@ -27,11 +27,11 @@ export const ChildAssignmentValidation = () => {
         throw error;
       }
       console.log('Fetched requests:', data);
-      return data as ChildRequest[];
+      return data as ChildAssignmentRequest[];
     }
   });
 
-  const handleApprove = async (request: ChildRequest) => {
+  const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
       console.log('Approving request:', request);
       
@@ -67,7 +67,7 @@ export const ChildAssignmentValidation = () => {
     }
   };
 
-  const handleReject = async (request: ChildRequest) => {
+  const handleReject = async (request: ChildAssignmentRequest) => {
     try {
       console.log('Rejecting request:', request);
       
@@ -116,7 +116,7 @@ export const ChildAssignmentValidation = () => {
               <h3 className="font-semibold">{request.name}</h3>
               <p className="text-sm text-gray-500">{request.requester_email}</p>
               <p className="text-sm text-gray-500">
-                {new Date(request.created_at).toLocaleDateString()}
+                {new Date(request.created_at || '').toLocaleDateString()}
               </p>
             </div>
             <div className="space-x-2">
