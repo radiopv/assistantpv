@@ -43,13 +43,16 @@ const FAQ = () => {
 
   const addFaqMutation = useMutation({
     mutationFn: async (newFaq: { question: string; answer: string }) => {
+      const now = new Date().toISOString();
       const { data, error } = await supabase
         .from("faq")
         .insert([{ 
           question: newFaq.question, 
           answer: newFaq.answer,
           is_active: true,
-          display_order: (faqItems?.length || 0) + 1
+          display_order: (faqItems?.length || 0) + 1,
+          created_at: now,
+          updated_at: now
         }])
         .select();
 
@@ -75,7 +78,8 @@ const FAQ = () => {
         .update({ 
           question: faq.question, 
           answer: faq.answer,
-          is_active: faq.is_active 
+          is_active: faq.is_active,
+          updated_at: new Date().toISOString()
         })
         .eq("id", faq.id)
         .select();
