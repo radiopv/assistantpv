@@ -24,20 +24,24 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
     return differenceInYears(new Date(), parseISO(birthDate));
   };
 
-  const sortData = (data: any[], key: string) => {
+  const sortData = (key: string) => {
     const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
     setSortConfig({ key, direction });
+  };
 
-    return [...data].sort((a, b) => {
-      let aValue = key === 'age' ? getAge(a.birth_date) : a[key];
-      let bValue = key === 'age' ? getAge(b.birth_date) : b[key];
+  const getSortedChildren = () => {
+    if (!sortConfig.key) return children;
+
+    return [...children].sort((a, b) => {
+      let aValue = sortConfig.key === 'age' ? getAge(a.birth_date) : a[sortConfig.key];
+      let bValue = sortConfig.key === 'age' ? getAge(b.birth_date) : b[sortConfig.key];
 
       if (typeof aValue === 'string') {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
       }
 
-      if (direction === 'asc') {
+      if (sortConfig.direction === 'asc') {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
@@ -45,15 +49,10 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
     });
   };
 
-  const getSortedChildren = () => {
-    if (!sortConfig.key) return children;
-    return sortData(children, sortConfig.key);
-  };
-
   const renderSortButton = (key: string, label: string) => (
     <Button
       variant="ghost"
-      onClick={() => sortData(children, key)}
+      onClick={() => sortData(key)}
       className="h-8 flex items-center gap-1 p-0 hover:bg-transparent"
     >
       {label}
@@ -67,7 +66,7 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
         <TableHeader>
           <TableRow>
             <TableHead>{renderSortButton('name', t("name"))}</TableHead>
-            <TableHead>{renderSortButton('birth_date', t("age"))}</TableHead>
+            <TableHead>{renderSortButton('age', t("age"))}</TableHead>
             <TableHead>{renderSortButton('city', t("city"))}</TableHead>
             <TableHead>{renderSortButton('is_sponsored', t("status"))}</TableHead>
             <TableHead className="text-right">{t("actions")}</TableHead>
