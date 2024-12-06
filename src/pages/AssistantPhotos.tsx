@@ -4,14 +4,29 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { ChildSelector } from "@/components/AssistantPhotos/ChildSelector";
-import { PhotoGrid } from "@/components/AssistantPhotos/PhotoGrid";
+import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { toast } from "sonner";
 import { logActivity } from "@/utils/activity-logger";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const AssistantPhotos = () => {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      title: "Ajout photos et vidéos enfants",
+      instructions: "Cette page vous permet d'ajouter des photos et des vidéos à l'album d'un enfant. Ces médias seront visibles par le parrain dans le profil de l'enfant qu'il parraine.",
+      photosAdded: "Médias ajoutés avec succès et parrain notifié",
+    },
+    es: {
+      title: "Agregar fotos y videos de niños",
+      instructions: "Esta página le permite agregar fotos y videos al álbum de un niño. Estos medios serán visibles para el padrino en el perfil del niño que apadrina.",
+      photosAdded: "Medios agregados con éxito y padrino notificado",
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const { data: children } = useQuery({
     queryKey: ['children'],
@@ -36,8 +51,8 @@ const AssistantPhotos = () => {
     if (child?.sponsorships?.[0]?.sponsor_id) {
       await supabase.from('messages').insert({
         recipient_id: child.sponsorships[0].sponsor_id,
-        subject: `Nouvelles photos de ${child.name}`,
-        content: `De nouvelles photos ont été ajoutées à l'album de ${child.name}. Vous pouvez les consulter dans son profil.`,
+        subject: `Nouvelles photos/vidéos de ${child.name}`,
+        content: `De nouveaux médias ont été ajoutés à l'album de ${child.name}. Vous pouvez les consulter dans son profil.`,
         is_read: false
       });
     }
@@ -46,17 +61,17 @@ const AssistantPhotos = () => {
   const handleUploadSuccess = async () => {
     if (selectedChild) {
       await notifySponsor(selectedChild);
-      await logActivity(selectedChild, 'photos_added', { child_id: selectedChild });
-      toast.success("Photos ajoutées avec succès et parrain notifié");
+      await logActivity(selectedChild, 'media_added', { child_id: selectedChild });
+      toast.success(t.photosAdded);
     }
   };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <h1 className="text-2xl font-bold">{t("addChildPhotos")}</h1>
+      <h1 className="text-2xl font-bold">{t.title}</h1>
       
       <p className="text-gray-600 mb-6">
-        {t("photoPageInstructions")}
+        {t.instructions}
       </p>
 
       <Card className="p-6">
@@ -73,7 +88,7 @@ const AssistantPhotos = () => {
                 childId={selectedChild}
                 onUploadSuccess={handleUploadSuccess}
               />
-              <PhotoGrid childId={selectedChild} />
+              <AlbumMediaGrid childId={selectedChild} />
             </>
           )}
         </div>

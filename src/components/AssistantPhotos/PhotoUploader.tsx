@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Upload, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PhotoUploaderProps {
   childId: string;
@@ -11,18 +12,40 @@ interface PhotoUploaderProps {
 }
 
 export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) => {
-  const [previews, setPreviews] = useState<{ file: File; preview: string }[]>([]);
+  const [previews, setPreviews] = useState<{ file: File; preview: string; type: 'image' | 'video' }[]>([]);
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      selectFiles: "Sélectionner des fichiers",
+      upload: "Upload",
+      uploadWithCount: "Upload ({count} fichiers)",
+      error: "Une erreur est survenue pendant l'upload"
+    },
+    es: {
+      selectFiles: "Seleccionar archivos",
+      upload: "Subir",
+      uploadWithCount: "Subir ({count} archivos)",
+      error: "Ocurrió un error durante la subida"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files?.length) return;
 
-    const newPreviews = Array.from(event.target.files).map(file => ({
-      file,
-      preview: URL.createObjectURL(file)
-    }));
+    const newPreviews = Array.from(event.target.files).map(file => {
+      const isVideo = file.type.startsWith('video/');
+      return {
+        file,
+        preview: isVideo ? URL.createObjectURL(file) : URL.createObjectURL(file),
+        type: isVideo ? 'video' as const : 'image' as const
+      };
+    });
 
     setPreviews(prev => [...prev, ...newPreviews]);
   };
@@ -41,7 +64,7 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
       const totalFiles = previews.length;
       let completed = 0;
 
-      for (const { file } of previews) {
+      for (const { file, type } of previews) {
         const fileExt = file.name.split('.').pop();
         const filePath = `${childId}/${Math.random()}.${fileExt}`;
 
@@ -58,7 +81,7 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
         await supabase.from('album_media').insert({
           child_id: childId,
           url: publicUrl,
-          type: 'image'
+          type: type
         });
 
         completed++;
@@ -70,7 +93,7 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
       onUploadSuccess();
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error("Une erreur est survenue pendant l'upload");
+      toast.error(t.error);
     } finally {
       setUploading(false);
     }
@@ -82,7 +105,7 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,video/*"
           multiple
           onChange={handleFileSelect}
           className="hidden"
@@ -93,11 +116,11 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
           disabled={uploading}
         >
           <Upload className="w-4 h-4 mr-2" />
-          Sélectionner des photos
+          {t.selectFiles}
         </Button>
         {previews.length > 0 && (
           <Button onClick={uploadFiles} disabled={uploading}>
-            Upload ({previews.length} photos)
+            {t.uploadWithCount.replace('{count}', previews.length.toString())}
           </Button>
         )}
       </div>
@@ -110,11 +133,19 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {previews.map((preview, index) => (
             <div key={index} className="relative group">
-              <img
-                src={preview.preview}
-                alt="Preview"
-                className="w-full aspect-square object-cover rounded-lg"
-              />
+              {preview.type === 'video' ? (
+                <video
+                  src={preview.preview}
+                  className="w-full aspect-square object-cover rounded-lg"
+                  controls
+                />
+              ) : (
+                <img
+                  src={preview.preview}
+                  alt="Preview"
+                  className="w-full aspect-square object-cover rounded-lg"
+                />
+              )}
               <button
                 onClick={() => removePreview(index)}
                 className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
