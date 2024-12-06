@@ -138,6 +138,16 @@ export const frenchTranslations = {
   welcomeEmailContent: "Nous sommes ravis de vous accueillir parmi nos parrains...",
   updateEmailSubject: "Mise à jour importante",
   updateEmailContent: "Voici les dernières nouvelles concernant votre filleul...",
-  reminderEmailSubject: "Rappel de parrainage",
-  reminderEmailContent: "N'oubliez pas de consulter les dernières photos de votre filleul..."
+
+  // Child request validation
+  childRequests: "Demandes d'ajout d'enfants",
+  childRequestApproved: "Demande approuvée avec succès",
+  childRequestRejected: "Demande rejetée",
+  errorApprovingChildRequest: "Erreur lors de l'approbation de la demande",
+  errorRejectingChildRequest: "Erreur lors du rejet de la demande",
+  noChildRequestsPending: "Aucune demande en attente",
+  childRequestApprovedSubject: "Votre demande d'ajout d'enfant a été approuvée",
+  childRequestApprovedContent: "Nous sommes heureux de vous informer que votre demande d'ajout pour {name} a été approuvée.",
+  childRequestRejectedSubject: "Votre demande d'ajout d'enfant a été refusée",
+  childRequestRejectedContent: "Nous sommes désolés de vous informer que votre demande d'ajout pour {name} a été refusée.",
 };

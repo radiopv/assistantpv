@@ -4,6 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { TestimonialValidation } from "@/components/Validation/TestimonialValidation";
 import { SponsorshipValidation } from "@/components/Validation/SponsorshipValidation";
 import { PhotoValidation } from "@/components/Validation/PhotoValidation";
+import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignmentValidation";
 
 const ValidationPage = () => {
   const { t } = useLanguage();
@@ -15,6 +16,7 @@ const ValidationPage = () => {
       <Tabs defaultValue="sponsorship" className="w-full">
         <TabsList>
           <TabsTrigger value="sponsorship">{t("sponsorshipRequests")}</TabsTrigger>
+          <TabsTrigger value="children">{t("childRequests")}</TabsTrigger>
           <TabsTrigger value="photos">{t("photoValidation")}</TabsTrigger>
           <TabsTrigger value="testimonials">{t("testimonialValidation")}</TabsTrigger>
         </TabsList>
@@ -22,6 +24,12 @@ const ValidationPage = () => {
         <TabsContent value="sponsorship">
           <Card className="p-4">
             <SponsorshipValidation />
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="children">
+          <Card className="p-4">
+            <ChildAssignmentValidation />
           </Card>
         </TabsContent>
 
