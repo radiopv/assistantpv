@@ -103,4 +103,16 @@ export const spanishTranslations = {
   errorApprovingTestimonial: "Error al aprobar el testimonio",
   errorRejectingTestimonial: "Error al rechazar el testimonio",
   validation: "Validación",
+
+  // Photo validation
+  noPhotosToValidate: "No hay fotos para validar",
+  photoApproved: "Foto aprobada con éxito",
+  photoRejected: "Foto rechazada",
+  errorApprovingPhoto: "Error al aprobar la foto",
+  errorRejectingPhoto: "Error al rechazar la foto",
+  approve: "Aprobar",
+  reject: "Rechazar",
+  childName: "Nombre del niño",
+  uploadDate: "Fecha de envío",
+  actions: "Acciones",
 };

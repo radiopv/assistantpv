@@ -101,4 +101,16 @@ export const frenchTranslations = {
   errorApprovingTestimonial: "Erreur lors de l'approbation du témoignage",
   errorRejectingTestimonial: "Erreur lors du rejet du témoignage",
   validation: "Validation",
+
+  // Photo validation
+  noPhotosToValidate: "Aucune photo à valider",
+  photoApproved: "Photo approuvée avec succès",
+  photoRejected: "Photo rejetée",
+  errorApprovingPhoto: "Erreur lors de l'approbation de la photo",
+  errorRejectingPhoto: "Erreur lors du rejet de la photo",
+  approve: "Approuver",
+  reject: "Rejeter",
+  childName: "Nom de l'enfant",
+  uploadDate: "Date d'envoi",
+  actions: "Actions",
 };

@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TestimonialValidation } from "@/components/Validation/TestimonialValidation";
 import { SponsorshipValidation } from "@/components/Validation/SponsorshipValidation";
+import { PhotoValidation } from "@/components/Validation/PhotoValidation";
 
 const ValidationPage = () => {
   const { t } = useLanguage();
@@ -26,7 +27,7 @@ const ValidationPage = () => {
 
         <TabsContent value="photos">
           <Card className="p-4">
-            <p className="text-center text-gray-500">{t("comingSoon")}</p>
+            <PhotoValidation />
           </Card>
         </TabsContent>
 
