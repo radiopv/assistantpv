@@ -1,4 +1,4 @@
-import { Database } from './database';
+import { Json } from './json';
 
 export interface ChildAssignmentRequest {
   id: string;
@@ -8,4 +8,8 @@ export interface ChildAssignmentRequest {
   created_at?: string;
 }
 
-export type ChildAssignmentRequestsDatabase = Database;
+export interface ChildAssignmentRequestsTable {
+  Row: ChildAssignmentRequest;
+  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at'>;
+  Update: Partial<Omit<ChildAssignmentRequest, 'id' | 'created_at'>>;
+}

@@ -1,19 +1,10 @@
 import { Json } from './json';
+import { ChildAssignmentRequestsTable } from './child-assignment-requests';
 
 export interface Database {
   public: {
     Tables: {
-      child_assignment_requests: {
-        Row: {
-          id: string;
-          created_at: string;
-          name: string;
-          requester_email: string;
-          status: string;
-        };
-        Insert: Omit<Row, 'id' | 'created_at'>;
-        Update: Partial<Omit<Row, 'id' | 'created_at'>>;
-      };
+      child_assignment_requests: ChildAssignmentRequestsTable;
       aid_categories: {
         Row: {
           created_at: string | null;
@@ -79,7 +70,7 @@ export interface Database {
           title?: string | null;
           type?: string;
           updated_at?: string | null;
-          url?: string | null;
+          url?: string;
         };
         Relationships: [
           {
@@ -877,7 +868,7 @@ export interface Database {
           display_order?: number | null;
           id?: string;
           is_visible?: boolean | null;
-          section_name?: string;
+          section_name: string;
           subtitle?: string | null;
           title?: string | null;
           updated_at?: string | null;
@@ -985,12 +976,12 @@ export interface Database {
           id?: string;
           metadata?: Json | null;
           original_url?: string | null;
-          source_id?: string;
-          source_table?: string;
+          source_id: string;
+          source_table: string;
           thumbnail_url?: string | null;
-          type?: string;
+          type: string;
           updated_at?: string | null;
-          url?: string;
+          url: string;
           version?: number | null;
         };
         Relationships: [];
@@ -1024,7 +1015,7 @@ export interface Database {
           is_private?: boolean | null;
           type: string;
           updated_at?: string | null;
-          url?: string;
+          url: string;
         };
         Relationships: [
           {
@@ -1396,7 +1387,7 @@ export interface Database {
           id?: string;
           notification_sound?: boolean | null;
           sponsor_id?: string | null;
-          updated_at?: string;
+          updated_at?: string | null;
         };
         Relationships: [
           {
@@ -1543,9 +1534,9 @@ export interface Database {
           created_at?: string | null;
           id?: string;
           logo_url?: string | null;
-          primary_color?: string;
-          secondary_color?: string;
-          site_name?: string;
+          primary_color: string;
+          secondary_color: string;
+          site_name: string;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -1606,7 +1597,7 @@ export interface Database {
           id?: string;
           type: string;
           updated_at?: string | null;
-          url?: string;
+          url: string;
         };
         Relationships: [
           {
@@ -1832,7 +1823,7 @@ export interface Database {
           id?: string;
           motivation?: string | null;
           phone?: string | null;
-          status?: string;
+          status: string;
           terms_accepted?: boolean;
           updated_at?: string | null;
           city?: string | null;
@@ -2039,9 +2030,9 @@ export interface Database {
           tags?: string[] | null;
           thumbnail_url?: string | null;
           title?: string;
-          type?: string;
+          type: string;
           updated_at?: string | null;
-          url?: string;
+          url: string;
           version?: number | null;
         };
         Relationships: [];
