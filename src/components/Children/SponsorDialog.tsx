@@ -24,14 +24,16 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
     try {
       console.log('Updating sponsor with:', { childId, sponsorId });
       
+      const updateData: Children['Update'] = {
+        is_sponsored: sponsorId !== "none",
+        sponsor_id: sponsorId === "none" ? null : sponsorId,
+        sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
+        sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
+      };
+
       const { error } = await supabase
         .from('children')
-        .update({
-          is_sponsored: sponsorId !== "none",
-          sponsor_id: sponsorId === "none" ? null : sponsorId,
-          sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
-          sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
-        } as Children['Update'])
+        .update(updateData)
         .eq('id', childId);
 
       if (error) throw error;
