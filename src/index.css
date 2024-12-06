@@ -38,6 +38,9 @@
     font-display: optional;
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100%;
+    position: relative;
   }
 
   body {
@@ -46,16 +49,28 @@
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100%;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  #root {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow-x: hidden;
   }
 
   /* Enhanced Mobile Optimizations */
   @media (max-width: 640px) {
     html {
-      font-size: 14px; /* Slightly smaller base font size for mobile */
+      font-size: 14px;
     }
 
     .container {
-      @apply px-4;
+      @apply px-4 max-w-full w-full;
+      margin: 0 auto;
     }
 
     /* Improved touch targets */
@@ -83,7 +98,7 @@
     input[type="password"],
     textarea {
       @apply w-full py-3 px-4;
-      font-size: 16px; /* Prevents iOS zoom on focus */
+      font-size: 16px;
     }
 
     /* Better table handling on mobile */
