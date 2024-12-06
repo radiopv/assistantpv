@@ -84,6 +84,25 @@ export const spanishTranslations = {
   story: "Historia",
   needs: "Necesidades",
 
+  // Home page specific translations
+  changeLife: "Cambia una vida hoy",
+  giveHope: "Da esperanza a los niños que más lo necesitan",
+  sponsorChild: "Apadrinar un niño",
+  childrenWaitingSponsorship: "Niños esperando apadrinamiento",
+  learnMore: "Saber más",
+  years: "años",
+  seeAllChildren: "Ver todos los niños",
+  howItWorks: "Cómo funciona",
+  chooseChild: "Elige un niño",
+  browseProfiles: "Explora los perfiles de niños que necesitan ayuda",
+  completeProfile: "Completa tu perfil",
+  fillInformation: "Completa tu información para comenzar el apadrinamiento",
+  startSponsorship: "Comienza el apadrinamiento",
+  receiveUpdates: "Recibe actualizaciones regulares sobre tu ahijado",
+  readyToChange: "¿Listo para cambiar una vida?",
+  sponsorshipDifference: "Tu apadrinamiento puede hacer una diferencia real en la vida de un niño",
+  startNow: "Comenzar ahora",
+
   // Children filters translations
   searchPlaceholder: "Buscar niños...",
   allCities: "Todas las ciudades",
