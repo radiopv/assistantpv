@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
 import { DetailedStats } from "@/components/Dashboard/DetailedStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
-import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -90,10 +89,7 @@ const Dashboard = () => {
     <div className="container mx-auto p-6 space-y-8 animate-fade-in">
       <DashboardHeader stats={stats} />
       
-      <div className="grid gap-8 md:grid-cols-2">
-        <DetailedStats />
-        <UrgentNeedsStats />
-      </div>
+      <DetailedStats />
       
       <div className="grid gap-8 md:grid-cols-2">
         <UserEngagementStats />
