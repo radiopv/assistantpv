@@ -10,6 +10,13 @@ const EmailManager = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
+  // Ajout des logs pour vérifier les variables d'environnement
+  console.log('EmailJS Config:', {
+    publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+    serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+    templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+  });
+
   const getSponsorsEmails = async (sponsorType: "all" | "active" | "pending") => {
     // Simulation des emails pour test
     return ["test@example.com"];
@@ -29,7 +36,18 @@ const EmailManager = () => {
     const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
     const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
+    // Log des valeurs pour vérification
+    console.log('Attempting to send email with config:', {
+      serviceId,
+      templateId,
+      publicKey,
+      subject,
+      content,
+      sponsorType
+    });
+
     if (!serviceId || !templateId || !publicKey) {
+      console.error('Missing EmailJS configuration:', { serviceId, templateId, publicKey });
       toast({
         title: t("error"),
         description: "Configuration EmailJS manquante. Veuillez vérifier vos variables d'environnement.",
