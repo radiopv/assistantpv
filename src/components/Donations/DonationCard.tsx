@@ -62,9 +62,9 @@ export const DonationCard = ({
         <DonationDetails donation={donation} />
         
         {donation.comments && (
-          <div className="w-full">
+          <div className="w-full break-words">
             <p className="text-gray-500">{t.comments}</p>
-            <p className="text-sm break-words">{donation.comments}</p>
+            <p className="text-sm">{donation.comments}</p>
           </div>
         )}
 
