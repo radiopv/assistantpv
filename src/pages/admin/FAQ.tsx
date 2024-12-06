@@ -164,8 +164,8 @@ const FAQ = () => {
             setEditingFaq={setEditingFaq}
             onUpdate={updateFaqMutation.mutate}
             onDelete={deleteFaqMutation.mutate}
-            onToggleVisibility={(id, isActive) =>
-              toggleVisibilityMutation.mutate({ id, isActive })
+            onToggleVisibility={(id, is_active) =>
+              toggleVisibilityMutation.mutate({ id, is_active })
             }
           />
         ))}

@@ -14,7 +14,7 @@ interface FAQItemProps {
   setEditingFaq: (faq: any) => void;
   onUpdate: (faq: any) => void;
   onDelete: (id: string) => void;
-  onToggleVisibility: (id: string, isActive: boolean) => void;
+  onToggleVisibility: (id: string, is_active: boolean) => void;
 }
 
 export const FAQItem = ({
