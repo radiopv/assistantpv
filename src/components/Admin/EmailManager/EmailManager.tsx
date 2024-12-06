@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { Resend } from 'resend';
 
-const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
-const resend = new Resend(resendApiKey);
-
-export const EmailManager = () => {
+const EmailManager = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [subject, setSubject] = useState("");
@@ -20,6 +17,21 @@ export const EmailManager = () => {
   const [template, setTemplate] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedSponsors, setSelectedSponsors] = useState<"all" | "active" | "pending">("all");
+  const [resendClient, setResendClient] = useState<Resend | null>(null);
+
+  useEffect(() => {
+    const apiKey = import.meta.env.VITE_RESEND_API_KEY;
+    if (!apiKey) {
+      console.error('Missing Resend API key. Please add VITE_RESEND_API_KEY to your .env file');
+      toast({
+        title: t("error"),
+        description: "Missing Resend API key configuration",
+        variant: "destructive",
+      });
+      return;
+    }
+    setResendClient(new Resend(apiKey));
+  }, []);
 
   const emailTemplates = {
     welcome: {
@@ -66,6 +78,15 @@ export const EmailManager = () => {
   };
 
   const handleSendEmails = async () => {
+    if (!resendClient) {
+      toast({
+        title: t("error"),
+        description: "Email service not configured",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!subject || !content) {
       toast({
         title: t("error"),
@@ -84,7 +105,7 @@ export const EmailManager = () => {
       for (let i = 0; i < emails.length; i += batchSize) {
         const batch = emails.slice(i, i + batchSize);
         await Promise.all(batch.map(email => 
-          resend.emails.send({
+          resendClient.emails.send({
             from: 'noreply@votredomaine.com',
             to: email,
             subject: subject,
@@ -172,7 +193,7 @@ export const EmailManager = () => {
 
         <Button 
           onClick={handleSendEmails} 
-          disabled={loading}
+          disabled={loading || !resendClient}
           className="w-full"
         >
           {loading ? t("sendingEmails") : t("sendEmails")}
@@ -181,3 +202,5 @@ export const EmailManager = () => {
     </Card>
   );
 };
+
+export { EmailManager };
