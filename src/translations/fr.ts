@@ -12,7 +12,7 @@ export const frenchTranslations = {
 
   // Home page specific translations
   changeLife: "Changez une vie aujourd'hui",
-  giveHope: "Donnez de l'espoir aux enfants qui en ont le plus besoin",
+  giveHope: "Offrez de l'espoir aux enfants qui en ont le plus besoin",
   sponsorChild: "Parrainer un enfant",
   childrenWaitingSponsorship: "Enfants en attente de parrainage",
   learnMore: "En savoir plus",
@@ -20,13 +20,13 @@ export const frenchTranslations = {
   seeAllChildren: "Voir tous les enfants",
   howItWorks: "Comment ça marche",
   chooseChild: "Choisissez un enfant",
-  browseProfiles: "Parcourez les profils des enfants qui ont besoin d'aide",
+  browseProfiles: "Découvrez les profils des enfants qui ont besoin d'aide",
   completeProfile: "Complétez votre profil",
-  fillInformation: "Remplissez vos informations pour commencer le parrainage",
+  fillInformation: "Remplissez vos informations pour débuter le parrainage",
   startSponsorship: "Commencez le parrainage",
   receiveUpdates: "Recevez des nouvelles régulières de votre filleul(e)",
   readyToChange: "Prêt(e) à changer une vie ?",
-  sponsorshipDifference: "Votre parrainage peut faire une réelle différence dans la vie d'un enfant",
+  sponsorshipDifference: "Votre parrainage peut transformer la vie d'un enfant",
   startNow: "Commencer maintenant",
 
   // Navigation and common sections

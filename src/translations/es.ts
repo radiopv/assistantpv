@@ -9,10 +9,10 @@ export const spanishTranslations = {
   
   // Home page specific translations
   changeLife: "Cambia una vida hoy",
-  giveHope: "Da esperanza a los niños que más lo necesitan",
-  sponsorChild: "Apadrinar un niño",
+  giveHope: "Brinda esperanza a los niños que más lo necesitan",
+  sponsorChild: "Apadrinar a un niño",
   childrenWaitingSponsorship: "Niños esperando apadrinamiento",
-  learnMore: "Saber más",
+  learnMore: "Más información",
   childAge: "años",
   seeAllChildren: "Ver todos los niños",
   howItWorks: "Cómo funciona",
@@ -23,7 +23,7 @@ export const spanishTranslations = {
   startSponsorship: "Comienza el apadrinamiento",
   receiveUpdates: "Recibe actualizaciones regulares sobre tu ahijado",
   readyToChange: "¿Listo para cambiar una vida?",
-  sponsorshipDifference: "Tu apadrinamiento puede hacer una diferencia real en la vida de un niño",
+  sponsorshipDifference: "Tu apadrinamiento puede transformar la vida de un niño",
   startNow: "Comenzar ahora",
 
   // Navigation
