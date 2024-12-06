@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Activity, User } from "lucide-react";
+import { Activity, User, Calendar, MapPin } from "lucide-react";
 import { type ActivityLogType } from "@/types/activity";
 import { Database } from "@/integrations/supabase/types";
 
@@ -28,8 +28,9 @@ const ActivityLog = () => {
           *,
           sponsor:user_id (
             id,
+            name,
             role,
-            name
+            city
           )
         `)
         .order('created_at', { ascending: false })
@@ -42,20 +43,18 @@ const ActivityLog = () => {
       
       console.log('Raw data from Supabase:', data);
       
-      const transformedData = (data as unknown as ActivityLogWithSponsor[]).map(item => {
-        console.log('Processing item:', item);
-        return {
-          id: item.id,
-          user_id: item.user_id,
-          action: item.action,
-          details: item.details,
-          created_at: item.created_at,
-          user: {
-            name: item.sponsor?.name || `Utilisateur ${item.user_id.slice(0, 8)}`,
-            role: item.sponsor?.role || 'visitor'
-          }
-        };
-      });
+      const transformedData = (data as unknown as ActivityLogWithSponsor[]).map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        action: item.action,
+        details: item.details,
+        created_at: item.created_at,
+        user: {
+          name: item.sponsor?.name || `Utilisateur ${item.user_id.slice(0, 8)}`,
+          role: item.sponsor?.role || 'visitor',
+          city: item.sponsor?.city
+        }
+      }));
 
       console.log('Transformed data:', transformedData);
       return transformedData as ActivityLogType[];
@@ -100,7 +99,7 @@ const ActivityLog = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 p-8">
         {[1, 2, 3].map((i) => (
           <Skeleton key={i} className="h-24 w-full" />
         ))}
@@ -113,7 +112,7 @@ const ActivityLog = () => {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Journal d'activité</h1>
         <p className="text-gray-600 mt-2">
-          Suivi en temps réel des actions des assistants et sponsors
+          Suivi en temps réel des actions des assistants et parrains
         </p>
       </div>
 
@@ -131,17 +130,26 @@ const ActivityLog = () => {
                       <p className="font-medium text-gray-900">
                         {activity.user?.name}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {activity.action}
-                      </p>
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <span>{activity.action}</span>
+                        {activity.user?.city && (
+                          <>
+                            <MapPin className="h-4 w-4" />
+                            <span>{activity.user.city}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
-                    <time className="text-sm text-gray-500">
-                      {format(new Date(activity.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
-                    </time>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <Calendar className="h-4 w-4" />
+                      <time>
+                        {format(new Date(activity.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                      </time>
+                    </div>
                   </div>
                   {activity.details && (
-                    <div className="mt-2 text-sm text-gray-700">
-                      <pre className="whitespace-pre-wrap">
+                    <div className="mt-2 text-sm text-gray-700 bg-gray-50 rounded-md p-3">
+                      <pre className="whitespace-pre-wrap font-sans">
                         {JSON.stringify(activity.details, null, 2)}
                       </pre>
                     </div>

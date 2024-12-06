@@ -9,5 +9,6 @@ export type ActivityLogType = {
   user?: {
     name: string;
     role: string;
+    city?: string;
   };
 };
