@@ -33,7 +33,7 @@ export const spanishTranslations = {
   messages: "Mensajes",
   settings: "Ajustes",
   home: "Inicio",
-  profile: "Perfil",
+  profile: "Ver perfil",
   sponsors: "Padrinos",
   about: "Acerca de",
   contact: "Contacto",
@@ -62,6 +62,8 @@ export const spanishTranslations = {
   clear: "Limpiar",
   upload: "Subir",
   download: "Descargar",
+  approve: "Aprobar",
+  actions: "Acciones",
   
   // Profile related
   name: "Nombre",
@@ -79,30 +81,27 @@ export const spanishTranslations = {
   ageNotAvailable: "Edad no disponible",
   years: "años",
   months: "meses",
-  sponsored: "Apadrinado",
-  available: "Disponible",
-  profile: "Ver perfil",
-  editOrRemoveSponsor: "Editar o eliminar padrino",
-  addSponsor: "Agregar padrino",
-  sponsor: "Padrino",
+  status: "Estado",
   age: "Edad",
   childInfo: "Información del niño",
-  enterTranslation: "Ingrese la traducción",
-  approve: "Aprobar",
-  translationRequired: "Se requiere una traducción",
-  translationApproved: "Traducción aprobada",
-  originalText: "Texto original",
   manageDonations: "Gestionar donaciones",
   gridView: "Vista de cuadrícula",
   tableView: "Vista de tabla",
-  actions: "Acciones",
-  status: "Estado",
 
-  // Status translations
-  available: "Disponible",
+  // Sponsor related
   sponsored: "Apadrinado",
+  available: "Disponible",
+  editOrRemoveSponsor: "Editar o eliminar padrino",
+  addSponsor: "Agregar padrino",
+  sponsor: "Padrino",
   pending: "Pendiente",
   urgent: "Urgente",
+
+  // Translation related
+  enterTranslation: "Ingrese la traducción",
+  translationRequired: "Se requiere una traducción",
+  translationApproved: "Traducción aprobada",
+  originalText: "Texto original",
 
   // Messages
   from: "De",
@@ -135,11 +134,9 @@ export const spanishTranslations = {
   photoRejected: "Foto rechazada",
   errorApprovingPhoto: "Error al aprobar la foto",
   errorRejectingPhoto: "Error al rechazar la foto",
-  approve: "Aprobar",
   reject: "Rechazar",
   childName: "Nombre del niño",
   uploadDate: "Fecha de envío",
-  actions: "Acciones",
 
   // Sponsorship
   becomeSponsor: "Conviértete en padrino",
@@ -162,7 +159,7 @@ export const spanishTranslations = {
   sponsorAlbum: "Álbum del niño",
   sponsorAlbumDescription: "Aquí puedes ver las fotos y videos del niño",
   
-  // Profile
+  // Profile updates
   profileUpdated: "Perfil actualizado",
   profileUpdateSuccess: "El perfil ha sido actualizado con éxito",
   profileUpdateError: "Error al actualizar el perfil",
