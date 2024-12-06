@@ -20,59 +20,53 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
   const queryClient = useQueryClient();
   const { t } = useLanguage();
 
-  const handleSponsorUpdate = async (childId: string, sponsorId: string | null) => {
+  const handleSponsorUpdate = async (childId: string, sponsorId: string) => {
     try {
       console.log('Updating sponsor with:', { childId, sponsorId });
       
       const updates: Partial<Children['Update']> = {
         is_sponsored: !!sponsorId,
-        sponsor_id: sponsorId,
+        sponsor_id: sponsorId || null,
         sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
         sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
       };
-
-      console.log('Updates object:', updates);
 
       const { error } = await supabase
         .from('children')
         .update(updates)
         .eq('id', childId);
 
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
+      if (error) throw error;
 
-      await queryClient.invalidateQueries({ queryKey: ['children'] });
-      toast.success(sponsorId ? t("success") : t("success"));
+      toast.success(t("sponsorUpdateSuccess"));
+      queryClient.invalidateQueries({ queryKey: ['children'] });
       onClose();
     } catch (error) {
       console.error('Error updating sponsor:', error);
-      toast.error(t("error"));
+      toast.error(t("sponsorUpdateError"));
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {child.is_sponsored ? t("edit") : t("addChild")}
-          </DialogTitle>
+          <DialogTitle>{t("selectSponsor")}</DialogTitle>
         </DialogHeader>
+
         <div className="space-y-4">
           <Select
             value={selectedSponsor}
             onValueChange={setSelectedSponsor}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t("selectMessage")} />
+              <SelectValue placeholder={t("selectSponsorPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              {child.is_sponsored && (
-                <SelectItem value="remove_sponsor">{t("delete")}</SelectItem>
-              )}
-              {sponsors?.map((sponsor) => (
+              <SelectItem value="">
+                {t("noSponsor")}
+              </SelectItem>
+              {sponsors.map((sponsor) => (
                 <SelectItem key={sponsor.id} value={sponsor.id}>
                   {sponsor.name}
                 </SelectItem>
@@ -80,18 +74,12 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
             </SelectContent>
           </Select>
 
-          <div className="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={onClose}
-            >
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={onClose}>
               {t("cancel")}
             </Button>
-            <Button
-              onClick={() => handleSponsorUpdate(child.id, selectedSponsor === "remove_sponsor" ? null : selectedSponsor)}
-              disabled={!selectedSponsor}
-            >
-              {t("confirm")}
+            <Button onClick={() => handleSponsorUpdate(child.id, selectedSponsor)}>
+              {t("save")}
             </Button>
           </div>
         </div>
