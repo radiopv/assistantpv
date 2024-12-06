@@ -65,7 +65,7 @@ const Home = () => {
                   <div className="p-6">
                     <h3 className="text-xl font-semibold mb-2">{child.name}</h3>
                     <p className="text-gray-600 mb-4">
-                      {child.age} {t("years")} • {child.city}
+                      {child.age} {t("childAge")} • {child.city}
                     </p>
                     <Button 
                       variant="outline" 

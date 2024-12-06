@@ -90,7 +90,7 @@ export const spanishTranslations = {
   sponsorChild: "Apadrinar un niño",
   childrenWaitingSponsorship: "Niños esperando apadrinamiento",
   learnMore: "Saber más",
-  years: "años",
+  childAge: "años",
   seeAllChildren: "Ver todos los niños",
   howItWorks: "Cómo funciona",
   chooseChild: "Elige un niño",
@@ -116,10 +116,4 @@ export const spanishTranslations = {
   
   // Status translations
   available: "Disponible",
-  sponsored: "Apadrinado",
-  
-  // Common fields
-  gender: "Género",
-  age: "Edad",
-  status: "Estado"
-};
+  sponsored: "Apadrinado"

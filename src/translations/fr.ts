@@ -15,7 +15,7 @@ export const frenchTranslations = {
   sponsorChild: "Parrainer un enfant",
   childrenWaitingSponsorship: "Enfants en attente de parrainage",
   learnMore: "En savoir plus",
-  years: "ans",
+  childAge: "ans",
   seeAllChildren: "Voir tous les enfants",
   howItWorks: "Comment ça marche",
   chooseChild: "Choisissez un enfant",
