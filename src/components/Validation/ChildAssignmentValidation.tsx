@@ -6,14 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { sendEmail } from "@/api/email";
-
-interface ChildRequest {
-  id: string;
-  name: string;
-  requester_email: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-}
+import { ChildRequest } from "@/integrations/supabase/types/child-requests";
 
 export const ChildAssignmentValidation = () => {
   const { toast } = useToast();
@@ -23,18 +16,25 @@ export const ChildAssignmentValidation = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-requests'],
     queryFn: async () => {
+      console.log('Fetching child requests...');
       const { data, error } = await supabase
         .from('child_requests')
         .select('*')
         .eq('status', 'pending');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching requests:', error);
+        throw error;
+      }
+      console.log('Fetched requests:', data);
       return data as ChildRequest[];
     }
   });
 
   const handleApprove = async (request: ChildRequest) => {
     try {
+      console.log('Approving request:', request);
+      
       // Update request status
       const { error: updateError } = await supabase
         .from('child_requests')
@@ -69,6 +69,8 @@ export const ChildAssignmentValidation = () => {
 
   const handleReject = async (request: ChildRequest) => {
     try {
+      console.log('Rejecting request:', request);
+      
       // Update request status
       const { error: updateError } = await supabase
         .from('child_requests')
