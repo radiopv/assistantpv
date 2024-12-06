@@ -1,3 +1,5 @@
+import { type Json } from './common';
+
 export type ActivityLogTables = {
   activity_logs: {
     Row: {
