@@ -16,7 +16,7 @@ export const TestimonialValidation = () => {
     queryKey: ['pending-testimonials'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('testimonials')
+        .from('temoignage')
         .select('*')
         .eq('is_approved', false);
       
@@ -28,7 +28,7 @@ export const TestimonialValidation = () => {
   const handleApprove = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('testimonials')
+        .from('temoignage')
         .update({ is_approved: true })
         .eq('id', id);
 
@@ -54,7 +54,7 @@ export const TestimonialValidation = () => {
   const handleReject = async (id: string) => {
     try {
       const { error } = await supabase
-        .from('testimonials')
+        .from('temoignage')
         .delete()
         .eq('id', id);
 

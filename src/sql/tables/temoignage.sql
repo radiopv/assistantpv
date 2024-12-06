@@ -1,4 +1,4 @@
-create table if not exists public.testimonials (
+create table if not exists public.temoignage (
     id uuid default gen_random_uuid() primary key,
     content text not null,
     author text not null,
@@ -12,19 +12,19 @@ create table if not exists public.testimonials (
 );
 
 -- Add RLS policies
-alter table public.testimonials enable row level security;
+alter table public.temoignage enable row level security;
 
 create policy "Testimonials are viewable by everyone"
-    on public.testimonials for select
+    on public.temoignage for select
     using (true);
 
 create policy "Only authenticated users can insert testimonials"
-    on public.testimonials for insert
+    on public.temoignage for insert
     to authenticated
     with check (true);
 
 create policy "Only admins can update testimonials"
-    on public.testimonials for update
+    on public.temoignage for update
     to authenticated
     using (
         exists (
@@ -35,7 +35,7 @@ create policy "Only admins can update testimonials"
     );
 
 create policy "Only admins can delete testimonials"
-    on public.testimonials for delete
+    on public.temoignage for delete
     to authenticated
     using (
         exists (
@@ -55,6 +55,6 @@ end;
 $$ language plpgsql;
 
 create trigger handle_testimonials_updated_at
-    before update on public.testimonials
+    before update on public.temoignage
     for each row
     execute procedure public.handle_updated_at();
