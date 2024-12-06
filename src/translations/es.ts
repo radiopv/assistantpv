@@ -76,12 +76,37 @@ export const spanishTranslations = {
   comments: "Comentarios",
   story: "Historia",
   needs: "Necesidades",
+  ageNotAvailable: "Edad no disponible",
+  years: "años",
+  months: "meses",
+  sponsored: "Apadrinado",
+  available: "Disponible",
+  profile: "Ver perfil",
+  editOrRemoveSponsor: "Editar o eliminar padrino",
+  addSponsor: "Agregar padrino",
+  sponsor: "Padrino",
+  age: "Edad",
+  childInfo: "Información del niño",
+  enterTranslation: "Ingrese la traducción",
+  approve: "Aprobar",
+  translationRequired: "Se requiere una traducción",
+  translationApproved: "Traducción aprobada",
+  originalText: "Texto original",
+  manageDonations: "Gestionar donaciones",
+  gridView: "Vista de cuadrícula",
+  tableView: "Vista de tabla",
+  actions: "Acciones",
+  status: "Estado",
 
   // Status translations
   available: "Disponible",
   sponsored: "Apadrinado",
   pending: "Pendiente",
   urgent: "Urgente",
+
+  // Messages
+  from: "De",
+  selectMessageToRead: "Seleccione un mensaje para leer",
 
   // Validation page
   validationPage: "Página de validación",
@@ -115,4 +140,33 @@ export const spanishTranslations = {
   childName: "Nombre del niño",
   uploadDate: "Fecha de envío",
   actions: "Acciones",
+
+  // Sponsorship
+  becomeSponsor: "Conviértete en padrino",
+  sponsorshipDescription: "Completa el formulario para comenzar el proceso de apadrinamiento",
+  fullName: "Nombre completo",
+  motivation: "Motivación",
+  facebookUrl: "URL de Facebook",
+  longTermSponsorship: "Deseo un apadrinamiento a largo plazo",
+  acceptTerms: "Acepto los términos y condiciones",
+  sponsorshipTerminationNote: "Puedes terminar el apadrinamiento en cualquier momento",
+  submitting: "Enviando...",
+  submitRequest: "Enviar solicitud",
+  pleaseAcceptTerms: "Por favor acepta los términos y condiciones",
+  success: "Éxito",
+  sponsorshipRequestSubmitted: "Tu solicitud de apadrinamiento ha sido enviada",
+  error: "Error",
+  errorSubmittingRequest: "Error al enviar la solicitud",
+
+  // Album
+  sponsorAlbum: "Álbum del niño",
+  sponsorAlbumDescription: "Aquí puedes ver las fotos y videos del niño",
+  
+  // Profile
+  profileUpdated: "Perfil actualizado",
+  profileUpdateSuccess: "El perfil ha sido actualizado con éxito",
+  profileUpdateError: "Error al actualizar el perfil",
+  childDeleted: "Niño eliminado",
+  childDeleteSuccess: "El niño ha sido eliminado con éxito",
+  childDeleteError: "Error al eliminar el niño"
 };

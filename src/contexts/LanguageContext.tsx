@@ -21,16 +21,16 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   const [language, setLanguage] = useState<Language>('fr');
 
   useEffect(() => {
-    const detectLanguage = () => {
-      const browserLang = navigator.language.toLowerCase();
-      if (browserLang.startsWith('es')) {
-        setLanguage('es');
-      } else if (browserLang.startsWith('fr')) {
-        setLanguage('fr');
-      }
-    };
-
-    detectLanguage();
+    const storedLanguage = localStorage.getItem('preferredLanguage') as Language;
+    const browserLang = navigator.language.toLowerCase();
+    
+    if (storedLanguage && (storedLanguage === 'fr' || storedLanguage === 'es')) {
+      setLanguage(storedLanguage);
+    } else if (browserLang.startsWith('es')) {
+      setLanguage('es');
+    } else if (browserLang.startsWith('fr')) {
+      setLanguage('fr');
+    }
   }, []);
 
   useEffect(() => {
@@ -39,7 +39,14 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
   const t = (key: string): string => {
     const currentTranslations = translations[language];
-    return currentTranslations[key as keyof typeof currentTranslations] || key;
+    const translation = currentTranslations[key as keyof typeof currentTranslations];
+    
+    if (!translation) {
+      console.warn(`Translation missing for key: ${key} in language: ${language}`);
+      return key;
+    }
+    
+    return translation;
   };
 
   return (
