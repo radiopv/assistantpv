@@ -16,7 +16,7 @@ interface SponsorDialogProps {
 }
 
 export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialogProps) => {
-  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id || "");
+  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id || "none");
   const queryClient = useQueryClient();
   const { t } = useLanguage();
 
@@ -27,8 +27,8 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
       const { error } = await supabase
         .from('children')
         .update({
-          is_sponsored: !!sponsorId,
-          sponsor_id: sponsorId || null,
+          is_sponsored: sponsorId !== "none",
+          sponsor_id: sponsorId === "none" ? null : sponsorId,
           sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
           sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
         } as Children['Update'])
@@ -61,7 +61,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
               <SelectValue placeholder={t("selectSponsorPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">
+              <SelectItem value="none">
                 {t("noSponsor")}
               </SelectItem>
               {sponsors.map((sponsor) => (
