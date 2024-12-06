@@ -13,8 +13,6 @@ import {
   ChartBar,
   HelpCircle,
   Languages,
-  Activity,
-  PlusCircle,
   Image,
   CheckCircle2
 } from "lucide-react";
@@ -71,7 +69,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
         {
           href: "/donations/add",
           label: t("addDonation"),
-          icon: PlusCircle,
+          icon: UserPlus,
           show: user?.permissions?.donations || isAdmin,
         }
       ]
@@ -113,12 +111,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       href: "/admin/faq",
       label: t("faq"),
       icon: HelpCircle,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/activity",
-      label: "Journal d'activité",
-      icon: Activity,
       show: isAdmin,
     },
   ];
