@@ -6,7 +6,14 @@ import { RequestsList } from "@/components/Sponsorship/RequestsList/RequestsList
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Resend } from 'resend';
 
-const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
+console.log('API Key:', import.meta.env.VITE_RESEND_API_KEY); // Debug log
+
+const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
+if (!resendApiKey) {
+  console.error('Missing Resend API key in environment variables');
+}
+
+const resend = new Resend(resendApiKey);
 
 export const SponsorshipValidation = () => {
   const { toast } = useToast();
