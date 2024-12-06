@@ -7,9 +7,11 @@ import { ChildSelector } from "@/components/AssistantPhotos/ChildSelector";
 import { PhotoGrid } from "@/components/AssistantPhotos/PhotoGrid";
 import { toast } from "sonner";
 import { logActivity } from "@/utils/activity-logger";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AssistantPhotos = () => {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   const { data: children } = useQuery({
     queryKey: ['children'],
@@ -51,8 +53,12 @@ const AssistantPhotos = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <h1 className="text-2xl font-bold">Gestion des Photos</h1>
+      <h1 className="text-2xl font-bold">{t("addChildPhotos")}</h1>
       
+      <p className="text-gray-600 mb-6">
+        {t("photoPageInstructions")}
+      </p>
+
       <Card className="p-6">
         <div className="space-y-6">
           <ChildSelector

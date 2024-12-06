@@ -15,7 +15,8 @@ import {
   HelpCircle,
   Languages,
   Activity,
-  PlusCircle
+  PlusCircle,
+  Image
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -52,6 +53,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
           label: t("addChild"),
           icon: UserPlus,
           show: user?.permissions?.edit_children || isAdmin,
+        },
+        {
+          href: "/assistant/photos",
+          label: t("addChildPhotos"),
+          icon: Image,
+          show: true,
         }
       ]
     },
