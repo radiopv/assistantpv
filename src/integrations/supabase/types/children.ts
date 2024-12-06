@@ -21,7 +21,7 @@ export interface Children {
     photo_validated: boolean | null;
     sponsor_email: string | null;
     sponsor_facebook_url: string | null;
-    sponsor_id: string | null; // Changed from number to string
+    sponsor_id: string | null;
     sponsor_name: string | null;
     sponsor_phone: string | null;
     sponsorship_id: string | null;

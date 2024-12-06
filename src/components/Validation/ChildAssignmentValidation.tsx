@@ -20,7 +20,7 @@ export const ChildAssignmentValidation = () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending');
+        .eq('status', 'pending') as { data: ChildAssignmentRequest[] | null, error: any };
       
       if (error) {
         console.error('Error fetching requests:', error);
@@ -39,7 +39,7 @@ export const ChildAssignmentValidation = () => {
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
-        .eq('id', request.id);
+        .eq('id', request.id) as { error: any };
 
       if (updateError) throw updateError;
 
@@ -73,7 +73,7 @@ export const ChildAssignmentValidation = () => {
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'rejected' })
-        .eq('id', request.id);
+        .eq('id', request.id) as { error: any };
 
       if (updateError) throw updateError;
 

@@ -1,4 +1,4 @@
-import { Database } from './database';
+import { Database as DatabaseBase } from './database';
 
 export interface ChildAssignmentRequest {
   id: string;
@@ -8,7 +8,7 @@ export interface ChildAssignmentRequest {
   created_at?: string;
 }
 
-export interface Database {
+export interface ChildAssignmentRequestsDatabase extends DatabaseBase {
   public: {
     Tables: {
       child_assignment_requests: {
@@ -16,6 +16,6 @@ export interface Database {
         Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at'>;
         Update: Partial<Omit<ChildAssignmentRequest, 'id' | 'created_at'>>;
       };
-    };
+    } & DatabaseBase['public']['Tables'];
   };
 }
