@@ -21,19 +21,26 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
 
   const handleSponsorUpdate = async (childId: string, sponsorId: string | null) => {
     try {
+      console.log('Updating sponsor with:', { childId, sponsorId });
+      
       const updates = {
         is_sponsored: !!sponsorId,
-        sponsor_id: sponsorId ? parseInt(sponsorId) : null,
-        sponsor_name: sponsors?.find(s => s.id.toString() === sponsorId)?.name || null,
-        sponsor_email: sponsors?.find(s => s.id.toString() === sponsorId)?.email || null,
+        sponsor_id: sponsorId,
+        sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
+        sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
       };
+
+      console.log('Updates object:', updates);
 
       const { error } = await supabase
         .from('children')
         .update(updates)
         .eq('id', childId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
 
       await queryClient.invalidateQueries({ queryKey: ['children'] });
       toast.success(sponsorId ? t("success") : t("success"));
@@ -65,7 +72,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
                 <SelectItem value="remove_sponsor">{t("delete")}</SelectItem>
               )}
               {sponsors?.map((sponsor) => (
-                <SelectItem key={sponsor.id} value={sponsor.id.toString()}>
+                <SelectItem key={sponsor.id} value={sponsor.id}>
                   {sponsor.name}
                 </SelectItem>
               ))}
