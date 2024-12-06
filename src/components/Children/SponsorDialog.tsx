@@ -6,16 +6,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Children } from "@/integrations/supabase/types/children";
 
 interface SponsorDialogProps {
-  child: any;
+  child: Children['Row'];
   sponsors: any[];
   isOpen: boolean;
   onClose: () => void;
 }
 
 export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialogProps) => {
-  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id?.toString() || "");
+  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id || "");
   const queryClient = useQueryClient();
   const { t } = useLanguage();
 
@@ -23,7 +24,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
     try {
       console.log('Updating sponsor with:', { childId, sponsorId });
       
-      const updates = {
+      const updates: Partial<Children['Update']> = {
         is_sponsored: !!sponsorId,
         sponsor_id: sponsorId,
         sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
