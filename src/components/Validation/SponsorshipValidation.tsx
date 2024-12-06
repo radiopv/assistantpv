@@ -4,6 +4,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RequestsList } from "@/components/Sponsorship/RequestsList/RequestsList";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.VITE_RESEND_API_KEY);
 
 export const SponsorshipValidation = () => {
   const { toast } = useToast();
@@ -23,6 +26,30 @@ export const SponsorshipValidation = () => {
       return data;
     }
   });
+
+  const sendEmail = async (recipientEmail: string, isApproved: boolean) => {
+    try {
+      const subject = isApproved ? 
+        "Votre demande de parrainage a été approuvée" : 
+        "Votre demande de parrainage a été refusée";
+      
+      const content = isApproved ?
+        "Nous sommes heureux de vous informer que votre demande de parrainage a été approuvée. Vous pouvez maintenant accéder à votre espace parrain." :
+        "Nous sommes désolés de vous informer que votre demande de parrainage a été refusée. N'hésitez pas à nous contacter pour plus d'informations.";
+
+      const data = await resend.emails.send({
+        from: 'Lovable <onboarding@resend.dev>',
+        to: recipientEmail,
+        subject: subject,
+        html: `<p>${content}</p>`
+      });
+
+      console.log('Email sent successfully:', data);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
+  };
 
   const sendNotificationMessage = async (recipientEmail: string, isApproved: boolean) => {
     try {
@@ -79,8 +106,11 @@ export const SponsorshipValidation = () => {
 
       if (error) throw error;
 
-      // Send notification message
-      await sendNotificationMessage(request.email, true);
+      // Send notification message and email
+      await Promise.all([
+        sendNotificationMessage(request.email, true),
+        sendEmail(request.email, true)
+      ]);
 
       // Invalidate the query to refresh the list
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
@@ -121,8 +151,11 @@ export const SponsorshipValidation = () => {
 
       if (error) throw error;
 
-      // Send notification message
-      await sendNotificationMessage(request.email, false);
+      // Send notification message and email
+      await Promise.all([
+        sendNotificationMessage(request.email, false),
+        sendEmail(request.email, false)
+      ]);
 
       // Invalidate the query to refresh the list
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
