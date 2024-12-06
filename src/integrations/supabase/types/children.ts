@@ -1,4 +1,4 @@
-import { Json } from './common';
+import { Json } from './json';
 
 export interface Children {
   Row: {
@@ -22,7 +22,7 @@ export interface Children {
     sponsor_id: string | null // Changed from number to string
     sponsor_name: string | null
     sponsor_phone: string | null
-    sponsorship_id: string | null // Changed from number to string for consistency
+    sponsorship_id: string | null // Changed from number to string
     sponsorship_status: string | null
     sponsorships: string | null
     start_date: string | null
@@ -53,7 +53,7 @@ export interface Children {
     sponsorship_id?: string | null // Changed from number to string
     sponsorship_status?: string | null
     sponsorships?: string | null
-    start_date?: string
+    start_date?: string | null
     status: string
     updated_at?: string | null
   }
