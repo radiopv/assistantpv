@@ -1,5 +1,6 @@
 import { type Json } from './json';
 import type { SponsorshipTables } from './sponsorship';
+import type { ActivityLogTables } from './activity';
 
 export type Database = {
   public: {
@@ -988,7 +989,7 @@ export type Database = {
           latitude: number;
           longitude: number;
           sponsored_count?: number | null;
-          updated_at?: string | null;
+          updated_at?: string;
         };
         Update: {
           child_count?: number | null;
@@ -1255,7 +1256,7 @@ export type Database = {
           is_read?: boolean | null;
           message_id?: string | null;
           recipient_id?: string | null;
-          updated_at?: string | null;
+          updated_at?: string;
         };
         Relationships: [
           {
@@ -1841,7 +1842,39 @@ export type Database = {
           }
         ];
       };
-    } & SponsorshipTables;
+      activity_logs: {
+        Row: {
+          id: string;
+          user_id: string;
+          action: string;
+          details: Json | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          action: string;
+          details?: Json | null;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          action?: string;
+          details?: Json | null;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "sponsors";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+    } & SponsorshipTables & ActivityLogTables;
     Views: {
       donation_items_with_categories: {
         Row: {
