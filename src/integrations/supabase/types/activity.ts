@@ -1,36 +1,27 @@
-import { type Json } from './common';
+import { type Json } from './json';
 
 export type ActivityLogTables = {
   activity_logs: {
     Row: {
       id: string;
+      created_at: string;
       user_id: string;
       action: string;
-      details: Json | null;
-      created_at: string | null;
+      details: Json;
     };
     Insert: {
       id?: string;
+      created_at?: string;
       user_id: string;
       action: string;
-      details?: Json | null;
-      created_at?: string | null;
+      details: Json;
     };
     Update: {
       id?: string;
+      created_at?: string;
       user_id?: string;
       action?: string;
-      details?: Json | null;
-      created_at?: string | null;
+      details?: Json;
     };
-    Relationships: [
-      {
-        foreignKeyName: "activity_logs_user_id_fkey";
-        columns: ["user_id"];
-        isOneToOne: false;
-        referencedRelation: "sponsors";
-        referencedColumns: ["id"];
-      }
-    ];
   };
 };
