@@ -19,20 +19,34 @@ interface NeedsListProps {
 
 const notifySponsors = async (childId: string, childName: string, need: Need) => {
   try {
-    // Récupérer le parrain de l'enfant
-    const { data: child } = await supabase
-      .from('children')
-      .select('sponsors:sponsor_id (id, name)')
-      .eq('id', childId)
+    // Récupérer le parrain de l'enfant avec une jointure correcte
+    const { data: sponsorships, error: queryError } = await supabase
+      .from('sponsorships')
+      .select(`
+        sponsor:sponsors (
+          id,
+          name
+        )
+      `)
+      .eq('child_id', childId)
+      .eq('status', 'active')
       .single();
 
-    if (!child?.sponsors?.id) return;
+    if (queryError) {
+      console.error('Error fetching sponsor:', queryError);
+      return;
+    }
+
+    if (!sponsorships?.sponsor?.id) {
+      console.log('No active sponsor found for child');
+      return;
+    }
 
     // Créer le message pour le parrain
     const { error: messageError } = await supabase
       .from('messages')
       .insert({
-        recipient_id: child.sponsors.id,
+        recipient_id: sponsorships.sponsor.id,
         subject: `Nouveau besoin pour ${childName}`,
         content: `Un nouveau besoin a été ajouté pour ${childName} : ${need.category}${need.description ? ` - ${need.description}` : ''}${need.is_urgent ? ' (URGENT)' : ''}`,
         sender_id: (await supabase.auth.getUser()).data.user?.id,
@@ -41,9 +55,12 @@ const notifySponsors = async (childId: string, childName: string, need: Need) =>
     if (messageError) {
       console.error('Error sending message:', messageError);
       toast.error("Erreur lors de l'envoi de la notification au parrain");
+    } else {
+      toast.success("Le parrain a été notifié du nouveau besoin");
     }
   } catch (error) {
     console.error('Error in notifySponsors:', error);
+    toast.error("Une erreur est survenue lors de la notification du parrain");
   }
 };
 
