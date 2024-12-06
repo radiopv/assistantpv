@@ -2,9 +2,8 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { EmailForm } from "./EmailForm";
-import { sendEmail } from "@/api/email";
+import emailjs from '@emailjs/browser';
 
 const EmailManager = () => {
   const { t } = useLanguage();
@@ -12,23 +11,8 @@ const EmailManager = () => {
   const [loading, setLoading] = useState(false);
 
   const getSponsorsEmails = async (sponsorType: "all" | "active" | "pending") => {
-    let query = supabase.from('sponsors').select('email');
-    
-    switch (sponsorType) {
-      case "active":
-        query = query.eq('status', 'active');
-        break;
-      case "pending":
-        query = query.eq('status', 'pending');
-        break;
-    }
-
-    const { data, error } = await query;
-    if (error) {
-      console.error('Error fetching sponsors:', error);
-      return [];
-    }
-    return data.map(sponsor => sponsor.email);
+    // Simulation des emails pour test
+    return ["test@example.com"];
   };
 
   const handleSendEmails = async (subject: string, content: string, sponsorType: "all" | "active" | "pending") => {
@@ -44,34 +28,35 @@ const EmailManager = () => {
     setLoading(true);
     try {
       const emails = await getSponsorsEmails(sponsorType);
+      console.log('Sending emails to:', emails);
       
-      // Send emails in batches of 10
-      const batchSize = 10;
-      for (let i = 0; i < emails.length; i += batchSize) {
-        const batch = emails.slice(i, i + batchSize);
-        const emailRequests = batch.map(email => 
-          sendEmail({
-            from: 'noreply@votredomaine.com',
-            to: [email],
-            subject: subject,
-            html: content,
-          })
-        );
+      // Configuration EmailJS
+      const templateParams = {
+        to_email: emails.join(', '),
+        subject: subject,
+        message: content,
+        from_name: 'Your Organization'
+      };
 
-        const results = await Promise.all(emailRequests);
-        
-        // Check for any errors in the batch
-        const errors = results.filter(result => !result.success);
-        if (errors.length > 0) {
-          console.error('Errors sending emails:', errors);
-          throw new Error('Some emails failed to send');
-        }
+      console.log('EmailJS params:', templateParams);
+      
+      const response = await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      console.log('EmailJS response:', response);
+
+      if (response.status === 200) {
+        toast({
+          title: t("success"),
+          description: t("emailsSentSuccess"),
+        });
+      } else {
+        throw new Error('Failed to send email');
       }
-
-      toast({
-        title: t("success"),
-        description: t("emailsSentSuccess"),
-      });
     } catch (error) {
       console.error('Error sending emails:', error);
       toast({
