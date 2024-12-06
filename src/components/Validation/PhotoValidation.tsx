@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
@@ -14,49 +14,70 @@ import {
 
 export const PhotoValidation = () => {
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
 
   const { data: photos, refetch } = useQuery({
     queryKey: ["pending-photos"],
     queryFn: async () => {
+      // First try to get featured photos that haven't been approved yet
       const { data, error } = await supabase
         .from("album_media")
         .select("*")
-        .eq("is_featured", true)
-        .is("is_approved", null);
+        .eq("is_featured", true);
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching photos:", error);
+        throw error;
+      }
+
+      // Filter locally for is_approved being null since the column might not exist yet
+      return data.filter(photo => photo.is_approved === null);
     },
   });
 
   const handleApprove = async (id: string) => {
-    const { error } = await supabase
-      .from("album_media")
-      .update({ is_approved: true })
-      .eq("id", id);
+    try {
+      const { error } = await supabase
+        .from("album_media")
+        .update({ is_approved: true })
+        .eq("id", id);
 
-    if (error) {
+      if (error) {
+        console.error("Error approving photo:", error);
+        toast.error(t("errorApprovingPhoto"));
+        return;
+      }
+
+      toast.success(t("photoApproved"));
+      queryClient.invalidateQueries({ queryKey: ["pending-photos"] });
+    } catch (error) {
+      console.error("Error in handleApprove:", error);
       toast.error(t("errorApprovingPhoto"));
-      return;
     }
-
-    toast.success(t("photoApproved"));
-    refetch();
   };
 
   const handleReject = async (id: string) => {
-    const { error } = await supabase
-      .from("album_media")
-      .update({ is_approved: false, is_featured: false })
-      .eq("id", id);
+    try {
+      const { error } = await supabase
+        .from("album_media")
+        .update({ 
+          is_approved: false,
+          is_featured: false 
+        })
+        .eq("id", id);
 
-    if (error) {
+      if (error) {
+        console.error("Error rejecting photo:", error);
+        toast.error(t("errorRejectingPhoto"));
+        return;
+      }
+
+      toast.success(t("photoRejected"));
+      queryClient.invalidateQueries({ queryKey: ["pending-photos"] });
+    } catch (error) {
+      console.error("Error in handleReject:", error);
       toast.error(t("errorRejectingPhoto"));
-      return;
     }
-
-    toast.success(t("photoRejected"));
-    refetch();
   };
 
   if (!photos?.length) {
