@@ -6,6 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface NeedsListProps {
   childId: string;
@@ -14,6 +16,36 @@ interface NeedsListProps {
   onToggleUrgent: (childId: string, needIndex: number) => Promise<void>;
   onDeleteNeed: (childId: string, needIndex: number) => Promise<void>;
 }
+
+const notifySponsors = async (childId: string, childName: string, need: Need) => {
+  try {
+    // Récupérer le parrain de l'enfant
+    const { data: child } = await supabase
+      .from('children')
+      .select('sponsors:sponsor_id (id, name)')
+      .eq('id', childId)
+      .single();
+
+    if (!child?.sponsors?.id) return;
+
+    // Créer le message pour le parrain
+    const { error: messageError } = await supabase
+      .from('messages')
+      .insert({
+        recipient_id: child.sponsors.id,
+        subject: `Nouveau besoin pour ${childName}`,
+        content: `Un nouveau besoin a été ajouté pour ${childName} : ${need.category}${need.description ? ` - ${need.description}` : ''}${need.is_urgent ? ' (URGENT)' : ''}`,
+        sender_id: (await supabase.auth.getUser()).data.user?.id,
+      });
+
+    if (messageError) {
+      console.error('Error sending message:', messageError);
+      toast.error("Erreur lors de l'envoi de la notification au parrain");
+    }
+  } catch (error) {
+    console.error('Error in notifySponsors:', error);
+  }
+};
 
 export const NeedsList = ({ 
   childId, 
@@ -35,6 +67,18 @@ export const NeedsList = ({
       autre: "Autre"
     };
     return labels[category] || category;
+  };
+
+  const handleToggleUrgent = async (index: number) => {
+    await onToggleUrgent(childId, index);
+    // Notifier le parrain du changement
+    const need = needs[index];
+    if (need) {
+      await notifySponsors(childId, childName, {
+        ...need,
+        is_urgent: !need.is_urgent
+      });
+    }
   };
 
   const allCategories = [
@@ -102,7 +146,7 @@ export const NeedsList = ({
                     <Checkbox
                       id={`urgent-${need.category}`}
                       checked={need.is_urgent}
-                      onCheckedChange={() => onToggleUrgent(childId, index)}
+                      onCheckedChange={() => handleToggleUrgent(index)}
                     />
                     <label 
                       htmlFor={`urgent-${need.category}`}
