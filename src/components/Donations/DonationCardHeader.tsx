@@ -62,12 +62,12 @@ export const DonationCardHeader = ({
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
       <DonationHeader donation={donation} />
-      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+      <div className="flex flex-col gap-2 w-full sm:w-auto">
         <Button
           variant="outline"
           size="sm"
           onClick={onEdit}
-          className="w-full sm:w-auto"
+          className="w-full"
         >
           <Edit className="w-4 h-4 mr-2" />
           {t.edit}
@@ -78,7 +78,7 @@ export const DonationCardHeader = ({
               <Button
                 variant="destructive"
                 size="sm"
-                className="w-full sm:w-auto"
+                className="w-full"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 {t.delete}
