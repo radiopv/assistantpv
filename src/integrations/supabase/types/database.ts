@@ -1,10 +1,6 @@
-import { Children } from './children';
-import { Json } from './json';
-
-export type Database = {
+export interface Database {
   public: {
     Tables: {
-      children: Children;
       aid_categories: {
         Row: {
           created_at: string | null
@@ -70,7 +66,7 @@ export type Database = {
           title?: string | null
           type?: string
           updated_at?: string | null
-          url?: string
+          url?: string | null
         }
         Relationships: [
           {
@@ -321,6 +317,101 @@ export type Database = {
         }
         Relationships: []
       }
+      children: {
+        Row: {
+          age: number
+          birth_date: string
+          city: string | null
+          created_at: string | null
+          description: string | null
+          comments: string | null
+          story: string | null
+          end_date: string | null
+          gender: string
+          id: string
+          is_sponsored: boolean | null
+          location_id: number | null
+          name: string
+          needs: Json | null
+          photo_url: string | null
+          sponsor_email: string | null
+          sponsor_facebook_url: string | null
+          sponsor_id: number | null
+          sponsor_name: string | null
+          sponsor_phone: string | null
+          sponsorship_id: number | null
+          sponsorship_status: string | null
+          sponsorships: string | null
+          start_date: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          age: number
+          birth_date: string
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          comments?: string | null
+          story?: string
+          end_date?: string | null
+          gender: string
+          id?: string
+          is_sponsored?: boolean | null
+          location_id?: number | null
+          name: string
+          needs?: Json | null
+          photo_url?: string | null
+          sponsor_email?: string | null
+          sponsor_facebook_url?: string | null
+          sponsor_id?: number | null
+          sponsor_name?: string | null
+          sponsor_phone?: string | null
+          sponsorship_id?: number | null
+          sponsorship_status?: string | null
+          sponsorships?: string | null
+          start_date?: string
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          age?: number
+          birth_date?: string
+          city?: string | null
+          created_at?: string | null
+          description?: string | null
+          comments?: string | null
+          story?: string | null
+          end_date?: string | null
+          gender?: string
+          id?: string
+          is_sponsored?: boolean | null
+          location_id?: number | null
+          name?: string
+          needs?: Json | null
+          photo_url?: string | null
+          sponsor_email?: string | null
+          sponsor_facebook_url?: string | null
+          sponsor_id?: number | null
+          sponsor_name?: string | null
+          sponsor_phone?: string | null
+          sponsorship_id?: number | null
+          sponsorship_status?: string | null
+          sponsorships?: string | null
+          start_date?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "children_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       donation_items: {
         Row: {
           category_id: string | null
@@ -432,11 +523,10 @@ export type Database = {
           longitude?: number
           name?: string
           type?: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
-
       donation_photos: {
         Row: {
           created_at: string
@@ -472,7 +562,6 @@ export type Database = {
           },
         ]
       }
-
       donation_videos: {
         Row: {
           created_at: string | null
@@ -802,7 +891,7 @@ export type Database = {
           page_url: string
           redirect_url?: string | null
           status: string
-          updated_at: string | null
+          updated_at?: string | null
           url: string
         }
         Update: {
@@ -814,7 +903,7 @@ export type Database = {
           redirect_url?: string | null
           status: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Relationships: []
       }
@@ -844,10 +933,10 @@ export type Database = {
           city_name?: string
           created_at?: string | null
           id?: number
-          latitude?: number
-          longitude?: number
-          sponsored_count?: number | null
-          updated_at?: string | null
+          latitude?: number;
+          longitude?: number;
+          sponsored_count?: number | null;
+          updated_at?: string;
         }
         Relationships: []
       }
@@ -886,9 +975,9 @@ export type Database = {
           source_id?: string
           source_table?: string
           thumbnail_url?: string | null
-          type: string
+          type?: string
           updated_at?: string | null
-          url: string
+          url?: string
           version?: number | null
         }
         Relationships: []
@@ -922,7 +1011,7 @@ export type Database = {
           is_private?: boolean | null
           type: string
           updated_at?: string | null
-          url?: string
+          url?: string;
         }
         Relationships: [
           {
@@ -1104,7 +1193,7 @@ export type Database = {
           is_read?: boolean | null
           message_id?: string | null
           recipient_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -1135,7 +1224,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name: string
+          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1368,7 +1457,7 @@ export type Database = {
           execute_at?: string
           id: string
           last_attempt?: string | null
-          status?: string | null
+          status?: string
           task_type?: string
           updated_at?: string | null
         }
@@ -1495,7 +1584,7 @@ export type Database = {
           id?: string
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Update: {
           child_id?: string | null
@@ -1690,7 +1779,6 @@ export type Database = {
           },
         ]
       }
-
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1725,7 +1813,7 @@ export type Database = {
         Update: {
           child_id?: string | null
           created_at?: string | null
-          email?: string
+          email: string
           facebook_url?: string | null
           full_name?: string
           id?: string
@@ -1747,7 +1835,6 @@ export type Database = {
           }
         ]
       }
-
       sponsorships: {
         Row: {
           auto_terminate_job_id: string | null
@@ -1842,7 +1929,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_visible?: boolean | null
-          name?: string
+          name?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -1868,7 +1955,7 @@ export type Database = {
           is_featured?: boolean | null
           rating?: number | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string;
         }
         Update: {
           child_id?: string | null
@@ -1935,14 +2022,14 @@ export type Database = {
           description?: string | null
           id?: string
           metadata?: Json | null
-          source_table?: string
+          source_table?: string;
           tags?: string[] | null
           thumbnail_url?: string | null
-          title?: string
-          type: string
-          updated_at?: string | null
-          url: string
-          version?: number | null
+          title?: string;
+          type?: string;
+          updated_at?: string | null;
+          url?: string;
+          version?: number | null;
         }
         Relationships: []
       }
@@ -2012,513 +2099,30 @@ export type Database = {
         }
         Relationships: []
       }
-      activity_logs: {
+      child_assignment_requests: {
         Row: {
-          id: string
-          user_id: string
-          action: string
-          details: Json | null
-          created_at: string | null
-        }
+          id: string;
+          name: string;
+          requester_email: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at: string;
+        };
         Insert: {
-          id?: string
-          user_id: string
-          action: string
-          details?: Json | null
-          created_at?: string | null
-        }
+          id?: string;
+          name: string;
+          requester_email: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+        };
         Update: {
-          id?: string
-          user_id?: string
-          action?: string
-          details?: Json | null
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "activity_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      temoignage: {
-        Row: {
-          id: string
-          content: string
-          author: string
-          rating: number | null
-          is_approved: boolean
-          is_featured: boolean
-          sponsor_id: string | null
-          child_id: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          content: string
-          author: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          content?: string
-          author?: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "temoignage_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "temoignage_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-    }
-    Views: {
-      donation_items_with_categories: {
-        Row: {
-          category_id: string | null
-          category_name: string | null
-          description: string | null
-          donation_id: string | null
-          id: string
-          quantity: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "donation_items_donation_id_fkey"
-            columns: ["donation_id"]
-            isOneToOne: false
-            referencedRelation: "donations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      donation_statistics: {
-        Row: {
-          completed_donations: number | null
-          pending_donations: number | null
-          success_rate: number | null
-          total_donations: number | null
-          total_people_helped: number | null
-        }
-        Relationships: []
-      }
-      donation_videos_with_details: {
-        Row: {
-          assistant_name: string | null
-          city: string | null
-          created_at: string | null
-          description: string | null
-          donation_date: string | null
-          donation_id: string | null
-          id: string | null
-          is_featured: boolean | null
-          thumbnail_url: string | null
-          title: string | null
-          updated_at: string | null
-          url: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "donation_videos_donation_id_fkey"
-            columns: ["donation_id"]
-            isOneToOne: false
-            referencedRelation: "donations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      statistics_summary: {
-        Row: {
-          children_stats: Json | null
-          donation_stats: Json | null
-          refresh_timestamp: string | null
-          sponsor_stats: Json | null
-        }
-        Relationships: []
-      }
-    }
-    Functions: {
-      add_assistant: {
-        Args: {
-          input_user_id: string
-        }
-        Returns: undefined
-      }
-      approve_sponsorship_request: {
-        Args: {
-          request_id: string
-          admin_id: string
-        }
-        Returns: undefined
-      }
-      auto_fix_links: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      check_and_award_badges: {
-        Args: {
-          sponsor_uuid: string
-        }
-        Returns: undefined
-      }
-      check_link: {
-        Args: {
-          link_id: string
-        }
-        Returns: undefined
-      }
-      check_permission: {
-        Args: {
-          user_id: string
-          required_permission: string
-        }
-        Returns: boolean
-      }
-      create_album_table: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      create_chat_room: {
-        Args: {
-          p_name: string
-          p_type: string
-          p_participants: string[]
-        }
-        Returns: string
-      }
-      create_notification: {
-        Args: {
-          p_recipient_id: string
-          p_type: string
-          p_title: string
-          p_content: string
-          p_link?: string
-        }
-        Returns: string
-      }
-      create_storage_bucket: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      exec_sql: {
-        Args: {
-          sql: string
-        }
-        Returns: undefined
-      }
-      fix_album_permissions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      fix_storage_permissions: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      get_active_display_options: {
-        Args: {
-          category_filter?: string
-        }
-        Returns: {
-          id: string
-          name: string
-          category: string
-          display_order: number
-        }[]
-      }
-      get_assistant_performance_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          assistant_name: string
-          donations_count: number
-          people_helped: number
-          success_rate: number
-        }[]
-      }
-      get_assistant_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_category_donation_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          category: string
-          quantity: number
-        }[]
-      }
-      get_city_donation_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          city: string
-          donations: number
-          people_helped: number
-        }[]
-      }
-      get_current_statistics: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_dashboard_statistics: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_default_privacy_settings: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_daily_donation_trends: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          day: number
-          donations: number
-        }[]
-      }
-      get_featured_donation_videos: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: string
-          url: string
-          title: string
-          description: string
-          thumbnail_url: string
-          created_at: string
-        }[]
-      }
-      get_monthly_donation_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          month: string
-          donations: number
-        }[]
-      }
-      get_monthly_donation_trends: {
-        Args: {
-          months_back?: number
-        }
-        Returns: {
-          month: string
-          donations: number
-          people_helped: number
-          success_rate: number
-        }[]
-      }
-      get_monthly_statistics: {
-        Args: {
-          start_date: string
-          end_date: string
-        }
-        Returns: Json
-      }
-      get_sponsorship_conversion_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_top_sponsorship_cities: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          city: string
-          active_sponsorships: number
-        }[]
-      }
-      get_unread_messages_count: {
-        Args: {
-          user_uuid: string
-        }
-        Returns: number
-      }
-      get_urgent_needs_by_city: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          city: string
-          urgent_needs_count: number
-          total_needs: number
-          urgent_needs_ratio: number
-        }[]
-      }
-      get_user_engagement_stats: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
-      get_user_permissions: {
-        Args: {
-          user_role: string
-        }
-        Returns: Json
-      }
-      has_permission: {
-        Args: {
-          user_id: string
-          required_permission: string
-        }
-        Returns: boolean
-      }
-      is_admin: {
-        Args: {
-          user_id: string
-        }
-        Returns: boolean
-      }
-      mark_message_as_read: {
-        Args: {
-          message_uuid: string
-          user_uuid: string
-        }
-        Returns: undefined
-      }
-      process_birthday_reminders: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      process_email_queue: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      process_scheduled_tasks: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      process_sponsorship_end_dates: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      refresh_statistics: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      reject_sponsorship_request: {
-        Args: {
-          request_id: string
-          admin_id: string
-          rejection_reason?: string
-        }
-        Returns: undefined
-      }
-      retry_failed_emails: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      send_message: {
-        Args: {
-          p_recipient_id: string
-          p_subject: string
-          p_content: string
-          p_sender_role?: string
-          p_parent_id?: string
-        }
-        Returns: string
-      }
-      send_message_notification: {
-        Args: {
-          p_recipient_id: string
-          p_sender_name: string
-          p_subject: string
-        }
-        Returns: string
-      }
-      send_notification: {
-        Args: {
-          p_recipient_id: string
-          p_type: string
-          p_title: string
-          p_content: string
-          p_link?: string
-        }
-        Returns: string
-      }
-      send_notification_email: {
-        Args: {
-          p_recipient_id: string
-          p_type: string
-          p_title: string
-          p_content: string
-          p_link?: string
-        }
-        Returns: string
-      }
-      setup_album_media: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      setup_album_policies: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      setup_storage_bucket: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      setup_storage_policies: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      terminate_sponsorship: {
-        Args: {
-          p_performed_by: string
-          p_sponsorship_id: string
-          p_termination_date: string
-          p_termination_reason: string
-          p_termination_comment: string
-        }
-        Returns: undefined
-      }
-      update_sponsor_points: {
-        Args: {
-          sponsor_uuid: string
-        }
-        Returns: undefined
-      }
-      update_sponsor_role: {
-        Args: {
-          sponsor_id: string
-          new_role: Database["public"]["Enums"]["user_role"]
-        }
-        Returns: undefined
-      }
-      validate_assistant_login: {
-        Args: {
-          p_email: string
-          p_password: string
-        }
-        Returns: {
-          valid: boolean
-          sponsor_id: string
-        }[]
-      }
-    }
-    Enums: {
-      user_role: "admin" | "assistant" | "sponsor" | "visitor"
-    }
-    CompositeTypes: {
-      email_template: {
-        subject: string | null
-        html: string | null
-      }
-    }
-  }
+          id?: string;
+          name?: string;
+          requester_email?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+    };
+  };
 }

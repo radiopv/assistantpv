@@ -14,11 +14,11 @@ export const ChildAssignmentValidation = () => {
   const queryClient = useQueryClient();
 
   const { data: requests, isLoading } = useQuery({
-    queryKey: ['child-requests'],
+    queryKey: ['child-assignment-requests'],
     queryFn: async () => {
-      console.log('Fetching child requests...');
+      console.log('Fetching child assignment requests...');
       const { data, error } = await supabase
-        .from('child_requests')
+        .from('child_assignment_requests')
         .select('*')
         .eq('status', 'pending');
       
@@ -37,7 +37,7 @@ export const ChildAssignmentValidation = () => {
       
       // Update request status
       const { error: updateError } = await supabase
-        .from('child_requests')
+        .from('child_assignment_requests')
         .update({ status: 'approved' })
         .eq('id', request.id);
 
@@ -56,7 +56,7 @@ export const ChildAssignmentValidation = () => {
         description: t("childRequestApproved"),
       });
 
-      queryClient.invalidateQueries({ queryKey: ['child-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
     } catch (error) {
       console.error('Error approving request:', error);
       toast({
@@ -73,7 +73,7 @@ export const ChildAssignmentValidation = () => {
       
       // Update request status
       const { error: updateError } = await supabase
-        .from('child_requests')
+        .from('child_assignment_requests')
         .update({ status: 'rejected' })
         .eq('id', request.id);
 
@@ -92,7 +92,7 @@ export const ChildAssignmentValidation = () => {
         description: t("childRequestRejected"),
       });
 
-      queryClient.invalidateQueries({ queryKey: ['child-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
     } catch (error) {
       console.error('Error rejecting request:', error);
       toast({
