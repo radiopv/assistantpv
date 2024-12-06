@@ -8,8 +8,6 @@ import { toast } from "sonner";
 import { DashboardHeader } from "@/components/Dashboard/DashboardHeader";
 import { DetailedStats } from "@/components/Dashboard/DetailedStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
-import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
-import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { DashboardStats } from "@/types/dashboard";
@@ -90,11 +88,6 @@ const Dashboard = () => {
       <DashboardHeader stats={stats} />
       
       <DetailedStats />
-      
-      <div className="grid gap-8 md:grid-cols-2">
-        <UserEngagementStats />
-        <SponsorshipStats />
-      </div>
       
       {isAdmin && (
         <div className="mt-8">

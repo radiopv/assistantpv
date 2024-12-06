@@ -1,8 +1,5 @@
 import { DetailedStats } from "@/components/Dashboard/DetailedStats";
 import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
-import { UrgentNeedsStats } from "@/components/Dashboard/AdvancedStats/UrgentNeedsStats";
-import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
-import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 
 const Statistics = () => {
   return (
@@ -15,13 +12,6 @@ const Statistics = () => {
       </div>
 
       <DetailedStats />
-      
-      <div className="grid gap-8 md:grid-cols-2">
-        <UrgentNeedsStats />
-        <UserEngagementStats />
-      </div>
-      
-      <SponsorshipStats />
       <AssistantStats />
     </div>
   );
