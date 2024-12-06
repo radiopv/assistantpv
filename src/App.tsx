@@ -20,8 +20,8 @@ import Login from "./pages/auth/Login";
 import { AdminPermissions } from "./components/Admin/AdminPermissions";
 import FAQ from "./pages/admin/FAQ";
 import Statistics from "./pages/admin/Statistics";
-import Travels from "./pages/admin/Travels";
 import TranslationsPage from "./pages/admin/Translations";
+import ValidationPage from "./pages/admin/Validation";
 import { DonationForm } from "./components/Donations/DonationForm";
 import AssistantPhotos from "./pages/AssistantPhotos";
 
@@ -88,7 +88,7 @@ const AppRoutes = () => (
       <Route path="/admin/translations" element={<ProtectedRoute><TranslationsPage /></ProtectedRoute>} />
       <Route path="/admin/faq" element={<ProtectedRoute requireAdmin><FAQ /></ProtectedRoute>} />
       <Route path="/admin/statistics" element={<ProtectedRoute requireAdmin><Statistics /></ProtectedRoute>} />
-      <Route path="/admin/travels" element={<ProtectedRoute requireAdmin><Travels /></ProtectedRoute>} />
+      <Route path="/admin/validation" element={<ProtectedRoute requireAdmin><ValidationPage /></ProtectedRoute>} />
     </Route>
   </Routes>
 );

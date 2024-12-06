@@ -10,13 +10,13 @@ import {
   Settings,
   Baby,
   UserPlus,
-  Plane,
   ChartBar,
   HelpCircle,
   Languages,
   Activity,
   PlusCircle,
-  Image
+  Image,
+  CheckCircle2
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -98,9 +98,9 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       show: isAdmin,
     },
     {
-      href: "/admin/travels",
-      label: t("travels"),
-      icon: Plane,
+      href: "/admin/validation",
+      label: t("validation"),
+      icon: CheckCircle2,
       show: isAdmin,
     },
     {
