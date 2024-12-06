@@ -1,24 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Accordion } from "@/components/ui/accordion";
+import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { Pencil, Trash2, Eye, EyeOff, Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { FAQItem } from "@/components/Admin/FAQ/FAQItem";
+import { AddFAQDialog } from "@/components/Admin/FAQ/AddFAQDialog";
 
 const FAQ = () => {
   const { toast } = useToast();
@@ -119,7 +105,10 @@ const FAQ = () => {
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
       const { error } = await supabase
         .from("faq")
-        .update({ is_active: !is_active })
+        .update({ 
+          is_active: !is_active,
+          updated_at: new Date().toISOString()
+        })
         .eq("id", id);
 
       if (error) throw error;
@@ -132,6 +121,15 @@ const FAQ = () => {
       });
     },
   });
+
+  const handleAddFaq = () => {
+    if (newQuestion && newAnswer) {
+      addFaqMutation.mutate({
+        question: newQuestion,
+        answer: newAnswer,
+      });
+    }
+  };
 
   if (isLoading) {
     return <div>Chargement...</div>;
@@ -146,125 +144,30 @@ const FAQ = () => {
             Gestion des questions fréquemment posées
           </p>
         </div>
-        <Dialog open={isEditing} onOpenChange={setIsEditing}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Ajouter une question
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Ajouter une nouvelle question</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 mt-4">
-              <Input
-                placeholder="Question"
-                value={newQuestion}
-                onChange={(e) => setNewQuestion(e.target.value)}
-              />
-              <Textarea
-                placeholder="Réponse"
-                value={newAnswer}
-                onChange={(e) => setNewAnswer(e.target.value)}
-              />
-              <Button
-                onClick={() => {
-                  if (newQuestion && newAnswer) {
-                    addFaqMutation.mutate({
-                      question: newQuestion,
-                      answer: newAnswer,
-                    });
-                  }
-                }}
-              >
-                Ajouter
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <AddFAQDialog
+          isOpen={isEditing}
+          onOpenChange={setIsEditing}
+          newQuestion={newQuestion}
+          setNewQuestion={setNewQuestion}
+          newAnswer={newAnswer}
+          setNewAnswer={setNewAnswer}
+          onAdd={handleAddFaq}
+        />
       </div>
 
       <Accordion type="single" collapsible className="w-full space-y-4">
         {faqItems?.map((item) => (
-          <AccordionItem 
-            key={item.id} 
-            value={item.id}
-            className={`border p-4 rounded-lg ${!item.is_active ? 'opacity-60' : ''}`}
-          >
-            <div className="flex justify-between items-center">
-              <AccordionTrigger className="text-left hover:no-underline">
-                {editingFaq?.id === item.id ? (
-                  <Input
-                    value={editingFaq.question}
-                    onChange={(e) =>
-                      setEditingFaq({ ...editingFaq, question: e.target.value })
-                    }
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                ) : (
-                  item.question
-                )}
-              </AccordionTrigger>
-              <div className="flex gap-2">
-                {editingFaq?.id === item.id ? (
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      updateFaqMutation.mutate(editingFaq);
-                    }}
-                  >
-                    Sauvegarder
-                  </Button>
-                ) : (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setEditingFaq(item)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() =>
-                        toggleVisibilityMutation.mutate({
-                          id: item.id,
-                          is_active: item.is_active,
-                        })
-                      }
-                    >
-                      {item.is_active ? (
-                        <Eye className="h-4 w-4" />
-                      ) : (
-                        <EyeOff className="h-4 w-4" />
-                      )}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => deleteFaqMutation.mutate(item.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-            <AccordionContent>
-              {editingFaq?.id === item.id ? (
-                <Textarea
-                  value={editingFaq.answer}
-                  onChange={(e) =>
-                    setEditingFaq({ ...editingFaq, answer: e.target.value })
-                  }
-                />
-              ) : (
-                item.answer
-              )}
-            </AccordionContent>
-          </AccordionItem>
+          <FAQItem
+            key={item.id}
+            item={item}
+            editingFaq={editingFaq}
+            setEditingFaq={setEditingFaq}
+            onUpdate={updateFaqMutation.mutate}
+            onDelete={deleteFaqMutation.mutate}
+            onToggleVisibility={(id, isActive) =>
+              toggleVisibilityMutation.mutate({ id, isActive })
+            }
+          />
         ))}
       </Accordion>
     </div>
