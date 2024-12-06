@@ -12,7 +12,7 @@ export interface SponsorshipRequest {
   updated_at: string | null;
   city: string | null;
   is_long_term: boolean | null;
-  is_one_time: boolean | null;
+  is_one_time?: boolean | null;
 }
 
 export type SponsorshipTables = {

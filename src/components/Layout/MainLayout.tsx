@@ -30,12 +30,10 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Desktop Sidebar */}
       <div className="hidden md:block w-64 fixed h-full">
         <Sidebar />
       </div>
 
-      {/* Mobile Menu */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
         <nav className="flex justify-around items-center h-16">
           {mobileNavItems.map((item) => (
