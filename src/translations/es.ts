@@ -94,4 +94,13 @@ export const spanishTranslations = {
   errorRejectingRequest: "Error al rechazar la solicitud",
   comingSoon: "Próximamente",
   loading: "Cargando...",
+  
+  // Testimonial validation
+  author: "Autor",
+  content: "Contenido",
+  testimonialApproved: "Testimonio aprobado con éxito",
+  testimonialRejected: "Testimonio rechazado",
+  errorApprovingTestimonial: "Error al aprobar el testimonio",
+  errorRejectingTestimonial: "Error al rechazar el testimonio",
+  validation: "Validación",
 };

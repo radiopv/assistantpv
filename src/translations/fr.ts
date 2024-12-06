@@ -92,4 +92,13 @@ export const frenchTranslations = {
   errorRejectingRequest: "Erreur lors du rejet de la demande",
   comingSoon: "Fonctionnalité à venir",
   loading: "Chargement...",
+  
+  // Testimonial validation
+  author: "Auteur",
+  content: "Contenu",
+  testimonialApproved: "Témoignage approuvé avec succès",
+  testimonialRejected: "Témoignage rejeté",
+  errorApprovingTestimonial: "Erreur lors de l'approbation du témoignage",
+  errorRejectingTestimonial: "Erreur lors du rejet du témoignage",
+  validation: "Validation",
 };
