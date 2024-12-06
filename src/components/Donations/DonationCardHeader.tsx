@@ -62,14 +62,14 @@ export const DonationCardHeader = ({
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
       <DonationHeader donation={donation} />
-      <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-start sm:justify-end">
+      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Button
           variant="outline"
           size="sm"
           onClick={onEdit}
-          className="flex items-center gap-2 flex-1 sm:flex-initial"
+          className="w-full sm:w-auto"
         >
-          <Edit className="w-4 h-4" />
+          <Edit className="w-4 h-4 mr-2" />
           {t.edit}
         </Button>
         {(isAdmin || canDelete) && onDelete && (
@@ -78,9 +78,9 @@ export const DonationCardHeader = ({
               <Button
                 variant="destructive"
                 size="sm"
-                className="flex items-center gap-2 flex-1 sm:flex-initial"
+                className="w-full sm:w-auto"
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4 mr-2" />
                 {t.delete}
               </Button>
             </AlertDialogTrigger>

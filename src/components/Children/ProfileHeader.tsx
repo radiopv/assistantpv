@@ -43,11 +43,11 @@ export const ProfileHeader = ({
           {name}
         </h1>
       </div>
-      <div className="flex gap-2 w-full sm:w-auto">
+      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Button 
           variant={editing ? "outline" : "default"}
           onClick={() => editing ? onSave() : onEdit()}
-          className="flex-1 sm:flex-initial"
+          className="w-full sm:w-auto"
         >
           {editing ? (
             <>
@@ -61,7 +61,7 @@ export const ProfileHeader = ({
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="flex-1 sm:flex-initial">
+            <Button variant="destructive" className="w-full sm:w-auto">
               <Trash2 className="w-4 h-4 mr-2" />
               {t("delete")}
             </Button>
