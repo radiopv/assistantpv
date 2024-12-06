@@ -338,10 +338,10 @@ export interface Database {
           photo_url: string | null
           sponsor_email: string | null
           sponsor_facebook_url: string | null
-          sponsor_id: number | null
+          sponsor_id: string | null
           sponsor_name: string | null
           sponsor_phone: string | null
-          sponsorship_id: number | null
+          sponsorship_id: string | null
           sponsorship_status: string | null
           sponsorships: string | null
           start_date: string | null
@@ -366,10 +366,10 @@ export interface Database {
           photo_url?: string | null
           sponsor_email?: string | null
           sponsor_facebook_url?: string | null
-          sponsor_id?: number | null
+          sponsor_id?: string | null
           sponsor_name?: string | null
           sponsor_phone?: string | null
-          sponsorship_id?: number | null
+          sponsorship_id?: string | null
           sponsorship_status?: string | null
           sponsorships?: string | null
           start_date?: string
@@ -394,10 +394,10 @@ export interface Database {
           photo_url?: string | null
           sponsor_email?: string | null
           sponsor_facebook_url?: string | null
-          sponsor_id?: number | null
+          sponsor_id?: string | null
           sponsor_name?: string | null
           sponsor_phone?: string | null
-          sponsorship_id?: number | null
+          sponsorship_id?: string | null
           sponsorship_status?: string | null
           sponsorships?: string | null
           start_date?: string | null
@@ -440,7 +440,7 @@ export interface Database {
           donation_id?: string | null
           id?: string
           quantity?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -904,8 +904,8 @@ export interface Database {
           page_url?: string
           redirect_url?: string | null
           status: string
-          updated_at?: string | null
-          url?: string
+          updated_at: string | null
+          url: string
         }
         Relationships: []
       }
@@ -1074,7 +1074,7 @@ export interface Database {
           created_at?: string | null
           created_by?: string | null
           created_by_role: string
-          id?: string
+          id: string
           is_global?: boolean | null
           name: string
           subject: string
@@ -1803,9 +1803,9 @@ export interface Database {
           status?: 'pending' | 'approved' | 'rejected'
           created_at?: string | null
         }
-        Relationships: []
+        Relationships: [];
       }
-    }
+    };
     Views: {
       donation_items_with_categories: {
         Row: {

@@ -26,6 +26,7 @@ export const ChildAssignmentValidation = () => {
         console.error('Error fetching requests:', error);
         throw error;
       }
+      
       console.log('Fetched requests:', data);
       return data as ChildAssignmentRequest[];
     }
@@ -35,7 +36,6 @@ export const ChildAssignmentValidation = () => {
     try {
       console.log('Approving request:', request);
       
-      // Update request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
@@ -43,7 +43,6 @@ export const ChildAssignmentValidation = () => {
 
       if (updateError) throw updateError;
 
-      // Send approval email
       await sendEmail({
         from: "noreply@lovable.dev",
         to: [request.requester_email],
@@ -71,7 +70,6 @@ export const ChildAssignmentValidation = () => {
     try {
       console.log('Rejecting request:', request);
       
-      // Update request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'rejected' })
@@ -79,7 +77,6 @@ export const ChildAssignmentValidation = () => {
 
       if (updateError) throw updateError;
 
-      // Send rejection email
       await sendEmail({
         from: "noreply@lovable.dev",
         to: [request.requester_email],
