@@ -31,12 +31,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setIsAssistant(['assistant', 'admin'].includes(parsedUser.role));
           
-          // Redirection basée sur le rôle
+          // Verify that the user exists in the sponsors table
+          const { data: sponsor, error } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('id', parsedUser.id)
+            .single();
+
+          if (error || !sponsor) {
+            console.error('User not found in sponsors table:', error);
+            localStorage.removeItem('user');
+            setUser(null);
+            navigate("/login");
+            return;
+          }
+
+          setUser(sponsor);
+          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+          
           if (window.location.pathname === '/login') {
-            if (parsedUser.role === 'admin' || parsedUser.role === 'assistant') {
+            if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
             } else {
               navigate('/');
