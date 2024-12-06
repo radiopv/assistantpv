@@ -1,11 +1,11 @@
-import { Json } from './json';
+import { Database } from './database';
 
 export interface ChildAssignmentRequest {
   id: string;
+  created_at: string;
   name: string;
   requester_email: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at?: string;
+  status: string;
 }
 
 export interface ChildAssignmentRequestsTable {
