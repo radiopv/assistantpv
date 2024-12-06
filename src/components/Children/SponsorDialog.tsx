@@ -16,7 +16,7 @@ interface SponsorDialogProps {
 }
 
 export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialogProps) => {
-  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id || "none");
+  const [selectedSponsor, setSelectedSponsor] = useState<string>(child.sponsor_id?.toString() || "none");
   const queryClient = useQueryClient();
   const { t } = useLanguage();
 
@@ -26,7 +26,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
       
       const updateData = {
         is_sponsored: sponsorId !== "none",
-        sponsor_id: sponsorId === "none" ? null : sponsorId,
+        sponsor_id: sponsorId === "none" ? null : Number(sponsorId),
         sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
         sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
       };

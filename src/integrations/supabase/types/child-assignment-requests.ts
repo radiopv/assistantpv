@@ -1,5 +1,3 @@
-import { Database } from './database';
-
 export interface ChildAssignmentRequest {
   id: string;
   created_at: string;
