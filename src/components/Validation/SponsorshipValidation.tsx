@@ -6,7 +6,7 @@ import { RequestsList } from "@/components/Sponsorship/RequestsList/RequestsList
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.VITE_RESEND_API_KEY);
+const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
 
 export const SponsorshipValidation = () => {
   const { toast } = useToast();
