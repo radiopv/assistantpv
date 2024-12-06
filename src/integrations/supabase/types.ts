@@ -60,7 +60,7 @@ export type Database = {
           title?: string | null
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Update: {
           child_id?: string | null
@@ -730,7 +730,7 @@ export type Database = {
           notification_id?: string | null
           recipient_email?: string
           status?: string | null
-          subject?: string
+          subject: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1651,7 +1651,7 @@ export type Database = {
           city?: string | null
           created_at?: string | null
           current_level_id?: string | null
-          email?: string | null
+          email?: string
           facebook_url?: string | null
           force_password_change?: boolean | null
           id?: string
@@ -2143,6 +2143,60 @@ export type Database = {
           }
         ]
       }
+      temoignage: {
+        Row: {
+          id: string
+          content: string
+          author: string
+          rating: number | null
+          is_approved: boolean
+          is_featured: boolean
+          sponsor_id: string | null
+          child_id: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          content: string
+          author: string
+          rating?: number | null
+          is_approved?: boolean
+          is_featured?: boolean
+          sponsor_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          content?: string
+          author?: string
+          rating?: number | null
+          is_approved?: boolean
+          is_featured?: boolean
+          sponsor_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "temoignage_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "temoignage_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       donation_items_with_categories: {
@@ -2567,4 +2621,3 @@ export type Database = {
     }
   }
 }
-
