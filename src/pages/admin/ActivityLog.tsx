@@ -62,7 +62,6 @@ const ActivityLog = () => {
   });
 
   useEffect(() => {
-    console.log('Setting up real-time subscription...');
     const channel = supabase
       .channel('activity-changes')
       .on(
@@ -72,8 +71,7 @@ const ActivityLog = () => {
           schema: 'public',
           table: 'activity_logs'
         },
-        (payload) => {
-          console.log('Received real-time update:', payload);
+        () => {
           refetch();
           toast({
             title: "Nouvelle activité",
@@ -84,7 +82,6 @@ const ActivityLog = () => {
       .subscribe();
 
     return () => {
-      console.log('Cleaning up subscription...');
       supabase.removeChannel(channel);
     };
   }, [refetch, toast]);
@@ -109,8 +106,6 @@ const ActivityLog = () => {
       </div>
     );
   }
-
-  console.log('Rendering activities:', activities);
 
   return (
     <div className="space-y-6 p-8">
