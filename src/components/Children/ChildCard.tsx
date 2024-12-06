@@ -13,8 +13,13 @@ interface ChildCardProps {
   onSponsorClick: (child: any) => void;
 }
 
-const formatAge = (birthDate: string) => {
+const formatAge = (birthDate: string | undefined | null) => {
   const { t } = useLanguage();
+  
+  if (!birthDate) {
+    return t("ageNotAvailable");
+  }
+
   const today = new Date();
   const birth = parseISO(birthDate);
   const years = differenceInYears(today, birth);
