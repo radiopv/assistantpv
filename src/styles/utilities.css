@@ -1,0 +1,66 @@
+/* Performance optimizations for images */
+@layer utilities {
+  img {
+    @apply transition-opacity duration-300;
+    content-visibility: auto;
+    contain: paint;
+  }
+
+  img.lazy {
+    @apply opacity-0;
+  }
+
+  img.lazy.loaded {
+    @apply opacity-100;
+  }
+
+  /* Touch interactions */
+  @media (hover: none) {
+    .hover\:scale-105:active {
+      transform: scale(1.05);
+      transition: transform 0.2s ease;
+    }
+
+    .touch-feedback:active {
+      @apply bg-gray-100/50 transition-colors duration-200;
+    }
+
+    .touch-scale:active {
+      transform: scale(0.98);
+      transition: transform 0.2s ease;
+    }
+  }
+
+  /* Animations */
+  .page-transition {
+    @apply animate-fade-in;
+  }
+
+  .menu-transition {
+    @apply animate-slide-in;
+  }
+
+  .modal-transition {
+    @apply animate-slide-up;
+  }
+}
+
+/* Ensure white background for all dropdown menus */
+[role="listbox"],
+[role="menu"],
+.select-content,
+[data-radix-popper-content-wrapper] > div {
+  @apply bg-white !important;
+}
+
+/* Ensure white background for dropdown items on hover */
+[role="option"]:hover,
+[role="menuitem"]:hover {
+  @apply bg-gray-100 !important;
+}
+
+/* Ensure selected items have proper contrast */
+[role="option"][data-highlighted],
+[role="menuitem"][data-highlighted] {
+  @apply bg-gray-100 text-gray-900 !important;
+}
