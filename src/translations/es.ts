@@ -81,5 +81,17 @@ export const spanishTranslations = {
   available: "Disponible",
   sponsored: "Apadrinado",
   pending: "Pendiente",
-  urgent: "Urgente"
+  urgent: "Urgente",
+
+  // Validation page
+  validationPage: "Página de validación",
+  sponsorshipRequests: "Solicitudes de apadrinamiento",
+  photoValidation: "Validación de fotos",
+  testimonialValidation: "Validación de testimonios",
+  sponsorshipRequestApproved: "Solicitud de apadrinamiento aprobada",
+  sponsorshipRequestRejected: "Solicitud de apadrinamiento rechazada",
+  errorApprovingRequest: "Error al aprobar la solicitud",
+  errorRejectingRequest: "Error al rechazar la solicitud",
+  comingSoon: "Próximamente",
+  loading: "Cargando...",
 };

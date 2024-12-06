@@ -81,7 +81,15 @@ export const frenchTranslations = {
   pending: "En attente",
   urgent: "Urgent",
 
-  // New translations
-  addChildPhotos: "Ajout photo enfants",
-  photoPageInstructions: "Cette page permet d'ajouter des photos aux profils des enfants. Les photos seront visibles par les parrains dans le profil de leur filleul.",
+  // Validation page
+  validationPage: "Page de validation",
+  sponsorshipRequests: "Demandes de parrainage",
+  photoValidation: "Validation des photos",
+  testimonialValidation: "Validation des témoignages",
+  sponsorshipRequestApproved: "Demande de parrainage approuvée",
+  sponsorshipRequestRejected: "Demande de parrainage rejetée",
+  errorApprovingRequest: "Erreur lors de l'approbation de la demande",
+  errorRejectingRequest: "Erreur lors du rejet de la demande",
+  comingSoon: "Fonctionnalité à venir",
+  loading: "Chargement...",
 };
