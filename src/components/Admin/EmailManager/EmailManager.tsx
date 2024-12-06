@@ -3,8 +3,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { resendClient } from "@/lib/email";
 import { EmailForm } from "./EmailForm";
+import { sendEmail } from "@/api/email";
 
 const EmailManager = () => {
   const { t } = useLanguage();
@@ -49,14 +49,23 @@ const EmailManager = () => {
       const batchSize = 10;
       for (let i = 0; i < emails.length; i += batchSize) {
         const batch = emails.slice(i, i + batchSize);
-        await Promise.all(batch.map(email => 
-          resendClient.emails.send({
+        const emailRequests = batch.map(email => 
+          sendEmail({
             from: 'noreply@votredomaine.com',
-            to: email,
+            to: [email],
             subject: subject,
             html: content,
           })
-        ));
+        );
+
+        const results = await Promise.all(emailRequests);
+        
+        // Check for any errors in the batch
+        const errors = results.filter(result => !result.success);
+        if (errors.length > 0) {
+          console.error('Errors sending emails:', errors);
+          throw new Error('Some emails failed to send');
+        }
       }
 
       toast({
