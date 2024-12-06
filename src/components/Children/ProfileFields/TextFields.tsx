@@ -13,8 +13,8 @@ export const TextFields = ({ child, editing, onChange }: TextFieldsProps) => {
   };
 
   return (
-    <>
-      <div className="grid gap-2">
+    <div className="space-y-4">
+      <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
@@ -22,11 +22,11 @@ export const TextFields = ({ child, editing, onChange }: TextFieldsProps) => {
           onChange={handleInputChange}
           disabled={!editing}
           placeholder="Description générale de l'enfant..."
-          className="min-h-[100px]"
+          className="min-h-[100px] w-full"
         />
       </div>
 
-      <div className="grid gap-2">
+      <div className="space-y-2">
         <Label htmlFor="story">Histoire</Label>
         <Textarea
           id="story"
@@ -34,11 +34,11 @@ export const TextFields = ({ child, editing, onChange }: TextFieldsProps) => {
           onChange={handleInputChange}
           disabled={!editing}
           placeholder="Histoire de l'enfant..."
-          className="min-h-[150px]"
+          className="min-h-[150px] w-full"
         />
       </div>
 
-      <div className="grid gap-2">
+      <div className="space-y-2">
         <Label htmlFor="comments">Commentaires</Label>
         <Textarea
           id="comments"
@@ -46,9 +46,9 @@ export const TextFields = ({ child, editing, onChange }: TextFieldsProps) => {
           onChange={handleInputChange}
           disabled={!editing}
           placeholder="Commentaires additionnels..."
-          className="min-h-[100px]"
+          className="min-h-[100px] w-full"
         />
       </div>
-    </>
+    </div>
   );
 };

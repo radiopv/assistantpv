@@ -33,20 +33,21 @@ export const ProfileHeader = ({
   const { t } = useLanguage();
 
   return (
-    <div className="flex justify-between items-center">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={onBack}>
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t("back")}
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex items-center gap-4 w-full sm:w-auto">
+        <Button variant="ghost" onClick={onBack} className="p-2 h-auto">
+          <ArrowLeft className="w-4 h-4 sm:mr-2" />
+          <span className="hidden sm:inline">{t("back")}</span>
         </Button>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-xl sm:text-3xl font-bold text-gray-900 truncate">
           {name}
         </h1>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 w-full sm:w-auto">
         <Button 
           variant={editing ? "outline" : "default"}
           onClick={() => editing ? onSave() : onEdit()}
+          className="flex-1 sm:flex-initial"
         >
           {editing ? (
             <>
@@ -60,21 +61,26 @@ export const ProfileHeader = ({
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive">
+            <Button variant="destructive" className="flex-1 sm:flex-initial">
               <Trash2 className="w-4 h-4 mr-2" />
               {t("delete")}
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent className="w-[95%] sm:w-full max-w-md mx-auto">
             <AlertDialogHeader>
               <AlertDialogTitle>{t("deleteConfirmation")}</AlertDialogTitle>
               <AlertDialogDescription>
                 {t("deleteWarning")}
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-              <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+              <AlertDialogCancel className="w-full sm:w-auto mt-2 sm:mt-0">
+                {t("cancel")}
+              </AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={onDelete} 
+                className="w-full sm:w-auto bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
                 {t("confirm")}
               </AlertDialogAction>
             </AlertDialogFooter>

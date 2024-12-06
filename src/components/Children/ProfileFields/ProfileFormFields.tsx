@@ -59,7 +59,7 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
   };
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 p-4">
       <div className="grid gap-2">
         <Label htmlFor="name">Nom</Label>
         <Input
@@ -67,84 +67,93 @@ export const ProfileFormFields = ({ child, editing, onChange }: ProfileFormField
           value={child.name}
           onChange={handleInputChange}
           disabled={!editing}
+          className="w-full"
         />
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="birth_date">Date de naissance</Label>
-        <Input
-          id="birth_date"
-          type="date"
-          value={child.birth_date}
-          onChange={handleInputChange}
-          disabled={!editing}
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="age">Âge</Label>
-        <Input
-          id="age"
-          value={formatAge(child.birth_date)}
-          disabled
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <Label htmlFor="city">Ville</Label>
-        {editing ? (
-          <Select
-            value={child.city || ""}
-            onValueChange={(value) => handleSelectChange("city", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionner une ville" />
-            </SelectTrigger>
-            <SelectContent>
-              {cities?.map((city) => (
-                <SelectItem key={city} value={city}>
-                  {city}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="birth_date">Date de naissance</Label>
           <Input
-            id="city"
-            value={child.city}
-            disabled
+            id="birth_date"
+            type="date"
+            value={child.birth_date}
+            onChange={handleInputChange}
+            disabled={!editing}
+            className="w-full"
           />
-        )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="age">Âge</Label>
+          <Input
+            id="age"
+            value={formatAge(child.birth_date)}
+            disabled
+            className="w-full bg-gray-50"
+          />
+        </div>
       </div>
 
-      <div className="grid gap-2">
-        <Label htmlFor="status">Statut</Label>
-        {editing ? (
-          <Select
-            defaultValue={child.status}
-            value={child.status}
-            onValueChange={(value) => handleSelectChange("status", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Sélectionner un statut">
-                {STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {STATUS_OPTIONS.map((status) => (
-                <SelectItem key={status.value} value={status.value}>
-                  {status.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        ) : (
-          <Input
-            id="status"
-            value={STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
-            disabled
-          />
-        )}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="city">Ville</Label>
+          {editing ? (
+            <Select
+              value={child.city || ""}
+              onValueChange={(value) => handleSelectChange("city", value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sélectionner une ville" />
+              </SelectTrigger>
+              <SelectContent>
+                {cities?.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="city"
+              value={child.city}
+              disabled
+              className="w-full bg-gray-50"
+            />
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="status">Statut</Label>
+          {editing ? (
+            <Select
+              defaultValue={child.status}
+              value={child.status}
+              onValueChange={(value) => handleSelectChange("status", value)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Sélectionner un statut">
+                  {STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((status) => (
+                  <SelectItem key={status.value} value={status.value}>
+                    {status.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="status"
+              value={STATUS_OPTIONS.find(option => option.value === child.status)?.label || child.status}
+              disabled
+              className="w-full bg-gray-50"
+            />
+          )}
+        </div>
       </div>
 
       <TextFields
