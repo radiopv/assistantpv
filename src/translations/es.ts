@@ -165,5 +165,32 @@ export const spanishTranslations = {
   profileUpdateError: "Error al actualizar el perfil",
   childDeleted: "Niño eliminado",
   childDeleteSuccess: "El niño ha sido eliminado con éxito",
-  childDeleteError: "Error al eliminar el niño"
+  childDeleteError: "Error al eliminar el niño",
+
+  // Email Manager translations
+  emailManager: "Gestor de correos",
+  selectTemplate: "Seleccionar plantilla",
+  welcomeTemplate: "Email de bienvenida",
+  updateTemplate: "Actualización",
+  reminderTemplate: "Recordatorio",
+  customTemplate: "Personalizado",
+  selectRecipients: "Seleccionar destinatarios",
+  allSponsors: "Todos los padrinos",
+  activeSponsors: "Padrinos activos",
+  pendingSponsors: "Padrinos pendientes",
+  emailSubject: "Asunto del correo",
+  emailContent: "Contenido del correo",
+  enterEmailSubject: "Ingrese el asunto del correo",
+  enterEmailContent: "Ingrese el contenido del correo",
+  sendEmails: "Enviar correos",
+  sendingEmails: "Enviando...",
+  emailsSentSuccess: "Los correos se han enviado con éxito",
+  errorSendingEmails: "Ocurrió un error al enviar los correos",
+  emailFieldsRequired: "El asunto y contenido del correo son requeridos",
+  welcomeEmailSubject: "Bienvenido a nuestro programa de apadrinamiento",
+  welcomeEmailContent: "Estamos encantados de darle la bienvenida como padrino...",
+  updateEmailSubject: "Actualización importante",
+  updateEmailContent: "Aquí están las últimas noticias sobre su ahijado...",
+  reminderEmailSubject: "Recordatorio de apadrinamiento",
+  reminderEmailContent: "No olvide consultar las últimas fotos de su ahijado..."
 };
