@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -7,6 +7,7 @@ import { RequestsList } from "@/components/Sponsorship/RequestsList/RequestsList
 export const SponsorshipValidation = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ['sponsorship-requests'],
@@ -23,12 +24,18 @@ export const SponsorshipValidation = () => {
 
   const handleApprove = async (id: string) => {
     try {
-      const { error } = await supabase.rpc('approve_sponsorship_request', {
-        request_id: id,
-        admin_id: (await supabase.auth.getUser()).data.user?.id
-      });
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .update({ 
+          status: 'approved',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
 
       if (error) throw error;
+
+      // Invalidate the query to refresh the list
+      await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
 
       toast({
         title: t("success"),
@@ -46,12 +53,18 @@ export const SponsorshipValidation = () => {
 
   const handleReject = async (id: string) => {
     try {
-      const { error } = await supabase.rpc('reject_sponsorship_request', {
-        request_id: id,
-        admin_id: (await supabase.auth.getUser()).data.user?.id
-      });
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .update({ 
+          status: 'rejected',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
 
       if (error) throw error;
+
+      // Invalidate the query to refresh the list
+      await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
 
       toast({
         title: t("success"),
