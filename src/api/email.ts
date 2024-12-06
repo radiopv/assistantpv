@@ -1,7 +1,11 @@
+import emailjs from '@emailjs/browser';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const emailjsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+const emailjsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const emailjsTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -18,6 +22,9 @@ interface EmailResponse {
   data?: any;
 }
 
+// Initialize EmailJS with public key
+emailjs.init(emailjsPublicKey);
+
 export const sendEmail = async (emailData: EmailRequest): Promise<EmailResponse> => {
   try {
     const { data: { session } } = await supabase.auth.getSession();
@@ -26,24 +33,29 @@ export const sendEmail = async (emailData: EmailRequest): Promise<EmailResponse>
       throw new Error('Unauthorized');
     }
 
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(emailData),
-    });
+    // Prepare template parameters for EmailJS
+    const templateParams = {
+      to_email: emailData.to.join(', '),
+      subject: emailData.subject,
+      message: emailData.html,
+      from_name: 'Your Organization',
+      reply_to: emailData.from
+    };
 
-    const data = await response.json();
+    const response = await emailjs.send(
+      emailjsServiceId,
+      emailjsTemplateId,
+      templateParams,
+      emailjsPublicKey
+    );
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Failed to send email');
+    if (response.status !== 200) {
+      throw new Error('Failed to send email');
     }
 
     return {
       success: true,
-      data
+      data: response
     };
   } catch (error: any) {
     console.error('Error sending email:', error);
