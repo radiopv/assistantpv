@@ -60,14 +60,14 @@ export const DonationCardHeader = ({
   const t = translations[language as keyof typeof translations];
 
   return (
-    <div className="flex justify-between items-start">
+    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
       <DonationHeader donation={donation} />
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2 w-full sm:w-auto">
         <Button
           variant="outline"
           size="sm"
           onClick={onEdit}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full sm:w-auto"
         >
           <Edit className="w-4 h-4" />
           {t.edit}
@@ -78,7 +78,7 @@ export const DonationCardHeader = ({
               <Button
                 variant="destructive"
                 size="sm"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto"
               >
                 <Trash2 className="w-4 h-4" />
                 {t.delete}
@@ -91,9 +91,9 @@ export const DonationCardHeader = ({
                   {t.deleteWarning}
                 </AlertDialogDescription>
               </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete}>
+              <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                <AlertDialogCancel className="w-full sm:w-auto">{t.cancel}</AlertDialogCancel>
+                <AlertDialogAction onClick={onDelete} className="w-full sm:w-auto">
                   {t.confirm}
                 </AlertDialogAction>
               </AlertDialogFooter>

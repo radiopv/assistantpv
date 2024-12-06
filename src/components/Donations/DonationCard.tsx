@@ -46,12 +46,11 @@ export const DonationCard = ({
 
   const t = translations[language as keyof typeof translations];
 
-  // Détermine si l'utilisateur peut supprimer en fonction de son rôle
   const userCanDelete = user?.role === 'admin' || user?.role === 'assistant';
 
   return (
-    <Card className="p-4">
-      <div className="space-y-4">
+    <Card className="p-4 w-full max-w-full overflow-hidden">
+      <div className="space-y-4 w-full">
         <DonationCardHeader
           donation={donation}
           isAdmin={isAdmin}
@@ -63,9 +62,9 @@ export const DonationCard = ({
         <DonationDetails donation={donation} />
         
         {donation.comments && (
-          <div>
+          <div className="w-full">
             <p className="text-gray-500">{t.comments}</p>
-            <p className="text-sm">{donation.comments}</p>
+            <p className="text-sm break-words">{donation.comments}</p>
           </div>
         )}
 
