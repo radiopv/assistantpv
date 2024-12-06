@@ -4,11 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase environment variables. Please check your .env file.');
-}
-
-const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+// Initialize Supabase client only if credentials are available
+const supabase = supabaseUrl && supabaseKey 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
 
 const emailjsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 const emailjsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
@@ -18,8 +17,10 @@ if (!emailjsPublicKey || !emailjsServiceId || !emailjsTemplateId) {
   console.error('Missing EmailJS environment variables. Please check your .env file.');
 }
 
-// Initialize EmailJS with public key
-emailjs.init(emailjsPublicKey || '');
+// Initialize EmailJS with public key if available
+if (emailjsPublicKey) {
+  emailjs.init(emailjsPublicKey);
+}
 
 interface EmailRequest {
   from: string;
@@ -36,10 +37,18 @@ interface EmailResponse {
 
 export const sendEmail = async (emailData: EmailRequest): Promise<EmailResponse> => {
   try {
+    if (!supabase) {
+      throw new Error('Supabase client not initialized. Check your environment variables.');
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
       throw new Error('Unauthorized');
+    }
+
+    if (!emailjsServiceId || !emailjsTemplateId) {
+      throw new Error('EmailJS configuration is missing');
     }
 
     // Prepare template parameters for EmailJS
@@ -52,8 +61,8 @@ export const sendEmail = async (emailData: EmailRequest): Promise<EmailResponse>
     };
 
     const response = await emailjs.send(
-      emailjsServiceId || '',
-      emailjsTemplateId || '',
+      emailjsServiceId,
+      emailjsTemplateId,
       templateParams
     );
 
