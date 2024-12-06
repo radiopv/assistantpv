@@ -6,14 +6,15 @@ import { RequestsList } from "@/components/Sponsorship/RequestsList/RequestsList
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Resend } from 'resend';
 
-console.log('API Key:', import.meta.env.VITE_RESEND_API_KEY); // Debug log
-
 const resendApiKey = import.meta.env.VITE_RESEND_API_KEY;
-if (!resendApiKey) {
-  console.error('Missing Resend API key in environment variables');
-}
+let resend: Resend | null = null;
 
-const resend = new Resend(resendApiKey);
+// Only initialize Resend if we have an API key
+if (resendApiKey) {
+  resend = new Resend(resendApiKey);
+} else {
+  console.error('Missing Resend API key. Please add VITE_RESEND_API_KEY to your .env file');
+}
 
 export const SponsorshipValidation = () => {
   const { toast } = useToast();
@@ -35,6 +36,11 @@ export const SponsorshipValidation = () => {
   });
 
   const sendEmail = async (recipientEmail: string, isApproved: boolean) => {
+    if (!resend) {
+      console.error('Resend client not initialized - missing API key');
+      throw new Error('Email service not configured');
+    }
+
     try {
       const subject = isApproved ? 
         "Votre demande de parrainage a été approuvée" : 
@@ -113,11 +119,16 @@ export const SponsorshipValidation = () => {
 
       if (error) throw error;
 
-      // Send notification message and email
-      await Promise.all([
-        sendNotificationMessage(request.email, true),
-        sendEmail(request.email, true)
-      ]);
+      try {
+        // Send notification message and email
+        await Promise.all([
+          sendNotificationMessage(request.email, true),
+          sendEmail(request.email, true)
+        ]);
+      } catch (emailError) {
+        console.error('Error sending notifications:', emailError);
+        // Continue with the approval process even if notifications fail
+      }
 
       // Invalidate the query to refresh the list
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
@@ -158,11 +169,16 @@ export const SponsorshipValidation = () => {
 
       if (error) throw error;
 
-      // Send notification message and email
-      await Promise.all([
-        sendNotificationMessage(request.email, false),
-        sendEmail(request.email, false)
-      ]);
+      try {
+        // Send notification message and email
+        await Promise.all([
+          sendNotificationMessage(request.email, false),
+          sendEmail(request.email, false)
+        ]);
+      } catch (emailError) {
+        console.error('Error sending notifications:', emailError);
+        // Continue with the rejection process even if notifications fail
+      }
 
       // Invalidate the query to refresh the list
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
