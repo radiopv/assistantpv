@@ -1,8 +1,16 @@
 import { Json } from './json';
+import { Children } from './children';
+import { ChildAssignmentRequest } from './child-assignment-requests';
 
 export interface Database {
   public: {
     Tables: {
+      child_assignment_requests: {
+        Row: ChildAssignmentRequest;
+        Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at'>;
+        Update: Partial<Omit<ChildAssignmentRequest, 'id' | 'created_at'>>;
+      };
+      children: Children;
       aid_categories: {
         Row: {
           created_at: string | null
@@ -77,7 +85,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       badges: {
@@ -167,7 +175,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       chat_messages: {
@@ -212,7 +220,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       chat_room_participants: {
@@ -248,7 +256,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       chat_rooms: {
@@ -286,7 +294,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       child_display_options: {
@@ -319,101 +327,6 @@ export interface Database {
         }
         Relationships: []
       }
-      children: {
-        Row: {
-          age: number
-          birth_date: string
-          city: string | null
-          created_at: string | null
-          description: string | null
-          comments: string | null
-          story: string | null
-          end_date: string | null
-          gender: string
-          id: string
-          is_sponsored: boolean | null
-          location_id: number | null
-          name: string
-          needs: Json | null
-          photo_url: string | null
-          sponsor_email: string | null
-          sponsor_facebook_url: string | null
-          sponsor_id: string | null
-          sponsor_name: string | null
-          sponsor_phone: string | null
-          sponsorship_id: string | null
-          sponsorship_status: string | null
-          sponsorships: string | null
-          start_date: string | null
-          status: string
-          updated_at: string | null
-        }
-        Insert: {
-          age: number
-          birth_date: string
-          city?: string | null
-          created_at?: string | null
-          description?: string | null
-          comments?: string | null
-          story?: string | null
-          end_date?: string | null
-          gender: string
-          id?: string
-          is_sponsored?: boolean | null
-          location_id?: number | null
-          name: string
-          needs?: Json | null
-          photo_url?: string | null
-          sponsor_email?: string | null
-          sponsor_facebook_url?: string | null
-          sponsor_id?: string | null
-          sponsor_name?: string | null
-          sponsor_phone?: string | null
-          sponsorship_id?: string | null
-          sponsorship_status?: string | null
-          sponsorships?: string | null
-          start_date?: string
-          status: string
-          updated_at?: string | null
-        }
-        Update: {
-          age?: number
-          birth_date?: string
-          city?: string | null
-          created_at?: string | null
-          description?: string | null
-          comments?: string | null
-          story?: string | null
-          end_date?: string | null
-          gender?: string
-          id?: string
-          is_sponsored?: boolean | null
-          location_id?: number | null
-          name?: string
-          needs?: Json | null
-          photo_url?: string | null
-          sponsor_email?: string | null
-          sponsor_facebook_url?: string | null
-          sponsor_id?: string | null
-          sponsor_name?: string | null
-          sponsor_phone?: string | null
-          sponsorship_id?: string | null
-          sponsorship_status?: string | null
-          sponsorships?: string | null
-          start_date?: string | null
-          status?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "children_location_id_fkey"
-            columns: ["location_id"]
-            isOneToOne: false
-            referencedRelation: "locations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       donation_items: {
         Row: {
           category_id: string | null
@@ -440,7 +353,7 @@ export interface Database {
           donation_id?: string | null
           id?: string
           quantity?: number
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -463,7 +376,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "donations"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       donation_items_backup: {
@@ -479,7 +392,7 @@ export interface Database {
           category_id?: string | null
           created_at?: string | null
           donation_id?: string | null
-          id?: string
+          id?: string | null
           quantity?: number
           updated_at?: string | null
         }
@@ -561,7 +474,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "donations"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       donation_videos: {
@@ -611,7 +524,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "donations"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       donations: {
@@ -685,7 +598,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "donations"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       email_queue: {
@@ -722,7 +635,7 @@ export interface Database {
           notification_id?: string | null
           recipient_email?: string
           status?: string | null
-          subject: string
+          subject?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -732,7 +645,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "notifications"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       email_templates: {
@@ -787,7 +700,7 @@ export interface Database {
           id?: string
           is_active?: boolean | null
           question: string
-          updated_at: string | null
+          updated_at?: string | null
         }
         Update: {
           answer?: string
@@ -893,7 +806,7 @@ export interface Database {
           page_url: string
           redirect_url?: string | null
           status: string
-          updated_at: string | null
+          updated_at?: string | null
           url: string
         }
         Update: {
@@ -903,9 +816,9 @@ export interface Database {
           last_checked?: string | null
           page_url?: string
           redirect_url?: string | null
-          status: string
-          updated_at: string | null
-          url: string
+          status?: string
+          updated_at?: string | null
+          url?: string
         }
         Relationships: []
       }
@@ -977,9 +890,9 @@ export interface Database {
           source_id?: string
           source_table?: string
           thumbnail_url?: string | null
-          type: string
+          type?: string
           updated_at?: string | null
-          url: string
+          url?: string
           version?: number | null
         }
         Relationships: []
@@ -1011,7 +924,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           is_private?: boolean | null
-          type: string
+          type?: string
           updated_at?: string | null
           url?: string
         }
@@ -1022,7 +935,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       message_attachments: {
@@ -1074,7 +987,7 @@ export interface Database {
           created_at?: string | null
           created_by?: string | null
           created_by_role: string
-          id: string
+          id?: string
           is_global?: boolean | null
           name: string
           subject: string
@@ -1099,7 +1012,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       messages: {
@@ -1169,7 +1082,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       messages_recipients: {
@@ -1204,7 +1117,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       need_categories: {
@@ -1226,7 +1139,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          name: string
+          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1261,18 +1174,19 @@ export interface Database {
           is_read?: boolean | null
           link?: string | null
           recipient_id?: string | null
-          title: string
-          type: string
+          title?: string
+          type?: string
           updated_at?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "notifications_recipient_id_fkey"
+            
             columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       page_config: {
@@ -1372,7 +1286,7 @@ export interface Database {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           browser_notifications?: boolean | null
@@ -1394,7 +1308,7 @@ export interface Database {
             isOneToOne: true
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       role_permissions: {
@@ -1416,7 +1330,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           permission_id?: string | null
-          role: string
+          role?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1426,7 +1340,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "permissions"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       scheduled_tasks: {
@@ -1448,7 +1362,7 @@ export interface Database {
           execute_at: string
           id: string
           last_attempt?: string | null
-          status?: string
+          status?: string | null
           task_type: string
           updated_at?: string | null
         }
@@ -1457,9 +1371,9 @@ export interface Database {
           created_at?: string | null
           data?: Json | null
           execute_at?: string
-          id: string
+          id?: string
           last_attempt?: string | null
-          status?: string
+          status?: string | null
           task_type?: string
           updated_at?: string | null
         }
@@ -1485,7 +1399,7 @@ export interface Database {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
+          updated_at?: string | null
           visit_date: string
         }
         Update: {
@@ -1496,7 +1410,7 @@ export interface Database {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
+          updated_at?: string | null
           visit_date?: string
         }
         Relationships: [
@@ -1506,7 +1420,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsorships"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       site_config: {
@@ -1593,7 +1507,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          type: string
+          type?: string
           updated_at?: string | null
           url?: string
         }
@@ -1611,7 +1525,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       sponsors: {
@@ -1643,7 +1557,7 @@ export interface Database {
           city?: string | null
           created_at?: string | null
           current_level_id?: string | null
-          email?: string
+          email?: string | null
           facebook_url?: string | null
           force_password_change?: boolean | null
           id?: string
@@ -1691,7 +1605,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsor_levels"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       sponsorship_audit_logs: {
@@ -1733,7 +1647,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsorships"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       sponsorship_notes: {
@@ -1778,34 +1692,416 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "sponsorships"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
-      child_assignment_requests: {
+      sponsorship_requests: {
+        Row: {
+          child_id: string | null
+          created_at: string | null
+          email: string
+          facebook_url: string | null
+          full_name: string
+          id: string
+          motivation: string | null
+          phone: string | null
+          status: string
+          terms_accepted: boolean
+          updated_at: string | null
+          city: string | null
+          is_long_term: boolean | null
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string | null
+          email: string
+          facebook_url?: string | null
+          full_name: string
+          id?: string
+          motivation?: string | null
+          phone?: string | null
+          status: string
+          terms_accepted?: boolean
+          updated_at?: string | null
+          city?: string | null
+          is_long_term?: boolean | null
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string | null
+          email?: string
+          facebook_url?: string | null
+          full_name?: string
+          id?: string
+          motivation?: string | null
+          phone?: string | null
+          status?: string
+          terms_accepted?: boolean
+          updated_at?: string | null
+          city?: string | null
+          is_long_term?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      sponsorships: {
+        Row: {
+          auto_terminate_job_id: string | null
+          child_id: string | null
+          comments: string | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          is_anonymous: boolean | null
+          sponsor_id: string | null
+          sponsorships: string | null
+          start_date: string
+          status: string
+          termination_comment: string | null
+          termination_date: string | null
+          termination_reason: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auto_terminate_job_id?: string | null
+          child_id?: string | null
+          comments?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          sponsor_id?: string | null
+          sponsorships?: string | null
+          start_date: string
+          status: string
+          termination_comment?: string | null
+          termination_date?: string | null
+          termination_reason?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auto_terminate_job_id?: string | null
+          child_id?: string | null
+          comments?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          sponsor_id?: string | null
+          sponsorships?: string | null
+          start_date?: string
+          status?: string
+          termination_comment?: string | null
+          termination_date?: string | null
+          termination_reason?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorships_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorships_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      statistics_config: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_visible: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id: string
+          is_visible?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_visible?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          child_id: string | null
+          content: string
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          rating: number | null
+          sponsor_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          child_id?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          child_id?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "testimonials_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      unified_media_browser: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          source_table: string
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string | null
+          type: string
+          updated_at: string | null
+          url: string
+          version: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          source_table: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string | null
+          type: string
+          updated_at?: string | null
+          url: string
+          version?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          source_table?: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string | null
+          type?: string
+          updated_at?: string | null
+          url?: string
+          version?: number | null
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          badge_id: string | null
+          created_at: string | null
+          earned_at: string | null
+          id: string
+          metadata: Json | null
+          points: number | null
+          sponsor_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          badge_id?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          badge_id?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata?: Json | null
+          points?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      activity_logs: {
         Row: {
           id: string
-          name: string
-          requester_email: string
-          status: 'pending' | 'approved' | 'rejected'
+          user_id: string
+          action: string
+          details: Json | null
           created_at: string | null
         }
         Insert: {
           id?: string
-          name: string
-          requester_email: string
-          status?: 'pending' | 'approved' | 'rejected'
+          user_id: string
+          action: string
+          details?: Json | null
           created_at?: string | null
         }
         Update: {
           id?: string
-          name?: string
-          requester_email?: string
-          status?: 'pending' | 'approved' | 'rejected'
+          user_id?: string
+          action?: string
+          details?: Json | null
           created_at?: string | null
         }
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
       }
-    };
+      temoignage: {
+        Row: {
+          id: string
+          content: string
+          author: string
+          rating: number | null
+          is_approved: boolean
+          is_featured: boolean
+          sponsor_id: string | null
+          child_id: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          content: string
+          author: string
+          rating?: number | null
+          is_approved?: boolean
+          is_featured?: boolean
+          sponsor_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          content?: string
+          author?: string
+          rating?: number | null
+          is_approved?: boolean
+          is_featured?: boolean
+          sponsor_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "temoignage_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "temoignage_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+    }
     Views: {
       donation_items_with_categories: {
         Row: {
@@ -1823,7 +2119,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "donations"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       donation_statistics: {
@@ -1858,7 +2154,7 @@ export interface Database {
             isOneToOne: false
             referencedRelation: "donations"
             referencedColumns: ["id"]
-          },
+          }
         ]
       }
       statistics_summary: {
