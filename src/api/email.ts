@@ -3,11 +3,23 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('Missing Supabase environment variables. Please check your .env file.');
+}
+
+const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+
 const emailjsPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 const emailjsServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
 const emailjsTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+if (!emailjsPublicKey || !emailjsServiceId || !emailjsTemplateId) {
+  console.error('Missing EmailJS environment variables. Please check your .env file.');
+}
+
+// Initialize EmailJS with public key
+emailjs.init(emailjsPublicKey || '');
 
 interface EmailRequest {
   from: string;
@@ -21,9 +33,6 @@ interface EmailResponse {
   error?: string;
   data?: any;
 }
-
-// Initialize EmailJS with public key
-emailjs.init(emailjsPublicKey);
 
 export const sendEmail = async (emailData: EmailRequest): Promise<EmailResponse> => {
   try {
@@ -43,10 +52,9 @@ export const sendEmail = async (emailData: EmailRequest): Promise<EmailResponse>
     };
 
     const response = await emailjs.send(
-      emailjsServiceId,
-      emailjsTemplateId,
-      templateParams,
-      emailjsPublicKey
+      emailjsServiceId || '',
+      emailjsTemplateId || '',
+      templateParams
     );
 
     if (response.status !== 200) {
