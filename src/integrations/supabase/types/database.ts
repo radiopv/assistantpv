@@ -278,7 +278,7 @@ export interface Database {
           id?: string;
           is_active?: boolean | null;
           name?: string;
-          type?: string | null;
+          type?: string;
           updated_at?: string | null;
         };
         Relationships: [
@@ -857,7 +857,7 @@ export interface Database {
           is_visible?: boolean | null;
           section_name: string;
           subtitle?: string | null;
-          title?: string | null;
+          title?: string;
           updated_at?: string | null;
         };
         Update: {
@@ -870,7 +870,7 @@ export interface Database {
           is_visible?: boolean | null;
           section_name?: string;
           subtitle?: string | null;
-          title?: string | null;
+          title?: string;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -907,7 +907,7 @@ export interface Database {
           redirect_url?: string | null;
           status: string;
           updated_at?: string | null;
-          url: string;
+          url?: string;
         };
         Relationships: [];
       };
@@ -976,12 +976,12 @@ export interface Database {
           id?: string;
           metadata?: Json | null;
           original_url?: string | null;
-          source_id?: string;
-          source_table?: string;
+          source_id: string;
+          source_table: string;
           thumbnail_url?: string | null;
-          type?: string;
+          type: string;
           updated_at?: string | null;
-          url?: string;
+          url: string;
           version?: number | null;
         };
         Relationships: [];
@@ -2030,9 +2030,9 @@ export interface Database {
           tags?: string[] | null;
           thumbnail_url?: string | null;
           title?: string;
-          type?: string;
+          type: string;
           updated_at?: string | null;
-          url?: string;
+          url: string;
           version?: number | null;
         };
         Relationships: [];

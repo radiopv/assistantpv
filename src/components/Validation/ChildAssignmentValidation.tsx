@@ -36,13 +36,62 @@ export const ChildAssignmentValidation = () => {
     try {
       console.log('Approving request:', request);
       
-      // Update the request status
+      // 1. Update the request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
         .eq('id', request.id);
 
       if (updateError) throw updateError;
+
+      // 2. Create sponsor if doesn't exist
+      const { data: existingSponsor } = await supabase
+        .from('sponsors')
+        .select('id')
+        .eq('email', request.requester_email)
+        .single();
+
+      let sponsorId = existingSponsor?.id;
+
+      if (!sponsorId) {
+        const { data: newSponsor, error: sponsorError } = await supabase
+          .from('sponsors')
+          .insert({
+            email: request.requester_email,
+            name: request.name,
+            role: 'sponsor'
+          })
+          .select('id')
+          .single();
+
+        if (sponsorError) throw sponsorError;
+        sponsorId = newSponsor.id;
+      }
+
+      // 3. Update child's sponsor information
+      const { error: childError } = await supabase
+        .from('children')
+        .update({
+          is_sponsored: true,
+          sponsor_id: sponsorId,
+          sponsor_name: request.name,
+          sponsor_email: request.requester_email
+        })
+        .eq('id', request.child_id);
+
+      if (childError) throw childError;
+
+      // 4. Create sponsorship record
+      const { error: sponsorshipError } = await supabase
+        .from('sponsorships')
+        .insert({
+          sponsor_id: sponsorId,
+          child_id: request.child_id,
+          start_date: new Date().toISOString(),
+          status: 'active'
+        });
+
+      if (sponsorshipError) throw sponsorshipError;
 
       // Send notification email
       await sendEmail({

@@ -1,9 +1,10 @@
 export interface ChildAssignmentRequest {
   id: string;
-  created_at: string;
-  name: string;
+  child_id: string;
   requester_email: string;
-  status: string;
+  name: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at?: string;
 }
 
 export interface ChildAssignmentRequestsTable {
