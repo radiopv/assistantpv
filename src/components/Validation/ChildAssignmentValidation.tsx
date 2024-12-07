@@ -36,6 +36,7 @@ export const ChildAssignmentValidation = () => {
     try {
       console.log('Approving request:', request);
       
+      // Update the request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
@@ -43,6 +44,7 @@ export const ChildAssignmentValidation = () => {
 
       if (updateError) throw updateError;
 
+      // Send notification email
       await sendEmail({
         from: "noreply@lovable.dev",
         to: [request.requester_email],
