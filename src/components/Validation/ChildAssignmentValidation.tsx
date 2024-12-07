@@ -36,6 +36,10 @@ export const ChildAssignmentValidation = () => {
     try {
       console.log('Approving request:', request);
       
+      if (!request.requester_email) {
+        throw new Error("Email du demandeur manquant");
+      }
+
       // 1. Update the request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
@@ -45,15 +49,17 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       // 2. Create sponsor if doesn't exist
-      const { data: existingSponsor } = await supabase
+      const { data: existingSponsor, error: sponsorQueryError } = await supabase
         .from('sponsors')
         .select('id')
         .eq('email', request.requester_email)
-        .single();
+        .maybeSingle();
 
-      let sponsorId = existingSponsor?.id;
+      if (sponsorQueryError) throw sponsorQueryError;
 
-      if (!sponsorId) {
+      let sponsorId: string;
+
+      if (!existingSponsor) {
         const { data: newSponsor, error: sponsorError } = await supabase
           .from('sponsors')
           .insert({
@@ -65,7 +71,11 @@ export const ChildAssignmentValidation = () => {
           .single();
 
         if (sponsorError) throw sponsorError;
+        if (!newSponsor) throw new Error("Échec de la création du parrain");
+        
         sponsorId = newSponsor.id;
+      } else {
+        sponsorId = existingSponsor.id;
       }
 
       // 3. Update child's sponsor information
@@ -95,7 +105,6 @@ export const ChildAssignmentValidation = () => {
 
       // Send notification email
       await sendEmail({
-        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
@@ -129,7 +138,6 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })
