@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -30,8 +30,6 @@ interface SidebarProps {
 const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   const { signOut, user } = useAuth();
   const { t } = useLanguage();
-  const location = useLocation();
-
   const isAdmin = user?.role === 'admin';
 
   const assistantLinks = [
