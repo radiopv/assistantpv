@@ -1,8 +1,8 @@
 export interface EmailRequest {
-  from: string;
   to: string[];
   subject: string;
   html: string;
+  from: string;
 }
 
 export const sendEmail = async (request: EmailRequest): Promise<void> => {
