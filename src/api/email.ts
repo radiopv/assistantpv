@@ -4,7 +4,6 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Initialize Supabase client only if credentials are available
 const supabase = supabaseUrl && supabaseKey 
   ? createClient(supabaseUrl, supabaseKey)
   : null;
@@ -17,19 +16,18 @@ if (!emailjsPublicKey || !emailjsServiceId || !emailjsTemplateId) {
   console.error('Missing EmailJS environment variables. Please check your .env file.');
 }
 
-// Initialize EmailJS with public key if available
 if (emailjsPublicKey) {
   emailjs.init(emailjsPublicKey);
 }
 
-interface EmailRequest {
+export interface EmailRequest {
   from: string;
   to: string[];
   subject: string;
   html: string;
 }
 
-interface EmailResponse {
+export interface EmailResponse {
   success: boolean;
   error?: string;
   data?: any;
@@ -51,7 +49,6 @@ export const sendEmail = async (emailData: EmailRequest): Promise<EmailResponse>
       throw new Error('EmailJS configuration is missing');
     }
 
-    // Prepare template parameters for EmailJS
     const templateParams = {
       to_email: emailData.to.join(', '),
       subject: emailData.subject,
