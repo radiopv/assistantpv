@@ -1,4 +1,4 @@
-import { ChildAssignmentRequestsTable } from './child-assignment-requests';
+import { ChildAssignmentRequestsTable } from './tables/child-assignment-requests';
 import { Json } from './json';
 
 export interface Database {
@@ -56,7 +56,7 @@ export interface Database {
           title?: string | null
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Update: {
           child_id?: string | null
@@ -489,7 +489,7 @@ export interface Database {
           category_id?: string | null
           created_at?: string | null
           donation_id?: string | null
-          id?: string | null
+          id?: string
           quantity?: number;
           updated_at?: string | null
         }
@@ -523,11 +523,11 @@ export interface Database {
           contact_info?: Json | null
           created_at?: string | null
           id?: string
-          latitude?: number
-          longitude?: number
-          name?: string
-          type?: string
-          updated_at?: string | null
+          latitude?: number;
+          longitude?: number;
+          name?: string;
+          type?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -604,7 +604,7 @@ export interface Database {
           thumbnail_url?: string | null
           title?: string | null
           updated_at?: string | null
-          url: string
+          url: string;
         }
         Relationships: [
           {
@@ -712,7 +712,7 @@ export interface Database {
           notification_id?: string | null
           recipient_email: string
           status?: string | null
-          subject: string
+          subject: string;
           updated_at?: string | null
         }
         Update: {
@@ -722,7 +722,7 @@ export interface Database {
           id?: string
           last_attempt?: string | null
           notification_id?: string | null
-          recipient_email?: string;
+          recipient_email?: string | null
           status?: string | null
           subject: string;
           updated_at?: string | null
@@ -927,8 +927,8 @@ export interface Database {
           city_name: string
           created_at?: string | null
           id?: number
-          latitude: number
-          longitude: number
+          latitude: number;
+          longitude: number;
           sponsored_count?: number | null
           updated_at?: string | null
         }
@@ -979,9 +979,9 @@ export interface Database {
           source_id?: string;
           source_table?: string;
           thumbnail_url?: string | null
-          type?: string;
+          type: string;
           updated_at?: string | null
-          url?: string;
+          url: string;
           version?: number | null;
         }
         Relationships: []
@@ -1015,7 +1015,7 @@ export interface Database {
           is_private?: boolean | null
           type: string
           updated_at?: string | null
-          url?: string;
+          url: string;
         }
         Relationships: [
           {
@@ -1048,12 +1048,12 @@ export interface Database {
         }
         Update: {
           created_at?: string | null
-          file_name?: string
-          file_size?: number
-          file_type?: string
-          file_url?: string
-          id?: string
-          message_id?: string | null
+          file_name?: string;
+          file_size?: number;
+          file_type?: string;
+          file_url?: string;
+          id?: string;
+          message_id?: string | null;
         }
         Relationships: []
       }
@@ -1228,7 +1228,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          name?: string
+          name: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1458,7 +1458,7 @@ export interface Database {
           attempts?: number | null
           created_at?: string | null
           data?: Json | null
-          execute_at?: string
+          execute_at?: string;
           id: string
           last_attempt?: string | null
           status?: string;
@@ -1528,7 +1528,7 @@ export interface Database {
           primary_color?: string;
           secondary_color?: string;
           site_name: string;
-          updated_at?: string | null;
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null

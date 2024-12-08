@@ -8,7 +8,7 @@ export const TestimonialValidation = () => {
       const { data, error } = await supabase
         .from('temoignage')
         .select('*')
-        .eq('is_approved', false);
+        .is('is_approved', false);
       
       if (error) throw error;
       return data;
