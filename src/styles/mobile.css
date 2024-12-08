@@ -56,5 +56,31 @@
     .touch-feedback:active {
       @apply bg-gray-100/50 transition-colors duration-200;
     }
+
+    /* Mobile menu improvements */
+    [data-radix-popper-content-wrapper] {
+      @apply !w-[90vw] max-w-[400px];
+    }
+
+    .mobile-menu {
+      @apply !w-[90vw] max-w-[400px] !h-[100dvh];
+    }
+
+    /* Sidebar mobile improvements */
+    [data-sidebar="sidebar"] {
+      @apply !w-[85vw] max-w-[400px];
+    }
+
+    [data-sidebar="menu-button"] {
+      @apply !min-h-[48px] !px-4;
+    }
+
+    [data-sidebar="group-label"] {
+      @apply !text-base !px-4 !py-2;
+    }
+
+    [data-sidebar="menu"] {
+      @apply !space-y-2;
+    }
   }
 }
