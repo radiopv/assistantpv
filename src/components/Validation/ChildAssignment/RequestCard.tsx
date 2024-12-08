@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 
 interface RequestCardProps {
   request: ChildAssignmentRequest;
