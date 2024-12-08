@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sendEmail } from "@/api/email";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
-import { Database } from "@/integrations/supabase/types/database";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();

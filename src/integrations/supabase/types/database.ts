@@ -1,7 +1,6 @@
 import { Json } from './json';
-import { Database as GeneratedDatabase } from './generated/database.types';
 
-export interface Database extends GeneratedDatabase {
+export interface Database {
   public: {
     Tables: {
       child_assignment_requests: {
@@ -26,6 +25,15 @@ export interface Database extends GeneratedDatabase {
           name?: string;
           status?: 'pending' | 'approved' | 'rejected';
         };
+        Relationships: [
+          {
+            foreignKeyName: "child_assignment_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          }
+        ]
       };
       aid_categories: {
         Row: {
