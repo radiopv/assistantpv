@@ -15,7 +15,7 @@ export const useChildAssignment = () => {
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from<'child_assignment_requests', Database['public']['Tables']['child_assignment_requests']['Row']>('child_assignment_requests')
+        .from('child_assignment_requests')
         .select('*')
         .eq('status', 'pending');
       
