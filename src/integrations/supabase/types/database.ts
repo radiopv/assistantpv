@@ -1,22 +1,32 @@
-import { ChildAssignmentRequestRow, ChildAssignmentRequestInsert, ChildAssignmentRequestUpdate } from './child-assignment-requests';
+import { Json } from './json';
+import { Database as GeneratedDatabase } from './generated/database.types';
 
-export interface Database {
+export interface Database extends GeneratedDatabase {
   public: {
     Tables: {
       child_assignment_requests: {
-        Row: ChildAssignmentRequestRow;
-        Insert: ChildAssignmentRequestInsert;
-        Update: ChildAssignmentRequestUpdate;
-        Relationships: [
-          {
-            foreignKeyName: "child_assignment_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
+        Row: {
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Insert: {
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status?: 'pending' | 'approved' | 'rejected';
+        };
+        Update: {
+          child_id?: string;
+          requester_email?: string;
+          name?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+        };
+      };
       aid_categories: {
         Row: {
           created_at: string | null
@@ -2049,6 +2059,6 @@ export interface Database {
         }
         Relationships: []
       }
-    }
-  }
+    };
+  };
 }

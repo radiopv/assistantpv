@@ -37,45 +37,6 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      const { data: existingSponsor, error: sponsorQueryError } = await supabase
-        .from('sponsors')
-        .select('id')
-        .eq('email', request.requester_email)
-        .single();
-
-      if (sponsorQueryError && sponsorQueryError.code !== 'PGRST116') throw sponsorQueryError;
-
-      let sponsorId = existingSponsor?.id;
-
-      if (!existingSponsor) {
-        const { data: newSponsor, error: sponsorError } = await supabase
-          .from('sponsors')
-          .insert({
-            email: request.requester_email,
-            name: request.name,
-            role: 'sponsor'
-          })
-          .select('id')
-          .single();
-
-        if (sponsorError) throw sponsorError;
-        if (!newSponsor) throw new Error("Failed to create sponsor");
-        
-        sponsorId = newSponsor.id;
-      }
-
-      const { error: childError } = await supabase
-        .from('children')
-        .update({
-          is_sponsored: true,
-          sponsor_id: sponsorId,
-          sponsor_name: request.name,
-          sponsor_email: request.requester_email
-        })
-        .eq('id', request.child_id);
-
-      if (childError) throw childError;
-
       await sendEmail({
         from: 'noreply@lovable.dev',
         to: [request.requester_email],
