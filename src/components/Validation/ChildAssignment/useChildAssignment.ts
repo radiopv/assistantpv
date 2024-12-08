@@ -37,7 +37,7 @@ export const useChildAssignment = () => {
         throw new Error("Email du demandeur manquant");
       }
 
-      // 1. Update request status
+      // Update request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
@@ -45,7 +45,7 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      // 2. Handle sponsor creation/lookup
+      // Handle sponsor creation/lookup
       const { data: existingSponsor, error: sponsorQueryError } = await supabase
         .from('sponsors')
         .select('id')
@@ -75,7 +75,7 @@ export const useChildAssignment = () => {
         sponsorId = existingSponsor.id;
       }
 
-      // 3. Update child information
+      // Update child information
       const { error: childError } = await supabase
         .from('children')
         .update({
@@ -88,7 +88,7 @@ export const useChildAssignment = () => {
 
       if (childError) throw childError;
 
-      // 4. Create sponsorship record
+      // Create sponsorship record
       const { error: sponsorshipError } = await supabase
         .from('sponsorships')
         .insert({
@@ -102,10 +102,10 @@ export const useChildAssignment = () => {
 
       // Send notification
       await sendEmail({
+        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
-        html: t("childRequestApprovedContent", { name: request.name }),
-        from: "noreply@lovable.dev"
+        html: t("childRequestApprovedContent", { name: request.name })
       });
 
       toast({
@@ -136,10 +136,10 @@ export const useChildAssignment = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
+        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
-        html: t("childRequestRejectedContent", { name: request.name }),
-        from: "noreply@lovable.dev"
+        html: t("childRequestRejectedContent", { name: request.name })
       });
 
       toast({
