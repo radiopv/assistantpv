@@ -8,8 +8,6 @@ export interface ChildAssignmentRequest {
   updated_at?: string;
 }
 
-export interface ChildAssignmentRequestsTable {
-  Row: ChildAssignmentRequest;
-  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'>;
-  Update: Partial<Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'>>;
-}
+export type ChildAssignmentRequestRow = ChildAssignmentRequest;
+export type ChildAssignmentRequestInsert = Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'>;
+export type ChildAssignmentRequestUpdate = Partial<ChildAssignmentRequestInsert>;

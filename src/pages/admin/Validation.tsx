@@ -4,10 +4,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { TestimonialValidation } from "@/components/Validation/TestimonialValidation";
 import { SponsorshipValidation } from "@/components/Validation/SponsorshipValidation";
 import { PhotoValidation } from "@/components/Validation/PhotoValidation";
-import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignmentValidation";
+import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignment/ChildAssignmentValidation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
+import { Database } from "@/integrations/supabase/types/database";
 
 const ValidationPage = () => {
   const { t } = useLanguage();
@@ -27,7 +28,7 @@ const ValidationPage = () => {
     queryKey: ['pending-child-requests-count'],
     queryFn: async () => {
       const { count } = await supabase
-        .from('child_assignment_requests')
+        .from<'child_assignment_requests', Database['public']['Tables']['child_assignment_requests']['Row']>('child_assignment_requests')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'pending');
       return count || 0;

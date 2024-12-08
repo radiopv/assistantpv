@@ -1,10 +1,22 @@
-import { ChildAssignmentRequestsTable } from './tables/child-assignment-requests';
-import { Json } from './json';
+import { ChildAssignmentRequestRow, ChildAssignmentRequestInsert, ChildAssignmentRequestUpdate } from './child-assignment-requests';
 
 export interface Database {
   public: {
     Tables: {
-      child_assignment_requests: ChildAssignmentRequestsTable;
+      child_assignment_requests: {
+        Row: ChildAssignmentRequestRow;
+        Insert: ChildAssignmentRequestInsert;
+        Update: ChildAssignmentRequestUpdate;
+        Relationships: [
+          {
+            foreignKeyName: "child_assignment_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       aid_categories: {
         Row: {
           created_at: string | null
@@ -2037,6 +2049,6 @@ export interface Database {
         }
         Relationships: []
       }
-    };
-  };
+    }
+  }
 }

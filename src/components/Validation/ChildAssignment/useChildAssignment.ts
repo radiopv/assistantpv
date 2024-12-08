@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sendEmail } from "@/api/email";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
+import { Database } from "@/integrations/supabase/types/database";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -14,7 +15,7 @@ export const useChildAssignment = () => {
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('child_assignment_requests')
+        .from<'child_assignment_requests', Database['public']['Tables']['child_assignment_requests']['Row']>('child_assignment_requests')
         .select('*')
         .eq('status', 'pending');
       
