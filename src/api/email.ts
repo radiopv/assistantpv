@@ -5,7 +5,7 @@ export interface EmailRequest {
   html: string;
 }
 
-export const sendEmail = async (request: EmailRequest) => {
+export const sendEmail = async (request: EmailRequest): Promise<void> => {
   const response = await fetch('/api/send-email', {
     method: 'POST',
     headers: {
@@ -17,6 +17,4 @@ export const sendEmail = async (request: EmailRequest) => {
   if (!response.ok) {
     throw new Error('Failed to send email');
   }
-
-  return response.json();
 };

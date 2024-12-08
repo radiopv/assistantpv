@@ -1,5 +1,3 @@
-import { Json } from './json';
-
 export interface ChildAssignmentRequest {
   id: string;
   child_id: string;
