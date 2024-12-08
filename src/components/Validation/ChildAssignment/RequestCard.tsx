@@ -2,7 +2,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
+import { Database } from "@/integrations/supabase/types/database";
+
+type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
 
 interface RequestCardProps {
   request: ChildAssignmentRequest;

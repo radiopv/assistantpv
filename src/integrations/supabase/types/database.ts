@@ -1,9 +1,21 @@
 import { Json } from './json';
-import { ChildAssignmentRequestsTable } from './child-assignment-requests';
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
+      child_assignment_requests: {
+        Row: {
+          id: string
+          child_id: string
+          requester_email: string
+          name: string
+          status: 'pending' | 'approved' | 'rejected'
+          created_at?: string
+          updated_at?: string
+        }
+        Insert: Omit<Database['public']['Tables']['child_assignment_requests']['Row'], 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Database['public']['Tables']['child_assignment_requests']['Row']>
+      }
       aid_categories: {
         Row: {
           created_at: string | null
@@ -55,7 +67,7 @@ export type Database = {
           title?: string | null
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Update: {
           child_id?: string | null
@@ -140,7 +152,7 @@ export type Database = {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           child_id?: string | null
@@ -530,6 +542,7 @@ export type Database = {
         }
         Relationships: []
       }
+
       donation_photos: {
         Row: {
           created_at: string
@@ -565,6 +578,7 @@ export type Database = {
           },
         ]
       }
+
       donation_videos: {
         Row: {
           created_at: string | null
@@ -1227,7 +1241,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name?: string
+          name: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1782,6 +1796,7 @@ export type Database = {
           },
         ]
       }
+
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1838,6 +1853,7 @@ export type Database = {
           }
         ]
       }
+
       sponsorships: {
         Row: {
           auto_terminate_job_id: string | null
@@ -2031,7 +2047,7 @@ export type Database = {
           title?: string
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
           version?: number | null
         }
         Relationships: []
@@ -2119,7 +2135,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id?: string
+          user_id: string
           action?: string
           details?: Json | null
           created_at?: string | null
@@ -2188,8 +2204,7 @@ export type Database = {
           }
         ]
       }
-      child_assignment_requests: ChildAssignmentRequestsTable;
-    };
+    }
     Views: {
       donation_items_with_categories: {
         Row: {
@@ -2600,15 +2615,6 @@ export type Database = {
           valid: boolean
           sponsor_id: string
         }[]
-      }
-    }
-    Enums: {
-      user_role: "admin" | "assistant" | "sponsor" | "visitor"
-    }
-    CompositeTypes: {
-      email_template: {
-        subject: string | null
-        html: string | null
       }
     }
   }
