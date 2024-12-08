@@ -13,31 +13,22 @@ export const useChildAssignment = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
-      console.log('Fetching child assignment requests...');
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
         .eq('status', 'pending');
       
-      if (error) {
-        console.error('Error fetching requests:', error);
-        throw error;
-      }
-      
-      console.log('Fetched requests:', data);
+      if (error) throw error;
       return data as ChildAssignmentRequest[];
     }
   });
 
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
-      console.log('Approving request:', request);
-      
       if (!request.requester_email) {
         throw new Error("Email du demandeur manquant");
       }
 
-      // Update request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
@@ -45,16 +36,15 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      // Handle sponsor creation/lookup
       const { data: existingSponsor, error: sponsorQueryError } = await supabase
         .from('sponsors')
         .select('id')
         .eq('email', request.requester_email)
-        .maybeSingle();
+        .single();
 
-      if (sponsorQueryError) throw sponsorQueryError;
+      if (sponsorQueryError && sponsorQueryError.code !== 'PGRST116') throw sponsorQueryError;
 
-      let sponsorId: string;
+      let sponsorId = existingSponsor?.id;
 
       if (!existingSponsor) {
         const { data: newSponsor, error: sponsorError } = await supabase
@@ -68,14 +58,11 @@ export const useChildAssignment = () => {
           .single();
 
         if (sponsorError) throw sponsorError;
-        if (!newSponsor) throw new Error("Échec de la création du parrain");
+        if (!newSponsor) throw new Error("Failed to create sponsor");
         
         sponsorId = newSponsor.id;
-      } else {
-        sponsorId = existingSponsor.id;
       }
 
-      // Update child information
       const { error: childError } = await supabase
         .from('children')
         .update({
@@ -88,21 +75,8 @@ export const useChildAssignment = () => {
 
       if (childError) throw childError;
 
-      // Create sponsorship record
-      const { error: sponsorshipError } = await supabase
-        .from('sponsorships')
-        .insert({
-          sponsor_id: sponsorId,
-          child_id: request.child_id,
-          start_date: new Date().toISOString(),
-          status: 'active'
-        });
-
-      if (sponsorshipError) throw sponsorshipError;
-
-      // Send notification
       await sendEmail({
-        from: "noreply@lovable.dev",
+        from: 'noreply@lovable.dev',
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
@@ -126,8 +100,6 @@ export const useChildAssignment = () => {
 
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
-      console.log('Rejecting request:', request);
-      
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'rejected' })
@@ -136,7 +108,7 @@ export const useChildAssignment = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: "noreply@lovable.dev",
+        from: 'noreply@lovable.dev',
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })
