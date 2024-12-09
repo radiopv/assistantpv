@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sendEmail } from "@/api/email";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
+import { Database } from "@/integrations/supabase/types/database";
+
+type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -25,10 +27,6 @@ export const useChildAssignment = () => {
 
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
-      if (!request.requester_email) {
-        throw new Error("Email du demandeur manquant");
-      }
-
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
