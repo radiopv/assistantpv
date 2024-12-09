@@ -1,6 +1,4 @@
-import { Json } from './json';
-
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       child_assignment_requests: {
@@ -13,8 +11,8 @@ export interface Database {
           created_at?: string
           updated_at?: string
         }
-        Insert: Omit<Database['public']['Tables']['child_assignment_requests']['Row'], 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Database['public']['Tables']['child_assignment_requests']['Row']>
+        Insert: Omit<Row, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<Row, 'id'>>
       }
       aid_categories: {
         Row: {
@@ -67,7 +65,7 @@ export interface Database {
           title?: string | null
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Update: {
           child_id?: string | null
@@ -152,7 +150,7 @@ export interface Database {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           child_id?: string | null
@@ -492,7 +490,7 @@ export interface Database {
           category_id?: string | null
           created_at?: string | null
           donation_id?: string | null
-          id?: string | null
+          id?: string
           quantity?: number
           updated_at?: string | null
         }
@@ -2045,7 +2043,7 @@ export interface Database {
           tags?: string[] | null
           thumbnail_url?: string | null
           title?: string
-          type: string
+          type?: string
           updated_at?: string | null
           url?: string
           version?: number | null
@@ -2067,7 +2065,7 @@ export interface Database {
           badge_id?: string | null
           created_at?: string | null
           earned_at?: string | null
-          id?: string
+          id: string
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null

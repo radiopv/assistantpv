@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sendEmail } from "@/api/email";
 import { Database } from "@/integrations/supabase/types/database";
-import { EmailRequest } from "./types";
+import { EmailRequest } from "@/types/email";
 
 type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
 
