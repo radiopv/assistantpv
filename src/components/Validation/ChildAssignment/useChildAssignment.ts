@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sendEmail } from "@/api/email";
-import { ChildAssignmentRequest } from "./types";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();

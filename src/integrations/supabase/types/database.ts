@@ -1,21 +1,10 @@
 import { Json } from './json';
+import { ChildAssignmentRequestsTable } from './tables/child-assignment-requests';
 
 export interface Database {
   public: {
     Tables: {
-      child_assignment_requests: {
-        Row: {
-          id: string;
-          child_id: string;
-          requester_email: string;
-          name: string;
-          status: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Insert: Omit<Database['public']['Tables']['child_assignment_requests']['Row'], 'id' | 'created_at' | 'updated_at'>;
-        Update: Partial<Omit<Database['public']['Tables']['child_assignment_requests']['Row'], 'id'>>;
-      };
+      child_assignment_requests: ChildAssignmentRequestsTable;
       aid_categories: {
         Row: {
           created_at: string | null;
@@ -81,7 +70,7 @@ export interface Database {
           title?: string | null;
           type?: string;
           updated_at?: string | null;
-          url?: string | null;
+          url?: string;
         };
         Relationships: [
           {
@@ -289,7 +278,7 @@ export interface Database {
           id?: string;
           is_active?: boolean | null;
           name?: string;
-          type?: string | null;
+          type?: string;
           updated_at?: string | null;
         };
         Relationships: [
@@ -868,7 +857,7 @@ export interface Database {
           is_visible?: boolean | null;
           section_name: string;
           subtitle?: string | null;
-          title?: string | null;
+          title?: string;
           updated_at?: string | null;
         };
         Update: {
@@ -881,7 +870,7 @@ export interface Database {
           is_visible?: boolean | null;
           section_name?: string;
           subtitle?: string | null;
-          title?: string | null;
+          title?: string;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -990,7 +979,7 @@ export interface Database {
           source_id?: string;
           source_table?: string;
           thumbnail_url?: string | null;
-          type?: string;
+          type: string;
           updated_at?: string | null;
           url?: string;
           version?: number | null;
@@ -1026,7 +1015,7 @@ export interface Database {
           is_private?: boolean | null;
           type: string;
           updated_at?: string | null;
-          url: string;
+          url?: string;
         };
         Relationships: [
           {
@@ -1472,7 +1461,7 @@ export interface Database {
           execute_at: string;
           id: string;
           last_attempt?: string | null;
-          status?: string;
+          status?: string | null;
           task_type?: string;
           updated_at?: string | null;
         };
@@ -1608,7 +1597,7 @@ export interface Database {
           id?: string;
           type: string;
           updated_at?: string | null;
-          url: string;
+          url?: string;
         };
         Relationships: [
           {
@@ -2041,7 +2030,7 @@ export interface Database {
           tags?: string[] | null;
           thumbnail_url?: string | null;
           title?: string;
-          type?: string;
+          type: string;
           updated_at?: string | null;
           url?: string;
           version?: number | null;
@@ -2131,8 +2120,8 @@ export interface Database {
         };
         Update: {
           id?: string;
-          user_id?: string;
-          action?: string;
+          user_id: string;
+          action: string;
           details?: Json | null;
           created_at?: string | null;
         };
