@@ -3,7 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { sendEmail } from "@/api/email";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
+import { Database } from "@/integrations/supabase/types/database";
+import { EmailRequest } from "./types";
+
+type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -36,12 +39,14 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      await sendEmail({
+      const emailRequest: EmailRequest = {
         from: 'noreply@lovable.dev',
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
-      });
+      };
+
+      await sendEmail(emailRequest);
 
       toast({
         title: t("success"),
@@ -68,12 +73,14 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      await sendEmail({
+      const emailRequest: EmailRequest = {
         from: 'noreply@lovable.dev',
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })
-      });
+      };
+
+      await sendEmail(emailRequest);
 
       toast({
         title: t("success"),
