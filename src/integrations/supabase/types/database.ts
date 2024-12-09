@@ -14,7 +14,7 @@ export interface Database {
           updated_at?: string
         }
         Insert: Omit<Database['public']['Tables']['child_assignment_requests']['Row'], 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Database['public']['Tables']['child_assignment_requests']['Row']>
+        Update: Partial<Omit<Database['public']['Tables']['child_assignment_requests']['Row'], 'id'>>
       }
       aid_categories: {
         Row: {
@@ -152,7 +152,7 @@ export interface Database {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           child_id?: string | null
@@ -368,7 +368,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           comments?: string | null
-          story?: string | null
+          story?: string
           end_date?: string | null
           gender: string
           id?: string
@@ -734,7 +734,7 @@ export interface Database {
           created_at?: string | null
           id?: string
           last_attempt?: string | null
-          notification_id?: string | null
+          notification_id?: string
           recipient_email?: string
           status?: string | null
           subject: string
@@ -951,9 +951,9 @@ export interface Database {
           created_at?: string | null
           id?: number
           latitude?: number
-          longitude?: number
-          sponsored_count?: number | null
-          updated_at?: string | null
+          longitude?: number;
+          sponsored_count?: number | null;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1028,7 +1028,7 @@ export interface Database {
           is_private?: boolean | null
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Relationships: [
           {
@@ -1241,7 +1241,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          name: string
+          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1475,7 +1475,7 @@ export interface Database {
           id: string
           last_attempt?: string | null
           status?: string
-          task_type?: string
+          task_type?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -1511,8 +1511,8 @@ export interface Database {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date?: string
+          updated_at?: string;
+          visit_date?: string;
         }
         Relationships: [
           {
@@ -1549,7 +1549,7 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string
           secondary_color?: string
-          site_name?: string
+          site_name?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -1610,7 +1610,7 @@ export interface Database {
           id?: string
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Relationships: [
           {
@@ -1833,15 +1833,15 @@ export interface Database {
           created_at?: string | null
           email?: string
           facebook_url?: string | null
-          full_name?: string
-          id?: string
+          full_name?: string;
+          id?: string;
           motivation?: string | null
           phone?: string | null
-          status?: string
-          terms_accepted?: boolean
-          updated_at?: string | null
-          city?: string | null
-          is_long_term?: boolean | null
+          status?: string;
+          terms_accepted?: boolean;
+          updated_at?: string | null;
+          city?: string | null;
+          is_long_term?: boolean | null;
         }
         Relationships: [
           {
@@ -1974,18 +1974,18 @@ export interface Database {
           is_featured?: boolean | null
           rating?: number | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string;
         }
         Update: {
           child_id?: string | null
-          content?: string
-          created_at?: string | null
-          id?: string
-          is_approved?: boolean | null
-          is_featured?: boolean | null
-          rating?: number | null
-          sponsor_id?: string | null
-          updated_at?: string | null
+          content?: string;
+          created_at?: string | null;
+          id?: string;
+          is_approved?: boolean | null;
+          is_featured?: boolean | null;
+          rating?: number | null;
+          sponsor_id?: string | null;
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -2045,7 +2045,7 @@ export interface Database {
           tags?: string[] | null
           thumbnail_url?: string | null
           title?: string
-          type: string
+          type?: string
           updated_at?: string | null
           url?: string
           version?: number | null
@@ -2135,7 +2135,7 @@ export interface Database {
         }
         Update: {
           id?: string
-          user_id: string
+          user_id?: string
           action?: string
           details?: Json | null
           created_at?: string | null
