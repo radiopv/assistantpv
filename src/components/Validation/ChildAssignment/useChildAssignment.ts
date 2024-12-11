@@ -46,7 +46,7 @@ export const useChildAssignment = () => {
 
       toast({
         title: t("success"),
-        description: t("childRequestApproved"),
+        description: t("childRequestApproved")
       });
 
       queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
@@ -55,7 +55,7 @@ export const useChildAssignment = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorApprovingChildRequest"),
+        description: t("errorApprovingChildRequest")
       });
     }
   };
@@ -78,7 +78,7 @@ export const useChildAssignment = () => {
 
       toast({
         title: t("success"),
-        description: t("childRequestRejected"),
+        description: t("childRequestRejected")
       });
 
       queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
@@ -87,7 +87,7 @@ export const useChildAssignment = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorRejectingChildRequest"),
+        description: t("errorRejectingChildRequest")
       });
     }
   };
