@@ -357,7 +357,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           comments?: string | null
-          story?: string
+          story?: string | null
           end_date?: string | null
           gender: string
           id?: string
@@ -523,11 +523,11 @@ export type Database = {
           contact_info?: Json | null
           created_at?: string | null
           id?: string
-          latitude?: number
-          longitude?: number
-          name?: string
-          type?: string
-          updated_at?: string | null
+          latitude?: number;
+          longitude?: number;
+          name?: string;
+          type?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -649,9 +649,9 @@ export type Database = {
           donation_date?: string;
           id?: string;
           people_helped?: number;
-          photos?: string[] | null;
-          status?: string | null;
-          updated_at?: string | null;
+          photos?: string[] | null
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1228,7 +1228,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name?: string
+          name: string
           updated_at?: string | null
         }
         Relationships: []
@@ -2135,7 +2135,6 @@ export type Database = {
           }
         ]
       }
-      child_assignment_requests: ChildAssignmentRequestsTable;
     };
     Views: {
       donation_items_with_categories: {
@@ -2549,9 +2548,5 @@ export type Database = {
         }[]
       }
     }
-    };
-    Enums: {
-      user_role: 'admin' | 'assistant' | 'sponsor';
-    };
   };
 };
