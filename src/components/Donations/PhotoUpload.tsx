@@ -1,11 +1,6 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
-import { Upload } from "lucide-react";
+import { MultiFileUpload } from "@/components/shared/MultiFileUpload/MultiFileUpload";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/components/ui/use-toast";
 
 interface PhotoUploadProps {
   donationId?: string;
@@ -22,120 +17,57 @@ export const PhotoUpload = ({
   onUploadComplete, 
   onPhotosChange 
 }: PhotoUploadProps) => {
-  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
-  const { language } = useLanguage();
 
-  const translations = {
-    fr: {
-      addPhotos: "Ajouter des photos",
-      noFileSelected: "Aucun fichier n'a été sélectionné",
-      chooseFiles: "Choisir des fichiers",
-      upload: "Upload",
-      uploading: "Upload en cours...",
-      photosAdded: "Photos ajoutées",
-      photosAddedSuccess: "Les photos ont été ajoutées avec succès.",
-      error: "Erreur",
-      uploadError: "Une erreur est survenue lors de l'upload."
-    },
-    es: {
-      addPhotos: "Agregar fotos",
-      noFileSelected: "Ningún archivo seleccionado",
-      chooseFiles: "Seleccionar archivos",
-      upload: "Subir",
-      uploading: "Subiendo...",
-      photosAdded: "Fotos agregadas",
-      photosAddedSuccess: "Las fotos se han agregado con éxito.",
-      error: "Error",
-      uploadError: "Ocurrió un error durante la subida."
-    }
-  };
-
-  const t = translations[language as keyof typeof translations];
-
-  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUploadComplete = async (urls: string[]) => {
     try {
-      if (!event.target.files || event.target.files.length === 0) {
-        return;
+      if (sponsorId) {
+        const { error: updateError } = await supabase
+          .from('sponsors')
+          .update({ photo_url: urls[0] })
+          .eq('id', sponsorId);
+
+        if (updateError) throw updateError;
+      } else if (donationId) {
+        const photoEntries = urls.map(url => ({
+          donation_id: donationId,
+          url: url,
+        }));
+
+        const { error: dbError } = await supabase
+          .from('donation_photos')
+          .insert(photoEntries);
+
+        if (dbError) throw dbError;
       }
-
-      if (onPhotosChange) {
-        onPhotosChange(event.target.files);
-        return;
-      }
-
-      setUploading(true);
-      const files = Array.from(event.target.files);
-      const uploadPromises = files.map(async (file) => {
-        const fileExt = file.name.split('.').pop();
-        const filePath = `${sponsorId || donationId}/${Math.random()}.${fileExt}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from(bucketName)
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from(bucketName)
-          .getPublicUrl(filePath);
-
-        if (sponsorId) {
-          const { error: updateError } = await supabase
-            .from('sponsors')
-            .update({ photo_url: publicUrl })
-            .eq('id', sponsorId);
-
-          if (updateError) throw updateError;
-        } else if (donationId) {
-          const { error: dbError } = await supabase
-            .from('donation_photos')
-            .insert({
-              donation_id: donationId,
-              url: publicUrl,
-            });
-
-          if (dbError) throw dbError;
-        }
-
-        return publicUrl;
-      });
-
-      await Promise.all(uploadPromises);
-
-      toast({
-        title: t.photosAdded,
-        description: t.photosAddedSuccess,
-      });
 
       onUploadComplete?.();
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: t.error,
-        description: t.uploadError,
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'ajout des photos.",
       });
-      console.error("Upload error:", error);
-    } finally {
-      setUploading(false);
     }
   };
 
-  return (
-    <div className="space-y-4">
-      <Label htmlFor="photo">{t.addPhotos}</Label>
-      <Input
-        id="photo"
+  if (onPhotosChange) {
+    return (
+      <input
         type="file"
         accept="image/*"
         multiple
-        onChange={handleUpload}
-        disabled={uploading}
+        onChange={(e) => onPhotosChange(e.target.files)}
+        className="w-full"
       />
-      <Button disabled={uploading}>
-        <Upload className="w-4 h-4 mr-2" />
-        {uploading ? t.uploading : t.upload}
-      </Button>
-    </div>
+    );
+  }
+
+  return (
+    <MultiFileUpload
+      bucketName={bucketName}
+      path={sponsorId || donationId || 'uploads'}
+      onUploadComplete={handleUploadComplete}
+    />
   );
 };
