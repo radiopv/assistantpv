@@ -1,9 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { sendEmail } from "@/api/email";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -19,6 +19,7 @@ export const useChildAssignment = () => {
         .eq('status', 'pending');
       
       if (error) throw error;
+      
       return data as ChildAssignmentRequest[];
     }
   });
@@ -37,7 +38,7 @@ export const useChildAssignment = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: 'noreply@lovable.dev',
+        from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
@@ -45,7 +46,7 @@ export const useChildAssignment = () => {
 
       toast({
         title: t("success"),
-        description: t("childRequestApproved")
+        description: t("childRequestApproved"),
       });
 
       queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
@@ -54,7 +55,7 @@ export const useChildAssignment = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorApprovingChildRequest")
+        description: t("errorApprovingChildRequest"),
       });
     }
   };
@@ -69,7 +70,7 @@ export const useChildAssignment = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: 'noreply@lovable.dev',
+        from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })
@@ -77,7 +78,7 @@ export const useChildAssignment = () => {
 
       toast({
         title: t("success"),
-        description: t("childRequestRejected")
+        description: t("childRequestRejected"),
       });
 
       queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
@@ -86,7 +87,7 @@ export const useChildAssignment = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorRejectingChildRequest")
+        description: t("errorRejectingChildRequest"),
       });
     }
   };

@@ -136,12 +136,7 @@ export const MultiFileUpload = ({
       try {
         const { error: uploadError } = await supabase.storage
           .from(bucketName)
-          .upload(filePath, file, {
-            onUploadProgress: (event) => {
-              const percent = (event.loaded / (event.total || 1)) * 100;
-              setProgress(prev => ({ ...prev, [file.name]: percent }));
-            }
-          });
+          .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
@@ -150,6 +145,7 @@ export const MultiFileUpload = ({
           .getPublicUrl(filePath);
 
         uploadedUrls.push(publicUrl);
+        setProgress(prev => ({ ...prev, [file.name]: 100 }));
       } catch (error) {
         console.error('Upload error:', error);
         toast.error(t.uploadError);

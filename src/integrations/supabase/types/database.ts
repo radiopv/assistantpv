@@ -4,6 +4,7 @@ import { ChildAssignmentRequestsTable } from './child-assignment-requests';
 export type Database = {
   public: {
     Tables: {
+      child_assignment_requests: ChildAssignmentRequestsTable;
       aid_categories: {
         Row: {
           created_at: string | null
@@ -2200,7 +2201,7 @@ export type Database = {
         }
         Relationships: []
       }
-    }
+    };
     Functions: {
       add_assistant: {
         Args: {
@@ -2548,5 +2549,9 @@ export type Database = {
         }[]
       }
     }
+    };
+    Enums: {
+      user_role: 'admin' | 'assistant' | 'sponsor';
+    };
   };
 };
