@@ -1,19 +1,9 @@
+import { Json } from './json';
+import { ChildAssignmentRequestsTable } from './child-assignment-requests';
+
 export type Database = {
   public: {
     Tables: {
-      child_assignment_requests: {
-        Row: {
-          id: string
-          child_id: string
-          requester_email: string
-          name: string
-          status: 'pending' | 'approved' | 'rejected'
-          created_at?: string
-          updated_at?: string
-        }
-        Insert: Omit<Row, 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Omit<Row, 'id'>>
-      }
       aid_categories: {
         Row: {
           created_at: string | null
@@ -366,7 +356,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           comments?: string | null
-          story?: string | null
+          story?: string
           end_date?: string | null
           gender: string
           id?: string
@@ -540,7 +530,6 @@ export type Database = {
         }
         Relationships: []
       }
-
       donation_photos: {
         Row: {
           created_at: string
@@ -576,7 +565,6 @@ export type Database = {
           },
         ]
       }
-
       donation_videos: {
         Row: {
           created_at: string | null
@@ -657,12 +645,12 @@ export type Database = {
           city?: string
           comments?: string | null
           created_at?: string | null
-          donation_date?: string
-          id?: string
-          people_helped?: number
-          photos?: string[] | null
-          status?: string | null
-          updated_at?: string | null
+          donation_date?: string;
+          id?: string;
+          people_helped?: number;
+          photos?: string[] | null;
+          status?: string | null;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -733,7 +721,7 @@ export type Database = {
           id?: string
           last_attempt?: string | null
           notification_id?: string | null
-          recipient_email?: string
+          recipient_email?: string;
           status?: string | null
           subject: string
           updated_at?: string | null
@@ -840,7 +828,7 @@ export type Database = {
           layout_position?: string | null
           position?: string
           updated_at?: string | null
-          url?: string
+          url?: string;
         }
         Relationships: []
       }
@@ -879,7 +867,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_visible?: boolean | null
-          section_name?: string
+          section_name?: string;
           subtitle?: string | null
           title?: string | null
           updated_at?: string | null
@@ -905,20 +893,20 @@ export type Database = {
           last_checked?: string | null
           page_url: string
           redirect_url?: string | null
-          status: string
+          status: string;
           updated_at?: string | null
-          url: string
+          url: string;
         }
         Update: {
           created_at?: string | null
           error_message?: string | null
           id?: string
           last_checked?: string | null
-          page_url?: string
+          page_url?: string;
           redirect_url?: string | null
-          status: string
+          status: string;
           updated_at?: string | null
-          url?: string
+          url?: string;
         }
         Relationships: []
       }
@@ -945,13 +933,13 @@ export type Database = {
         }
         Update: {
           child_count?: number | null
-          city_name?: string
+          city_name?: string;
           created_at?: string | null
-          id?: number
-          latitude?: number
-          longitude?: number
-          sponsored_count?: number | null
-          updated_at?: string | null
+          id?: number;
+          latitude?: number;
+          longitude?: number;
+          sponsored_count?: number | null;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -987,13 +975,13 @@ export type Database = {
           id?: string
           metadata?: Json | null
           original_url?: string | null
-          source_id?: string
-          source_table?: string
+          source_id?: string;
+          source_table?: string;
           thumbnail_url?: string | null
-          type?: string
+          type?: string;
           updated_at?: string | null
-          url?: string
-          version?: number | null
+          url?: string;
+          version?: number | null;
         }
         Relationships: []
       }
@@ -1016,17 +1004,17 @@ export type Database = {
           is_private?: boolean | null
           type: string
           updated_at?: string | null
-          url: string
+          url: string;
         }
         Update: {
           child_id?: string | null
           comment?: string | null
           created_at?: string | null
-          id?: string
+          id?: string;
           is_private?: boolean | null
-          type: string
+          type: string;
           updated_at?: string | null
-          url?: string
+          url?: string;
         }
         Relationships: [
           {
@@ -1059,12 +1047,12 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          file_name?: string
-          file_size?: number
-          file_type?: string
-          file_url?: string
-          id?: string
-          message_id?: string | null
+          file_name?: string;
+          file_size?: number;
+          file_type?: string;
+          file_url?: string;
+          id?: string;
+          message_id?: string | null;
         }
         Relationships: []
       }
@@ -1098,11 +1086,11 @@ export type Database = {
           content?: string
           created_at?: string | null
           created_by?: string | null
-          created_by_role?: string
-          id?: string
+          created_by_role?: string;
+          id?: string;
           is_global?: boolean | null
-          name?: string
-          subject?: string
+          name?: string;
+          subject?: string;
           updated_at?: string | null
         }
         Relationships: [
@@ -1158,8 +1146,8 @@ export type Database = {
           recipient_id?: string | null
           sender_id?: string | null
           sender_role?: string | null
-          subject?: string
-          updated_at?: string | null
+          subject?: string;
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -1239,7 +1227,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name: string
+          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1309,9 +1297,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_visible?: boolean | null
-          page_id?: string
+          page_id?: string;
           required_role?: string | null
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1385,7 +1373,7 @@ export type Database = {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string;
         }
         Update: {
           browser_notifications?: boolean | null
@@ -1398,7 +1386,7 @@ export type Database = {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -1461,20 +1449,20 @@ export type Database = {
           execute_at: string
           id: string
           last_attempt?: string | null
-          status?: string
-          task_type: string
-          updated_at?: string | null
+          status?: string;
+          task_type: string;
+          updated_at?: string | null;
         }
         Update: {
           attempts?: number | null
           created_at?: string | null
           data?: Json | null
-          execute_at?: string
-          id: string
+          execute_at?: string;
+          id: string;
           last_attempt?: string | null
-          status?: string
-          task_type?: string
-          updated_at?: string | null
+          status?: string;
+          task_type?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1498,8 +1486,8 @@ export type Database = {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date: string
+          updated_at?: string;
+          visit_date: string;
         }
         Update: {
           created_at?: string | null
@@ -1509,8 +1497,8 @@ export type Database = {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date?: string
+          updated_at?: string;
+          visit_date?: string;
         }
         Relationships: [
           {
@@ -1545,10 +1533,10 @@ export type Database = {
           created_at?: string | null
           id?: string
           logo_url?: string | null
-          primary_color?: string
-          secondary_color?: string
-          site_name?: string
-          updated_at?: string | null
+          primary_color?: string;
+          secondary_color?: string;
+          site_name?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1576,9 +1564,9 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          min_points?: number
-          name?: string
-          updated_at?: string | null
+          min_points?: number;
+          name?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1590,7 +1578,7 @@ export type Database = {
           id: string
           type: string
           updated_at: string | null
-          url: string
+          url: string;
         }
         Insert: {
           child_id?: string | null
@@ -1599,16 +1587,16 @@ export type Database = {
           id?: string
           type: string
           updated_at?: string | null
-          url: string
+          url: string;
         }
         Update: {
           child_id?: string | null
           created_at?: string | null
           description?: string | null
-          id?: string
-          type: string
+          id?: string;
+          type: string;
           updated_at?: string | null
-          url?: string
+          url?: string;
         }
         Relationships: [
           {
@@ -1686,7 +1674,7 @@ export type Database = {
           is_active?: boolean | null
           is_anonymous?: boolean | null
           last_login?: string | null
-          name?: string
+          name?: string;
           password_hash?: string | null
           permissions?: Json | null
           phone?: string | null
@@ -1794,7 +1782,6 @@ export type Database = {
           },
         ]
       }
-
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1829,17 +1816,17 @@ export type Database = {
         Update: {
           child_id?: string | null
           created_at?: string | null
-          email?: string
+          email: string
           facebook_url?: string | null
-          full_name?: string
-          id?: string
+          full_name?: string;
+          id?: string;
           motivation?: string | null
           phone?: string | null
-          status?: string
-          terms_accepted?: boolean
-          updated_at?: string | null
-          city?: string | null
-          is_long_term?: boolean | null
+          status?: string;
+          terms_accepted?: boolean;
+          updated_at?: string | null;
+          city?: string | null;
+          is_long_term?: boolean | null;
         }
         Relationships: [
           {
@@ -1851,7 +1838,6 @@ export type Database = {
           }
         ]
       }
-
       sponsorships: {
         Row: {
           auto_terminate_job_id: string | null
@@ -1946,8 +1932,8 @@ export type Database = {
           description?: string | null
           id?: string
           is_visible?: boolean | null
-          name?: string
-          updated_at?: string | null
+          name?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1972,18 +1958,18 @@ export type Database = {
           is_featured?: boolean | null
           rating?: number | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string;
         }
         Update: {
           child_id?: string | null
           content?: string
           created_at?: string | null
-          id?: string
+          id?: string;
           is_approved?: boolean | null
           is_featured?: boolean | null
           rating?: number | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -2039,14 +2025,14 @@ export type Database = {
           description?: string | null
           id?: string
           metadata?: Json | null
-          source_table?: string
+          source_table?: string;
           tags?: string[] | null
           thumbnail_url?: string | null
-          title?: string
-          type?: string
+          title?: string;
+          type?: string;
           updated_at?: string | null
-          url?: string
-          version?: number | null
+          url?: string;
+          version?: number | null;
         }
         Relationships: []
       }
@@ -2065,7 +2051,7 @@ export type Database = {
           badge_id?: string | null
           created_at?: string | null
           earned_at?: string | null
-          id: string
+          id?: string
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
@@ -2075,7 +2061,7 @@ export type Database = {
           badge_id?: string | null
           created_at?: string | null
           earned_at?: string | null
-          id?: string
+          id?: string;
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
@@ -2112,7 +2098,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
-          user_id?: string
+          user_id?: string;
         }
         Relationships: []
       }
@@ -2133,10 +2119,10 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id: string
-          action?: string
+          user_id: string;
+          action: string;
           details?: Json | null
-          created_at?: string | null
+          created_at?: string | null;
         }
         Relationships: [
           {
@@ -2148,61 +2134,8 @@ export type Database = {
           }
         ]
       }
-      temoignage: {
-        Row: {
-          id: string
-          content: string
-          author: string
-          rating: number | null
-          is_approved: boolean
-          is_featured: boolean
-          sponsor_id: string | null
-          child_id: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          content: string
-          author: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          content?: string
-          author?: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "temoignage_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "temoignage_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-    }
+      child_assignment_requests: ChildAssignmentRequestsTable;
+    };
     Views: {
       donation_items_with_categories: {
         Row: {
@@ -2429,7 +2362,7 @@ export type Database = {
           month: string
           donations: number
           people_helped: number
-          success_rate: number
+          success_rate: number;
         }[]
       }
       get_monthly_statistics: {
@@ -2615,5 +2548,5 @@ export type Database = {
         }[]
       }
     }
-  }
-}
+  };
+};
