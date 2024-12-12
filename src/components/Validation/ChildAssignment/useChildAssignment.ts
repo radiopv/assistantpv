@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { sendEmail } from "@/api/email";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
-import { EmailRequest } from "@/integrations/supabase/types/email";
+import { Database } from "@/integrations/supabase/types/database";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -37,14 +37,12 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      const emailRequest: EmailRequest = {
+      await sendEmail({
         from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
-      };
-
-      await sendEmail(emailRequest);
+      });
 
       toast({
         title: t("success"),
@@ -71,14 +69,12 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      const emailRequest: EmailRequest = {
+      await sendEmail({
         from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })
-      };
-
-      await sendEmail(emailRequest);
+      });
 
       toast({
         title: t("success"),

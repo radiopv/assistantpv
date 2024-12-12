@@ -29,7 +29,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('child_assignment_requests')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
+        .eq('status', 'pending') as { count: number | null };
       return count || 0;
     }
   });
