@@ -1,6 +1,46 @@
-export type Database = {
+import { Json } from './json';
+
+export interface Database {
   public: {
     Tables: {
+      child_assignment_requests: {
+        Row: {
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Insert: {
+          id?: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          child_id?: string;
+          requester_email?: string;
+          name?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "child_assignment_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          }
+        ];
+      };
       aid_categories: {
         Row: {
           created_at: string | null
@@ -137,7 +177,7 @@ export type Database = {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           child_id?: string | null
@@ -149,7 +189,7 @@ export type Database = {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -353,7 +393,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           comments?: string | null
-          story?: string | null
+          story?: string
           end_date?: string | null
           gender: string
           id?: string
@@ -527,6 +567,7 @@ export type Database = {
         }
         Relationships: []
       }
+
       donation_photos: {
         Row: {
           created_at: string
@@ -562,6 +603,7 @@ export type Database = {
           },
         ]
       }
+
       donation_videos: {
         Row: {
           created_at: string | null
@@ -853,7 +895,7 @@ export type Database = {
           is_visible?: boolean | null
           section_name: string
           subtitle?: string | null
-          title?: string | null
+          title: string
           updated_at?: string | null
         }
         Update: {
@@ -866,7 +908,7 @@ export type Database = {
           is_visible?: boolean | null
           section_name?: string
           subtitle?: string | null
-          title?: string | null
+          title?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -934,7 +976,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           latitude?: number
-          longitude?: number
+          longitude?: number;
           sponsored_count?: number | null
           updated_at?: string | null
         }
@@ -972,12 +1014,12 @@ export type Database = {
           id?: string
           metadata?: Json | null
           original_url?: string | null
-          source_id?: string
-          source_table?: string
+          source_id: string
+          source_table: string
           thumbnail_url?: string | null
-          type?: string
+          type: string
           updated_at?: string | null
-          url?: string
+          url: string
           version?: number | null
         }
         Relationships: []
@@ -1224,7 +1266,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name?: string
+          name: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1494,8 +1536,8 @@ export type Database = {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date?: string
+          updated_at?: string;
+          visit_date?: string;
         }
         Relationships: [
           {
@@ -1532,7 +1574,7 @@ export type Database = {
           logo_url?: string | null
           primary_color?: string
           secondary_color?: string
-          site_name?: string
+          site_name?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -1779,6 +1821,7 @@ export type Database = {
           },
         ]
       }
+
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1813,13 +1856,13 @@ export type Database = {
         Update: {
           child_id?: string | null
           created_at?: string | null
-          email?: string
+          email: string
           facebook_url?: string | null
-          full_name?: string
+          full_name?: string;
           id?: string
           motivation?: string | null
           phone?: string | null
-          status?: string
+          status: string
           terms_accepted?: boolean
           updated_at?: string | null
           city?: string | null
@@ -1835,6 +1878,7 @@ export type Database = {
           }
         ]
       }
+
       sponsorships: {
         Row: {
           auto_terminate_job_id: string | null
@@ -2026,9 +2070,9 @@ export type Database = {
           tags?: string[] | null
           thumbnail_url?: string | null
           title?: string
-          type?: string
+          type: string
           updated_at?: string | null
-          url?: string
+          url: string
           version?: number | null
         }
         Relationships: []
@@ -2052,7 +2096,7 @@ export type Database = {
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           badge_id?: string | null
@@ -2062,7 +2106,7 @@ export type Database = {
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -2117,7 +2161,7 @@ export type Database = {
         Update: {
           id?: string
           user_id: string
-          action?: string
+          action: string
           details?: Json | null
           created_at?: string | null
         }
@@ -2185,45 +2229,7 @@ export type Database = {
           }
         ]
       }
-      child_assignment_requests: {
-        Row: {
-          id: string;
-          child_id: string;
-          requester_email: string;
-          name: string;
-          status: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Insert: {
-          id?: string;
-          child_id: string;
-          requester_email: string;
-          name: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          child_id?: string;
-          requester_email?: string;
-          name?: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "child_assignment_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          }
-        ];
-      };
-    };
+    }
     Views: {
       donation_items_with_categories: {
         Row: {

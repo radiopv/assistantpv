@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { sendEmail } from "@/api/email";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Database } from "@/integrations/supabase/types/database";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -16,7 +17,7 @@ export const useChildAssignment = () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending') as { data: ChildAssignmentRequest[] | null, error: any };
+        .eq('status', 'pending');
       
       if (error) throw error;
       
