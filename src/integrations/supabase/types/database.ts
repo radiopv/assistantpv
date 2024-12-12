@@ -1,12 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
-
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       aid_categories: {
@@ -361,7 +353,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           comments?: string | null
-          story?: string
+          story?: string | null
           end_date?: string | null
           gender: string
           id?: string
@@ -485,7 +477,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           donation_id?: string | null
-          id?: string
+          id?: string | null
           quantity?: number
           updated_at?: string | null
         }
@@ -535,7 +527,6 @@ export type Database = {
         }
         Relationships: []
       }
-
       donation_photos: {
         Row: {
           created_at: string
@@ -571,7 +562,6 @@ export type Database = {
           },
         ]
       }
-
       donation_videos: {
         Row: {
           created_at: string | null
@@ -876,7 +866,7 @@ export type Database = {
           is_visible?: boolean | null
           section_name?: string
           subtitle?: string | null
-          title?: string | null
+          title?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1234,7 +1224,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name: string
+          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1298,7 +1288,7 @@ export type Database = {
           is_visible?: boolean | null
           page_id: string
           required_role?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -1603,7 +1593,7 @@ export type Database = {
           id?: string
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Relationships: [
           {
@@ -1823,7 +1813,7 @@ export type Database = {
         Update: {
           child_id?: string | null
           created_at?: string | null
-          email: string
+          email?: string
           facebook_url?: string | null
           full_name?: string
           id?: string
@@ -1845,7 +1835,6 @@ export type Database = {
           }
         ]
       }
-
       sponsorships: {
         Row: {
           auto_terminate_job_id: string | null
@@ -1966,7 +1955,7 @@ export type Database = {
           is_featured?: boolean | null
           rating?: number | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           child_id?: string | null
@@ -2127,7 +2116,7 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id: string
+          user_id?: string
           action?: string
           details?: Json | null
           created_at?: string | null
@@ -2142,34 +2131,88 @@ export type Database = {
           }
         ]
       }
-      child_assignment_requests: {
+      temoignage: {
         Row: {
           id: string
-          child_id: string
-          requester_email: string
-          name: string
-          status: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
+          content: string
+          author: string
+          rating: number | null
+          is_approved: boolean
+          is_featured: boolean
+          sponsor_id: string | null
+          child_id: string | null
+          created_at: string | null
+          updated_at: string | null
         }
         Insert: {
           id?: string
-          child_id: string
-          requester_email: string
-          name: string
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
+          content: string
+          author: string
+          rating?: number | null
+          is_approved?: boolean
+          is_featured?: boolean
+          sponsor_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
         }
         Update: {
           id?: string
-          child_id?: string
-          requester_email?: string
-          name?: string
+          content?: string
+          author?: string
+          rating?: number | null
+          is_approved?: boolean
+          is_featured?: boolean
+          sponsor_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "temoignage_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "temoignage_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      child_assignment_requests: {
+        Row: {
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Insert: {
+          id?: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
           updated_at?: string;
-        }
+        };
+        Update: {
+          id?: string;
+          child_id?: string;
+          requester_email?: string;
+          name?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
         Relationships: [
           {
             foreignKeyName: "child_assignment_requests_child_id_fkey"
@@ -2178,9 +2221,9 @@ export type Database = {
             referencedRelation: "children"
             referencedColumns: ["id"]
           }
-        ]
-      }
-    }
+        ];
+      };
+    };
     Views: {
       donation_items_with_categories: {
         Row: {

@@ -3,9 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { sendEmail } from "@/api/email";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Database } from "@/integrations/supabase/types/database";
-
-type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();

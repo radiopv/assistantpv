@@ -1,4 +1,4 @@
 export * from './database';
 export * from './sponsorship';
-export * from './json';
+export { Json } from './json';
 export * from './child-assignment-requests';
