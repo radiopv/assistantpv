@@ -2,9 +2,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { sendEmail } from "@/api/email";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Database } from "@/integrations/supabase/types/database";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
+import { EmailRequest } from "@/integrations/supabase/types/email";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -17,11 +17,10 @@ export const useChildAssignment = () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending');
+        .eq('status', 'pending') as { data: ChildAssignmentRequest[] | null, error: any };
       
       if (error) throw error;
-      
-      return data as ChildAssignmentRequest[];
+      return data || [];
     }
   });
 
@@ -38,12 +37,14 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      await sendEmail({
+      const emailRequest: EmailRequest = {
         from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
-      });
+      };
+
+      await sendEmail(emailRequest);
 
       toast({
         title: t("success"),
@@ -70,12 +71,14 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      await sendEmail({
+      const emailRequest: EmailRequest = {
         from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })
-      });
+      };
+
+      await sendEmail(emailRequest);
 
       toast({
         title: t("success"),

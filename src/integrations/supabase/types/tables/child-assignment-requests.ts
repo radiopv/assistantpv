@@ -1,4 +1,4 @@
-import { Database } from '../database';
+import { Json } from '../json';
 
 export interface ChildAssignmentRequest {
   id: string;
@@ -10,4 +10,8 @@ export interface ChildAssignmentRequest {
   updated_at?: string;
 }
 
-export type ChildAssignmentRequestsTable = Database['public']['Tables']['child_assignment_requests'];
+export interface ChildAssignmentRequestTable {
+  Row: ChildAssignmentRequest;
+  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'>;
+  Update: Partial<Omit<ChildAssignmentRequest, 'id'>>;
+}

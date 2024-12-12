@@ -1,46 +1,8 @@
 import { Json } from './json';
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
-      child_assignment_requests: {
-        Row: {
-          id: string;
-          child_id: string;
-          requester_email: string;
-          name: string;
-          status: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Insert: {
-          id?: string;
-          child_id: string;
-          requester_email: string;
-          name: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          child_id?: string;
-          requester_email?: string;
-          name?: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "child_assignment_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          }
-        ];
-      };
       aid_categories: {
         Row: {
           created_at: string | null
@@ -177,7 +139,7 @@ export interface Database {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           child_id?: string | null
@@ -189,7 +151,7 @@ export interface Database {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -393,7 +355,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           comments?: string | null
-          story?: string
+          story?: string | null
           end_date?: string | null
           gender: string
           id?: string
@@ -517,7 +479,7 @@ export interface Database {
           category_id?: string | null
           created_at?: string | null
           donation_id?: string | null
-          id?: string
+          id?: string | null
           quantity?: number
           updated_at?: string | null
         }
@@ -567,7 +529,6 @@ export interface Database {
         }
         Relationships: []
       }
-
       donation_photos: {
         Row: {
           created_at: string
@@ -603,7 +564,6 @@ export interface Database {
           },
         ]
       }
-
       donation_videos: {
         Row: {
           created_at: string | null
@@ -895,7 +855,7 @@ export interface Database {
           is_visible?: boolean | null
           section_name: string
           subtitle?: string | null
-          title: string
+          title?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -908,7 +868,7 @@ export interface Database {
           is_visible?: boolean | null
           section_name?: string
           subtitle?: string | null
-          title?: string;
+          title?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -933,7 +893,7 @@ export interface Database {
           page_url: string
           redirect_url?: string | null
           status: string
-          updated_at?: string | null
+          updated_at: string | null
           url: string
         }
         Update: {
@@ -976,7 +936,7 @@ export interface Database {
           created_at?: string | null
           id?: number
           latitude?: number
-          longitude?: number;
+          longitude?: number
           sponsored_count?: number | null
           updated_at?: string | null
         }
@@ -1266,7 +1226,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          name: string
+          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1425,7 +1385,7 @@ export interface Database {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1500,7 +1460,7 @@ export interface Database {
           id: string
           last_attempt?: string | null
           status?: string
-          task_type?: string;
+          task_type?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1536,8 +1496,8 @@ export interface Database {
           reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string;
-          visit_date?: string;
+          updated_at?: string
+          visit_date?: string
         }
         Relationships: [
           {
@@ -1574,7 +1534,7 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string
           secondary_color?: string
-          site_name?: string;
+          site_name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1821,7 +1781,6 @@ export interface Database {
           },
         ]
       }
-
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1856,13 +1815,13 @@ export interface Database {
         Update: {
           child_id?: string | null
           created_at?: string | null
-          email: string
+          email?: string
           facebook_url?: string | null
-          full_name?: string;
+          full_name?: string
           id?: string
           motivation?: string | null
           phone?: string | null
-          status: string
+          status?: string
           terms_accepted?: boolean
           updated_at?: string | null
           city?: string | null
@@ -1878,7 +1837,6 @@ export interface Database {
           }
         ]
       }
-
       sponsorships: {
         Row: {
           auto_terminate_job_id: string | null
@@ -2096,7 +2054,7 @@ export interface Database {
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           badge_id?: string | null
@@ -2106,7 +2064,7 @@ export interface Database {
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -2160,8 +2118,8 @@ export interface Database {
         }
         Update: {
           id?: string
-          user_id: string
-          action: string
+          user_id?: string
+          action?: string
           details?: Json | null
           created_at?: string | null
         }
@@ -2229,7 +2187,34 @@ export interface Database {
           }
         ]
       }
-    }
+      child_assignment_requests: {
+        Row: {
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Insert: {
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          child_id?: string;
+          requester_email?: string;
+          name?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+    };
     Views: {
       donation_items_with_categories: {
         Row: {
