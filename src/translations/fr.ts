@@ -154,5 +154,5 @@ export const frenchTranslations = {
   // New translations for photo upload
   uploadSuccess: "Photos téléversées avec succès !",
   uploadError: "Échec du téléversement, veuillez réessayer.",
-  uploading: "Téléversement en cours...",
+  uploading: "Téléversement en cours..."
 };

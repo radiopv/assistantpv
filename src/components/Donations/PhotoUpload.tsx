@@ -1,116 +1,83 @@
-import { useState } from "react";
-import { Progress } from "@/components/ui/progress";
-import { useToast } from "@/hooks/use-toast";
+import { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle, XCircle } from "lucide-react";
+import { ProgressIndicator } from "./PhotoUpload/ProgressIndicator";
+import { UploadStatus } from "./PhotoUpload/UploadStatus";
+import { PhotoPreview } from "./PhotoUpload/PhotoPreview";
 
 interface PhotoUploadProps {
-  donationId?: string;
-  sponsorId?: string;
-  bucketName?: string;
-  onUploadComplete?: () => void;
   onPhotosChange?: (files: FileList | null) => void;
 }
 
-export const PhotoUpload = ({ 
-  donationId, 
-  sponsorId,
-  bucketName = 'donation-photos',
-  onUploadComplete, 
-  onPhotosChange 
-}: PhotoUploadProps) => {
+export const PhotoUpload = ({ onPhotosChange }: PhotoUploadProps) => {
+  const [photos, setPhotos] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState<'success' | 'error' | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { language } = useLanguage();
 
-  const translations = {
-    fr: {
-      uploadSuccess: "Photos téléversées avec succès !",
-      uploadError: "Échec du téléversement, veuillez réessayer.",
-      uploading: "Téléversement en cours..."
-    },
-    es: {
-      uploadSuccess: "¡Fotos subidas con éxito!",
-      uploadError: "Error al subir, por favor intente de nuevo.",
-      uploading: "Subiendo..."
-    }
+  const t = language === 'fr' ? {
+    selectPhotos: "Sélectionner des photos",
+    upload: "Téléverser",
+  } : {
+    selectPhotos: "Seleccionar fotos",
+    upload: "Subir",
   };
 
-  const t = translations[language as keyof typeof translations];
-
-  const handleUploadComplete = async (urls: string[]) => {
-    try {
-      if (sponsorId) {
-        const { error: updateError } = await supabase
-          .from('sponsors')
-          .update({ photo_url: urls[0] })
-          .eq('id', sponsorId);
-
-        if (updateError) throw updateError;
-      } else if (donationId) {
-        const photoEntries = urls.map(url => ({
-          donation_id: donationId,
-          url: url,
-        }));
-
-        const { error: dbError } = await supabase
-          .from('donation_photos')
-          .insert(photoEntries);
-
-        if (dbError) throw dbError;
-      }
-
-      setUploadStatus('success');
-      onUploadComplete?.();
-    } catch (error: any) {
-      setUploadStatus('error');
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: t.uploadError,
-      });
-    }
-  };
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
     
+    const newPhotos = Array.from(e.target.files);
+    setPhotos(prev => [...prev, ...newPhotos]);
+    if (onPhotosChange) {
+      onPhotosChange(e.target.files);
+    }
+    setUploadStatus(null);
+  };
+
+  const removePhoto = (index: number) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
+    setUploadStatus(null);
+  };
+
+  const handleUpload = async () => {
+    if (!photos.length) return;
+
     setUploading(true);
     setProgress(0);
     setUploadStatus(null);
 
     try {
-      const files = Array.from(e.target.files);
-      const totalFiles = files.length;
-      const uploadedUrls: string[] = [];
+      const totalPhotos = photos.length;
+      let completed = 0;
 
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileExt = file.name.split('.').pop();
-        const filePath = `${Math.random()}.${fileExt}`;
+      for (const photo of photos) {
+        const fileExt = photo.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
-          .from(bucketName)
-          .upload(filePath, file);
+          .from('donation-photos')
+          .upload(fileName, photo);
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from(bucketName)
-          .getPublicUrl(filePath);
-
-        uploadedUrls.push(publicUrl);
-        setProgress(((i + 1) / totalFiles) * 100);
+        completed++;
+        setProgress((completed / totalPhotos) * 100);
       }
 
-      await handleUploadComplete(uploadedUrls);
+      setUploadStatus('success');
+      setPhotos([]);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } catch (error) {
-      setUploadStatus('error');
       console.error('Upload error:', error);
+      setUploadStatus('error');
     } finally {
       setUploading(false);
     }
@@ -118,38 +85,36 @@ export const PhotoUpload = ({
 
   return (
     <div className="space-y-4">
-      <input
-        type="file"
-        accept="image/*"
-        multiple
-        onChange={handleFileChange}
-        className="w-full cursor-pointer"
-        disabled={uploading}
-      />
+      <div className="flex gap-4">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleFileSelect}
+          className="hidden"
+        />
+        <Button
+          onClick={() => fileInputRef.current?.click()}
+          variant="outline"
+          disabled={uploading}
+        >
+          <Upload className="w-4 h-4 mr-2" />
+          {t.selectPhotos}
+        </Button>
+        {photos.length > 0 && (
+          <Button onClick={handleUpload} disabled={uploading}>
+            {t.upload} ({photos.length})
+          </Button>
+        )}
+      </div>
 
-      {uploading && (
-        <div className="space-y-2">
-          <Progress value={progress} className="w-full" />
-          <p className="text-sm text-gray-500">{t.uploading}</p>
-        </div>
-      )}
+      {uploading && <ProgressIndicator progress={progress} />}
+      
+      <UploadStatus status={uploadStatus} />
 
-      {uploadStatus === 'success' && (
-        <Alert variant="default" className="bg-green-50 border-green-200">
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-600 ml-2">
-            {t.uploadSuccess}
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {uploadStatus === 'error' && (
-        <Alert variant="destructive">
-          <XCircle className="h-4 w-4" />
-          <AlertDescription className="ml-2">
-            {t.uploadError}
-          </AlertDescription>
-        </Alert>
+      {photos.length > 0 && (
+        <PhotoPreview photos={photos} onRemove={removePhoto} />
       )}
     </div>
   );
