@@ -2187,44 +2187,47 @@ export interface Database {
           }
         ]
       }
+
       child_assignment_requests: {
         Row: {
-          id: string
-          child_id: string
-          requester_email: string
-          name: string
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
           status: 'pending' | 'approved' | 'rejected';
           created_at?: string;
           updated_at?: string;
-        }
+        };
         Insert: {
-          id?: string
-          child_id: string
-          requester_email: string
-          name: string
+          id?: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
           updated_at?: string;
-        }
+        };
         Update: {
-          id?: string
-          child_id?: string
-          requester_email?: string
-          name?: string
+          id?: string;
+          child_id?: string;
+          requester_email?: string;
+          name?: string;
           status?: 'pending' | 'approved' | 'rejected';
           created_at?: string;
           updated_at?: string;
-        }
+        };
         Relationships: [
           {
-            foreignKeyName: "child_assignment_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
+            foreignKeyName: "child_assignment_requests_child_id_fkey";
+            columns: ["child_id"];
+            isOneToOne: false;
+            referencedRelation: "children";
+            referencedColumns: ["id"];
           }
-        ]
-      }
-    }
-  }
+        ];
+      };
+
+      // ... keep existing code (all tables after child_assignment_requests)
+    };
+  };
 }
