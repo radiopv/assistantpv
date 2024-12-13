@@ -105,6 +105,7 @@ export const ChildAssignmentValidation = () => {
 
       // Send notification email
       await sendEmail({
+        from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
@@ -138,6 +139,7 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
+        from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })

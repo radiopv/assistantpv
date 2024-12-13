@@ -12,7 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const PublicLayout = () => {
+export const PublicLayout = () => {
   const { session, user } = useAuth();
 
   const menuItems = [
