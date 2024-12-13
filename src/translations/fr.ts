@@ -99,7 +99,7 @@ export const frenchTranslations = {
   testimonialApproved: "Témoignage approuvé avec succès",
   testimonialRejected: "Témoignage rejeté",
   errorApprovingTestimonial: "Erreur lors de l'approbation du témoignage",
-  errorRejectingTestimonial: "Erreur lors du rejet du témoignage",
+  errorRejectingTestimonial: "Erreur lors du rejet de témoignage",
   validation: "Validation",
 
   // Photo validation
@@ -150,4 +150,9 @@ export const frenchTranslations = {
   childRequestApprovedContent: "Nous sommes heureux de vous informer que votre demande d'ajout pour {name} a été approuvée.",
   childRequestRejectedSubject: "Votre demande d'ajout d'enfant a été refusée",
   childRequestRejectedContent: "Nous sommes désolés de vous informer que votre demande d'ajout pour {name} a été refusée.",
+  
+  // New translations for photo upload
+  uploadSuccess: "Photos téléversées avec succès !",
+  uploadError: "Échec du téléversement, veuillez réessayer.",
+  uploading: "Téléversement en cours...",
 };

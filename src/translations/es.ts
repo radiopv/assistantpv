@@ -45,8 +45,6 @@ export const spanishTranslations = {
   translationManager: "Gestor de traducciones",
   addChild: "Agregar niño",
   addDonation: "Agregar donación",
-  addChildPhotos: "Agregar fotos de niños",
-  photoPageInstructions: "Esta página permite agregar fotos a los perfiles de los niños. Las fotos serán visibles para los padrinos en el perfil de su ahijado.",
   
   // Common actions
   save: "Guardar",
@@ -178,4 +176,9 @@ export const spanishTranslations = {
   childRequestApprovedContent: "Nos complace informarle que su solicitud para añadir a {name} ha sido aprobada.",
   childRequestRejectedSubject: "Su solicitud para añadir un niño ha sido rechazada",
   childRequestRejectedContent: "Lamentamos informarle que su solicitud para añadir a {name} ha sido rechazada.",
+  
+  // New upload messages
+  uploadSuccess: "¡Fotos subidas con éxito!",
+  uploadError: "Error al subir, por favor intente de nuevo.",
+  uploading: "Subiendo..."
 };
