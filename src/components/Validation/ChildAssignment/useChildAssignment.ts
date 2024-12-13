@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { sendEmail } from "@/api/email";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -16,10 +16,10 @@ export const useChildAssignment = () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending') as { data: ChildAssignmentRequest[] | null, error: any };
+        .eq('status', 'pending');
       
       if (error) throw error;
-      return data || [];
+      return (data || []) as ChildAssignmentRequest[];
     }
   });
 
