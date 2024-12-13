@@ -2,17 +2,10 @@ import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { 
-  LayoutDashboard, 
-  Menu,
-} from "lucide-react";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { LayoutDashboard, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-export const PublicLayout = () => {
+const PublicLayout = () => {
   const { session, user } = useAuth();
 
   const menuItems = [
