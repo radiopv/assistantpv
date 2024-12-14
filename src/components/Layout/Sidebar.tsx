@@ -15,7 +15,8 @@ import {
   Languages,
   Image,
   CheckCircle2,
-  Mail
+  Mail,
+  Edit
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -55,6 +56,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
           href: "/assistant/photos",
           label: t("addChildPhotos"),
           icon: Image,
+          show: true,
+        },
+        {
+          href: "/admin/statistics",
+          label: "Édition des besoins",
+          icon: Edit,
           show: true,
         }
       ]
