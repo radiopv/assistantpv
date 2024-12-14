@@ -1,17 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
-import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TableHead, TableHeader as UITableHeader, TableRow } from "@/components/ui/table";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface TableHeaderProps {
+interface ChildrenNeedsHeaderProps {
   onSort: (field: "childName" | "urgentNeeds") => void;
 }
 
-export const TableHeader = ({ onSort }: TableHeaderProps) => {
+export const ChildrenNeedsHeader = ({ onSort }: ChildrenNeedsHeaderProps) => {
   const { t } = useLanguage();
 
   return (
-    <TableHeader>
+    <UITableHeader>
       <TableRow>
         <TableHead>
           <Button variant="ghost" onClick={() => onSort("childName")} className="w-full">
@@ -30,6 +30,6 @@ export const TableHeader = ({ onSort }: TableHeaderProps) => {
         <TableHead>{t("comments")}</TableHead>
         <TableHead className="w-[100px]">{t("actions")}</TableHead>
       </TableRow>
-    </TableHeader>
+    </UITableHeader>
   );
 };

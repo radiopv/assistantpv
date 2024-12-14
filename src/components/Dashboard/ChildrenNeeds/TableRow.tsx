@@ -11,7 +11,7 @@ interface TableRowProps {
   onEdit: (child: ChildNeed) => void;
   onSave: (childId: string) => void;
   editableFields: ChildNeed | null;
-  setEditableFields: (fields: ChildNeed | null) => void;
+  setEditableFields: React.Dispatch<React.SetStateAction<ChildNeed | null>>;
 }
 
 export const TableRow = ({
@@ -22,6 +22,10 @@ export const TableRow = ({
   editableFields,
   setEditableFields,
 }: TableRowProps) => {
+  const handleFieldUpdate = (field: keyof ChildNeed, value: any) => {
+    setEditableFields(prev => prev ? { ...prev, [field]: value } : null);
+  };
+
   return (
     <UITableRow key={child.childId}>
       <TableCell>{child.childName}</TableCell>
@@ -29,36 +33,28 @@ export const TableRow = ({
         <NeedsCell
           needs={isEditing ? editableFields?.needs || [] : child.needs}
           isEditing={isEditing}
-          onUpdate={(updatedNeeds) =>
-            setEditableFields(prev => prev ? { ...prev, needs: updatedNeeds } : null)
-          }
+          onUpdate={(updatedNeeds) => handleFieldUpdate('needs', updatedNeeds)}
         />
       </TableCell>
       <TableCell>
         <EditableCell
           value={isEditing ? editableFields?.description || "" : child.description}
           isEditing={isEditing}
-          onChange={(value) =>
-            setEditableFields(prev => prev ? { ...prev, description: value } : null)
-          }
+          onChange={(value) => handleFieldUpdate('description', value)}
         />
       </TableCell>
       <TableCell>
         <EditableCell
           value={isEditing ? editableFields?.story || "" : child.story}
           isEditing={isEditing}
-          onChange={(value) =>
-            setEditableFields(prev => prev ? { ...prev, story: value } : null)
-          }
+          onChange={(value) => handleFieldUpdate('story', value)}
         />
       </TableCell>
       <TableCell>
         <EditableCell
           value={isEditing ? editableFields?.comments || "" : child.comments}
           isEditing={isEditing}
-          onChange={(value) =>
-            setEditableFields(prev => prev ? { ...prev, comments: value } : null)
-          }
+          onChange={(value) => handleFieldUpdate('comments', value)}
         />
       </TableCell>
       <TableCell>

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { convertJsonToNeeds, convertNeedsToJson } from "@/types/needs";
 import { toast } from "sonner";
-import { TableHeader } from "./TableHeader";
+import { ChildrenNeedsHeader } from "./TableHeader";
 import { TableRow } from "./TableRow";
 import { ChildNeed } from "./types";
 
@@ -105,7 +105,7 @@ export const ChildrenNeedsTable = () => {
   return (
     <div className="rounded-md border">
       <Table>
-        <TableHeader onSort={toggleSort} />
+        <ChildrenNeedsHeader onSort={toggleSort} />
         <TableBody>
           {sortedData.map((child) => (
             <TableRow

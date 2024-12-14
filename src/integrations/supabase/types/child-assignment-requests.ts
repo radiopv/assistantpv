@@ -1,4 +1,4 @@
-import { Database } from './database';
+import { Json } from './json';
 
 export interface ChildAssignmentRequest {
   id: string;
@@ -10,4 +10,21 @@ export interface ChildAssignmentRequest {
   updated_at?: string;
 }
 
-export type ChildAssignmentRequestTable = Database['public']['Tables']['child_assignment_requests'];
+export interface ChildAssignmentRequestTable {
+  Row: ChildAssignmentRequest;
+  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'> & {
+    id?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
+  Update: Partial<ChildAssignmentRequest>;
+  Relationships: [
+    {
+      foreignKeyName: "child_assignment_requests_child_id_fkey";
+      columns: ["child_id"];
+      isOneToOne: false;
+      referencedRelation: "children";
+      referencedColumns: ["id"];
+    }
+  ];
+}
