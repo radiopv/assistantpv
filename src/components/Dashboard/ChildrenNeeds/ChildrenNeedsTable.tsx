@@ -99,11 +99,11 @@ export const ChildrenNeedsTable = () => {
   };
 
   if (isLoading) {
-    return <div>{t("loading")}</div>;
+    return <div className="p-8 text-center">{t("loading")}</div>;
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border bg-white shadow-sm">
       <Table>
         <ChildrenNeedsHeader onSort={toggleSort} />
         <TableBody>

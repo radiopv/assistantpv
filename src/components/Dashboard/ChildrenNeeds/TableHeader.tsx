@@ -14,13 +14,21 @@ export const ChildrenNeedsHeader = ({ onSort }: ChildrenNeedsHeaderProps) => {
     <UITableHeader>
       <TableRow>
         <TableHead>
-          <Button variant="ghost" onClick={() => onSort("childName")} className="w-full">
+          <Button
+            variant="ghost"
+            onClick={() => onSort("childName")}
+            className="w-full"
+          >
             {t("childName")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </TableHead>
         <TableHead>
-          <Button variant="ghost" onClick={() => onSort("urgentNeeds")} className="w-full">
+          <Button
+            variant="ghost"
+            onClick={() => onSort("urgentNeeds")}
+            className="w-full"
+          >
             {t("needs")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
