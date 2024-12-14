@@ -28,9 +28,9 @@ import Permissions from "@/pages/admin/Permissions";
 
 const App = () => {
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <Router>
+    <Router>
+      <LanguageProvider>
+        <AuthProvider>
           <Routes>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
@@ -60,10 +60,10 @@ const App = () => {
               <Route path="/admin/permissions" element={<Permissions />} />
             </Route>
           </Routes>
-        </Router>
-        <Toaster />
-      </AuthProvider>
-    </LanguageProvider>
+          <Toaster />
+        </AuthProvider>
+      </LanguageProvider>
+    </Router>
   );
 };
 

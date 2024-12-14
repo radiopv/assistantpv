@@ -1,5 +1,3 @@
-import { Json } from './json';
-
 export interface Database {
   public: {
     Tables: {
@@ -525,7 +523,7 @@ export interface Database {
           longitude?: number
           name?: string
           type?: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -893,7 +891,7 @@ export interface Database {
           page_url: string
           redirect_url?: string | null
           status: string
-          updated_at: string | null
+          updated_at?: string | null
           url: string
         }
         Update: {
@@ -905,7 +903,7 @@ export interface Database {
           redirect_url?: string | null
           status: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Relationships: []
       }
@@ -1013,7 +1011,7 @@ export interface Database {
           is_private?: boolean | null
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Relationships: [
           {
@@ -1226,7 +1224,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          name?: string
+          name: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1372,7 +1370,7 @@ export interface Database {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           browser_notifications?: boolean | null
@@ -1595,7 +1593,7 @@ export interface Database {
           id?: string
           type: string
           updated_at?: string | null
-          url?: string
+          url: string
         }
         Relationships: [
           {
@@ -1666,7 +1664,7 @@ export interface Database {
           city?: string | null
           created_at?: string | null
           current_level_id?: string | null
-          email?: string
+          email?: string | null
           facebook_url?: string | null
           force_password_change?: boolean | null
           id?: string
@@ -1821,7 +1819,7 @@ export interface Database {
           id?: string
           motivation?: string | null
           phone?: string | null
-          status?: string
+          status: string
           terms_accepted?: boolean
           updated_at?: string | null
           city?: string | null
@@ -2133,61 +2131,6 @@ export interface Database {
           }
         ]
       }
-      temoignage: {
-        Row: {
-          id: string
-          content: string
-          author: string
-          rating: number | null
-          is_approved: boolean
-          is_featured: boolean
-          sponsor_id: string | null
-          child_id: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          content: string
-          author: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          content?: string
-          author?: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "temoignage_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "temoignage_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-
       child_assignment_requests: {
         Row: {
           id: string;
@@ -2226,8 +2169,6 @@ export interface Database {
           }
         ];
       };
-
-      // ... keep existing code (all tables after child_assignment_requests)
     };
   };
 }
