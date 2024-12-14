@@ -38,8 +38,21 @@
 
     /* Better table handling on mobile */
     table {
-      @apply block w-full overflow-x-auto -mx-4 px-4;
+      @apply block w-full;
+      min-width: 100%;
+    }
+
+    /* Table cell improvements for mobile */
+    td, th {
+      @apply p-2 text-sm;
+      min-width: 120px;
+    }
+
+    /* Scrollable table container */
+    .overflow-x-auto {
+      @apply -mx-4 px-4;
       max-width: 100vw;
+      -webkit-overflow-scrolling: touch;
     }
 
     /* Card adjustments for mobile */
