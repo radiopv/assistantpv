@@ -4,6 +4,7 @@ import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
 import { AuthProvider } from "@/components/Auth/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Pages
 import Home from "@/pages/Home";
@@ -26,12 +27,15 @@ import Emails from "@/pages/admin/Emails";
 import FAQ from "@/pages/admin/FAQ";
 import Permissions from "@/pages/admin/Permissions";
 
+const queryClient = new QueryClient();
+
 const App = () => {
   return (
-    <Router>
-      <LanguageProvider>
-        <AuthProvider>
-          <Routes>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <LanguageProvider>
+          <AuthProvider>
+            <Routes>
             <Route element={<PublicLayout />}>
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
@@ -59,11 +63,12 @@ const App = () => {
               <Route path="/admin/faq" element={<FAQ />} />
               <Route path="/admin/permissions" element={<Permissions />} />
             </Route>
-          </Routes>
-          <Toaster />
-        </AuthProvider>
-      </LanguageProvider>
-    </Router>
+            </Routes>
+            <Toaster />
+          </AuthProvider>
+        </LanguageProvider>
+      </Router>
+    </QueryClientProvider>
   );
 };
 
