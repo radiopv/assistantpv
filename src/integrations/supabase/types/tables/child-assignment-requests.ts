@@ -1,4 +1,4 @@
-import { Json } from '../json';
+import { Database } from '../database';
 
 export interface ChildAssignmentRequest {
   id: string;
