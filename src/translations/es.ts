@@ -180,5 +180,29 @@ export const spanishTranslations = {
   // New upload messages
   uploadSuccess: "¡Fotos subidas con éxito!",
   uploadError: "Error al subir, por favor intente de nuevo.",
-  uploading: "Subiendo..."
+  uploading: "Subiendo...",
+
+  // Statistics page translations
+  childrenNeeds: "Necesidades de los niños",
+  editChildrenNeeds: "Editar y gestionar las necesidades de los niños",
+  loading: "Cargando...",
+  edit: "Editar",
+  save: "Guardar",
+  cancel: "Cancelar",
+  actions: "Acciones",
+  description: "Descripción",
+  story: "Historia",
+  comments: "Comentarios",
+  needs: "Necesidades",
+  childName: "Nombre del niño",
+  urgent: "Urgente",
+  normal: "Normal",
+  updateSuccess: "Actualización exitosa",
+  updateError: "Error al actualizar",
+  
+  // Mobile menu translations
+  menu: "Menú",
+  close: "Cerrar",
+  openMenu: "Abrir menú",
+  closeMenu: "Cerrar menú"
 };

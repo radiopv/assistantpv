@@ -70,30 +70,42 @@
       @apply bg-gray-100/50 transition-colors duration-200;
     }
 
-    /* Mobile menu improvements */
-    [data-radix-popper-content-wrapper] {
-      @apply !w-[90vw] max-w-[400px];
-    }
-
+    /* Enhanced mobile menu */
     .mobile-menu {
-      @apply !w-[90vw] max-w-[400px] !h-[100dvh];
+      @apply fixed inset-0 z-50 bg-white/95 backdrop-blur-sm;
+      height: 100dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* Sidebar mobile improvements */
-    [data-sidebar="sidebar"] {
-      @apply !w-[85vw] max-w-[400px];
+    .mobile-menu-content {
+      @apply p-6 space-y-6;
     }
 
-    [data-sidebar="menu-button"] {
-      @apply !min-h-[48px] !px-4;
+    .mobile-menu-header {
+      @apply flex items-center justify-between mb-6;
     }
 
-    [data-sidebar="group-label"] {
-      @apply !text-base !px-4 !py-2;
+    .mobile-menu-close {
+      @apply rounded-full p-2 hover:bg-gray-100;
     }
 
-    [data-sidebar="menu"] {
-      @apply !space-y-2;
+    .mobile-menu-items {
+      @apply space-y-4;
+    }
+
+    /* Improved table responsiveness */
+    .table-container {
+      @apply -mx-4 px-4 overflow-x-auto;
+    }
+
+    .table-wrapper {
+      @apply min-w-full rounded-lg border bg-white shadow-sm;
+    }
+
+    /* Better touch targets for buttons */
+    .table-action-button {
+      @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
     }
   }
 }

@@ -13,8 +13,10 @@ const Statistics = () => {
         </p>
       </div>
       
-      <div className="overflow-x-auto">
-        <ChildrenNeedsTable />
+      <div className="table-container">
+        <div className="table-wrapper">
+          <ChildrenNeedsTable />
+        </div>
       </div>
     </div>
   );
