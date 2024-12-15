@@ -1,3 +1,5 @@
+import { Json } from './json';
+
 export interface Database {
   public: {
     Tables: {
@@ -2172,3 +2174,4 @@ export interface Database {
     };
   };
 }
+

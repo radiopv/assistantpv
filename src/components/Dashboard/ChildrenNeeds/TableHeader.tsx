@@ -7,7 +7,7 @@ interface TableHeaderProps {
   onSort: (field: "childName" | "urgentNeeds") => void;
 }
 
-export const TableHeader = ({ onSort }: TableHeaderProps) => {
+export const ChildrenNeedsHeader = ({ onSort }: TableHeaderProps) => {
   const { t } = useLanguage();
 
   return (
@@ -19,7 +19,7 @@ export const TableHeader = ({ onSort }: TableHeaderProps) => {
             onClick={() => onSort("childName")}
             className="w-full table-action-button"
           >
-            {t("childName")}
+            {t("childNameStats")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </TableHead>
@@ -29,14 +29,14 @@ export const TableHeader = ({ onSort }: TableHeaderProps) => {
             onClick={() => onSort("urgentNeeds")}
             className="w-full table-action-button"
           >
-            {t("needs")}
+            {t("needsStats")}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </TableHead>
-        <TableHead>{t("description")}</TableHead>
-        <TableHead>{t("story")}</TableHead>
-        <TableHead>{t("comments")}</TableHead>
-        <TableHead className="w-[100px]">{t("actions")}</TableHead>
+        <TableHead>{t("descriptionStats")}</TableHead>
+        <TableHead>{t("storyStats")}</TableHead>
+        <TableHead>{t("commentsStats")}</TableHead>
+        <TableHead className="w-[100px]">{t("actionsStats")}</TableHead>
       </TableRow>
     </UITableHeader>
   );
