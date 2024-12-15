@@ -1,33 +1,35 @@
-export interface SponsorshipRequest {
-  child_id: string | null;
-  created_at: string | null;
-  email: string;
-  facebook_url: string | null;
-  full_name: string;
+import { Database } from './database';
+
+export interface Sponsorship {
   id: string;
-  motivation: string | null;
-  phone: string | null;
+  sponsor_id: string | null;
+  child_id: string | null;
+  start_date: string;
+  end_date: string | null;
   status: string;
-  terms_accepted: boolean;
+  is_anonymous: boolean | null;
+  created_at: string | null;
   updated_at: string | null;
-  city: string | null;
-  is_long_term: boolean | null;
-  is_one_time?: boolean | null;
+  comments: string | null;
+}
+
+export interface SponsorshipWithDetails extends Sponsorship {
+  sponsors: {
+    name: string;
+    email: string | null;
+    photo_url: string | null;
+  } | null;
+  children: {
+    name: string;
+    photo_url: string | null;
+    age: number;
+  } | null;
 }
 
 export type SponsorshipTables = {
-  sponsorship_requests: {
-    Row: SponsorshipRequest;
-    Insert: Partial<SponsorshipRequest> & Pick<SponsorshipRequest, 'email' | 'full_name' | 'status'>;
-    Update: Partial<SponsorshipRequest>;
-    Relationships: [
-      {
-        foreignKeyName: "sponsorship_requests_child_id_fkey";
-        columns: ["child_id"];
-        referencedRelation: "children";
-        referencedColumns: ["id"];
-        isOneToOne: false;
-      }
-    ];
+  sponsorships: {
+    Row: Sponsorship;
+    Insert: Partial<Sponsorship>;
+    Update: Partial<Sponsorship>;
   };
 };

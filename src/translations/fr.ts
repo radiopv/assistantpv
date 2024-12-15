@@ -1,37 +1,18 @@
-export const frenchTranslations = {
-  welcome: "Bienvenue",
-  user: "Utilisateur",
-  editProfile: "Modifier le profil",
-  logout: "Déconnexion",
-  dashboard: "Tableau de bord",
-  children: "Enfants",
-  donations: "Dons",
-  messages: "Messages",
-  settings: "Paramètres",
-  permissions: "Permissions",
-  translationManager: "Gestionnaire de traductions",
-  validation: "Validation",
-  statistics: "Statistiques",
-  emailManager: "Gestionnaire d'emails",
-  faq: "FAQ",
-  addChild: "Ajouter un enfant",
-  childPhotos: "Photos des enfants",
-  addDonation: "Ajouter un don",
-  back: "Retour",
-  save: "Enregistrer",
-  edit: "Modifier",
-  delete: "Supprimer",
-  deleteConfirmation: "Confirmer la suppression",
-  deleteWarning: "Cette action est irréversible. Êtes-vous sûr de vouloir continuer ?",
-  cancel: "Annuler",
-  confirm: "Confirmer",
-  loading: "Chargement...",
-  success: "Succès",
-  error: "Erreur",
-  sponsorshipRequestApproved: "La demande de parrainage a été approuvée",
-  errorApprovingRequest: "Une erreur est survenue lors de l'approbation de la demande",
-  sponsorshipRequestRejected: "La demande de parrainage a été rejetée",
-  errorRejectingRequest: "Une erreur est survenue lors du rejet de la demande",
-  manageDonations: "Gérer les dons et les parrainages",
-  sponsorshipManagement: "Gestion des parrainages"
+export default {
+  sponsorship: {
+    management: "Gestion des Parrainages",
+    newSponsorship: "Nouveau Parrainage",
+    createSponsorship: "Créer un parrainage",
+    deleteSponsorship: "Supprimer le parrainage",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce parrainage ? Cette action ne peut pas être annulée.",
+    sponsoredChild: "Enfant parrainé",
+    success: {
+      created: "Le parrainage a été créé avec succès",
+      deleted: "Le parrainage a été supprimé avec succès"
+    },
+    error: {
+      create: "Une erreur est survenue lors de la création du parrainage",
+      delete: "Une erreur est survenue lors de la suppression du parrainage"
+    }
+  }
 };
