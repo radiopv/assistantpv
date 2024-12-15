@@ -1,35 +1,27 @@
-import { Database } from './database';
+import { Json } from './json';
 
-export interface Sponsorship {
+export interface SponsorshipRequest {
   id: string;
-  sponsor_id: string | null;
   child_id: string | null;
-  start_date: string;
-  end_date: string | null;
+  email: string;
+  facebook_url: string | null;
+  full_name: string;
+  motivation: string | null;
+  phone: string | null;
   status: string;
-  is_anonymous: boolean | null;
-  created_at: string | null;
-  updated_at: string | null;
-  comments: string | null;
+  terms_accepted: boolean;
+  created_at?: string | null;
+  updated_at?: string | null;
+  city?: string | null;
+  is_long_term?: boolean | null;
 }
 
-export interface SponsorshipWithDetails extends Sponsorship {
-  sponsors: {
-    name: string;
-    email: string | null;
-    photo_url: string | null;
-  } | null;
-  children: {
-    name: string;
-    photo_url: string | null;
-    age: number;
-  } | null;
+export interface ChildAssignmentRequest {
+  id: string;
+  child_id: string;
+  requester_email: string;
+  name: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at?: string;
+  updated_at?: string;
 }
-
-export type SponsorshipTables = {
-  sponsorships: {
-    Row: Sponsorship;
-    Insert: Partial<Sponsorship>;
-    Update: Partial<Sponsorship>;
-  };
-};

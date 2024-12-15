@@ -1,3 +1,11 @@
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
 export type Database = {
   public: {
     Tables: {
@@ -137,7 +145,7 @@ export type Database = {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string;
         }
         Update: {
           child_id?: string | null
@@ -149,7 +157,7 @@ export type Database = {
           phone?: string | null
           sms_enabled?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string;
         }
         Relationships: [
           {
@@ -230,7 +238,7 @@ export type Database = {
           joined_at?: string | null
           role?: string | null
           room_id?: string
-          sponsor_id?: string
+          sponsor_id?: string;
         }
         Relationships: [
           {
@@ -365,7 +373,7 @@ export type Database = {
           sponsor_email?: string | null
           sponsor_facebook_url?: string | null
           sponsor_id?: number | null
-          sponsor_name?: string
+          sponsor_name?: string | null
           sponsor_phone?: string | null
           sponsorship_id?: number | null
           sponsorship_status?: string | null
@@ -519,11 +527,11 @@ export type Database = {
           contact_info?: Json | null
           created_at?: string | null
           id?: string
-          latitude?: number
-          longitude?: number
-          name?: string
-          type?: string
-          updated_at?: string | null
+          latitude?: number;
+          longitude?: number;
+          name?: string;
+          type?: string;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -600,7 +608,7 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string | null
           updated_at?: string | null
-          url?: string;
+          url: string;
         }
         Relationships: [
           {
@@ -718,9 +726,9 @@ export type Database = {
           id?: string
           last_attempt?: string | null
           notification_id?: string | null
-          recipient_email?: string
+          recipient_email?: string;
           status?: string | null
-          subject: string
+          subject: string;
           updated_at?: string | null
         }
         Relationships: [
@@ -760,7 +768,7 @@ export type Database = {
           days_after_start?: number | null
           id?: string
           name?: string
-          subject?: string
+          subject?: string;
           template_type?: string | null
           updated_at?: string | null
         }
@@ -794,7 +802,7 @@ export type Database = {
           display_order?: number | null
           id?: string
           is_active?: boolean | null
-          question?: string
+          question?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -890,14 +898,14 @@ export type Database = {
           last_checked?: string | null
           page_url: string
           redirect_url?: string | null
-          status: string
+          status: string;
           updated_at?: string | null
           url: string;
         }
         Update: {
           created_at?: string | null
           error_message?: string | null
-          id?: string
+          id?: string;
           last_checked?: string | null
           page_url?: string;
           redirect_url?: string | null
@@ -1083,11 +1091,11 @@ export type Database = {
           content?: string
           created_at?: string | null
           created_by?: string | null
-          created_by_role?: string
+          created_by_role?: string;
           id?: string
           is_global?: boolean | null
           name?: string
-          subject?: string
+          subject?: string;
           updated_at?: string | null
         }
         Relationships: [
@@ -1143,7 +1151,7 @@ export type Database = {
           recipient_id?: string | null
           sender_id?: string | null
           sender_role?: string | null
-          subject: string
+          subject?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1815,15 +1823,15 @@ export type Database = {
           created_at?: string | null
           email?: string
           facebook_url?: string | null
-          full_name?: string
-          id?: string
+          full_name?: string;
+          id?: string;
           motivation?: string | null
           phone?: string | null
-          status?: string
-          terms_accepted?: boolean
-          updated_at?: string | null
-          city?: string | null
-          is_long_term?: boolean | null
+          status?: string;
+          terms_accepted?: boolean;
+          updated_at?: string | null;
+          city?: string | null;
+          is_long_term?: boolean | null;
         }
         Relationships: [
           {
