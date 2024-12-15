@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./use-toast";
-import { SponsorshipWithDetails } from "@/integrations/supabase/types/sponsorship";
+import { SponsorshipWithDetails, GroupedSponsorship } from "@/integrations/supabase/types/sponsorship";
 
 export const useSponsorshipManagement = () => {
   const { toast } = useToast();
@@ -15,11 +15,13 @@ export const useSponsorshipManagement = () => {
         .select(`
           *,
           sponsors (
+            id,
             name,
             email,
             photo_url
           ),
           children (
+            id,
             name,
             photo_url,
             age
@@ -28,7 +30,30 @@ export const useSponsorshipManagement = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as SponsorshipWithDetails[];
+
+      // Group sponsorships by sponsor email
+      const groupedData = (data as SponsorshipWithDetails[]).reduce<GroupedSponsorship[]>((acc, curr) => {
+        const existingGroup = acc.find(g => g.sponsor.email === curr.sponsors.email);
+        
+        if (existingGroup) {
+          existingGroup.sponsorships.push({
+            id: curr.id,
+            child: curr.children
+          });
+        } else {
+          acc.push({
+            sponsor: curr.sponsors,
+            sponsorships: [{
+              id: curr.id,
+              child: curr.children
+            }]
+          });
+        }
+        
+        return acc;
+      }, []);
+
+      return groupedData;
     }
   });
 
@@ -47,13 +72,7 @@ export const useSponsorshipManagement = () => {
   });
 
   const createSponsorship = useMutation({
-    mutationFn: async ({ 
-      sponsor_id, 
-      child_id 
-    }: { 
-      sponsor_id: string; 
-      child_id: string; 
-    }) => {
+    mutationFn: async ({ sponsor_id, child_id }: { sponsor_id: string; child_id: string; }) => {
       const { error } = await supabase
         .from('sponsorships')
         .insert({
