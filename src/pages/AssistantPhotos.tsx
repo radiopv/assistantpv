@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { ChildSelector } from "@/components/AssistantPhotos/ChildSelector";
-import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { toast } from "sonner";
 import { logActivity } from "@/utils/activity-logger";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ChildPhotoAlbum } from "@/components/AssistantPhotos/ChildPhotoAlbum";
 
 const AssistantPhotos = () => {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
@@ -15,14 +16,18 @@ const AssistantPhotos = () => {
 
   const translations = {
     fr: {
-      title: "Ajout photos et vidéos enfants",
-      instructions: "Cette page vous permet d'ajouter des photos et des vidéos à l'album d'un enfant. Ces médias seront visibles par le parrain dans le profil de l'enfant qu'il parraine.",
+      title: "Gestion des photos et vidéos",
+      instructions: "Cette page vous permet de gérer les photos et vidéos des enfants. Sélectionnez un enfant pour voir son album ou ajouter de nouveaux médias.",
       photosAdded: "Médias ajoutés avec succès et parrain notifié",
+      allAlbums: "Tous les albums",
+      upload: "Ajouter des médias",
     },
     es: {
-      title: "Agregar fotos y videos de niños",
-      instructions: "Esta página le permite agregar fotos y videos al álbum de un niño. Estos medios serán visibles para el padrino en el perfil del niño que apadrina.",
+      title: "Gestión de fotos y videos",
+      instructions: "Esta página le permite gestionar las fotos y videos de los niños. Seleccione un niño para ver su álbum o agregar nuevos medios.",
       photosAdded: "Medios agregados con éxito y padrino notificado",
+      allAlbums: "Todos los álbumes",
+      upload: "Agregar medios",
     }
   };
 
@@ -83,13 +88,23 @@ const AssistantPhotos = () => {
           />
 
           {selectedChild && (
-            <>
-              <PhotoUploader
-                childId={selectedChild}
-                onUploadSuccess={handleUploadSuccess}
-              />
-              <AlbumMediaGrid childId={selectedChild} />
-            </>
+            <Tabs defaultValue="album" className="w-full">
+              <TabsList>
+                <TabsTrigger value="album">{t.allAlbums}</TabsTrigger>
+                <TabsTrigger value="upload">{t.upload}</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="album">
+                <ChildPhotoAlbum childId={selectedChild} />
+              </TabsContent>
+
+              <TabsContent value="upload">
+                <PhotoUploader
+                  childId={selectedChild}
+                  onUploadSuccess={handleUploadSuccess}
+                />
+              </TabsContent>
+            </Tabs>
           )}
         </div>
       </Card>

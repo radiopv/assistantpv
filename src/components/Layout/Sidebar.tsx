@@ -54,14 +54,14 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
         },
         {
           href: "/assistant/photos",
-          label: t("addChildPhotos"),
+          label: t("childPhotos"),
           icon: Image,
           show: true,
         },
         {
-          href: "/admin/statistics",
-          label: "Édition des besoins",
-          icon: Edit,
+          href: "/sponsorship-management",
+          label: t("sponsorshipManagement"),
+          icon: Users,
           show: true,
         }
       ]
