@@ -1,3 +1,5 @@
+import { Json } from './json';
+
 export interface SponsorshipWithDetails {
   id: string;
   sponsor: {
@@ -12,6 +14,24 @@ export interface SponsorshipWithDetails {
     photo_url: string | null;
     age: number;
   };
+}
+
+export interface GroupedSponsorship {
+  sponsor: {
+    id: string;
+    name: string;
+    email: string;
+    photo_url: string | null;
+  };
+  sponsorships: Array<{
+    id: string;
+    child: {
+      id: string;
+      name: string;
+      photo_url: string | null;
+      age: number;
+    };
+  }>;
 }
 
 export interface ChildWithSponsorDetails {
