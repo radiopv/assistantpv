@@ -24,8 +24,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const SponsorshipManagement = () => {
+  const { t } = useLanguage();
   const {
     sponsorships,
     allChildren,
@@ -52,22 +54,21 @@ const SponsorshipManagement = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      {/* Sponsors Section */}
       <section>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Liste des Parrains</h2>
+          <h2 className="text-2xl font-bold">{t("sponsorshipManagement.sponsorsList")}</h2>
           <Dialog>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                Nouveau Parrainage
+                {t("sponsorshipManagement.newSponsorship")}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Créer un nouveau parrainage</DialogTitle>
+                <DialogTitle>{t("sponsorshipManagement.newSponsorship")}</DialogTitle>
                 <DialogDescription>
-                  Sélectionnez un enfant à parrainer
+                  {t("sponsorshipManagement.selectChild")}
                 </DialogDescription>
               </DialogHeader>
               <ScrollArea className="h-[400px]">
@@ -82,7 +83,7 @@ const SponsorshipManagement = () => {
                         <div>
                           <h3 className="text-lg font-semibold">{child.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {child.age} ans
+                            {child.age} {t("years")}
                           </p>
                         </div>
                       </div>
@@ -108,13 +109,12 @@ const SponsorshipManagement = () => {
         </div>
       </section>
 
-      {/* Children Section */}
       <section className="mt-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Liste Complète des Enfants</h2>
+          <h2 className="text-2xl font-bold">{t("sponsorshipManagement.childrenList")}</h2>
           <div className="flex gap-4">
             <Input
-              placeholder="Rechercher un enfant ou un parrain..."
+              placeholder={t("sponsorshipManagement.searchPlaceholder")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-64"
@@ -127,21 +127,21 @@ const SponsorshipManagement = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nom</TableHead>
-                <TableHead>Âge</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Parrain Actuel</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t("name")}</TableHead>
+                <TableHead>{t("age")}</TableHead>
+                <TableHead>{t("status")}</TableHead>
+                <TableHead>{t("currentSponsor")}</TableHead>
+                <TableHead>{t("actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredChildren?.map((child) => (
                 <TableRow key={child.id}>
                   <TableCell className="font-medium">{child.name}</TableCell>
-                  <TableCell>{child.age} ans</TableCell>
+                  <TableCell>{child.age} {t("years")}</TableCell>
                   <TableCell>
                     <Badge variant={child.is_sponsored ? "default" : "secondary"}>
-                      {child.is_sponsored ? "Parrainé" : "Non Parrainé"}
+                      {child.is_sponsored ? t("sponsorshipManagement.status.sponsored") : t("sponsorshipManagement.status.notSponsored")}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -153,7 +153,7 @@ const SponsorshipManagement = () => {
                         <span>{child.sponsor.name}</span>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">Aucun parrain</span>
+                      <span className="text-muted-foreground">{t("sponsorshipManagement.noSponsor")}</span>
                     )}
                   </TableCell>
                   <TableCell>
@@ -162,7 +162,6 @@ const SponsorshipManagement = () => {
                       size="sm"
                       onClick={() => {
                         if (child.is_sponsored) {
-                          // Find the sponsorship ID and delete it
                           const sponsorship = sponsorships?.find(s => 
                             s.sponsorships.some(sp => sp.child.id === child.id)
                           );
@@ -173,12 +172,11 @@ const SponsorshipManagement = () => {
                             }
                           }
                         } else {
-                          setSelectedSponsor(null); // Reset selected sponsor
-                          // Open dialog to select a sponsor
+                          setSelectedSponsor(null);
                         }
                       }}
                     >
-                      {child.is_sponsored ? "Retirer le parrain" : "Ajouter un parrain"}
+                      {child.is_sponsored ? t("sponsorshipManagement.actions.removeSponsor") : t("sponsorshipManagement.actions.addSponsor")}
                     </Button>
                   </TableCell>
                 </TableRow>
