@@ -6,13 +6,11 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { Languages } from "lucide-react";
-import { frenchTranslations } from "@/translations/fr";
-import { spanishTranslations } from "@/translations/es";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TranslationScanner } from "./TranslationScanner";
 
 type TranslationType = {
-  [key: string]: string | { [key: string]: string | { [key: string]: string } };
+  [key: string]: string | TranslationType;
 };
 
 export const TranslationManager = () => {
@@ -21,8 +19,8 @@ export const TranslationManager = () => {
     fr: TranslationType;
     es: TranslationType;
   }>({
-    fr: { ...frenchTranslations },
-    es: { ...spanishTranslations }
+    fr: {},
+    es: {}
   });
   const [scanning, setScanning] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
@@ -39,11 +37,8 @@ export const TranslationManager = () => {
 
   const handleSave = () => {
     try {
-      // Here you would typically save to a backend
-      // For now, we'll just show the current state
       console.log('Current translations:', translations);
       
-      // Check for duplicate keys
       const frKeys = Object.keys(translations.fr);
       const esKeys = Object.keys(translations.es);
       const hasDuplicates = frKeys.length !== new Set(frKeys).size || 
@@ -75,6 +70,27 @@ export const TranslationManager = () => {
     }
   };
 
+  const renderTranslationInput = (key: string, value: string | TranslationType) => {
+    if (typeof value === 'string') {
+      return (
+        <div key={key} className="grid grid-cols-2 gap-4">
+          <Input 
+            value={key} 
+            disabled 
+            className="bg-gray-50"
+          />
+          <Input
+            value={value}
+            onChange={(e) => handleTranslationChange('fr', key, e.target.value)}
+          />
+        </div>
+      );
+    }
+    return Object.entries(value).map(([subKey, subValue]) => 
+      renderTranslationInput(`${key}.${subKey}`, subValue as string)
+    );
+  };
+
   return (
     <div className="space-y-6">
       <Card className="p-6">
@@ -99,19 +115,9 @@ export const TranslationManager = () => {
           <TabsContent value="fr">
             <ScrollArea className="h-[600px] pr-4">
               <div className="space-y-4">
-                {Object.entries(translations.fr).map(([key, value]) => (
-                  <div key={key} className="grid grid-cols-2 gap-4">
-                    <Input 
-                      value={key} 
-                      disabled 
-                      className="bg-gray-50"
-                    />
-                    <Input
-                      value={value}
-                      onChange={(e) => handleTranslationChange('fr', key, e.target.value)}
-                    />
-                  </div>
-                ))}
+                {Object.entries(translations.fr).map(([key, value]) => 
+                  renderTranslationInput(key, value)
+                )}
               </div>
             </ScrollArea>
           </TabsContent>
@@ -119,19 +125,9 @@ export const TranslationManager = () => {
           <TabsContent value="es">
             <ScrollArea className="h-[600px] pr-4">
               <div className="space-y-4">
-                {Object.entries(translations.es).map(([key, value]) => (
-                  <div key={key} className="grid grid-cols-2 gap-4">
-                    <Input 
-                      value={key} 
-                      disabled 
-                      className="bg-gray-50"
-                    />
-                    <Input
-                      value={value}
-                      onChange={(e) => handleTranslationChange('es', key, e.target.value)}
-                    />
-                  </div>
-                ))}
+                {Object.entries(translations.es).map(([key, value]) => 
+                  renderTranslationInput(key, value)
+                )}
               </div>
             </ScrollArea>
           </TabsContent>

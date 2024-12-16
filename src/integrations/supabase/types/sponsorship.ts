@@ -1,5 +1,3 @@
-import { Database } from './database';
-
 export interface SponsorshipWithDetails {
   id: string;
   sponsor: {
@@ -40,7 +38,7 @@ export interface ChildWithSponsorDetails {
   age: number;
   photo_url: string | null;
   is_sponsored: boolean;
-  sponsor?: {
+  sponsor: {
     id: string;
     name: string;
     email: string;

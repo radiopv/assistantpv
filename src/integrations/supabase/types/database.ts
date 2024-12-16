@@ -1,6 +1,9 @@
+import { ChildAssignmentRequestTable } from './child-assignment-requests';
+
 export interface Database {
   public: {
     Tables: {
+      child_assignment_requests: ChildAssignmentRequestTable;
       children: {
         Row: {
           id: string;
