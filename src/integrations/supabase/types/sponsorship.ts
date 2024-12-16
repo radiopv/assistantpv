@@ -20,7 +20,12 @@ export interface GroupedSponsorship {
   }>;
 }
 
-export interface ChildWithSponsorDetails extends Children['Row'] {
+export interface ChildWithSponsorDetails {
+  id: string;
+  name: string;
+  age: number;
+  photo_url: string | null;
+  is_sponsored: boolean;
   sponsor: Sponsor['Row'] | null;
 }
 

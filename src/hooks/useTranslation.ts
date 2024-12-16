@@ -3,9 +3,9 @@ import { frenchTranslations } from "@/translations/fr";
 import { spanishTranslations } from "@/translations/es";
 
 export const useTranslation = () => {
-  const { currentLanguage } = useLanguage();
+  const { language } = useLanguage();
 
-  const translations = currentLanguage === 'fr' ? frenchTranslations : spanishTranslations;
+  const translations = language === 'fr' ? frenchTranslations : spanishTranslations;
 
   return { translations };
 };
