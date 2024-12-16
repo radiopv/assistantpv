@@ -1,50 +1,27 @@
-import { Json } from './json';
+import { Children } from './children';
+import { Sponsor } from './sponsor';
 
 export interface SponsorshipWithDetails {
   id: string;
-  sponsor: {
-    id: string;
-    name: string;
-    email: string;
-    photo_url: string | null;
-  };
-  child: {
-    id: string;
-    name: string;
-    photo_url: string | null;
-    age: number;
-  };
+  sponsor: Sponsor['Row'];
+  child: Children['Row'];
+  start_date: string;
+  end_date: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface GroupedSponsorship {
-  sponsor: {
-    id: string;
-    name: string;
-    email: string;
-    photo_url: string | null;
-  };
+  sponsor: Sponsor['Row'];
   sponsorships: Array<{
     id: string;
-    child: {
-      id: string;
-      name: string;
-      photo_url: string | null;
-      age: number;
-    };
+    child: Children['Row'];
   }>;
 }
 
-export interface ChildWithSponsorDetails {
-  id: string;
-  name: string;
-  age: number;
-  photo_url: string | null;
-  is_sponsored: boolean;
-  sponsor: {
-    id: string;
-    name: string;
-    email: string;
-  } | null;
+export interface ChildWithSponsorDetails extends Children['Row'] {
+  sponsor: Sponsor['Row'] | null;
 }
 
 export interface SponsorshipRequest {

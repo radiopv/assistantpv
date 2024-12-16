@@ -6,7 +6,44 @@ import { Json } from './json';
 export interface Database {
   public: {
     Tables: {
-      child_assignment_requests: ChildAssignmentRequestTable;
+      child_assignment_requests: {
+        Row: {
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<{
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at: string;
+          updated_at: string;
+        }>;
+        Relationships: [
+          {
+            foreignKeyName: "child_assignment_requests_child_id_fkey";
+            columns: ["child_id"];
+            isOneToOne: false;
+            referencedRelation: "children";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
       children: Children;
       sponsors: Sponsor;
       sponsorship_requests: {
