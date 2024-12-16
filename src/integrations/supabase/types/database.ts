@@ -197,5 +197,77 @@ export interface Database {
         };
       };
     };
+    Views: {
+      donation_statistics: {
+        Row: {
+          completed_donations: number | null;
+          pending_donations: number | null;
+          success_rate: number | null;
+          total_donations: number | null;
+          total_people_helped: number | null;
+        };
+      };
+      statistics_summary: {
+        Row: {
+          children_stats: Json | null;
+          donation_stats: Json | null;
+          refresh_timestamp: string | null;
+          sponsor_stats: Json | null;
+        };
+      };
+    };
+    Functions: {
+      approve_sponsorship_request: {
+        Args: {
+          request_id: string;
+          admin_id: string;
+        };
+        Returns: void;
+      };
+      reject_sponsorship_request: {
+        Args: {
+          request_id: string;
+          admin_id: string;
+          rejection_reason?: string;
+        };
+        Returns: void;
+      };
+      create_notification: {
+        Args: {
+          p_recipient_id: string;
+          p_type: string;
+          p_title: string;
+          p_content: string;
+          p_link?: string;
+        };
+        Returns: string;
+      };
+      send_notification: {
+        Args: {
+          p_recipient_id: string;
+          p_type: string;
+          p_title: string;
+          p_content: string;
+          p_link?: string;
+        };
+        Returns: string;
+      };
+      check_permission: {
+        Args: {
+          user_id: string;
+          required_permission: string;
+        };
+        Returns: boolean;
+      };
+      is_admin: {
+        Args: {
+          user_id: string;
+        };
+        Returns: boolean;
+      };
+    };
+    Enums: {
+      user_role: "admin" | "assistant" | "sponsor" | "visitor";
+    };
   };
 }

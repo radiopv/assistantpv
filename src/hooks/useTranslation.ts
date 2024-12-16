@@ -4,8 +4,7 @@ import { spanishTranslations } from "@/translations/es";
 
 export const useTranslation = () => {
   const { language } = useLanguage();
-
-  const translations = language === 'fr' ? frenchTranslations : spanishTranslations;
-
-  return { translations };
+  return {
+    translations: language === 'fr' ? frenchTranslations : spanishTranslations
+  };
 };
