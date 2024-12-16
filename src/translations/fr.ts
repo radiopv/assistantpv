@@ -1,20 +1,20 @@
 export const frenchTranslations = {
   sponsorshipManagement: {
-    sponsorsList: "Liste des Parrains",
-    childrenList: "Liste Complète des Enfants",
-    newSponsorship: "Nouveau Parrainage",
-    selectChild: "Sélectionnez un enfant à parrainer",
+    sponsorsList: "Liste des parrains",
+    childrenList: "Liste des enfants",
+    newSponsorship: "Nouveau parrainage",
+    selectChild: "Sélectionner un enfant",
     searchPlaceholder: "Rechercher un enfant ou un parrain...",
     status: {
       sponsored: "Parrainé",
-      notSponsored: "Non Parrainé"
+      notSponsored: "Non parrainé"
     },
     noSponsor: "Aucun parrain",
     actions: {
-      removeSponsor: "Retirer le parrain",
-      addSponsor: "Ajouter un parrain"
+      edit: "Modifier",
+      delete: "Supprimer",
+      addSponsor: "Ajouter un parrain",
+      removeSponsor: "Retirer le parrain"
     }
   }
-} as const;
-
-export default frenchTranslations;
+};

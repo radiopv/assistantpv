@@ -14,24 +14,6 @@ export interface SponsorshipWithDetails {
   };
 }
 
-export interface GroupedSponsorship {
-  sponsor: {
-    id: string;
-    name: string;
-    email: string;
-    photo_url: string | null;
-  };
-  sponsorships: Array<{
-    id: string;
-    child: {
-      id: string;
-      name: string;
-      photo_url: string | null;
-      age: number;
-    };
-  }>;
-}
-
 export interface ChildWithSponsorDetails {
   id: string;
   name: string;

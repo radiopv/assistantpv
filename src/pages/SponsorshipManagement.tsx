@@ -39,7 +39,7 @@ const SponsorshipManagement = () => {
 
   const filteredChildren = allChildren?.filter(child => 
     child.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    child.sponsors?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    child.sponsor?.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (isLoading) {
@@ -145,12 +145,12 @@ const SponsorshipManagement = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {child.sponsors ? (
+                    {child.sponsor ? (
                       <div className="flex items-center gap-2">
                         <Avatar className="w-6 h-6">
-                          <AvatarFallback>{child.sponsors.name[0]}</AvatarFallback>
+                          <AvatarFallback>{child.sponsor.name[0]}</AvatarFallback>
                         </Avatar>
-                        <span>{child.sponsors.name}</span>
+                        <span>{child.sponsor.name}</span>
                       </div>
                     ) : (
                       <span className="text-muted-foreground">Aucun parrain</span>

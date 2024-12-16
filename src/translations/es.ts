@@ -1,20 +1,20 @@
 export const spanishTranslations = {
   sponsorshipManagement: {
-    sponsorsList: "Lista de Padrinos",
-    childrenList: "Lista Completa de Niños",
-    newSponsorship: "Nuevo Apadrinamiento",
-    selectChild: "Seleccione un niño para apadrinar",
+    sponsorsList: "Lista de padrinos",
+    childrenList: "Lista de niños",
+    newSponsorship: "Nuevo apadrinamiento",
+    selectChild: "Seleccionar niño",
     searchPlaceholder: "Buscar un niño o padrino...",
     status: {
       sponsored: "Apadrinado",
-      notSponsored: "Sin Padrino"
+      notSponsored: "Sin padrino"
     },
     noSponsor: "Sin padrino",
     actions: {
-      removeSponsor: "Quitar padrino",
-      addSponsor: "Agregar padrino"
+      edit: "Editar",
+      delete: "Eliminar",
+      addSponsor: "Agregar padrino",
+      removeSponsor: "Quitar padrino"
     }
   }
-} as const;
-
-export default spanishTranslations;
+};
