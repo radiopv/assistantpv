@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { SponsorshipWithDetails, GroupedSponsorship } from "@/integrations/supabase/types/sponsorship";
+import { SponsorshipWithDetails, GroupedSponsorship, ChildWithSponsorDetails } from "@/integrations/supabase/types/sponsorship";
 
 export const useSponsorshipManagement = () => {
   const queryClient = useQueryClient();
@@ -30,36 +30,20 @@ export const useSponsorshipManagement = () => {
 
       if (error) throw error;
 
-      // Group sponsorships by sponsor email
       const groupedData = (data as SponsorshipWithDetails[]).reduce<GroupedSponsorship[]>((acc, curr) => {
         const existingGroup = acc.find(g => g.sponsor.email === curr.sponsors.email);
         
         if (existingGroup) {
           existingGroup.sponsorships.push({
             id: curr.id,
-            child: {
-              id: curr.children.id,
-              name: curr.children.name,
-              photo_url: curr.children.photo_url,
-              age: curr.children.age
-            }
+            child: curr.children
           });
         } else {
           acc.push({
-            sponsor: {
-              id: curr.sponsors.id,
-              name: curr.sponsors.name,
-              email: curr.sponsors.email,
-              photo_url: curr.sponsors.photo_url
-            },
+            sponsor: curr.sponsors,
             sponsorships: [{
               id: curr.id,
-              child: {
-                id: curr.children.id,
-                name: curr.children.name,
-                photo_url: curr.children.photo_url,
-                age: curr.children.age
-              }
+              child: curr.children
             }]
           });
         }
@@ -71,22 +55,28 @@ export const useSponsorshipManagement = () => {
     }
   });
 
-  const { data: availableChildren, isLoading: childrenLoading } = useQuery({
-    queryKey: ['available-children'],
+  const { data: allChildren, isLoading: childrenLoading } = useQuery({
+    queryKey: ['all-children'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
-        .select('*')
-        .eq('is_sponsored', false)
+        .select(`
+          *,
+          sponsors (
+            id,
+            name,
+            email
+          )
+        `)
         .order('name');
 
       if (error) throw error;
-      return data;
+      return data as ChildWithSponsorDetails[];
     }
   });
 
   const createSponsorship = useMutation({
-    mutationFn: async ({ sponsor_id, child_id }: { sponsor_id: string; child_id: string; }) => {
+    mutationFn: async ({ sponsor_id, child_id }: { sponsor_id: string; child_id: string }) => {
       const { error } = await supabase
         .from('sponsorships')
         .insert({
@@ -100,7 +90,7 @@ export const useSponsorshipManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
-      queryClient.invalidateQueries({ queryKey: ['available-children'] });
+      queryClient.invalidateQueries({ queryKey: ['all-children'] });
       toast.success("Le parrainage a été créé avec succès");
     },
     onError: () => {
@@ -119,7 +109,7 @@ export const useSponsorshipManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
-      queryClient.invalidateQueries({ queryKey: ['available-children'] });
+      queryClient.invalidateQueries({ queryKey: ['all-children'] });
       toast.success("Le parrainage a été supprimé avec succès");
     },
     onError: () => {
@@ -129,7 +119,7 @@ export const useSponsorshipManagement = () => {
 
   return {
     sponsorships,
-    availableChildren,
+    allChildren,
     isLoading: sponsorshipsLoading || childrenLoading,
     createSponsorship,
     deleteSponsorship

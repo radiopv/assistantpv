@@ -1,18 +1,18 @@
 export default {
-  sponsorship: {
-    management: "Gestión de Apadrinamientos",
+  sponsorshipManagement: {
+    sponsorsList: "Lista de Padrinos",
+    childrenList: "Lista Completa de Niños",
     newSponsorship: "Nuevo Apadrinamiento",
-    createSponsorship: "Crear nuevo apadrinamiento",
-    deleteSponsorship: "Eliminar apadrinamiento",
-    deleteConfirmation: "¿Está seguro de que desea eliminar este apadrinamiento? Esta acción no se puede deshacer.",
-    sponsoredChild: "Niño apadrinado",
-    success: {
-      created: "El apadrinamiento se ha creado con éxito",
-      deleted: "El apadrinamiento se ha eliminado con éxito"
+    selectChild: "Seleccione un niño para apadrinar",
+    searchPlaceholder: "Buscar un niño o padrino...",
+    status: {
+      sponsored: "Apadrinado",
+      notSponsored: "Sin Padrino"
     },
-    error: {
-      create: "Se produjo un error al crear el apadrinamiento",
-      delete: "Se produjo un error al eliminar el apadrinamiento"
+    noSponsor: "Sin padrino",
+    actions: {
+      removeSponsor: "Quitar padrino",
+      addSponsor: "Agregar padrino"
     }
   }
 };

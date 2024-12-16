@@ -1,18 +1,18 @@
 export default {
-  sponsorship: {
-    management: "Gestion des Parrainages",
+  sponsorshipManagement: {
+    sponsorsList: "Liste des Parrains",
+    childrenList: "Liste Complète des Enfants",
     newSponsorship: "Nouveau Parrainage",
-    createSponsorship: "Créer un nouveau parrainage",
-    deleteSponsorship: "Supprimer le parrainage",
-    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce parrainage ? Cette action ne peut pas être annulée.",
-    sponsoredChild: "Enfant parrainé",
-    success: {
-      created: "Le parrainage a été créé avec succès",
-      deleted: "Le parrainage a été supprimé avec succès"
+    selectChild: "Sélectionnez un enfant à parrainer",
+    searchPlaceholder: "Rechercher un enfant ou un parrain...",
+    status: {
+      sponsored: "Parrainé",
+      notSponsored: "Non Parrainé"
     },
-    error: {
-      create: "Une erreur est survenue lors de la création du parrainage",
-      delete: "Une erreur est survenue lors de la suppression du parrainage"
+    noSponsor: "Aucun parrain",
+    actions: {
+      removeSponsor: "Retirer le parrain",
+      addSponsor: "Ajouter un parrain"
     }
   }
 };

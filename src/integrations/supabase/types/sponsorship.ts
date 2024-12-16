@@ -1,21 +1,22 @@
 import { Database } from './database';
 
-export type SponsorshipWithDetails = Database['public']['Tables']['sponsorships']['Row'] & {
-  sponsors: {
+export interface SponsorshipWithDetails {
+  id: string;
+  sponsor: {
     id: string;
     name: string;
     email: string;
     photo_url: string | null;
   };
-  children: {
+  child: {
     id: string;
     name: string;
     photo_url: string | null;
     age: number;
   };
-};
+}
 
-export type GroupedSponsorship = {
+export interface GroupedSponsorship {
   sponsor: {
     id: string;
     name: string;
@@ -31,14 +32,12 @@ export type GroupedSponsorship = {
       age: number;
     };
   }>;
-};
+}
 
-export interface SponsorshipRequest {
-  id: string;
-  child_id: string;
-  requester_email: string;
-  name: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at?: string;
-  updated_at?: string;
+export interface ChildWithSponsorDetails extends Database['public']['Tables']['children']['Row'] {
+  sponsor?: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
 }
