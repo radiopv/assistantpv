@@ -15,6 +15,6 @@ export const frenchTranslations = {
       addSponsor: "Ajouter un parrain"
     }
   }
-};
+} as const;
 
 export default frenchTranslations;

@@ -34,7 +34,12 @@ export interface GroupedSponsorship {
   }>;
 }
 
-export interface ChildWithSponsorDetails extends Database['public']['Tables']['children']['Row'] {
+export interface ChildWithSponsorDetails {
+  id: string;
+  name: string;
+  age: number;
+  photo_url: string | null;
+  is_sponsored: boolean;
   sponsor?: {
     id: string;
     name: string;
@@ -49,4 +54,11 @@ export interface SponsorshipRequest {
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  city?: string;
+  motivation?: string;
+  is_long_term: boolean;
+  facebook_url?: string;
 }

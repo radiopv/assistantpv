@@ -15,6 +15,6 @@ export const spanishTranslations = {
       addSponsor: "Agregar padrino"
     }
   }
-};
+} as const;
 
 export default spanishTranslations;

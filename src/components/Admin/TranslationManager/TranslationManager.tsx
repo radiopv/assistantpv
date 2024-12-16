@@ -12,7 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { TranslationScanner } from "./TranslationScanner";
 
 type TranslationType = {
-  [key: string]: string;
+  [key: string]: string | { [key: string]: string | { [key: string]: string } };
 };
 
 export const TranslationManager = () => {
