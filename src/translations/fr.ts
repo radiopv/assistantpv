@@ -1,4 +1,4 @@
-export default {
+export const frenchTranslations = {
   sponsorship: {
     management: "Gestion des Parrainages",
     newSponsorship: "Nouveau Parrainage",

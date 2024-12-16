@@ -1,6 +1,4 @@
-import { Database } from './database';
-
-export type SponsorshipWithDetails = Database['public']['Tables']['sponsorships']['Row'] & {
+export interface SponsorshipWithDetails {
   sponsors: {
     id: string;
     name: string;
@@ -13,7 +11,7 @@ export type SponsorshipWithDetails = Database['public']['Tables']['sponsorships'
     photo_url: string | null;
     age: number;
   };
-};
+}
 
 export type GroupedSponsorship = {
   sponsor: {
@@ -38,6 +36,13 @@ export interface SponsorshipRequest {
   child_id: string;
   requester_email: string;
   name: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  city: string;
+  motivation: string;
+  facebook_url?: string;
+  is_long_term: boolean;
   status: 'pending' | 'approved' | 'rejected';
   created_at?: string;
   updated_at?: string;
