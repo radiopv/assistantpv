@@ -16,8 +16,7 @@ import {
   Image,
   CheckCircle2,
   Mail,
-  Edit,
-  Heart
+  Edit
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -62,7 +61,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
         {
           href: "/sponsorship-management",
           label: t("sponsorshipManagement"),
-          icon: Heart,
+          icon: Users,
           show: true,
         }
       ]
