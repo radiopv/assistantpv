@@ -1,10 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "./use-toast";
+import { toast } from "sonner";
 import { SponsorshipWithDetails, GroupedSponsorship } from "@/integrations/supabase/types/sponsorship";
 
 export const useSponsorshipManagement = () => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery({
@@ -38,14 +37,29 @@ export const useSponsorshipManagement = () => {
         if (existingGroup) {
           existingGroup.sponsorships.push({
             id: curr.id,
-            child: curr.children
+            child: {
+              id: curr.children.id,
+              name: curr.children.name,
+              photo_url: curr.children.photo_url,
+              age: curr.children.age
+            }
           });
         } else {
           acc.push({
-            sponsor: curr.sponsors,
+            sponsor: {
+              id: curr.sponsors.id,
+              name: curr.sponsors.name,
+              email: curr.sponsors.email,
+              photo_url: curr.sponsors.photo_url
+            },
             sponsorships: [{
               id: curr.id,
-              child: curr.children
+              child: {
+                id: curr.children.id,
+                name: curr.children.name,
+                photo_url: curr.children.photo_url,
+                age: curr.children.age
+              }
             }]
           });
         }
@@ -87,17 +101,10 @@ export const useSponsorshipManagement = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
       queryClient.invalidateQueries({ queryKey: ['available-children'] });
-      toast({
-        title: "Succès",
-        description: "Le parrainage a été créé avec succès",
-      });
+      toast.success("Le parrainage a été créé avec succès");
     },
     onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la création du parrainage",
-      });
+      toast.error("Une erreur est survenue lors de la création du parrainage");
     }
   });
 
@@ -113,17 +120,10 @@ export const useSponsorshipManagement = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
       queryClient.invalidateQueries({ queryKey: ['available-children'] });
-      toast({
-        title: "Succès",
-        description: "Le parrainage a été supprimé avec succès",
-      });
+      toast.success("Le parrainage a été supprimé avec succès");
     },
     onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression du parrainage",
-      });
+      toast.error("Une erreur est survenue lors de la suppression du parrainage");
     }
   });
 

@@ -1,8 +1,8 @@
-export const frenchTranslations = {
+export default {
   sponsorship: {
     management: "Gestion des Parrainages",
     newSponsorship: "Nouveau Parrainage",
-    createSponsorship: "Créer un parrainage",
+    createSponsorship: "Créer un nouveau parrainage",
     deleteSponsorship: "Supprimer le parrainage",
     deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce parrainage ? Cette action ne peut pas être annulée.",
     sponsoredChild: "Enfant parrainé",
