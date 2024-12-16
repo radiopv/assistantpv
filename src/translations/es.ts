@@ -1,4 +1,4 @@
-export default {
+export const spanishTranslations = {
   sponsorshipManagement: {
     sponsorsList: "Lista de Padrinos",
     childrenList: "Lista Completa de Niños",
@@ -16,3 +16,5 @@ export default {
     }
   }
 };
+
+export default spanishTranslations;

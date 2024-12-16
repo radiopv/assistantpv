@@ -41,3 +41,12 @@ export interface ChildWithSponsorDetails extends Database['public']['Tables']['c
     email: string;
   } | null;
 }
+
+export interface SponsorshipRequest {
+  id: string;
+  sponsor_id: string;
+  child_id: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  updated_at: string;
+}
