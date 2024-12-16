@@ -1,46 +1,44 @@
-import { Children } from './children';
-import { Sponsor } from './sponsor';
+import { Database } from './database';
 
-export interface SponsorshipWithDetails {
-  id: string;
-  sponsor: Sponsor['Row'];
-  child: Children['Row'];
-  start_date: string;
-  end_date: string | null;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
+export type SponsorshipWithDetails = Database['public']['Tables']['sponsorships']['Row'] & {
+  sponsors: {
+    id: string;
+    name: string;
+    email: string;
+    photo_url: string | null;
+  };
+  children: {
+    id: string;
+    name: string;
+    photo_url: string | null;
+    age: number;
+  };
+};
 
-export interface GroupedSponsorship {
-  sponsor: Sponsor['Row'];
+export type GroupedSponsorship = {
+  sponsor: {
+    id: string;
+    name: string;
+    email: string;
+    photo_url: string | null;
+  };
   sponsorships: Array<{
     id: string;
-    child: Children['Row'];
+    child: {
+      id: string;
+      name: string;
+      photo_url: string | null;
+      age: number;
+    };
   }>;
-}
-
-export interface ChildWithSponsorDetails {
-  id: string;
-  name: string;
-  age: number;
-  photo_url: string | null;
-  is_sponsored: boolean;
-  sponsor: Sponsor['Row'] | null;
-}
+};
 
 export interface SponsorshipRequest {
   id: string;
-  sponsor_id: string;
   child_id: string;
+  requester_email: string;
+  name: string;
   status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-  updated_at: string;
-  full_name: string;
-  email: string;
-  phone?: string;
-  city?: string;
-  motivation?: string;
-  is_long_term: boolean;
-  facebook_url?: string;
+  created_at?: string;
+  updated_at?: string;
 }

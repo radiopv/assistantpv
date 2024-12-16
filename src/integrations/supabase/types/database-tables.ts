@@ -526,7 +526,7 @@ export interface Database {
           longitude?: number
           name?: string
           type?: string
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -856,7 +856,7 @@ export interface Database {
           is_visible?: boolean | null
           section_name: string
           subtitle?: string | null
-          title: string
+          title?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -869,7 +869,7 @@ export interface Database {
           is_visible?: boolean | null
           section_name?: string
           subtitle?: string | null
-          title?: string
+          title?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -906,7 +906,7 @@ export interface Database {
           redirect_url?: string | null
           status: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Relationships: []
       }
@@ -1227,7 +1227,7 @@ export interface Database {
           created_at?: string | null
           description?: string | null
           id?: string
-          name?: string
+          name: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1386,7 +1386,7 @@ export interface Database {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -1461,7 +1461,7 @@ export interface Database {
           id: string
           last_attempt?: string | null
           status?: string
-          task_type?: string;
+          task_type?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1535,7 +1535,7 @@ export interface Database {
           logo_url?: string | null
           primary_color?: string
           secondary_color?: string
-          site_name?: string;
+          site_name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1905,6 +1905,233 @@ export interface Database {
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      statistics_config: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_visible: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id: string
+          is_visible?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_visible?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          child_id: string | null
+          content: string
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          rating: number | null
+          sponsor_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          child_id?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          sponsor_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          child_id?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "testimonials_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "testimonials_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      unified_media_browser: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          metadata: Json | null
+          source_table: string
+          tags: string[] | null
+          thumbnail_url: string | null
+          title: string | null
+          type: string
+          updated_at: string | null
+          url: string
+          version: number | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          source_table: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          type: string
+          updated_at?: string | null
+          url: string
+          version?: number | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          source_table?: string
+          tags?: string[] | null
+          thumbnail_url?: string | null
+          title?: string
+          type: string
+          updated_at?: string | null
+          url: string
+          version?: number | null
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          badge_id: string | null
+          created_at: string | null
+          earned_at: string | null
+          id: string
+          metadata: Json | null
+          points: number | null
+          sponsor_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          badge_id?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata: Json | null
+          points?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          badge_id?: string | null
+          created_at?: string | null
+          earned_at?: string | null
+          id?: string
+          metadata: Json | null
+          points?: number | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_achievements_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      activity_logs: {
+        Row: {
+          id: string
+          user_id: string
+          action: string
+          details: Json | null
+          created_at: string | null
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          action: string
+          details?: Json | null
+          created_at?: string | null
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          action?: string
+          details?: Json | null
+          created_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
         ]
       }
       child_assignment_requests: ChildAssignmentRequestTable;

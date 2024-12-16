@@ -1,9 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { sendEmail } from "@/api/email";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChildAssignmentRequest } from "./types";
-import { Database } from "@/integrations/supabase/types/database";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -25,15 +25,23 @@ export const useChildAssignment = () => {
 
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
-      const { error } = await supabase
+      if (!request.requester_email) {
+        throw new Error("Email du demandeur manquant");
+      }
+
+      const { error: updateError } = await supabase
         .from('child_assignment_requests')
-        .update({ 
-          status: 'approved',
-          updated_at: new Date().toISOString()
-        })
+        .update({ status: 'approved' })
         .eq('id', request.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      await sendEmail({
+        from: "noreply@example.com",
+        to: [request.requester_email],
+        subject: t("childRequestApprovedSubject"),
+        html: t("childRequestApprovedContent", { name: request.name })
+      });
 
       toast({
         title: t("success"),
@@ -46,22 +54,26 @@ export const useChildAssignment = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorApprovingRequest")
+        description: t("errorApprovingChildRequest")
       });
     }
   };
 
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('child_assignment_requests')
-        .update({ 
-          status: 'rejected',
-          updated_at: new Date().toISOString()
-        })
+        .update({ status: 'rejected' })
         .eq('id', request.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
+
+      await sendEmail({
+        from: "noreply@example.com",
+        to: [request.requester_email],
+        subject: t("childRequestRejectedSubject"),
+        html: t("childRequestRejectedContent", { name: request.name })
+      });
 
       toast({
         title: t("success"),
@@ -74,7 +86,7 @@ export const useChildAssignment = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorRejectingRequest")
+        description: t("errorRejectingChildRequest")
       });
     }
   };

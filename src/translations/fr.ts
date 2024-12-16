@@ -1,20 +1,18 @@
-export const frenchTranslations = {
-  sponsorshipManagement: {
-    sponsorsList: "Liste des parrains",
-    childrenList: "Liste des enfants",
-    newSponsorship: "Nouveau parrainage",
-    selectChild: "Sélectionner un enfant",
-    searchPlaceholder: "Rechercher un enfant ou un parrain...",
-    status: {
-      sponsored: "Parrainé",
-      notSponsored: "Non parrainé"
+export default {
+  sponsorship: {
+    management: "Gestion des Parrainages",
+    newSponsorship: "Nouveau Parrainage",
+    createSponsorship: "Créer un nouveau parrainage",
+    deleteSponsorship: "Supprimer le parrainage",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce parrainage ? Cette action ne peut pas être annulée.",
+    sponsoredChild: "Enfant parrainé",
+    success: {
+      created: "Le parrainage a été créé avec succès",
+      deleted: "Le parrainage a été supprimé avec succès"
     },
-    noSponsor: "Aucun parrain",
-    actions: {
-      edit: "Modifier",
-      delete: "Supprimer",
-      addSponsor: "Ajouter un parrain",
-      removeSponsor: "Retirer le parrain"
+    error: {
+      create: "Une erreur est survenue lors de la création du parrainage",
+      delete: "Une erreur est survenue lors de la suppression du parrainage"
     }
   }
 };
