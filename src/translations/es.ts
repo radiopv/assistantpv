@@ -1,4 +1,4 @@
-export default {
+export const spanishTranslations = {
   dashboard: "Tablero",
   children: "Niños",
   addChild: "Agregar niño",
@@ -29,5 +29,5 @@ export default {
   favoriteRemoved: "Foto eliminada de favoritos",
   photosAdded: "Medios agregados con éxito y padrino notificado",
   allAlbums: "Todos los álbumes",
-  upload: "Agregar medios",
+  upload: "Agregar medios"
 } as const;
