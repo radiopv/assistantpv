@@ -1,31 +1,35 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useSponsorshipManagement } from "@/hooks/useSponsorshipManagement";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Loader2, Plus, UserPlus, UserMinus } from "lucide-react";
+import { useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AvailableChildrenList } from "@/components/Sponsorship/AvailableChildrenList";
-import { SponsoredChildrenList } from "@/components/Sponsorship/SponsoredChildrenList";
-import { Loader2 } from "lucide-react";
+import { SponsorshipCard } from "@/components/Sponsorship/SponsorshipCard";
+import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { toast } from "sonner";
 
 const SponsorshipManagement = () => {
-  const { data: children, isLoading } = useQuery({
-    queryKey: ['children'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('children')
-        .select(`
-          *,
-          sponsors (
-            name,
-            email,
-            photo_url
-          )
-        `)
-        .order('name');
+  const { t } = useLanguage();
+  const {
+    sponsorships,
+    allChildren,
+    isLoading,
+    createSponsorship,
+    deleteSponsorship,
+    toggleSponsorshipStatus
+  } = useSponsorshipManagement();
 
-      if (error) throw error;
-      return data;
-    }
-  });
+  const [selectedSponsor, setSelectedSponsor] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -35,35 +39,87 @@ const SponsorshipManagement = () => {
     );
   }
 
-  const sponsoredChildren = children?.filter(child => child.is_sponsored) || [];
-  const availableChildren = children?.filter(child => !child.is_sponsored) || [];
+  const handleStatusToggle = async (childId: string, currentStatus: boolean) => {
+    try {
+      await toggleSponsorshipStatus(childId);
+      toast.success(t("sponsorshipStatusUpdated"));
+    } catch (error) {
+      toast.error(t("errorUpdatingStatus"));
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Gestion des Parrainages</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">{t("sponsorshipManagement")}</h1>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              {t("newSponsorship")}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>{t("createSponsorship")}</DialogTitle>
+              <DialogDescription>
+                {t("selectChildToSponsor")}
+              </DialogDescription>
+            </DialogHeader>
+            <ScrollArea className="h-[400px]">
+              <div className="grid grid-cols-2 gap-4 p-4">
+                {allChildren?.map((child) => (
+                  <Card key={child.id} className="cursor-pointer hover:bg-accent p-4">
+                    <div className="flex items-center gap-4">
+                      <Avatar className="w-16 h-16">
+                        <AvatarImage src={child.photo_url || ""} />
+                        <AvatarFallback>{child.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold">{child.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          {child.age} {t("years")}
+                        </p>
+                        <Badge 
+                          variant={child.is_sponsored ? "secondary" : "default"}
+                          className="mt-2"
+                        >
+                          {child.is_sponsored ? t("sponsored") : t("available")}
+                        </Badge>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleStatusToggle(child.id, child.is_sponsored)}
+                        title={child.is_sponsored ? t("removeSponsor") : t("addSponsor")}
+                      >
+                        {child.is_sponsored ? (
+                          <UserMinus className="w-4 h-4" />
+                        ) : (
+                          <UserPlus className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </ScrollArea>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-      <Tabs defaultValue="available" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="available">
-            Enfants Disponibles ({availableChildren.length})
-          </TabsTrigger>
-          <TabsTrigger value="sponsored">
-            Enfants Parrainés ({sponsoredChildren.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="available" className="mt-6">
-          <Card className="p-4">
-            <AvailableChildrenList children={availableChildren} />
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="sponsored" className="mt-6">
-          <Card className="p-4">
-            <SponsoredChildrenList children={sponsoredChildren} />
-          </Card>
-        </TabsContent>
-      </Tabs>
+      <div className="grid gap-6">
+        {sponsorships?.map((group) => (
+          <SponsorshipCard
+            key={group.sponsor.email}
+            group={group}
+            onAddChild={(sponsorId) => setSelectedSponsor(sponsorId)}
+            onDeleteSponsorship={(sponsorshipId) => 
+              deleteSponsorship.mutate(sponsorshipId)
+            }
+          />
+        ))}
+      </div>
     </div>
   );
 };

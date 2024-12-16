@@ -1,37 +1,18 @@
 export const spanishTranslations = {
-  welcome: "Bienvenido",
-  user: "Usuario",
-  logout: "Cerrar sesión",
-  editProfile: "Editar perfil",
-  success: "Éxito",
-  error: "Error",
-  loading: "Cargando...",
-  save: "Guardar",
-  cancel: "Cancelar",
-  delete: "Eliminar",
-  edit: "Editar",
-  confirm: "Confirmar",
-  back: "Volver",
-  children: "Niños",
-  dashboard: "Panel",
-  donations: "Donaciones",
-  messages: "Mensajes",
-  settings: "Configuración",
-  permissions: "Permisos",
-  statistics: "Estadísticas",
-  faq: "Preguntas frecuentes",
-  emailManager: "Gestor de correos",
-  translationManager: "Gestor de traducciones",
-  validation: "Validación",
-  addChild: "Añadir niño",
-  childPhotos: "Fotos de niños",
-  addDonation: "Añadir donación",
-  sponsorshipManagement: "Gestión de apadrinamientos",
-  deleteConfirmation: "Confirmar eliminación",
-  deleteWarning: "Esta acción no se puede deshacer",
-  manageDonations: "Gestionar donaciones y ayudas",
-  sponsorshipRequestApproved: "Solicitud de apadrinamiento aprobada",
-  sponsorshipRequestRejected: "Solicitud de apadrinamiento rechazada",
-  errorApprovingRequest: "Error al aprobar la solicitud",
-  errorRejectingRequest: "Error al rechazar la solicitud"
-} as const;
+  sponsorship: {
+    management: "Gestión de Apadrinamientos",
+    newSponsorship: "Nuevo Apadrinamiento",
+    createSponsorship: "Crear nuevo apadrinamiento",
+    deleteSponsorship: "Eliminar apadrinamiento",
+    deleteConfirmation: "¿Está seguro de que desea eliminar este apadrinamiento? Esta acción no se puede deshacer.",
+    sponsoredChild: "Niño apadrinado",
+    success: {
+      created: "El apadrinamiento se ha creado con éxito",
+      deleted: "El apadrinamiento se ha eliminado con éxito"
+    },
+    error: {
+      create: "Se produjo un error al crear el apadrinamiento",
+      delete: "Se produjo un error al eliminar el apadrinamiento"
+    }
+  }
+};
