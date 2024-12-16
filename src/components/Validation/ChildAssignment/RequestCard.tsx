@@ -2,9 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Database } from "@/integrations/supabase/types/database";
-
-type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
+import { ChildAssignmentRequest } from "./types";
 
 interface RequestCardProps {
   request: ChildAssignmentRequest;
@@ -22,7 +20,7 @@ export const RequestCard = ({ request, onApprove, onReject }: RequestCardProps) 
           <h3 className="font-semibold">{request.name}</h3>
           <p className="text-sm text-gray-500">{request.requester_email}</p>
           <p className="text-sm text-gray-500">
-            {new Date(request.created_at || '').toLocaleDateString()}
+            {new Date(request.created_at).toLocaleDateString()}
           </p>
         </div>
         <div className="space-x-2">
