@@ -1,35 +1,46 @@
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSponsorshipManagement } from "@/hooks/useSponsorshipManagement";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Loader2, Plus, UserPlus, UserMinus } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card } from "@/components/ui/card";
-import { SponsorshipCard } from "@/components/Sponsorship/SponsorshipCard";
-import { Badge } from "@/components/ui/badge";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const SponsorshipManagement = () => {
-  const { t } = useLanguage();
   const {
     sponsorships,
-    allChildren,
+    availableChildren,
     isLoading,
     createSponsorship,
     deleteSponsorship,
-    toggleSponsorshipStatus
   } = useSponsorshipManagement();
 
-  const [selectedSponsor, setSelectedSponsor] = useState<string | null>(null);
+  const [selectedSponsorship, setSelectedSponsorship] = useState<string | null>(
+    null
+  );
 
   if (isLoading) {
     return (
@@ -39,85 +50,132 @@ const SponsorshipManagement = () => {
     );
   }
 
-  const handleStatusToggle = async (childId: string, currentStatus: boolean) => {
-    try {
-      await toggleSponsorshipStatus(childId);
-      toast.success(t("sponsorshipStatusUpdated"));
-    } catch (error) {
-      toast.error(t("errorUpdatingStatus"));
-    }
-  };
-
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">{t("sponsorshipManagement")}</h1>
+        <h1 className="text-2xl font-bold">Gestion des Parrainages</h1>
         <Dialog>
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              {t("newSponsorship")}
+              Nouveau Parrainage
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{t("createSponsorship")}</DialogTitle>
-              <DialogDescription>
-                {t("selectChildToSponsor")}
-              </DialogDescription>
+              <DialogTitle>Créer un nouveau parrainage</DialogTitle>
             </DialogHeader>
-            <ScrollArea className="h-[400px]">
-              <div className="grid grid-cols-2 gap-4 p-4">
-                {allChildren?.map((child) => (
-                  <Card key={child.id} className="cursor-pointer hover:bg-accent p-4">
-                    <div className="flex items-center gap-4">
-                      <Avatar className="w-16 h-16">
-                        <AvatarImage src={child.photo_url || ""} />
-                        <AvatarFallback>{child.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold">{child.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {child.age} {t("years")}
-                        </p>
-                        <Badge 
-                          variant={child.is_sponsored ? "secondary" : "default"}
-                          className="mt-2"
-                        >
-                          {child.is_sponsored ? t("sponsored") : t("available")}
-                        </Badge>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleStatusToggle(child.id, child.is_sponsored)}
-                        title={child.is_sponsored ? t("removeSponsor") : t("addSponsor")}
-                      >
-                        {child.is_sponsored ? (
-                          <UserMinus className="w-4 h-4" />
-                        ) : (
-                          <UserPlus className="w-4 h-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            </ScrollArea>
+            <div className="grid gap-4">
+              <ScrollArea className="h-[400px]">
+                <div className="grid grid-cols-2 gap-4 p-4">
+                  {availableChildren?.map((child) => (
+                    <Card key={child.id} className="cursor-pointer hover:bg-accent">
+                      <CardHeader className="flex flex-row items-center gap-4">
+                        <Avatar className="w-16 h-16">
+                          <AvatarImage src={child.photo_url || ""} />
+                          <AvatarFallback>{child.name[0]}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <CardTitle className="text-lg">{child.name}</CardTitle>
+                          <p className="text-sm text-muted-foreground">
+                            {child.age} ans
+                          </p>
+                        </div>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
           </DialogContent>
         </Dialog>
       </div>
 
       <div className="grid gap-6">
-        {sponsorships?.map((group) => (
-          <SponsorshipCard
-            key={group.sponsor.email}
-            group={group}
-            onAddChild={(sponsorId) => setSelectedSponsor(sponsorId)}
-            onDeleteSponsorship={(sponsorshipId) => 
-              deleteSponsorship.mutate(sponsorshipId)
-            }
-          />
+        {sponsorships?.map((sponsorship) => (
+          <Card key={sponsorship.id}>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Avatar className="w-12 h-12">
+                    <AvatarImage
+                      src={sponsorship.sponsors?.photo_url || ""}
+                      alt={sponsorship.sponsors?.name}
+                    />
+                    <AvatarFallback>
+                      {sponsorship.sponsors?.name?.[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h3 className="font-semibold">
+                      {sponsorship.sponsors?.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {sponsorship.sponsors?.email}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" size="icon">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Supprimer le parrainage
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Êtes-vous sûr de vouloir supprimer ce parrainage ? Cette
+                          action ne peut pas être annulée.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => {
+                            if (sponsorship.id) {
+                              deleteSponsorship.mutate(sponsorship.id);
+                            }
+                          }}
+                        >
+                          Supprimer
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <h4 className="font-medium mb-2">Enfant parrainé :</h4>
+                {sponsorship.children && (
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage
+                        src={sponsorship.children.photo_url || ""}
+                        alt={sponsorship.children.name}
+                      />
+                      <AvatarFallback>
+                        {sponsorship.children.name[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">
+                        {sponsorship.children.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {sponsorship.children.age} ans
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>

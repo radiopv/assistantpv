@@ -39,7 +39,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
   const t = (key: string): string => {
     const currentTranslations = translations[language];
-    const translation = currentTranslations[key];
+    const translation = currentTranslations[key as keyof typeof currentTranslations];
     
     if (!translation) {
       console.warn(`Translation missing for key: ${key} in language: ${language}`);
