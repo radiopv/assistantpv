@@ -638,9 +638,9 @@ export type Database = {
           city: string
           comments?: string | null
           created_at?: string | null
-          donation_date: string
-          id?: string
-          people_helped: number
+          donation_date: string;
+          id?: string;
+          people_helped: number;
           photos?: string[] | null
           status?: string | null
           updated_at?: string | null
@@ -889,14 +889,14 @@ export type Database = {
           redirect_url: string | null
           status: string
           updated_at: string | null
-          url: string
+          url: string;
         }
         Insert: {
           created_at?: string | null
           error_message?: string | null
           id?: string
           last_checked?: string | null
-          page_url: string
+          page_url: string;
           redirect_url?: string | null
           status: string;
           updated_at?: string | null
@@ -911,7 +911,7 @@ export type Database = {
           redirect_url?: string | null
           status: string;
           updated_at?: string | null
-          url?: string;
+          url: string;
         }
         Relationships: []
       }
@@ -1053,10 +1053,10 @@ export type Database = {
         Update: {
           created_at?: string | null
           file_name?: string
-          file_size?: number
-          file_type?: string
-          file_url?: string
-          id?: string
+          file_size?: number;
+          file_type?: string;
+          file_url?: string;
+          id?: string;
           message_id?: string | null
         }
         Relationships: []
@@ -1079,24 +1079,24 @@ export type Database = {
           content: string
           created_at?: string | null
           created_by?: string | null
-          created_by_role: string
-          id?: string
+          created_by_role: string;
+          id?: string;
           is_global?: boolean | null
-          name: string
-          subject: string
-          updated_at?: string | null
+          name: string;
+          subject: string;
+          updated_at?: string | null;
         }
         Update: {
-          category?: string
-          content?: string
+          category?: string;
+          content?: string;
           created_at?: string | null
           created_by?: string | null
           created_by_role?: string;
-          id?: string
+          id?: string;
           is_global?: boolean | null
-          name?: string
+          name?: string;
           subject?: string;
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -1128,7 +1128,7 @@ export type Database = {
           content: string
           conversation_type?: string | null
           created_at?: string | null
-          id?: string
+          id?: string;
           is_archived?: boolean | null
           is_read?: boolean | null
           is_starred?: boolean | null
@@ -1136,14 +1136,14 @@ export type Database = {
           recipient_id?: string | null
           sender_id?: string | null
           sender_role?: string | null
-          subject: string
-          updated_at?: string | null
+          subject: string;
+          updated_at?: string | null;
         }
         Update: {
-          content?: string
+          content?: string;
           conversation_type?: string | null
           created_at?: string | null
-          id?: string
+          id?: string;
           is_archived?: boolean | null
           is_read?: boolean | null
           is_starred?: boolean | null
@@ -1151,8 +1151,8 @@ export type Database = {
           recipient_id?: string | null
           sender_id?: string | null
           sender_role?: string | null
-          subject?: string
-          updated_at?: string | null
+          subject?: string;
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -1256,20 +1256,20 @@ export type Database = {
           is_read?: boolean | null
           link?: string | null
           recipient_id?: string | null
-          title: string
-          type: string
-          updated_at?: string | null
+          title: string;
+          type: string;
+          updated_at?: string | null;
         }
         Update: {
-          content?: string
+          content?: string;
           created_at?: string | null
-          id?: string
+          id?: string;
           is_read?: boolean | null
           link?: string | null
           recipient_id?: string | null
-          title: string
-          type: string
-          updated_at?: string | null
+          title: string;
+          type: string;
+          updated_at?: string | null;
         }
         Relationships: [
           {
@@ -1302,9 +1302,9 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_visible?: boolean | null
-          page_id?: string
+          page_id?: string;
           required_role?: string | null
-          updated_at?: string | null
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -1330,7 +1330,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name?: string
+          name?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -1415,14 +1415,14 @@ export type Database = {
           created_at?: string | null
           id?: string
           permission_id?: string | null
-          role: string
+          role: string;
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
           permission_id?: string | null
-          role: string
+          role: string;
           updated_at?: string | null
         }
         Relationships: [
@@ -1570,7 +1570,7 @@ export type Database = {
           description?: string | null
           id?: string
           min_points?: number
-          name?: string
+          name?: string;
           updated_at?: string | null
         }
         Relationships: []
@@ -1679,7 +1679,7 @@ export type Database = {
           is_active?: boolean | null
           is_anonymous?: boolean | null
           last_login?: string | null
-          name?: string
+          name?: string;
           password_hash?: string | null
           permissions?: Json | null
           phone?: string | null
@@ -1830,7 +1830,7 @@ export type Database = {
           status?: string;
           terms_accepted?: boolean;
           updated_at?: string | null;
-          city?: string | null;
+          city?: string | null
           is_long_term?: boolean | null;
         }
         Relationships: [
@@ -1876,7 +1876,7 @@ export type Database = {
           termination_comment?: string | null
           termination_date?: string | null
           termination_reason?: string | null
-          updated_at?: string | null
+          updated_at?: string;
         }
         Update: {
           auto_terminate_job_id?: string | null
