@@ -5,22 +5,18 @@ export interface SponsorshipRequest {
   name: string;
   email: string;
   phone?: string;
-  city?: string;
   facebook_url?: string;
   motivation?: string;
-  is_long_term?: boolean;
+  status: string;
   terms_accepted: boolean;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
+  created_at?: string;
   updated_at?: string;
+  city?: string;
+  is_long_term?: boolean;
 }
 
 export interface SponsorshipRequestTable {
   Row: SponsorshipRequest;
-  Insert: Omit<SponsorshipRequest, 'id' | 'created_at' | 'updated_at'> & {
-    id?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
+  Insert: Omit<SponsorshipRequest, 'id' | 'created_at' | 'updated_at'>;
   Update: Partial<SponsorshipRequest>;
 }
