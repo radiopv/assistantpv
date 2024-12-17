@@ -25,3 +25,8 @@ export interface ChildTable {
   Insert: Omit<Child, 'id' | 'created_at' | 'updated_at'>;
   Update: Partial<Child>;
 }
+
+// Re-export for backward compatibility
+export type Children = {
+  Row: Child;
+}
