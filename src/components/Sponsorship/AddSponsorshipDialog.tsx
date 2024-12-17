@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface AddSponsorshipDialogProps {
   open: boolean;
@@ -31,6 +32,17 @@ export const AddSponsorshipDialog = ({
     child.city?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleSelectChild = (childId: string, isSponsored: boolean) => {
+    if (isSponsored) {
+      // Show confirmation dialog before reassigning
+      if (window.confirm(t("sponsorship.confirmReassign"))) {
+        onAdd(childId);
+      }
+    } else {
+      onAdd(childId);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
@@ -38,10 +50,17 @@ export const AddSponsorshipDialog = ({
           <DialogTitle>{t("sponsorship.createSponsorship")}</DialogTitle>
         </DialogHeader>
 
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            {t("sponsorship.reassignmentInfo")}
+          </AlertDescription>
+        </Alert>
+
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher un enfant..."
+            placeholder={t("searchChild")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -69,18 +88,14 @@ export const AddSponsorshipDialog = ({
                       variant={child.is_sponsored ? "secondary" : "default"}
                       className="mt-2"
                     >
-                      {child.is_sponsored ? "Parrainé" : "Disponible"}
+                      {child.is_sponsored ? t("sponsored") : t("available")}
                     </Badge>
                   </div>
                   <Button
-                    variant="ghost"
-                    onClick={() => {
-                      onAdd(child.id);
-                      onClose();
-                    }}
-                    disabled={child.is_sponsored}
+                    variant={child.is_sponsored ? "destructive" : "default"}
+                    onClick={() => handleSelectChild(child.id, child.is_sponsored)}
                   >
-                    Sélectionner
+                    {child.is_sponsored ? t("reassign") : t("select")}
                   </Button>
                 </div>
               </Card>
