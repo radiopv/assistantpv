@@ -1,9 +1,9 @@
 export enum TableNames {
-  CHILDREN = 'children',
   SPONSORS = 'sponsors',
+  CHILDREN = 'children',
   SPONSORSHIPS = 'sponsorships',
-  CHILD_ASSIGNMENT_REQUESTS = 'child_assignment_requests',
   SPONSORSHIP_REQUESTS = 'sponsorship_requests',
+  CHILD_ASSIGNMENT_REQUESTS = 'child_assignment_requests',
   TESTIMONIALS = 'testimonials',
   DONATIONS = 'donations',
   MESSAGES = 'messages',
