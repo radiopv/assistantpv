@@ -20,7 +20,7 @@ export const useChildAssignment = () => {
         .eq('status', 'pending');
       
       if (error) throw error;
-      return data as ChildAssignmentRequest[];
+      return data as unknown as ChildAssignmentRequest[];
     }
   });
 
