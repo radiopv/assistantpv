@@ -22,7 +22,7 @@ export const useChildAssignment = () => {
     }
   });
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
       const { error } = await supabase
         .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
@@ -30,7 +30,7 @@ export const useChildAssignment = () => {
           status: 'approved',
           updated_at: new Date().toISOString()
         })
-        .eq('id', id);
+        .eq('id', request.id);
 
       if (error) throw error;
 
@@ -42,7 +42,7 @@ export const useChildAssignment = () => {
     }
   };
 
-  const handleReject = async (id: string) => {
+  const handleReject = async (request: ChildAssignmentRequest) => {
     try {
       const { error } = await supabase
         .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
@@ -50,7 +50,7 @@ export const useChildAssignment = () => {
           status: 'rejected',
           updated_at: new Date().toISOString()
         })
-        .eq('id', id);
+        .eq('id', request.id);
 
       if (error) throw error;
 
