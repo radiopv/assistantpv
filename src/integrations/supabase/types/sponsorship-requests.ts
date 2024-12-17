@@ -1,10 +1,9 @@
 export interface SponsorshipRequest {
   id: string;
-  child_id: string | null;
+  child_id: string;
   requester_email: string;
   name: string;
   email: string;
-  full_name: string;
   phone?: string;
   facebook_url?: string;
   motivation?: string;
