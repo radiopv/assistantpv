@@ -5,8 +5,8 @@ export interface ChildAssignmentRequest {
   child_id: string;
   requester_email: string;
   name: string;
-  status: string;
-  created_at?: string;
+  status: "pending" | "approved" | "rejected";
+  created_at: string;
   updated_at?: string;
 }
 
@@ -15,7 +15,7 @@ export interface ChildAssignmentRequestRow {
   child_id: string;
   requester_email: string;
   name: string;
-  status: string;
+  status: "pending" | "approved" | "rejected";
   created_at: string | null;
   updated_at: string | null;
 }

@@ -9,7 +9,7 @@ export interface SponsorshipRequest {
   motivation?: string;
   status: string;
   terms_accepted: boolean;
-  created_at?: string;
+  created_at: string;
   updated_at?: string;
   city?: string;
   is_long_term?: boolean;

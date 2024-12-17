@@ -4,7 +4,7 @@ export interface Child {
   age: number;
   gender: string;
   birth_date: string;
-  city: string;
+  city: string | null;
   description?: string;
   story?: string;
   photo_url?: string;
@@ -18,4 +18,8 @@ export interface Child {
   photo_validated: boolean;
   status: string;
   comments?: string;
+}
+
+export interface Children {
+  Row: Child;
 }
