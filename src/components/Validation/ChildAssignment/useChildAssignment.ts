@@ -1,12 +1,10 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { TableNames } from "@/integrations/supabase/types/database-tables";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 
 export const useChildAssignment = () => {
-  const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   const { data: requests, isLoading } = useQuery({
@@ -16,7 +14,7 @@ export const useChildAssignment = () => {
         .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .select('*')
         .eq('status', 'pending');
-      
+
       if (error) throw error;
       return data as ChildAssignmentRequest[];
     }
@@ -34,11 +32,11 @@ export const useChildAssignment = () => {
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
-      toast.success(t("requestApproved"));
+      await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      toast.success("Request approved successfully");
     } catch (error) {
       console.error('Error approving request:', error);
-      toast.error(t("errorApprovingRequest"));
+      toast.error("Error approving request");
     }
   };
 
@@ -54,11 +52,11 @@ export const useChildAssignment = () => {
 
       if (error) throw error;
 
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
-      toast.success(t("requestRejected"));
+      await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      toast.success("Request rejected successfully");
     } catch (error) {
       console.error('Error rejecting request:', error);
-      toast.error(t("errorRejectingRequest"));
+      toast.error("Error rejecting request");
     }
   };
 
