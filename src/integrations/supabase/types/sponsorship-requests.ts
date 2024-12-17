@@ -5,15 +5,15 @@ export interface SponsorshipRequest {
   name: string;
   email: string;
   full_name: string;
-  phone?: string | null;
-  facebook_url?: string | null;
-  motivation?: string | null;
+  phone?: string;
+  facebook_url?: string;
+  motivation?: string;
   status: string;
   terms_accepted: boolean;
   created_at?: string;
   updated_at?: string;
-  city?: string | null;
-  is_long_term?: boolean | null;
+  city?: string;
+  is_long_term?: boolean;
 }
 
 export interface SponsorshipRequestTable {

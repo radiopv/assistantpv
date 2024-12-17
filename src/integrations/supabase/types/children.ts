@@ -5,20 +5,20 @@ export interface Child {
   name: string;
   birth_date: string;
   gender: string;
-  city: string | null;
-  photo_url: string | null;
-  description: string | null;
-  story: string | null;
-  comments: string | null;
-  is_sponsored: boolean | null;
-  needs: Json[] | null;
+  city: string;
+  photo_url: string;
+  description: string;
+  story: string;
+  comments: string;
+  is_sponsored: boolean;
+  needs: Json[];
   age: number;
   photo_validated: boolean;
-  sponsor_id?: number | null;
-  sponsor_name?: string | null;
-  sponsor_email?: string | null;
-  sponsor_phone?: string | null;
-  sponsor_facebook_url?: string | null;
+  sponsor_id?: number;
+  sponsor_name?: string;
+  sponsor_email?: string;
+  sponsor_phone?: string;
+  sponsor_facebook_url?: string;
   status: string;
 }
 

@@ -1,3 +1,5 @@
+import { Database } from './database';
+
 export interface ChildAssignmentRequest {
   id: string;
   child_id: string;
