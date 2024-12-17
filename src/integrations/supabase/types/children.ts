@@ -1,4 +1,4 @@
-import { Json } from "./json";
+import { Json } from './json';
 
 export interface Child {
   id: string;
@@ -24,6 +24,6 @@ export interface Child {
 
 export interface Children {
   Row: Child;
-  Insert: Omit<Child, 'id'>;
+  Insert: Omit<Child, 'id' | 'created_at' | 'updated_at'>;
   Update: Partial<Child>;
 }
