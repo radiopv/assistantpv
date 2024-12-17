@@ -26,7 +26,6 @@ export interface ChildTable {
   Update: Partial<Child>;
 }
 
-// Re-export for backward compatibility
 export type Children = {
   Row: Child;
 }
