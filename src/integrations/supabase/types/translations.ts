@@ -1,3 +1,3 @@
 export interface TranslationType {
-  [key: string]: string | Record<string, any>;
+  [key: string]: string | TranslationType;
 }

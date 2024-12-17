@@ -58,5 +58,5 @@ export const TableNames = {
   TEMOIGNAGE: 'temoignage'
 } as const;
 
-export type TableName = keyof Tables;
+export type TableName = keyof Tables | 'child_assignment_requests' | 'sponsorship_requests';
 export type ViewName = keyof Views;
