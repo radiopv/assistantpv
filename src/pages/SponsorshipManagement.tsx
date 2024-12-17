@@ -8,28 +8,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const SponsorshipManagement = () => {
   const { t } = useLanguage();
-  const { 
-    sponsorships, 
-    allChildren, 
-    isLoading, 
-    createSponsorship, 
-    deleteSponsorship 
-  } = useSponsorshipManagement();
+  const { sponsorships, allChildren, isLoading, createSponsorship, deleteSponsorship } = useSponsorshipManagement();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
-
-  const handleAddChild = (sponsorId: string) => {
-    setSelectedSponsorId(sponsorId);
-    setIsAddDialogOpen(true);
-  };
-
-  const handleCreateSponsorship = (childId: string) => {
-    if (selectedSponsorId) {
-      createSponsorship.mutate(childId);
-      setIsAddDialogOpen(false);
-      setSelectedSponsorId(null);
-    }
-  };
 
   if (isLoading) {
     return (
@@ -51,18 +31,14 @@ const SponsorshipManagement = () => {
 
       <SponsorshipList 
         sponsorships={sponsorships || []}
-        onDeleteSponsorship={deleteSponsorship.mutate}
-        onAddChild={handleAddChild}
+        onDelete={deleteSponsorship}
       />
 
       <AddSponsorshipDialog
         open={isAddDialogOpen}
-        onClose={() => {
-          setIsAddDialogOpen(false);
-          setSelectedSponsorId(null);
-        }}
+        onClose={() => setIsAddDialogOpen(false)}
         availableChildren={allChildren || []}
-        onAdd={handleCreateSponsorship}
+        onAdd={createSponsorship}
       />
     </div>
   );

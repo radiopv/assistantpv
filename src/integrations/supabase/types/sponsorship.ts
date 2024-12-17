@@ -14,20 +14,6 @@ export interface SponsorshipWithDetails {
   };
 }
 
-export interface SponsorshipRequest {
-  id: string;
-  requester_email: string;
-  name: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-  child_id: string;
-  motivation?: string;
-  phone?: string;
-  city?: string;
-  facebook_url?: string;
-  is_long_term?: boolean;
-}
-
 export type GroupedSponsorship = {
   sponsor: {
     id: string;
