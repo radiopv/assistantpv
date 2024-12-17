@@ -1,23 +1,20 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { sendEmail } from "@/api/email";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
+import { toast } from "sonner";
+import { TableNames } from "@/integrations/supabase/types/database-tables";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 
 export const useChildAssignment = () => {
-  const { toast } = useToast();
-  const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('child_assignment_requests')
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .select('*')
         .eq('status', 'pending');
-      
+
       if (error) throw error;
       return data as ChildAssignmentRequest[];
     }
@@ -25,69 +22,41 @@ export const useChildAssignment = () => {
 
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
-      if (!request.requester_email) {
-        throw new Error("Email du demandeur manquant");
-      }
-
-      const { error: updateError } = await supabase
-        .from('child_assignment_requests')
-        .update({ status: 'approved' })
+      const { error } = await supabase
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
+        .update({ 
+          status: 'approved',
+          updated_at: new Date().toISOString()
+        })
         .eq('id', request.id);
 
-      if (updateError) throw updateError;
+      if (error) throw error;
 
-      await sendEmail({
-        from: "noreply@example.com",
-        to: [request.requester_email],
-        subject: t("childRequestApprovedSubject"),
-        html: t("childRequestApprovedContent", { name: request.name })
-      });
-
-      toast({
-        title: t("success"),
-        description: t("childRequestApproved")
-      });
-
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      toast.success("Request approved successfully");
     } catch (error) {
       console.error('Error approving request:', error);
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: t("errorApprovingChildRequest")
-      });
+      toast.error("Error approving request");
     }
   };
 
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
-      const { error: updateError } = await supabase
-        .from('child_assignment_requests')
-        .update({ status: 'rejected' })
+      const { error } = await supabase
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
+        .update({ 
+          status: 'rejected',
+          updated_at: new Date().toISOString()
+        })
         .eq('id', request.id);
 
-      if (updateError) throw updateError;
+      if (error) throw error;
 
-      await sendEmail({
-        from: "noreply@example.com",
-        to: [request.requester_email],
-        subject: t("childRequestRejectedSubject"),
-        html: t("childRequestRejectedContent", { name: request.name })
-      });
-
-      toast({
-        title: t("success"),
-        description: t("childRequestRejected")
-      });
-
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      toast.success("Request rejected successfully");
     } catch (error) {
       console.error('Error rejecting request:', error);
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: t("errorRejectingChildRequest")
-      });
+      toast.error("Error rejecting request");
     }
   };
 
