@@ -18,6 +18,8 @@ export interface SponsorshipRequest {
   id: string;
   requester_email: string;
   name: string;
+  full_name: string;
+  email: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   child_id: string;
@@ -26,6 +28,8 @@ export interface SponsorshipRequest {
   city?: string;
   facebook_url?: string;
   is_long_term?: boolean;
+  terms_accepted?: boolean;
+  updated_at?: string;
 }
 
 export type GroupedSponsorship = {
