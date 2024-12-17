@@ -37,7 +37,15 @@ export interface SponsorshipRequest {
   child_id: string;
   requester_email: string;
   name: string;
+  email: string;
+  phone?: string;
+  city?: string;
+  facebook_url?: string;
+  motivation?: string;
+  is_long_term?: boolean;
   status: 'pending' | 'approved' | 'rejected';
   created_at?: string;
   updated_at?: string;
+  full_name: string;
+  terms_accepted: boolean;
 }
