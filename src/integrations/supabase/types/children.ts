@@ -21,9 +21,3 @@ export interface Child {
   sponsor_facebook_url?: string;
   status: string;
 }
-
-export interface Children {
-  Row: Child;
-  Insert: Omit<Child, 'id'>;
-  Update: Partial<Child>;
-}
