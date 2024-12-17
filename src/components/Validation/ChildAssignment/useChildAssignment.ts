@@ -3,8 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { sendEmail } from "@/api/email";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
-import { TableNames } from "@/integrations/supabase/types/database-tables";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
@@ -15,7 +14,7 @@ export const useChildAssignment = () => {
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
+        .from('child_assignment_requests')
         .select('*')
         .eq('status', 'pending');
       
@@ -31,7 +30,7 @@ export const useChildAssignment = () => {
       }
 
       const { error: updateError } = await supabase
-        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
+        .from('child_assignment_requests')
         .update({ status: 'approved' })
         .eq('id', request.id);
 
@@ -63,7 +62,7 @@ export const useChildAssignment = () => {
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
       const { error: updateError } = await supabase
-        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
+        .from('child_assignment_requests')
         .update({ status: 'rejected' })
         .eq('id', request.id);
 
