@@ -1,15 +1,14 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { sendEmail } from "@/api/email";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 import { TableNames } from "@/integrations/supabase/types/database-tables";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useChildAssignment = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
-  const queryClient = useQueryClient();
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
@@ -19,7 +18,11 @@ export const useChildAssignment = () => {
         .select('*')
         .eq('status', 'pending');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching requests:', error);
+        throw error;
+      }
+      
       return data as ChildAssignmentRequest[];
     }
   });
@@ -27,7 +30,7 @@ export const useChildAssignment = () => {
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
       if (!request.requester_email) {
-        throw new Error("Email du demandeur manquant");
+        throw new Error("Email required");
       }
 
       const { error: updateError } = await supabase
@@ -38,7 +41,6 @@ export const useChildAssignment = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: "noreply@example.com",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
@@ -46,16 +48,14 @@ export const useChildAssignment = () => {
 
       toast({
         title: t("success"),
-        description: t("childRequestApproved")
+        description: t("childRequestApproved"),
       });
-
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
     } catch (error) {
       console.error('Error approving request:', error);
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorApprovingChildRequest")
+        description: t("errorApprovingRequest"),
       });
     }
   };
@@ -69,25 +69,24 @@ export const useChildAssignment = () => {
 
       if (updateError) throw updateError;
 
-      await sendEmail({
-        from: "noreply@example.com",
-        to: [request.requester_email],
-        subject: t("childRequestRejectedSubject"),
-        html: t("childRequestRejectedContent", { name: request.name })
-      });
+      if (request.requester_email) {
+        await sendEmail({
+          to: [request.requester_email],
+          subject: t("childRequestRejectedSubject"),
+          html: t("childRequestRejectedContent", { name: request.name })
+        });
+      }
 
       toast({
         title: t("success"),
-        description: t("childRequestRejected")
+        description: t("childRequestRejected"),
       });
-
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
     } catch (error) {
       console.error('Error rejecting request:', error);
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorRejectingChildRequest")
+        description: t("errorRejectingRequest"),
       });
     }
   };
