@@ -3,15 +3,10 @@ import { SponsorshipCard } from "./SponsorshipCard";
 
 interface SponsorshipListProps {
   sponsorships: GroupedSponsorship[];
-  onDeleteSponsorship: (sponsorshipId: string) => void;
-  onAddChild: (sponsorId: string) => void;
+  onDelete: (sponsorshipId: string) => void;
 }
 
-export const SponsorshipList = ({ 
-  sponsorships, 
-  onDeleteSponsorship,
-  onAddChild 
-}: SponsorshipListProps) => {
+export const SponsorshipList = ({ sponsorships, onDelete }: SponsorshipListProps) => {
   if (sponsorships.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -26,8 +21,7 @@ export const SponsorshipList = ({
         <SponsorshipCard
           key={group.sponsor.email}
           group={group}
-          onDeleteSponsorship={onDeleteSponsorship}
-          onAddChild={onAddChild}
+          onDelete={onDelete}
         />
       ))}
     </div>
