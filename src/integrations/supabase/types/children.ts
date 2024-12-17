@@ -1,31 +1,29 @@
-import { Json } from './json';
+import { Json } from "./json";
 
 export interface Child {
   id: string;
   name: string;
-  gender: string;
   birth_date: string;
+  gender: string;
   city: string | null;
   photo_url: string | null;
-  photo_validated: boolean;
   description: string | null;
   story: string | null;
-  is_sponsored: boolean;
-  sponsor_id: string | null;
-  sponsor_name: string | null;
-  sponsor_email: string | null;
-  created_at: string;
-  updated_at: string | null;
-  needs: Json | null;
+  comments: string | null;
+  is_sponsored: boolean | null;
+  needs: Json[] | null;
   age: number;
+  photo_validated: boolean;
+  sponsor_id?: number | null;
+  sponsor_name?: string | null;
+  sponsor_email?: string | null;
+  sponsor_phone?: string | null;
+  sponsor_facebook_url?: string | null;
+  status: string;
 }
 
-export interface ChildTable {
+export interface Children {
   Row: Child;
-  Insert: Omit<Child, 'id' | 'created_at' | 'updated_at'>;
+  Insert: Omit<Child, 'id'>;
   Update: Partial<Child>;
-}
-
-export type Children = {
-  Row: Child;
 }
