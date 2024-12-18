@@ -51,7 +51,7 @@ export const ReassignChildDialog = ({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {t("sponsorship.reassignChild", { name: child?.name })}
+            {t("sponsorship.reassignChild")}
           </DialogTitle>
         </DialogHeader>
 

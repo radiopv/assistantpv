@@ -1,10 +1,10 @@
 export enum TableNames {
+  CHILD_ASSIGNMENT_REQUESTS = 'child_assignment_requests',
+  SPONSORSHIP_REQUESTS = 'sponsorship_requests',
+  SPONSORSHIPS = 'sponsorships',
   CHILDREN = 'children',
   SPONSORS = 'sponsors',
-  SPONSORSHIPS = 'sponsorships',
-  CHILD_ASSIGNMENT_REQUESTS = 'child_assignment_requests',
   MESSAGES = 'messages',
-  ACTIVITY_LOGS = 'activity_logs',
-  DONATIONS = 'donations',
-  TESTIMONIALS = 'testimonials'
+  ALBUM_MEDIA = 'album_media',
+  TEMOIGNAGE = 'temoignage',
 }
