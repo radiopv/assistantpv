@@ -31,9 +31,9 @@ export const useSponsorshipManagement = () => {
 
       if (error) throw error;
 
-      // Group sponsorships by sponsor
+      // Grouper les parrainages par email du parrain
       const groupedData = (data as SponsorshipWithDetails[]).reduce<GroupedSponsorship[]>((acc, curr) => {
-        const existingGroup = acc.find(g => g.sponsor.id === curr.sponsors.id);
+        const existingGroup = acc.find(g => g.sponsor.email === curr.sponsors.email);
         
         if (existingGroup) {
           existingGroup.sponsorships.push({
@@ -57,6 +57,19 @@ export const useSponsorshipManagement = () => {
     }
   });
 
+  const { data: allChildren, isLoading: childrenLoading } = useQuery({
+    queryKey: ['all-children'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from(TableNames.CHILDREN)
+        .select('*')
+        .order('name');
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const createSponsorship = useMutation({
     mutationFn: async (childId: string) => {
       const { error } = await supabase
@@ -71,6 +84,11 @@ export const useSponsorshipManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
+      queryClient.invalidateQueries({ queryKey: ['all-children'] });
+      toast.success("Le parrainage a été créé avec succès");
+    },
+    onError: () => {
+      toast.error("Une erreur est survenue lors de la création du parrainage");
     }
   });
 
@@ -85,31 +103,19 @@ export const useSponsorshipManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
-    }
-  });
-
-  const reassignChild = useMutation({
-    mutationFn: async ({ childId, newSponsorId }: { childId: string; newSponsorId: string }) => {
-      const { error } = await supabase
-        .from(TableNames.SPONSORSHIPS)
-        .update({ 
-          sponsor_id: newSponsorId,
-          updated_at: new Date().toISOString()
-        })
-        .eq('child_id', childId);
-
-      if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ['all-children'] });
+      toast.success("Le parrainage a été supprimé avec succès");
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
+    onError: () => {
+      toast.error("Une erreur est survenue lors de la suppression du parrainage");
     }
   });
 
   return {
     sponsorships,
-    isLoading: sponsorshipsLoading,
+    allChildren,
+    isLoading: sponsorshipsLoading || childrenLoading,
     createSponsorship,
-    deleteSponsorship,
-    reassignChild
+    deleteSponsorship
   };
 };

@@ -11,7 +11,7 @@ export const useChildAssignment = () => {
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('child_assignment_requests')
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .select('*')
         .eq('status', 'pending');
 
@@ -23,7 +23,7 @@ export const useChildAssignment = () => {
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
       const { error } = await supabase
-        .from('child_assignment_requests')
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .update({ 
           status: 'approved',
           updated_at: new Date().toISOString()
@@ -43,7 +43,7 @@ export const useChildAssignment = () => {
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
       const { error } = await supabase
-        .from('child_assignment_requests')
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .update({ 
           status: 'rejected',
           updated_at: new Date().toISOString()

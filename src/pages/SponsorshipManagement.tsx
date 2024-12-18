@@ -1,48 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { useSponsorshipManagement } from "@/hooks/useSponsorshipManagement";
-import { Loader2, Plus, Users } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
+import { SponsorshipList } from "@/components/Sponsorship/SponsorshipList";
+import { AddSponsorshipDialog } from "@/components/Sponsorship/AddSponsorshipDialog";
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { SponsorshipDetailsDialog } from "@/components/Sponsorship/SponsorshipDetailsDialog";
-import { toast } from "sonner";
 
 const SponsorshipManagement = () => {
   const { t } = useLanguage();
   const { 
     sponsorships, 
+    allChildren, 
     isLoading, 
     createSponsorship, 
-    deleteSponsorship,
-    reassignChild 
+    deleteSponsorship 
   } = useSponsorshipManagement();
-  
-  const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
 
-  const handleCreateSponsorship = async (childId: string, sponsorId: string) => {
-    try {
-      await createSponsorship.mutateAsync(childId);
-      toast.success(t("sponsorship.success.created"));
-    } catch (error) {
-      toast.error(t("sponsorship.error.create"));
-    }
+  const handleAddChild = (sponsorId: string) => {
+    setSelectedSponsorId(sponsorId);
+    setIsAddDialogOpen(true);
   };
 
-  const handleDeleteSponsorship = async (sponsorshipId: string) => {
-    try {
-      await deleteSponsorship.mutateAsync(sponsorshipId);
-      toast.success(t("sponsorship.success.deleted"));
-    } catch (error) {
-      toast.error(t("sponsorship.error.delete"));
-    }
-  };
-
-  const handleReassignChild = async (childId: string, newSponsorId: string) => {
-    try {
-      await reassignChild.mutateAsync({ childId, newSponsorId });
-      toast.success(t("sponsorship.success.reassigned"));
-    } catch (error) {
-      toast.error(t("sponsorship.error.reassign"));
+  const handleCreateSponsorship = (childId: string) => {
+    if (selectedSponsorId) {
+      createSponsorship.mutate(childId);
+      setIsAddDialogOpen(false);
+      setSelectedSponsorId(null);
     }
   };
 
@@ -58,47 +43,26 @@ const SponsorshipManagement = () => {
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{t("sponsorship.management")}</h1>
+        <Button onClick={() => setIsAddDialogOpen(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          {t("sponsorship.newSponsorship")}
+        </Button>
       </div>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>{t("name")}</TableHead>
-              <TableHead>{t("email")}</TableHead>
-              <TableHead className="text-center">{t("sponsoredChildren")}</TableHead>
-              <TableHead className="text-right">{t("actions")}</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sponsorships?.map((group) => (
-              <TableRow key={group.sponsor.id}>
-                <TableCell className="font-medium">{group.sponsor.name}</TableCell>
-                <TableCell>{group.sponsor.email}</TableCell>
-                <TableCell className="text-center">{group.sponsorships.length}</TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedSponsor(group)}
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    {t("manageChildren")}
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <SponsorshipList 
+        sponsorships={sponsorships || []}
+        onDeleteSponsorship={deleteSponsorship.mutate}
+        onAddChild={handleAddChild}
+      />
 
-      <SponsorshipDetailsDialog
-        sponsor={selectedSponsor}
-        open={!!selectedSponsor}
-        onClose={() => setSelectedSponsor(null)}
-        onCreateSponsorship={handleCreateSponsorship}
-        onDeleteSponsorship={handleDeleteSponsorship}
-        onReassignChild={handleReassignChild}
+      <AddSponsorshipDialog
+        open={isAddDialogOpen}
+        onClose={() => {
+          setIsAddDialogOpen(false);
+          setSelectedSponsorId(null);
+        }}
+        availableChildren={allChildren || []}
+        onAdd={handleCreateSponsorship}
       />
     </div>
   );
