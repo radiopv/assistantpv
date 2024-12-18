@@ -5,3 +5,7 @@ export interface TranslationType {
     };
   };
 }
+
+export interface NestedTranslations {
+  [key: string]: string | NestedTranslations;
+}
