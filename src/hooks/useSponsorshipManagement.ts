@@ -2,7 +2,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SponsorshipWithDetails, GroupedSponsorship } from "@/integrations/supabase/types/sponsorship";
-import { TableNames } from "@/integrations/supabase/types/database-tables";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useSponsorshipManagement = () => {
@@ -13,7 +12,7 @@ export const useSponsorshipManagement = () => {
     queryKey: ['sponsorships'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from(TableNames.SPONSORSHIPS)
+        .from('sponsorships')
         .select(`
           *,
           sponsors (
@@ -47,7 +46,13 @@ export const useSponsorshipManagement = () => {
           });
         } else {
           acc.push({
-            sponsor: curr.sponsors,
+            sponsor: {
+              id: curr.sponsors.id,
+              name: curr.sponsors.name,
+              email: curr.sponsors.email,
+              photo_url: curr.sponsors.photo_url,
+              is_active: curr.sponsors.is_active
+            },
             sponsorships: [{
               id: curr.id,
               child: curr.children,
@@ -68,7 +73,7 @@ export const useSponsorshipManagement = () => {
     queryKey: ['all-children'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from(TableNames.CHILDREN)
+        .from('children')
         .select('*')
         .order('name');
 
@@ -80,7 +85,7 @@ export const useSponsorshipManagement = () => {
   const createSponsorship = useMutation({
     mutationFn: async ({ childId, sponsorId }: { childId: string; sponsorId: string }) => {
       const { error } = await supabase
-        .from(TableNames.SPONSORSHIPS)
+        .from('sponsorships')
         .insert({
           child_id: childId,
           sponsor_id: sponsorId,
@@ -103,7 +108,7 @@ export const useSponsorshipManagement = () => {
   const deleteSponsorship = useMutation({
     mutationFn: async (sponsorshipId: string) => {
       const { error } = await supabase
-        .from(TableNames.SPONSORSHIPS)
+        .from('sponsorships')
         .delete()
         .eq('id', sponsorshipId);
 
@@ -119,33 +124,11 @@ export const useSponsorshipManagement = () => {
     }
   });
 
-  const reassignChild = useMutation({
-    mutationFn: async ({ childId, newSponsorId }: { childId: string; newSponsorId: string }) => {
-      const { error } = await supabase
-        .from(TableNames.SPONSORSHIPS)
-        .update({ 
-          sponsor_id: newSponsorId,
-          updated_at: new Date().toISOString()
-        })
-        .eq('child_id', childId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
-      toast.success(t("sponsorship.success.reassigned"));
-    },
-    onError: () => {
-      toast.error(t("sponsorship.error.reassign"));
-    }
-  });
-
   return {
     sponsorships,
     allChildren,
     isLoading: sponsorshipsLoading || childrenLoading,
     createSponsorship,
-    deleteSponsorship,
-    reassignChild
+    deleteSponsorship
   };
 };
