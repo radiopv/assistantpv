@@ -13,8 +13,10 @@ const SponsorshipManagement = () => {
     allChildren, 
     isLoading, 
     createSponsorship, 
-    deleteSponsorship 
+    deleteSponsorship,
+    reassignChild 
   } = useSponsorshipManagement();
+
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
 
@@ -25,7 +27,10 @@ const SponsorshipManagement = () => {
 
   const handleCreateSponsorship = (childId: string) => {
     if (selectedSponsorId) {
-      createSponsorship.mutate(childId);
+      createSponsorship.mutate({ 
+        childId, 
+        sponsorId: selectedSponsorId 
+      });
       setIsAddDialogOpen(false);
       setSelectedSponsorId(null);
     }
@@ -53,6 +58,7 @@ const SponsorshipManagement = () => {
         sponsorships={sponsorships || []}
         onDeleteSponsorship={deleteSponsorship.mutate}
         onAddChild={handleAddChild}
+        onReassignChild={reassignChild.mutate}
       />
 
       <AddSponsorshipDialog

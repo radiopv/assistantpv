@@ -3,9 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SponsorshipWithDetails, GroupedSponsorship } from "@/integrations/supabase/types/sponsorship";
 import { TableNames } from "@/integrations/supabase/types/database-tables";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useSponsorshipManagement = () => {
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
 
   const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery({
     queryKey: ['sponsorships'],
@@ -18,7 +20,8 @@ export const useSponsorshipManagement = () => {
             id,
             name,
             email,
-            photo_url
+            photo_url,
+            is_active
           ),
           children (
             id,
@@ -31,21 +34,25 @@ export const useSponsorshipManagement = () => {
 
       if (error) throw error;
 
-      // Grouper les parrainages par email du parrain
+      // Grouper les parrainages par parrain
       const groupedData = (data as SponsorshipWithDetails[]).reduce<GroupedSponsorship[]>((acc, curr) => {
-        const existingGroup = acc.find(g => g.sponsor.email === curr.sponsors.email);
+        const existingGroup = acc.find(g => g.sponsor.id === curr.sponsors.id);
         
         if (existingGroup) {
           existingGroup.sponsorships.push({
             id: curr.id,
-            child: curr.children
+            child: curr.children,
+            start_date: curr.start_date,
+            status: curr.status
           });
         } else {
           acc.push({
             sponsor: curr.sponsors,
             sponsorships: [{
               id: curr.id,
-              child: curr.children
+              child: curr.children,
+              start_date: curr.start_date,
+              status: curr.status
             }]
           });
         }
@@ -71,11 +78,12 @@ export const useSponsorshipManagement = () => {
   });
 
   const createSponsorship = useMutation({
-    mutationFn: async (childId: string) => {
+    mutationFn: async ({ childId, sponsorId }: { childId: string; sponsorId: string }) => {
       const { error } = await supabase
         .from(TableNames.SPONSORSHIPS)
         .insert({
           child_id: childId,
+          sponsor_id: sponsorId,
           start_date: new Date().toISOString(),
           status: 'active'
         });
@@ -85,10 +93,10 @@ export const useSponsorshipManagement = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
       queryClient.invalidateQueries({ queryKey: ['all-children'] });
-      toast.success("Le parrainage a été créé avec succès");
+      toast.success(t("sponsorship.success.created"));
     },
     onError: () => {
-      toast.error("Une erreur est survenue lors de la création du parrainage");
+      toast.error(t("sponsorship.error.create"));
     }
   });
 
@@ -104,10 +112,31 @@ export const useSponsorshipManagement = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
       queryClient.invalidateQueries({ queryKey: ['all-children'] });
-      toast.success("Le parrainage a été supprimé avec succès");
+      toast.success(t("sponsorship.success.deleted"));
     },
     onError: () => {
-      toast.error("Une erreur est survenue lors de la suppression du parrainage");
+      toast.error(t("sponsorship.error.delete"));
+    }
+  });
+
+  const reassignChild = useMutation({
+    mutationFn: async ({ childId, newSponsorId }: { childId: string; newSponsorId: string }) => {
+      const { error } = await supabase
+        .from(TableNames.SPONSORSHIPS)
+        .update({ 
+          sponsor_id: newSponsorId,
+          updated_at: new Date().toISOString()
+        })
+        .eq('child_id', childId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
+      toast.success(t("sponsorship.success.reassigned"));
+    },
+    onError: () => {
+      toast.error(t("sponsorship.error.reassign"));
     }
   });
 
@@ -116,6 +145,7 @@ export const useSponsorshipManagement = () => {
     allChildren,
     isLoading: sponsorshipsLoading || childrenLoading,
     createSponsorship,
-    deleteSponsorship
+    deleteSponsorship,
+    reassignChild
   };
 };

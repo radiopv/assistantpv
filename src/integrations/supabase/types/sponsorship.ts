@@ -1,3 +1,5 @@
+import { Json } from './json';
+
 export interface SponsorshipWithDetails {
   id: string;
   sponsors: {
@@ -12,32 +14,18 @@ export interface SponsorshipWithDetails {
     photo_url: string | null;
     age: number;
   };
+  start_date: string;
+  status: string;
+  is_anonymous: boolean;
 }
 
-export interface SponsorshipRequest {
-  id: string;
-  requester_email: string;
-  name: string;
-  full_name: string;
-  email: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-  child_id: string;
-  motivation?: string;
-  phone?: string;
-  city?: string;
-  facebook_url?: string;
-  is_long_term?: boolean;
-  terms_accepted?: boolean;
-  updated_at?: string;
-}
-
-export type GroupedSponsorship = {
+export interface GroupedSponsorship {
   sponsor: {
     id: string;
     name: string;
     email: string;
     photo_url: string | null;
+    is_active: boolean;
   };
   sponsorships: Array<{
     id: string;
@@ -47,5 +35,23 @@ export type GroupedSponsorship = {
       photo_url: string | null;
       age: number;
     };
+    start_date: string;
+    status: string;
   }>;
-};
+}
+
+export interface SponsorshipRequest {
+  id: string;
+  child_id: string;
+  full_name: string;
+  email: string;
+  phone?: string;
+  city?: string;
+  facebook_url?: string;
+  motivation?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  is_long_term: boolean;
+  terms_accepted: boolean;
+  created_at: string;
+  updated_at?: string;
+}
