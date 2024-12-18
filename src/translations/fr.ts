@@ -1,4 +1,4 @@
-export const fr = {
+export const frenchTranslations = {
   sponsorship: {
     management: "Gestion des parrainages",
     newSponsorship: "Nouveau parrainage",
@@ -19,4 +19,21 @@ export const fr = {
       update: "Erreur lors de la mise à jour du parrainage"
     }
   },
+  translationManager: "Gestionnaire de traductions",
+  translationError: "Erreur de traduction",
+  translationUpdated: "Traductions mises à jour",
+  scanningTranslations: "Scan des traductions",
+  scanAssistantSection: "Scanner les traductions",
+  frenchTranslations: "Traductions françaises",
+  spanishTranslations: "Traductions espagnoles",
+  save: "Enregistrer",
+  searchChild: "Rechercher un enfant",
+  sponsored: "Parrainé",
+  available: "Disponible",
+  reassign: "Réassigner",
+  select: "Sélectionner"
+};
+
+export type TranslationType = {
+  [key: string]: string | TranslationType;
 };

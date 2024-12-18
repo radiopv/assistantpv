@@ -6,6 +6,6 @@ export enum TableNames {
   SPONSORSHIP_REQUESTS = 'sponsorship_requests',
   MESSAGES = 'messages',
   ALBUM_MEDIA = 'album_media',
-  TEMOIGNAGE = 'temoignage',
+  TESTIMONIALS = 'temoignage',
   ACTIVITY_LOGS = 'activity_logs'
 }
