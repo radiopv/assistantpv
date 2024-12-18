@@ -94,7 +94,9 @@ export const useSponsorshipManagement = () => {
         .from(TableNames.SPONSORSHIPS)
         .update({ 
           sponsor_id: newSponsorId,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
+          start_date: new Date().toISOString(),
+          status: 'active'
         })
         .eq('child_id', childId);
 

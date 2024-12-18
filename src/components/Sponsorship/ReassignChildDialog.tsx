@@ -28,8 +28,8 @@ export const ReassignChildDialog = ({
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: sponsors = [] } = useQuery({
-    queryKey: ['sponsors'],
+  const { data: availableSponsors = [] } = useQuery({
+    queryKey: ['available-sponsors'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('sponsors')
@@ -41,17 +41,19 @@ export const ReassignChildDialog = ({
     }
   });
 
-  const filteredSponsors = sponsors.filter(sponsor => 
+  const filteredSponsors = availableSponsors.filter(sponsor => 
     sponsor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sponsor.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    sponsor.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (!child) return null;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>
-            {t("sponsorship.reassignChild")}
+            {t("sponsorship.reassignChild", { name: child.name })}
           </DialogTitle>
         </DialogHeader>
 
@@ -76,7 +78,7 @@ export const ReassignChildDialog = ({
                       <AvatarFallback>{sponsor.name[0]}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h3 className="font-medium">{sponsor.name}</h3>
+                      <h3 className="font-semibold">{sponsor.name}</h3>
                       <p className="text-sm text-muted-foreground">
                         {sponsor.email}
                       </p>

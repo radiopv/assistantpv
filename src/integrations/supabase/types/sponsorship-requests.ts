@@ -3,14 +3,13 @@ export interface SponsorshipRequest {
   child_id: string;
   requester_email: string;
   name: string;
-  email: string;
-  facebook_url?: string;
-  phone?: string;
-  motivation?: string;
-  status: string;
-  terms_accepted: boolean;
+  status: 'pending' | 'approved' | 'rejected';
   created_at: string;
   updated_at?: string;
+  motivation?: string;
+  phone?: string;
+  facebook_url?: string;
+  terms_accepted: boolean;
   city?: string;
   is_long_term?: boolean;
 }
