@@ -1,27 +1,22 @@
-export const frenchTranslations = {
+export const fr = {
   sponsorship: {
-    management: "Gestion des Parrainages",
-    newSponsorship: "Nouveau Parrainage",
-    createSponsorship: "Créer un nouveau parrainage",
+    management: "Gestion des parrainages",
+    newSponsorship: "Nouveau parrainage",
+    createSponsorship: "Créer un parrainage",
     deleteSponsorship: "Supprimer le parrainage",
-    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce parrainage ? Cette action ne peut pas être annulée.",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce parrainage ?",
     sponsoredChild: "Enfant parrainé",
-    confirmReassign: "Cet enfant est déjà parrainé. Voulez-vous vraiment réattribuer cet enfant à un nouveau parrain ?",
-    reassignmentInfo: "Vous pouvez sélectionner n'importe quel enfant, même s'il est déjà parrainé. Une confirmation sera demandée pour les enfants déjà parrainés.",
+    confirmReassign: "Êtes-vous sûr de vouloir réassigner cet enfant ?",
+    reassignmentInfo: "L'enfant sera retiré du parrain actuel et assigné au nouveau parrain.",
     success: {
-      created: "Le parrainage a été créé avec succès",
-      deleted: "Le parrainage a été supprimé avec succès",
-      reassigned: "L'enfant a été réattribué avec succès"
+      created: "Parrainage créé avec succès",
+      deleted: "Parrainage supprimé avec succès",
+      updated: "Parrainage mis à jour avec succès"
     },
     error: {
-      create: "Une erreur est survenue lors de la création du parrainage",
-      delete: "Une erreur est survenue lors de la suppression du parrainage",
-      reassign: "Une erreur est survenue lors de la réattribution de l'enfant"
+      create: "Erreur lors de la création du parrainage",
+      delete: "Erreur lors de la suppression du parrainage",
+      update: "Erreur lors de la mise à jour du parrainage"
     }
   },
-  sponsored: "Parrainé",
-  available: "Disponible",
-  reassign: "Réattribuer",
-  select: "Sélectionner",
-  searchChild: "Rechercher un enfant..."
 };
