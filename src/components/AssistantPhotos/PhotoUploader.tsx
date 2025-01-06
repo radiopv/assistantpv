@@ -74,16 +74,12 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
         setCurrentFileIndex(i);
         const { file, type } = previews[i];
         
-        // Calculer la progression pour ce fichier
         const baseProgress = (i / totalFiles) * 100;
-        
         const fileExt = file.name.split('.').pop();
         const filePath = `${childId}/${Math.random()}.${fileExt}`;
 
-        // Créer un nouveau FileReader pour suivre le progrès de lecture
         const reader = new FileReader();
         
-        // Promesse pour suivre la progression de la lecture
         await new Promise((resolve, reject) => {
           reader.onload = () => resolve(reader.result);
           reader.onerror = reject;
@@ -98,12 +94,7 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
 
         const { error: uploadError } = await supabase.storage
           .from('album-media')
-          .upload(filePath, file, {
-            onProgress: (event) => {
-              const fileProgress = (event.loaded / event.total!) * (100 / totalFiles);
-              setProgress(Math.floor(baseProgress + fileProgress));
-            }
-          });
+          .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
@@ -116,6 +107,8 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
           url: publicUrl,
           type: type
         });
+
+        setProgress(((i + 1) / totalFiles) * 100);
       }
 
       toast.success(t.uploadComplete);
