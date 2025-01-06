@@ -37,10 +37,12 @@ const ValidationPage = () => {
   const { data: photoCount } = useQuery({
     queryKey: ['pending-photo-count'],
     queryFn: async () => {
+      console.log("Fetching photo count");
       const { count } = await supabase
         .from('album_media')
         .select('*', { count: 'exact', head: true })
-        .eq('is_approved', false) as { count: number };
+        .is('is_approved', null) as { count: number };
+      console.log("Photo count:", count);
       return count || 0;
     }
   });
