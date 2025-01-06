@@ -15,7 +15,6 @@ import { NeedCheckboxes } from "./Needs/NeedCheckboxes";
 interface ChildCardProps {
   child: any;
   onViewProfile: (id: string) => void;
-  onSponsorClick: (child: any) => void;
 }
 
 const formatAge = (birthDate: string | undefined | null) => {
@@ -218,7 +217,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
                         : "bg-gray-100 text-gray-800"
                     }`}
                   >
-                    {need.category}
+                    {need.description || t("needsDescription")}
                     {need.is_urgent && " (!)"} 
                   </div>
                 ))}
