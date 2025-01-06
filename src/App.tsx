@@ -1,20 +1,23 @@
-import { BrowserRouter as Router } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
+import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/components/Auth/AuthProvider";
-import AppRoutes from "@/components/Routes/AppRoutes";
+import { LanguageProvider } from "@/contexts/LanguageContext";
+import { Toaster } from "@/components/ui/toaster";
+import { AppRoutes } from "@/components/Routes/AppRoutes";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <AuthProvider>
-          <AppRoutes />
-          <Toaster />
-        </AuthProvider>
-      </Router>
+      <BrowserRouter>
+        <LanguageProvider>
+          <AuthProvider>
+            <AppRoutes />
+            <Toaster />
+          </AuthProvider>
+        </LanguageProvider>
+      </BrowserRouter>
     </QueryClientProvider>
   );
 }
