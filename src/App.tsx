@@ -9,7 +9,6 @@ import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
 import SponsorshipManagement from "@/pages/SponsorshipManagement";
 import Donations from "@/pages/Donations";
-import Permissions from "@/pages/admin/Permissions";
 import Validation from "@/pages/admin/Validation";
 import Statistics from "@/pages/admin/Statistics";
 import FAQ from "@/pages/admin/FAQ";
@@ -33,7 +32,6 @@ function App() {
                 <Route path="/donations" element={<Donations />} />
                 
                 {/* Admin Routes */}
-                <Route path="/admin/permissions" element={<Permissions />} />
                 <Route path="/admin/validation" element={<Validation />} />
                 <Route path="/admin/statistics" element={<Statistics />} />
                 <Route path="/admin/faq" element={<FAQ />} />

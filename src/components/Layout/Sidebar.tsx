@@ -6,7 +6,6 @@ import {
   LayoutDashboard, 
   Users, 
   Gift, 
-  Settings,
   Baby,
   UserPlus,
   ChartBar,
@@ -83,12 +82,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   ];
 
   const adminLinks = [
-    {
-      href: "/admin/permissions",
-      label: t("permissions"),
-      icon: Settings,
-      show: isAdmin,
-    },
     {
       href: "/admin/translations",
       label: t("translationManager"),
