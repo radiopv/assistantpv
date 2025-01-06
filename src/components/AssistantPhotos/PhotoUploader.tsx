@@ -99,7 +99,7 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
         const { error: uploadError } = await supabase.storage
           .from('album-media')
           .upload(filePath, file, {
-            onUploadProgress: (event) => {
+            onProgress: (event) => {
               const fileProgress = (event.loaded / event.total!) * (100 / totalFiles);
               setProgress(Math.floor(baseProgress + fileProgress));
             }
