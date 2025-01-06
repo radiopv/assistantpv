@@ -5,6 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSponsorshipManagement } from "@/hooks/useSponsorshipManagement";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
