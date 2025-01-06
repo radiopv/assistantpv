@@ -63,19 +63,36 @@ const AssistantPhotos = () => {
   });
 
   const notifySponsor = async (childId: string) => {
+    // Fetch child details with current sponsorship information
     const { data: child } = await supabase
       .from('children')
-      .select('name, sponsorships(sponsor_id)')
+      .select(`
+        name,
+        sponsorships (
+          sponsor_id,
+          status,
+          end_date
+        )
+      `)
       .eq('id', childId)
       .single();
 
-    if (child?.sponsorships?.[0]?.sponsor_id) {
-      await supabase.from('messages').insert({
-        recipient_id: child.sponsorships[0].sponsor_id,
-        subject: `Nouvelles photos de ${child.name}`,
-        content: `De nouvelles photos ont été ajoutées à l'album de ${child.name}. Vous pouvez les consulter dans son profil.`,
-        is_read: false
-      });
+    // Check if child exists and has an active sponsorship
+    if (child?.sponsorships && child.sponsorships.length > 0) {
+      // Find active sponsorship (no end_date and status is 'active')
+      const activeSponsorship = child.sponsorships.find(
+        s => s.status === 'active' && !s.end_date
+      );
+
+      if (activeSponsorship?.sponsor_id) {
+        // Send message only to the active sponsor
+        await supabase.from('messages').insert({
+          recipient_id: activeSponsorship.sponsor_id,
+          subject: `Nouvelles photos de ${child.name}`,
+          content: `De nouvelles photos ont été ajoutées à l'album de ${child.name}. Vous pouvez les consulter dans son profil.`,
+          is_read: false
+        });
+      }
     }
   };
 
