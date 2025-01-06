@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { TableNames } from "@/integrations/supabase/types/database-tables";
 
 export const useChildAssignment = () => {
   const queryClient = useQueryClient();
@@ -12,7 +13,7 @@ export const useChildAssignment = () => {
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('child_assignment_requests')
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .select('*')
         .eq('status', 'pending')
         .returns<ChildAssignmentRequest[]>();
@@ -25,9 +26,9 @@ export const useChildAssignment = () => {
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
       const { error } = await supabase
-        .from('child_assignment_requests')
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .update({ 
-          status: 'approved',
+          status: 'approved' as const,
           updated_at: new Date().toISOString()
         })
         .eq('id', request.id)
@@ -46,9 +47,9 @@ export const useChildAssignment = () => {
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
       const { error } = await supabase
-        .from('child_assignment_requests')
+        .from(TableNames.CHILD_ASSIGNMENT_REQUESTS)
         .update({ 
-          status: 'rejected',
+          status: 'rejected' as const,
           updated_at: new Date().toISOString()
         })
         .eq('id', request.id)

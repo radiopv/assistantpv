@@ -8,3 +8,5 @@ export enum TableNames {
   TESTIMONIALS = 'temoignage',
   ACTIVITY_LOGS = 'activity_logs'
 }
+
+export type DatabaseTableName = keyof typeof TableNames;
