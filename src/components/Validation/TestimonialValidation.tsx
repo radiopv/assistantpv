@@ -39,7 +39,6 @@ export const TestimonialValidation = () => {
         description: t("testimonialApproved"),
       });
 
-      // Invalidate the query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['pending-testimonials'] });
     } catch (error) {
       console.error('Error approving testimonial:', error);
@@ -65,7 +64,6 @@ export const TestimonialValidation = () => {
         description: t("testimonialRejected"),
       });
 
-      // Invalidate the query to refresh the list
       queryClient.invalidateQueries({ queryKey: ['pending-testimonials'] });
     } catch (error) {
       console.error('Error rejecting testimonial:', error);
