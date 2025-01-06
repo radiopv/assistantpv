@@ -6,17 +6,14 @@ export interface ChildAssignmentRequest {
   created_at?: string;
 }
 
-// Add the table definition to Database type
-declare module './database' {
-  interface Database {
-    public: {
-      Tables: {
-        child_assignment_requests: {
-          Row: ChildAssignmentRequest;
-          Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at'>;
-          Update: Partial<Omit<ChildAssignmentRequest, 'id' | 'created_at'>>;
-        };
+export interface Database {
+  public: {
+    Tables: {
+      child_assignment_requests: {
+        Row: ChildAssignmentRequest;
+        Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at'>;
+        Update: Partial<Omit<ChildAssignmentRequest, 'id' | 'created_at'>>;
       };
     };
-  }
+  };
 }

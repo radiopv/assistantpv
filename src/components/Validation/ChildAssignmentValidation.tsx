@@ -16,26 +16,22 @@ export const ChildAssignmentValidation = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
-      console.log('Fetching child assignment requests...');
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending');
+        .eq('status', 'pending') as { data: ChildAssignmentRequest[], error: any };
       
       if (error) {
         console.error('Error fetching requests:', error);
         throw error;
       }
       
-      console.log('Fetched requests:', data);
-      return data as ChildAssignmentRequest[];
+      return data;
     }
   });
 
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
-      console.log('Approving request:', request);
-      
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
@@ -44,7 +40,6 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
@@ -68,8 +63,6 @@ export const ChildAssignmentValidation = () => {
 
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
-      console.log('Rejecting request:', request);
-      
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'rejected' })
@@ -78,7 +71,6 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })

@@ -18,7 +18,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('sponsorship_requests')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
+        .eq('status', 'pending') as { count: number };
       return count || 0;
     }
   });
@@ -29,7 +29,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('child_assignment_requests')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending');
+        .eq('status', 'pending') as { count: number };
       return count || 0;
     }
   });
@@ -40,7 +40,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('album_media')
         .select('*', { count: 'exact', head: true })
-        .eq('is_approved', false);
+        .eq('is_approved', false) as { count: number };
       return count || 0;
     }
   });
@@ -51,7 +51,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('testimonials')
         .select('*', { count: 'exact', head: true })
-        .eq('is_approved', false);
+        .eq('is_approved', false) as { count: number };
       return count || 0;
     }
   });
