@@ -23,7 +23,7 @@ export const PhotoValidation = () => {
       const { data, error } = await supabase
         .from("album_media")
         .select("*")
-        .is("is_approved", null);
+        .eq("is_approved", false);
 
       if (error) {
         console.error("Error fetching photos:", error);

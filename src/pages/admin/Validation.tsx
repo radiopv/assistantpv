@@ -41,7 +41,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('album_media')
         .select('*', { count: 'exact', head: true })
-        .is('is_approved', null) as { count: number };
+        .eq('is_approved', false) as { count: number };
       console.log("Photo count:", count);
       return count || 0;
     }
