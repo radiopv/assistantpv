@@ -8,7 +8,11 @@ import Login from "@/pages/auth/Login";
 const Index = () => {
   const { user, loading } = useAuth();
   
+  console.log("Index page - User:", user);
+  console.log("Index page - Loading:", loading);
+  
   if (loading) {
+    console.log("Index page - Showing loading skeleton");
     return (
       <div className="container mx-auto p-4 space-y-4">
         <Skeleton className="h-12 w-64 mx-auto" />
@@ -18,6 +22,7 @@ const Index = () => {
   }
   
   if (!user) {
+    console.log("Index page - Showing login form");
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto p-4">
@@ -31,9 +36,11 @@ const Index = () => {
   }
 
   if (user.role === 'admin' || user.role === 'assistant') {
+    console.log("Index page - Redirecting to dashboard");
     return <Navigate to="/dashboard" />;
   }
 
+  console.log("Index page - Showing messages");
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-4 space-y-6">
