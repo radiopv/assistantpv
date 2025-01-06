@@ -17,6 +17,7 @@ import AssistantPhotos from "@/pages/AssistantPhotos";
 import MediaManagement from "@/pages/MediaManagement";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
+import Tasks from "@/pages/Tasks";
 
 // Admin pages
 import Statistics from "@/pages/admin/Statistics";
@@ -46,6 +47,7 @@ const AppRoutes = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/assistant/photos" element={<AssistantPhotos />} />
         <Route path="/media" element={<MediaManagement />} />
+        <Route path="/tasks" element={<Tasks />} />
         
         {/* Admin routes */}
         <Route path="/admin/statistics" element={<Statistics />} />
