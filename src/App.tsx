@@ -1,73 +1,67 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
-import MainLayout from "@/components/Layout/MainLayout";
-import PublicLayout from "@/components/Layout/PublicLayout";
-import { AuthProvider } from "@/components/Auth/AuthProvider";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/react-query";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// Pages
-import Home from "@/pages/Home";
-import Login from "@/pages/auth/Login";
+import { AuthProvider } from "@/components/Auth/AuthProvider";
+import { Toaster } from "sonner";
+import MainLayout from "@/components/Layout/MainLayout";
 import Dashboard from "@/pages/Dashboard";
 import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
-import ChildProfile from "@/pages/ChildProfile";
-import Donations from "@/pages/Donations";
-import Settings from "@/pages/Settings";
-import BecomeSponsor from "@/pages/BecomeSponsor";
-import AssistantPhotos from "@/pages/AssistantPhotos";
-import MediaManagement from "@/pages/MediaManagement";
+import ChildPhotos from "@/pages/ChildPhotos";
 import SponsorshipManagement from "@/pages/SponsorshipManagement";
+import Donations from "@/pages/Donations";
+import AddDonation from "@/pages/AddDonation";
+import Permissions from "@/pages/admin/Permissions";
+import TranslationManager from "@/pages/admin/TranslationManager";
 import Validation from "@/pages/admin/Validation";
 import Statistics from "@/pages/admin/Statistics";
-import Translations from "@/pages/admin/Translations";
-import Emails from "@/pages/admin/Emails";
+import EmailManager from "@/pages/admin/EmailManager";
 import FAQ from "@/pages/admin/FAQ";
-import Permissions from "@/pages/admin/Permissions";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
+import NotFound from "@/pages/NotFound";
 
-const queryClient = new QueryClient();
-
-const App = () => {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <LanguageProvider>
-          <AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <BrowserRouter>
             <Routes>
-              <Route element={<PublicLayout />}>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/become-sponsor" element={<BecomeSponsor />} />
-              </Route>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               
-              <Route element={<MainLayout />}>
+              <Route path="/" element={<MainLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/children" element={<Children />} />
                 <Route path="/children/add" element={<AddChild />} />
-                <Route path="/children/:id" element={<ChildProfile />} />
+                <Route path="/assistant/photos" element={<ChildPhotos />} />
+                <Route path="/sponsorship-management" element={<SponsorshipManagement />} />
                 <Route path="/donations" element={<Donations />} />
-                <Route path="/donations/add" element={<Donations />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/assistant/photos" element={<AssistantPhotos />} />
-                <Route path="/media" element={<MediaManagement />} />
-                <Route path="/sponsorship" element={<SponsorshipManagement />} />
+                <Route path="/donations/add" element={<AddDonation />} />
                 
-                {/* Admin routes */}
+                {/* Admin Routes */}
+                <Route path="/admin/permissions" element={<Permissions />} />
+                <Route path="/admin/translations" element={<TranslationManager />} />
                 <Route path="/admin/validation" element={<Validation />} />
                 <Route path="/admin/statistics" element={<Statistics />} />
-                <Route path="/admin/translations" element={<Translations />} />
-                <Route path="/admin/emails" element={<Emails />} />
+                <Route path="/admin/emails" element={<EmailManager />} />
                 <Route path="/admin/faq" element={<FAQ />} />
-                <Route path="/admin/permissions" element={<Permissions />} />
               </Route>
+
+              <Route path="*" element={<NotFound />} />
             </Routes>
-            <Toaster />
-          </AuthProvider>
-        </LanguageProvider>
-      </Router>
+          </BrowserRouter>
+        </AuthProvider>
+      </LanguageProvider>
+      <Toaster />
     </QueryClientProvider>
   );
-};
+}
 
 export default App;

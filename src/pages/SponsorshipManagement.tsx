@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { SponsorshipWithDetails } from "@/integrations/supabase/types/sponsorship";
 
 const SponsorshipManagement = () => {
   const { t } = useLanguage();
@@ -15,7 +16,9 @@ const SponsorshipManagement = () => {
       const { data, error } = await supabase
         .from('sponsorships')
         .select(`
-          *,
+          id,
+          start_date,
+          status,
           sponsors (
             id,
             name,
@@ -30,28 +33,32 @@ const SponsorshipManagement = () => {
             city
           )
         `)
-        .order('created_at', { ascending: false });
+        .returns<SponsorshipWithDetails[]>();
 
       if (error) throw error;
-      return data;
+      return data || [];
     }
   });
 
   const handleDeleteSponsorship = async (id: string) => {
-    const { error } = await supabase
-      .from('sponsorships')
-      .delete()
-      .eq('id', id);
+    try {
+      const { error } = await supabase
+        .from('sponsorships')
+        .delete()
+        .eq('id', id);
 
-    if (error) {
-      toast.error(t("sponsorship.error.delete"));
-    } else {
+      if (error) throw error;
+
       toast.success(t("sponsorship.success.deleted"));
+    } catch (error) {
+      console.error('Error deleting sponsorship:', error);
+      toast.error(t("sponsorship.error.delete"));
     }
   };
 
   const columns = [
     {
+      accessorKey: "sponsors.name",
       header: t("sponsor"),
       cell: ({ row }: any) => (
         <div className="flex items-center gap-2">
@@ -63,6 +70,7 @@ const SponsorshipManagement = () => {
       ),
     },
     {
+      accessorKey: "children.name",
       header: t("child"),
       cell: ({ row }: any) => (
         <div className="flex items-center gap-2">
@@ -74,6 +82,7 @@ const SponsorshipManagement = () => {
       ),
     },
     {
+      accessorKey: "start_date",
       header: t("startDate"),
       cell: ({ row }: any) => (
         <span>
@@ -82,6 +91,7 @@ const SponsorshipManagement = () => {
       ),
     },
     {
+      accessorKey: "status",
       header: t("status"),
       cell: ({ row }: any) => (
         <span className={`inline-block px-2 py-1 rounded-full text-xs ${
@@ -94,7 +104,7 @@ const SponsorshipManagement = () => {
       ),
     },
     {
-      header: t("actions"),
+      id: "actions",
       cell: ({ row }: any) => (
         <Button
           variant="destructive"
