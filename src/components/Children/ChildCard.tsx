@@ -5,12 +5,12 @@ import { convertJsonToNeeds } from "@/types/needs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
-import { NeedsSection } from "./Needs/NeedsSection";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ProfilePhotoSection } from "./ProfilePhoto/ProfilePhotoSection";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { NeedCheckboxes } from "./Needs/NeedCheckboxes";
 
 interface ChildCardProps {
   child: any;
@@ -39,28 +39,20 @@ const formatAge = (birthDate: string | undefined | null) => {
 
 export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
   const { t } = useLanguage();
-  const [selectedNeed, setSelectedNeed] = useState<string | null>(null);
-  const [comment, setComment] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editedChild, setEditedChild] = useState(child);
-
-  const handleNeedClick = (needCategory: string) => {
-    setSelectedNeed(needCategory === selectedNeed ? null : needCategory);
-    setComment("");
-  };
-
-  const handleCommentSubmit = (needCategory: string, isUrgent: boolean) => {
-    console.log("Need category:", needCategory);
-    console.log("Comment:", comment);
-    console.log("Is urgent:", isUrgent);
-    setSelectedNeed(null);
-    setComment("");
-  };
 
   const handleInputChange = (field: string, value: string) => {
     setEditedChild(prev => ({
       ...prev,
       [field]: value
+    }));
+  };
+
+  const handleNeedsChange = (needs: any[]) => {
+    setEditedChild(prev => ({
+      ...prev,
+      needs: needs
     }));
   };
 
@@ -81,7 +73,8 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           story: editedChild.story,
           comments: editedChild.comments,
           photo_url: editedChild.photo_url,
-          city: editedChild.city
+          city: editedChild.city,
+          needs: editedChild.needs
         })
         .eq('id', child.id);
 
@@ -195,26 +188,43 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
                 className="min-h-[80px]"
               />
             </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">{t("needs")}</p>
+              <NeedCheckboxes
+                needs={convertJsonToNeeds(editedChild.needs)}
+                onNeedsChange={handleNeedsChange}
+              />
+            </div>
           </div>
         ) : (
-          child.description && (
+          <>
+            {child.description && (
+              <div>
+                <ScrollArea className="h-20">
+                  <p className="text-sm text-gray-600">{child.description}</p>
+                </ScrollArea>
+              </div>
+            )}
             <div>
-              <ScrollArea className="h-20">
-                <p className="text-sm text-gray-600">{child.description}</p>
-              </ScrollArea>
+              <p className="text-sm text-gray-500 mb-1">{t("needs")}</p>
+              <div className="grid grid-cols-2 gap-2">
+                {convertJsonToNeeds(child.needs).map((need, index) => (
+                  <div
+                    key={`${need.category}-${index}`}
+                    className={`px-3 py-2 rounded-lg text-sm ${
+                      need.is_urgent
+                        ? "bg-red-100 text-red-800"
+                        : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {need.category}
+                    {need.is_urgent && " (!)"} 
+                  </div>
+                ))}
+              </div>
             </div>
-          )
+          </>
         )}
-
-        <NeedsSection
-          needs={convertJsonToNeeds(child.needs)}
-          selectedNeed={selectedNeed}
-          comment={comment}
-          onNeedClick={handleNeedClick}
-          onCommentChange={setComment}
-          onCommentSubmit={handleCommentSubmit}
-          onClose={() => setSelectedNeed(null)}
-        />
         
         <div className="flex flex-col items-center gap-2">
           {isEditing ? (
