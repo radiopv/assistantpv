@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { UserPlus, ArrowUpDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { differenceInYears, parseISO } from "date-fns";
+import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useState } from "react";
 
 interface ChildrenTableProps {
@@ -20,8 +20,19 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
   const { t } = useLanguage();
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: '', direction: 'asc' });
 
-  const getAge = (birthDate: string) => {
-    return differenceInYears(new Date(), parseISO(birthDate));
+  const formatAge = (birthDate: string) => {
+    if (!birthDate) return t("ageNotAvailable");
+    
+    const today = new Date();
+    const birth = parseISO(birthDate);
+    const years = differenceInYears(today, birth);
+    
+    if (years === 0) {
+      const months = differenceInMonths(today, birth);
+      return `${months} ${t("months")}`;
+    }
+    
+    return `${years} ${t("years")}`;
   };
 
   const sortData = (key: string) => {
@@ -33,8 +44,15 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
     if (!sortConfig.key) return children;
 
     return [...children].sort((a, b) => {
-      let aValue = sortConfig.key === 'age' ? getAge(a.birth_date) : a[sortConfig.key];
-      let bValue = sortConfig.key === 'age' ? getAge(b.birth_date) : b[sortConfig.key];
+      let aValue = a[sortConfig.key];
+      let bValue = b[sortConfig.key];
+
+      if (sortConfig.key === 'age') {
+        const aDate = parseISO(a.birth_date);
+        const bDate = parseISO(b.birth_date);
+        aValue = aDate.getTime();
+        bValue = bDate.getTime();
+      }
 
       if (typeof aValue === 'string') {
         aValue = aValue.toLowerCase();
@@ -76,7 +94,7 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
           {getSortedChildren().map((child) => (
             <TableRow key={child.id}>
               <TableCell className="font-medium">{child.name}</TableCell>
-              <TableCell>{getAge(child.birth_date)} {t("years")}</TableCell>
+              <TableCell>{formatAge(child.birth_date)}</TableCell>
               <TableCell>{child.city}</TableCell>
               <TableCell>
                 <span
