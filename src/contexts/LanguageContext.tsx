@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { frenchTranslations } from '../translations/fr';
 import { spanishTranslations } from '../translations/es';
-import { TranslationType } from '@/integrations/supabase/types/translations';
 
 type Language = 'fr' | 'es';
 
@@ -11,7 +10,7 @@ interface LanguageContextType {
   t: (key: string) => string;
 }
 
-const translations: Record<Language, TranslationType> = {
+const translations = {
   fr: frenchTranslations,
   es: spanishTranslations
 };
@@ -39,19 +38,15 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
   }, [language]);
 
   const t = (key: string): string => {
-    const parts = key.split('.');
-    let value: any = translations[language];
+    const currentTranslations = translations[language];
+    const translation = currentTranslations[key];
     
-    for (const part of parts) {
-      if (value && typeof value === 'object' && part in value) {
-        value = value[part];
-      } else {
-        console.warn(`Translation missing for key: ${key} in language: ${language}`);
-        return key;
-      }
+    if (!translation) {
+      console.warn(`Translation missing for key: ${key} in language: ${language}`);
+      return key;
     }
     
-    return typeof value === 'string' ? value : key;
+    return translation;
   };
 
   return (

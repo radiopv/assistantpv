@@ -1,31 +1,91 @@
 import { Json } from './json';
 
-export interface Child {
-  id: string;
-  name: string;
-  gender: string;
-  birth_date: string;
-  city: string | null;
-  photo_url: string | null;
-  photo_validated: boolean;
-  description: string | null;
-  story: string | null;
-  is_sponsored: boolean;
-  sponsor_id: string | null;
-  sponsor_name: string | null;
-  sponsor_email: string | null;
-  created_at: string;
-  updated_at: string | null;
-  needs: Json | null;
-  age: number;
-}
-
-export interface ChildTable {
-  Row: Child;
-  Insert: Omit<Child, 'id' | 'created_at' | 'updated_at'>;
-  Update: Partial<Child>;
-}
-
-export type Children = {
-  Row: Child;
+export interface Children {
+  Row: {
+    id: string;
+    name: string;
+    birth_date: string | null;
+    gender: string | null;
+    city: string | null;
+    photo_url: string | null;
+    description: string | null;
+    story: string | null;
+    comments: string | null;
+    is_sponsored: boolean;
+    needs: Json[] | null;
+    age: number | null;
+    created_at: string | null;
+    updated_at: string | null;
+    end_date: string | null;
+    location_id: number | null;
+    photo_validated: boolean | null;
+    sponsor_email: string | null;
+    sponsor_facebook_url: string | null;
+    sponsor_id: string | null;
+    sponsor_name: string | null;
+    sponsor_phone: string | null;
+    sponsorship_id: string | null;
+    sponsorship_status: string | null;
+    sponsorships: string | null;
+    start_date: string | null;
+    status: string | null;
+  };
+  Insert: {
+    id?: string;
+    name: string;
+    birth_date?: string | null;
+    gender?: string | null;
+    city?: string | null;
+    photo_url?: string | null;
+    description?: string | null;
+    story?: string | null;
+    comments?: string | null;
+    is_sponsored?: boolean;
+    needs?: Json[] | null;
+    age?: number | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+    end_date?: string | null;
+    location_id?: number | null;
+    photo_validated?: boolean | null;
+    sponsor_email?: string | null;
+    sponsor_facebook_url?: string | null;
+    sponsor_id?: string | null;
+    sponsor_name?: string | null;
+    sponsor_phone?: string | null;
+    sponsorship_id?: string | null;
+    sponsorship_status?: string | null;
+    sponsorships?: string | null;
+    start_date?: string | null;
+    status?: string | null;
+  };
+  Update: {
+    id?: string;
+    name?: string;
+    birth_date?: string | null;
+    gender?: string | null;
+    city?: string | null;
+    photo_url?: string | null;
+    description?: string | null;
+    story?: string | null;
+    comments?: string | null;
+    is_sponsored?: boolean;
+    needs?: Json[] | null;
+    age?: number | null;
+    created_at?: string | null;
+    updated_at?: string | null;
+    end_date?: string | null;
+    location_id?: number | null;
+    photo_validated?: boolean | null;
+    sponsor_email?: string | null;
+    sponsor_facebook_url?: string | null;
+    sponsor_id?: string | null;
+    sponsor_name?: string | null;
+    sponsor_phone?: string | null;
+    sponsorship_id?: string | null;
+    sponsorship_status?: string | null;
+    sponsorships?: string | null;
+    start_date?: string | null;
+    status?: string | null;
+  };
 }

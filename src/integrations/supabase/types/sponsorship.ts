@@ -1,32 +1,10 @@
-export interface SponsorshipRequest {
-  id: string;
-  child_id: string;
-  email: string;
-  full_name: string;
-  phone: string;
-  facebook_url: string;
-  motivation: string;
-  city: string;
-  status: 'pending' | 'approved' | 'rejected';
-  terms_accepted: boolean;
-  is_long_term: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface SponsorshipWithDetails {
   id: string;
-  sponsor_id: string;
-  child_id: string;
-  status: string;
-  start_date: string;
-  end_date?: string;
   sponsors: {
     id: string;
     name: string;
     email: string;
     photo_url: string | null;
-    is_active: boolean;
   };
   children: {
     id: string;
@@ -36,13 +14,12 @@ export interface SponsorshipWithDetails {
   };
 }
 
-export interface GroupedSponsorship {
+export type GroupedSponsorship = {
   sponsor: {
     id: string;
     name: string;
     email: string;
     photo_url: string | null;
-    is_active: boolean;
   };
   sponsorships: Array<{
     id: string;
@@ -52,7 +29,15 @@ export interface GroupedSponsorship {
       photo_url: string | null;
       age: number;
     };
-    start_date: string;
-    status: string;
   }>;
+};
+
+export interface SponsorshipRequest {
+  id: string;
+  child_id: string;
+  requester_email: string;
+  name: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at?: string;
+  updated_at?: string;
 }

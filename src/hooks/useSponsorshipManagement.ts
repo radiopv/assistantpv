@@ -2,11 +2,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SponsorshipWithDetails, GroupedSponsorship } from "@/integrations/supabase/types/sponsorship";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useSponsorshipManagement = () => {
   const queryClient = useQueryClient();
-  const { t } = useLanguage();
 
   const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery({
     queryKey: ['sponsorships'],
@@ -19,8 +17,7 @@ export const useSponsorshipManagement = () => {
             id,
             name,
             email,
-            photo_url,
-            is_active
+            photo_url
           ),
           children (
             id,
@@ -33,31 +30,21 @@ export const useSponsorshipManagement = () => {
 
       if (error) throw error;
 
-      // Grouper les parrainages par parrain
+      // Group sponsorships by sponsor email
       const groupedData = (data as SponsorshipWithDetails[]).reduce<GroupedSponsorship[]>((acc, curr) => {
-        const existingGroup = acc.find(g => g.sponsor.id === curr.sponsors.id);
+        const existingGroup = acc.find(g => g.sponsor.email === curr.sponsors.email);
         
         if (existingGroup) {
           existingGroup.sponsorships.push({
             id: curr.id,
-            child: curr.children,
-            start_date: curr.start_date,
-            status: curr.status
+            child: curr.children
           });
         } else {
           acc.push({
-            sponsor: {
-              id: curr.sponsors.id,
-              name: curr.sponsors.name,
-              email: curr.sponsors.email,
-              photo_url: curr.sponsors.photo_url,
-              is_active: curr.sponsors.is_active
-            },
+            sponsor: curr.sponsors,
             sponsorships: [{
               id: curr.id,
-              child: curr.children,
-              start_date: curr.start_date,
-              status: curr.status
+              child: curr.children
             }]
           });
         }
@@ -83,12 +70,12 @@ export const useSponsorshipManagement = () => {
   });
 
   const createSponsorship = useMutation({
-    mutationFn: async ({ childId, sponsorId }: { childId: string; sponsorId: string }) => {
+    mutationFn: async ({ sponsor_id, child_id }: { sponsor_id: string; child_id: string; }) => {
       const { error } = await supabase
         .from('sponsorships')
         .insert({
-          child_id: childId,
-          sponsor_id: sponsorId,
+          sponsor_id,
+          child_id,
           start_date: new Date().toISOString(),
           status: 'active'
         });
@@ -98,37 +85,58 @@ export const useSponsorshipManagement = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
       queryClient.invalidateQueries({ queryKey: ['all-children'] });
-      toast.success(t("sponsorship.success.created"));
+      toast.success("Le parrainage a été créé avec succès");
     },
     onError: () => {
-      toast.error(t("sponsorship.error.create"));
+      toast.error("Une erreur est survenue lors de la création du parrainage");
     }
   });
 
   const deleteSponsorship = useMutation({
-    mutationFn: async (sponsorshipId: string) => {
+    mutationFn: async (sponsorship_id: string) => {
       const { error } = await supabase
         .from('sponsorships')
         .delete()
-        .eq('id', sponsorshipId);
+        .eq('id', sponsorship_id);
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
       queryClient.invalidateQueries({ queryKey: ['all-children'] });
-      toast.success(t("sponsorship.success.deleted"));
+      toast.success("Le parrainage a été supprimé avec succès");
     },
     onError: () => {
-      toast.error(t("sponsorship.error.delete"));
+      toast.error("Une erreur est survenue lors de la suppression du parrainage");
     }
   });
+
+  const toggleSponsorshipStatus = async (childId: string) => {
+    const { data: child, error: fetchError } = await supabase
+      .from('children')
+      .select('is_sponsored')
+      .eq('id', childId)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    const { error: updateError } = await supabase
+      .from('children')
+      .update({ is_sponsored: !child.is_sponsored })
+      .eq('id', childId);
+
+    if (updateError) throw updateError;
+
+    queryClient.invalidateQueries({ queryKey: ['all-children'] });
+    queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
+  };
 
   return {
     sponsorships,
     allChildren,
     isLoading: sponsorshipsLoading || childrenLoading,
     createSponsorship,
-    deleteSponsorship
+    deleteSponsorship,
+    toggleSponsorshipStatus
   };
 };

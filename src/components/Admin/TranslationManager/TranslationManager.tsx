@@ -10,18 +10,19 @@ import { frenchTranslations } from "@/translations/fr";
 import { spanishTranslations } from "@/translations/es";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TranslationScanner } from "./TranslationScanner";
-import { TranslationType } from "@/integrations/supabase/types/translations";
 
-type TranslationsState = {
-  fr: TranslationType;
-  es: TranslationType;
+type TranslationType = {
+  [key: string]: string;
 };
 
 export const TranslationManager = () => {
   const { t } = useLanguage();
-  const [translations, setTranslations] = useState<TranslationsState>({
-    fr: frenchTranslations as TranslationType,
-    es: spanishTranslations as TranslationType
+  const [translations, setTranslations] = useState<{
+    fr: TranslationType;
+    es: TranslationType;
+  }>({
+    fr: { ...frenchTranslations },
+    es: { ...spanishTranslations }
   });
   const [scanning, setScanning] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
@@ -106,7 +107,7 @@ export const TranslationManager = () => {
                       className="bg-gray-50"
                     />
                     <Input
-                      value={typeof value === 'string' ? value : JSON.stringify(value)}
+                      value={value}
                       onChange={(e) => handleTranslationChange('fr', key, e.target.value)}
                     />
                   </div>
@@ -126,7 +127,7 @@ export const TranslationManager = () => {
                       className="bg-gray-50"
                     />
                     <Input
-                      value={typeof value === 'string' ? value : JSON.stringify(value)}
+                      value={value}
                       onChange={(e) => handleTranslationChange('es', key, e.target.value)}
                     />
                   </div>

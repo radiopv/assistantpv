@@ -1,31 +1,23 @@
-export interface ChildAssignmentRequestsTable {
-  Row: {
-    id: string;
-    child_id: string;
-    requester_email: string;
-    name: string;
-    status: "pending" | "approved" | "rejected";
-    created_at: string | null;
-    updated_at: string | null;
-  };
-  Insert: {
+import { Database } from '../database';
+
+export interface ChildAssignmentRequest {
+  id: string;
+  child_id: string;
+  requester_email: string;
+  name: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ChildAssignmentRequestTable {
+  Row: ChildAssignmentRequest;
+  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'> & {
     id?: string;
-    child_id: string;
-    requester_email: string;
-    name: string;
-    status?: "pending" | "approved" | "rejected";
-    created_at?: string | null;
-    updated_at?: string | null;
+    created_at?: string;
+    updated_at?: string;
   };
-  Update: {
-    id?: string;
-    child_id?: string;
-    requester_email?: string;
-    name?: string;
-    status?: "pending" | "approved" | "rejected";
-    created_at?: string | null;
-    updated_at?: string | null;
-  };
+  Update: Partial<ChildAssignmentRequest>;
   Relationships: [
     {
       foreignKeyName: "child_assignment_requests_child_id_fkey";
@@ -36,5 +28,3 @@ export interface ChildAssignmentRequestsTable {
     }
   ];
 }
-
-export type ChildAssignmentRequest = ChildAssignmentRequestsTable["Row"];

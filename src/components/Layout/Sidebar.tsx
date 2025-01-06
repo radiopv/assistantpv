@@ -6,6 +6,8 @@ import {
   LayoutDashboard, 
   Users, 
   Gift, 
+  MessageSquare,
+  Settings,
   Baby,
   UserPlus,
   ChartBar,
@@ -13,6 +15,7 @@ import {
   Languages,
   Image,
   CheckCircle2,
+  Mail,
   Edit,
   Heart
 } from "lucide-react";
@@ -78,9 +81,21 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
         }
       ]
     },
+    {
+      href: "/messages",
+      label: t("messages"),
+      icon: MessageSquare,
+      show: true,
+    },
   ];
 
   const adminLinks = [
+    {
+      href: "/admin/permissions",
+      label: t("permissions"),
+      icon: Settings,
+      show: isAdmin,
+    },
     {
       href: "/admin/translations",
       label: t("translationManager"),
@@ -97,6 +112,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       href: "/admin/statistics",
       label: t("statistics"),
       icon: ChartBar,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/emails",
+      label: t("emailManager"),
+      icon: Mail,
       show: isAdmin,
     },
     {

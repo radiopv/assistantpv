@@ -1,13 +1,14 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
+import { sendEmail } from "@/api/email";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
-import { Database } from "@/integrations/supabase/types";
 
 export const useChildAssignment = () => {
-  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
@@ -15,51 +16,78 @@ export const useChildAssignment = () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending')
-        .returns<ChildAssignmentRequest[]>();
-
+        .eq('status', 'pending');
+      
       if (error) throw error;
-      return data || [];
+      return data as ChildAssignmentRequest[];
     }
   });
 
   const handleApprove = async (request: ChildAssignmentRequest) => {
     try {
-      const { error } = await supabase
+      if (!request.requester_email) {
+        throw new Error("Email du demandeur manquant");
+      }
+
+      const { error: updateError } = await supabase
         .from('child_assignment_requests')
-        .update({ 
-          status: 'approved',
-          updated_at: new Date().toISOString()
-        })
+        .update({ status: 'approved' })
         .eq('id', request.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
-      toast.success(t("requestApproved"));
+      await sendEmail({
+        from: "noreply@example.com",
+        to: [request.requester_email],
+        subject: t("childRequestApprovedSubject"),
+        html: t("childRequestApprovedContent", { name: request.name })
+      });
+
+      toast({
+        title: t("success"),
+        description: t("childRequestApproved")
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
     } catch (error) {
       console.error('Error approving request:', error);
-      toast.error(t("errorApprovingRequest"));
+      toast({
+        variant: "destructive",
+        title: t("error"),
+        description: t("errorApprovingChildRequest")
+      });
     }
   };
 
   const handleReject = async (request: ChildAssignmentRequest) => {
     try {
-      const { error } = await supabase
+      const { error: updateError } = await supabase
         .from('child_assignment_requests')
-        .update({ 
-          status: 'rejected',
-          updated_at: new Date().toISOString()
-        })
+        .update({ status: 'rejected' })
         .eq('id', request.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
-      toast.success(t("requestRejected"));
+      await sendEmail({
+        from: "noreply@example.com",
+        to: [request.requester_email],
+        subject: t("childRequestRejectedSubject"),
+        html: t("childRequestRejectedContent", { name: request.name })
+      });
+
+      toast({
+        title: t("success"),
+        description: t("childRequestRejected")
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
     } catch (error) {
       console.error('Error rejecting request:', error);
-      toast.error(t("errorRejectingRequest"));
+      toast({
+        variant: "destructive",
+        title: t("error"),
+        description: t("errorRejectingChildRequest")
+      });
     }
   };
 
