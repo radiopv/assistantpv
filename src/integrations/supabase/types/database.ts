@@ -1,5 +1,6 @@
+import { Tasks } from './tasks';
+import { Children } from './children';
 import { Json } from './json';
-import { Task, TasksTable } from './tasks';
 
 export type Database = {
   public: {
@@ -69,7 +70,7 @@ export type Database = {
           title?: string | null
           type?: string
           updated_at?: string | null
-          url?: string
+          url?: string | null
         }
         Relationships: [
           {
@@ -81,168 +82,80 @@ export type Database = {
           }
         ]
       }
-      tasks: TasksTable;
-      children: {
-        Row: {
-          id: string;
-          name: string;
-          birth_date: string | null;
-          gender: string | null;
-          city: string | null;
-          photo_url: string | null;
-          description: string | null;
-          story: string | null;
-          comments: string | null;
-          is_sponsored: boolean;
-          needs: Json[] | null;
-          age: number | null;
-          created_at: string | null;
-          updated_at: string | null;
-          end_date: string | null;
-          location_id: number | null;
-          photo_validated: boolean | null;
-          sponsor_email: string | null;
-          sponsor_facebook_url: string | null;
-          sponsor_id: string | null; // Changed from number to string
-          sponsor_name: string | null;
-          sponsor_phone: string | null;
-          sponsorship_id: string | null;
-          sponsorship_status: string | null;
-          sponsorships: string | null;
-          start_date: string | null;
-          status: string | null;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          birth_date?: string | null;
-          gender?: string | null;
-          city?: string | null;
-          photo_url?: string | null;
-          description?: string | null;
-          story?: string | null;
-          comments?: string | null;
-          is_sponsored?: boolean;
-          needs?: Json[] | null;
-          age?: number | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-          end_date?: string | null;
-          location_id?: number | null;
-          photo_validated?: boolean | null;
-          sponsor_email?: string | null;
-          sponsor_facebook_url?: string | null;
-          sponsor_id?: string | null;
-          sponsor_name?: string | null;
-          sponsor_phone?: string | null;
-          sponsorship_id?: string | null;
-          sponsorship_status?: string | null;
-          sponsorships?: string | null;
-          start_date?: string | null;
-          status?: string | null;
-        };
-        Update: {
-          id?: string;
-          name?: string;
-          birth_date?: string | null;
-          gender?: string | null;
-          city?: string | null;
-          photo_url?: string | null;
-          description?: string | null;
-          story?: string | null;
-          comments?: string | null;
-          is_sponsored?: boolean;
-          needs?: Json[] | null;
-          age?: number | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-          end_date?: string | null;
-          location_id?: number | null;
-          photo_validated?: boolean | null;
-          sponsor_email?: string | null;
-          sponsor_facebook_url?: string | null;
-          sponsor_id?: string | null;
-          sponsor_name?: string | null;
-          sponsor_phone?: string | null;
-          sponsorship_id?: string | null;
-          sponsorship_status?: string | null;
-          sponsorships?: string | null;
-          start_date?: string | null;
-          status?: string | null;
-        };
-      };
+      tasks: Tasks;
+      children: Children;
       badges: {
         Row: {
-          category: string | null;
-          created_at: string | null;
-          description: string | null;
-          icon: string | null;
-          id: string;
-          name: string;
-          points: number | null;
-          requirements: Json | null;
-          updated_at: string | null;
+          category: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          points: number | null
+          requirements: Json | null
+          updated_at: string | null
         }
         Insert: {
-          category?: string | null;
-          created_at?: string | null;
-          description?: string | null;
-          icon?: string | null;
-          id?: string;
-          name: string;
-          points?: number | null;
-          requirements?: Json | null;
-          updated_at?: string | null;
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          points?: number | null
+          requirements?: Json | null
+          updated_at?: string | null
         }
         Update: {
-          category?: string;
-          created_at?: string | null;
-          description?: string | null;
-          icon?: string | null;
-          id?: string;
-          name?: string;
-          points?: number | null;
-          requirements?: Json | null;
-          updated_at?: string | null;
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          points?: number | null
+          requirements?: Json | null
+          updated_at?: string | null
         }
         Relationships: []
-      };
+      }
       birthday_reminders: {
         Row: {
-          child_id: string | null;
-          created_at: string | null;
-          days_before: number[] | null;
-          email: string | null;
-          email_enabled: boolean | null;
-          id: string;
-          phone: string | null;
-          sms_enabled: boolean | null;
-          sponsor_id: string | null;
-          updated_at: string | null;
+          child_id: string | null
+          created_at: string | null
+          days_before: number[] | null
+          email: string | null
+          email_enabled: boolean | null
+          id: string
+          phone: string | null
+          sms_enabled: boolean | null
+          sponsor_id: string | null
+          updated_at: string | null
         }
         Insert: {
-          child_id?: string | null;
-          created_at?: string | null;
-          days_before?: number[] | null;
-          email?: string | null;
-          email_enabled?: boolean | null;
-          id?: string;
-          phone?: string | null;
-          sms_enabled?: boolean | null;
-          sponsor_id?: string | null;
-          updated_at?: string | null;
+          child_id?: string | null
+          created_at?: string | null
+          days_before?: number[] | null
+          email?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          phone?: string | null
+          sms_enabled?: boolean | null
+          sponsor_id?: string | null
+          updated_at?: string | null
         }
         Update: {
-          child_id?: string | null;
-          created_at?: string | null;
-          days_before?: number[] | null;
-          email?: string | null;
-          email_enabled?: boolean | null;
-          id?: string;
-          phone?: string | null;
-          sms_enabled?: boolean | null;
-          sponsor_id?: string | null;
-          updated_at?: string | null;
+          child_id?: string | null
+          created_at?: string | null
+          days_before?: number[] | null
+          email?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          phone?: string | null
+          sms_enabled?: boolean | null
+          sponsor_id?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -260,34 +173,34 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       chat_messages: {
         Row: {
-          content: string;
-          created_at: string | null;
-          encryption_key: string | null;
-          id: string;
-          is_encrypted: boolean | null;
-          room_id: string | null;
-          sender_id: string | null;
+          content: string
+          created_at: string | null
+          encryption_key: string | null
+          id: string
+          is_encrypted: boolean | null
+          room_id: string | null
+          sender_id: string | null
         }
         Insert: {
-          content: string;
-          created_at?: string | null;
-          encryption_key?: string | null;
-          id?: string;
-          is_encrypted?: boolean | null;
-          room_id?: string;
-          sender_id?: string;
+          content: string
+          created_at?: string | null
+          encryption_key?: string | null
+          id?: string
+          is_encrypted?: boolean | null
+          room_id?: string | null
+          sender_id?: string | null
         }
         Update: {
-          content?: string;
-          created_at?: string | null;
-          encryption_key?: string | null;
-          id?: string;
-          is_encrypted?: boolean | null;
-          room_id?: string;
-          sender_id?: string;
+          content?: string
+          created_at?: string | null
+          encryption_key?: string | null
+          id?: string
+          is_encrypted?: boolean | null
+          room_id?: string | null
+          sender_id?: string | null
         }
         Relationships: [
           {
@@ -305,25 +218,25 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       chat_room_participants: {
         Row: {
-          joined_at: string | null;
-          role: string | null;
-          room_id: string;
-          sponsor_id: string;
+          joined_at: string | null
+          role: string | null
+          room_id: string
+          sponsor_id: string
         }
         Insert: {
-          joined_at?: string | null;
-          role?: string | null;
-          room_id: string;
-          sponsor_id: string;
+          joined_at?: string | null
+          role?: string | null
+          room_id: string
+          sponsor_id: string
         }
         Update: {
-          joined_at?: string | null;
-          role?: string | null;
-          room_id?: string;
-          sponsor_id?: string;
+          joined_at?: string | null
+          role?: string | null
+          room_id?: string
+          sponsor_id?: string
         }
         Relationships: [
           {
@@ -341,34 +254,34 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       chat_rooms: {
         Row: {
-          created_at: string | null;
-          created_by: string | null;
-          id: string;
-          is_active: boolean | null;
-          name: string;
-          type: string | null;
-          updated_at: string | null;
+          created_at: string | null
+          created_by: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          type: string | null
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string | null;
-          created_by?: string | null;
-          id?: string;
-          is_active?: boolean | null;
-          name: string;
-          type?: string | null;
-          updated_at?: string | null;
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          type?: string | null
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string | null;
-          created_by?: string | null;
-          id?: string;
-          is_active?: boolean | null;
-          name?: string;
-          type?: string | null;
-          updated_at?: string | null;
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          type?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -379,64 +292,64 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       child_display_options: {
         Row: {
-          category: string;
-          created_at: string | null;
-          display_order: number | null;
-          id: string;
-          is_active: boolean | null;
-          name: string;
-          updated_at: string | null;
+          category: string
+          created_at: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
         }
         Insert: {
-          category: string;
-          created_at?: string | null;
-          display_order?: number | null;
-          id?: string;
-          is_active?: boolean | null;
-          name: string;
-          updated_at?: string | null;
+          category: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
         }
         Update: {
-          category?: string;
-          created_at?: string | null;
-          display_order?: number | null;
-          id?: string;
-          is_active?: boolean | null;
-          name?: string;
-          updated_at?: string | null;
+          category?: string
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
-      };
+      }
       donation_items: {
         Row: {
-          category_id: string | null;
-          created_at: string | null;
-          description: string | null;
-          donation_id: string | null;
-          id: string;
-          quantity: number;
-          updated_at: string | null;
+          category_id: string | null
+          created_at: string | null
+          description: string | null
+          donation_id: string | null
+          id: string
+          quantity: number
+          updated_at: string | null
         }
         Insert: {
-          category_id?: string | null;
-          created_at?: string | null;
-          description?: string | null;
-          donation_id?: string | null;
-          id?: string;
-          quantity: number;
-          updated_at?: string | null;
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          donation_id?: string | null
+          id?: string
+          quantity: number
+          updated_at?: string | null
         }
         Update: {
-          category_id?: string | null;
-          created_at?: string | null;
-          description?: string | null;
-          donation_id?: string | null;
-          id?: string;
-          quantity?: number;
-          updated_at?: string | null;
+          category_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          donation_id?: string | null
+          id?: string
+          quantity?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -454,25 +367,25 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       donations: {
         Row: {
-          assistant_name: string;
-          city: string;
-          comments: string | null;
-          created_at: string | null;
-          donation_date: string;
-          id: string;
-          people_helped: number;
-          photos: string[] | null;
-          status: string | null;
-          updated_at: string | null;
+          assistant_name: string
+          city: string
+          comments: string | null
+          created_at: string | null
+          donation_date: string
+          id: string
+          people_helped: number
+          photos: string[] | null
+          status: string | null
+          updated_at: string | null
         }
         Insert: {
-          assistant_name: string;
-          city: string;
-          comments?: string | null;
-          created_at?: string | null;
+          assistant_name: string
+          city: string
+          comments?: string | null
+          created_at?: string | null
           donation_date: string;
           id?: string;
           people_helped: number;
@@ -484,7 +397,7 @@ export type Database = {
           assistant_name?: string;
           city?: string;
           comments?: string | null;
-          created_at?: string;
+          created_at?: string | null;
           donation_date?: string;
           id?: string;
           people_helped?: number;
@@ -493,31 +406,31 @@ export type Database = {
           updated_at?: string | null;
         }
         Relationships: []
-      };
+      }
       donors: {
         Row: {
-          created_at: string | null;
-          donation_id: string | null;
-          id: string;
-          is_anonymous: boolean | null;
-          name: string;
-          updated_at: string | null;
+          created_at: string | null
+          donation_id: string | null
+          id: string
+          is_anonymous: boolean | null
+          name: string
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string | null;
-          donation_id?: string | null;
-          id?: string;
-          is_anonymous?: boolean | null;
-          name: string;
-          updated_at?: string | null;
+          created_at?: string | null
+          donation_id?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          name: string
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string | null;
-          donation_id?: string | null;
-          id?: string;
-          is_anonymous?: boolean | null;
-          name?: string;
-          updated_at?: string | null;
+          created_at?: string | null
+          donation_id?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          name?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -528,32 +441,32 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       locations: {
         Row: {
-          child_count: number | null;
-          city_name: string;
-          created_at: string | null;
-          id: number;
-          latitude: number;
-          longitude: number;
-          sponsored_count: number | null;
-          updated_at: string | null;
+          child_count: number | null
+          city_name: string
+          created_at: string | null
+          id: number
+          latitude: number
+          longitude: number
+          sponsored_count: number | null
+          updated_at: string | null
         }
         Insert: {
-          child_count?: number | null;
-          city_name: string;
-          created_at?: string | null;
-          id?: number;
+          child_count?: number | null
+          city_name: string
+          created_at?: string | null
+          id?: number
           latitude: number;
           longitude: number;
-          sponsored_count?: number | null;
-          updated_at?: string | null;
+          sponsored_count?: number | null
+          updated_at?: string | null
         }
         Update: {
-          child_count?: number | null;
+          child_count?: number | null
           city_name?: string;
-          created_at?: string | null;
+          created_at?: string | null
           id?: number;
           latitude?: number;
           longitude?: number;
@@ -561,52 +474,52 @@ export type Database = {
           updated_at?: string | null;
         }
         Relationships: []
-      };
+      }
       messages: {
         Row: {
-          content: string;
-          conversation_type: string | null;
-          created_at: string | null;
-          id: string;
-          is_archived: boolean | null;
-          is_read: boolean | null;
-          is_starred: boolean | null;
-          parent_id: string | null;
-          recipient_id: string | null;
-          sender_id: string | null;
-          sender_role: string | null;
-          subject: string;
-          updated_at: string | null;
+          content: string
+          conversation_type: string | null
+          created_at: string | null
+          id: string
+          is_archived: boolean | null
+          is_read: boolean | null
+          is_starred: boolean | null
+          parent_id: string | null
+          recipient_id: string | null
+          sender_id: string | null
+          sender_role: string | null
+          subject: string
+          updated_at: string | null
         }
         Insert: {
-          content: string;
-          conversation_type?: string | null;
-          created_at?: string | null;
-          id?: string;
-          is_archived?: boolean | null;
-          is_read?: boolean | null;
-          is_starred?: boolean | null;
-          parent_id?: string | null;
-          recipient_id?: string | null;
-          sender_id?: string | null;
-          sender_role?: string | null;
-          subject: string;
-          updated_at?: string | null;
+          content: string
+          conversation_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          is_starred?: boolean | null
+          parent_id?: string | null
+          recipient_id?: string | null
+          sender_id?: string | null
+          sender_role?: string | null
+          subject: string
+          updated_at?: string | null
         }
         Update: {
-          content?: string;
-          conversation_type?: string | null;
-          created_at?: string | null;
-          id?: string;
-          is_archived?: boolean | null;
-          is_read?: boolean | null;
-          is_starred?: boolean | null;
-          parent_id?: string | null;
-          recipient_id?: string | null;
-          sender_id?: string | null;
-          sender_role?: string | null;
-          subject?: string;
-          updated_at?: string | null;
+          content?: string
+          conversation_type?: string | null
+          created_at?: string | null
+          id?: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          is_starred?: boolean | null
+          parent_id?: string | null
+          recipient_id?: string | null
+          sender_id?: string | null
+          sender_role?: string | null
+          subject?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -631,40 +544,40 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       notifications: {
         Row: {
-          content: string;
-          created_at: string | null;
-          id: string;
-          is_read: boolean | null;
-          link: string | null;
-          recipient_id: string | null;
-          title: string;
-          type: string;
-          updated_at: string | null;
+          content: string
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          link: string | null
+          recipient_id: string | null
+          title: string
+          type: string
+          updated_at: string | null
         }
         Insert: {
-          content: string;
-          created_at?: string | null;
-          id?: string;
-          is_read?: boolean | null;
-          link?: string | null;
-          recipient_id?: string | null;
-          title: string;
-          type: string;
-          updated_at?: string | null;
+          content: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          recipient_id?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
         }
         Update: {
-          content?: string;
-          created_at?: string | null;
-          id?: string;
-          is_read?: boolean | null;
-          link?: string | null;
-          recipient_id?: string | null;
-          title?: string;
-          type?: string;
-          updated_at?: string | null;
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          recipient_id?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -675,103 +588,103 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      };
+      }
       permissions: {
         Row: {
-          category: string;
-          created_at: string | null;
-          description: string | null;
-          id: string;
-          name: string;
-          updated_at: string | null;
+          category: string
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
         }
         Insert: {
-          category: string;
-          created_at?: string | null;
-          description?: string | null;
-          id?: string;
-          name: string;
-          updated_at?: string | null;
+          category: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
         }
         Update: {
-          category?: string;
-          created_at?: string | null;
-          description?: string | null;
-          id?: string;
-          name?: string;
-          updated_at?: string | null;
+          category?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
       sponsors: {
         Row: {
-          address: string | null;
-          city: string | null;
-          created_at: string | null;
-          current_level_id: string | null;
-          email: string | null;
-          facebook_url: string | null;
-          force_password_change: boolean | null;
-          id: string;
-          is_active: boolean | null;
-          is_anonymous: boolean | null;
-          last_login: string | null;
-          name: string;
-          password_hash: string | null;
-          permissions: Json | null;
-          phone: string | null;
-          photo_url: string | null;
-          privacy_settings: Json | null;
-          role: string | null;
-          show_name_publicly: boolean | null;
-          total_points: number | null;
-          updated_at: string | null;
+          address: string | null
+          city: string | null
+          created_at: string | null
+          current_level_id: string | null
+          email: string | null
+          facebook_url: string | null
+          force_password_change: boolean | null
+          id: string
+          is_active: boolean | null
+          is_anonymous: boolean | null
+          last_login: string | null
+          name: string
+          password_hash: string | null
+          permissions: Json | null
+          phone: string | null
+          photo_url: string | null
+          privacy_settings: Json | null
+          role: string | null
+          show_name_publicly: boolean | null
+          total_points: number | null
+          updated_at: string | null
         }
         Insert: {
-          address?: string | null;
-          city?: string | null;
-          created_at?: string | null;
-          current_level_id?: string | null;
-          email?: string | null;
-          facebook_url?: string | null;
-          force_password_change?: boolean | null;
-          id?: string;
-          is_active?: boolean | null;
-          is_anonymous?: boolean | null;
-          last_login?: string | null;
-          name: string;
-          password_hash?: string | null;
-          permissions?: Json | null;
-          phone?: string;
-          photo_url?: string | null;
-          privacy_settings?: Json | null;
-          role?: string | null;
-          show_name_publicly?: boolean | null;
-          total_points?: number | null;
-          updated_at?: string | null;
+          address?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_level_id?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          force_password_change?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_anonymous?: boolean | null
+          last_login?: string | null
+          name: string
+          password_hash?: string | null
+          permissions?: Json | null
+          phone?: string | null
+          photo_url?: string | null
+          privacy_settings?: Json | null
+          role?: string | null
+          show_name_publicly?: boolean | null
+          total_points?: number | null
+          updated_at?: string | null
         }
         Update: {
-          address?: string | null;
-          city?: string | null;
-          created_at?: string | null;
-          current_level_id?: string | null;
-          email?: string | null;
-          facebook_url?: string | null;
-          force_password_change?: boolean | null;
-          id?: string;
-          is_active?: boolean | null;
-          is_anonymous?: boolean | null;
-          last_login?: string | null;
-          name?: string;
-          password_hash?: string | null;
-          permissions?: Json | null;
-          phone?: string | null;
-          photo_url?: string | null;
-          privacy_settings?: Json | null;
-          role?: string | null;
-          show_name_publicly?: boolean | null;
-          total_points?: number | null;
-          updated_at?: string | null;
+          address?: string | null
+          city?: string | null
+          created_at?: string | null
+          current_level_id?: string | null
+          email?: string | null
+          facebook_url?: string | null
+          force_password_change?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_anonymous?: boolean | null
+          last_login?: string | null
+          name?: string
+          password_hash?: string | null
+          permissions?: Json | null
+          phone?: string | null
+          photo_url?: string | null
+          privacy_settings?: Json | null
+          role?: string | null
+          show_name_publicly?: boolean | null
+          total_points?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -785,55 +698,55 @@ export type Database = {
       }
       sponsorships: {
         Row: {
-          auto_terminate_job_id: string | null;
-          child_id: string | null;
-          comments: string | null;
-          created_at: string | null;
-          end_date: string | null;
-          id: string;
-          is_anonymous: boolean | null;
-          sponsor_id: string | null;
-          sponsorships: string | null;
-          start_date: string;
-          status: string;
-          termination_comment: string | null;
-          termination_date: string | null;
-          termination_reason: string | null;
-          updated_at: string | null;
+          auto_terminate_job_id: string | null
+          child_id: string | null
+          comments: string | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          is_anonymous: boolean | null
+          sponsor_id: string | null
+          sponsorships: string | null
+          start_date: string
+          status: string
+          termination_comment: string | null
+          termination_date: string | null
+          termination_reason: string | null
+          updated_at: string | null
         }
         Insert: {
-          auto_terminate_job_id?: string | null;
-          child_id?: string | null;
-          comments?: string | null;
-          created_at?: string | null;
-          end_date?: string | null;
-          id?: string;
-          is_anonymous?: boolean | null;
-          sponsor_id?: string | null;
-          sponsorships?: string | null;
-          start_date: string;
-          status: string;
-          termination_comment?: string | null;
-          termination_date?: string | null;
-          termination_reason?: string | null;
-          updated_at?: string | null;
+          auto_terminate_job_id?: string | null
+          child_id?: string | null
+          comments?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          sponsor_id?: string | null
+          sponsorships?: string | null
+          start_date: string
+          status: string
+          termination_comment?: string | null
+          termination_date?: string | null
+          termination_reason?: string | null
+          updated_at?: string | null
         }
         Update: {
-          auto_terminate_job_id?: string | null;
-          child_id?: string | null;
-          comments?: string | null;
-          created_at?: string | null;
-          end_date?: string | null;
-          id?: string;
-          is_anonymous?: boolean | null;
-          sponsor_id?: string | null;
-          sponsorships?: string | null;
-          start_date?: string;
-          status: string;
-          termination_comment?: string | null;
-          termination_date?: string | null;
-          termination_reason?: string | null;
-          updated_at?: string | null;
+          auto_terminate_job_id?: string | null
+          child_id?: string | null
+          comments?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          is_anonymous?: boolean | null
+          sponsor_id?: string | null
+          sponsorships?: string | null
+          start_date?: string
+          status?: string
+          termination_comment?: string | null
+          termination_date?: string | null
+          termination_reason?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -856,12 +769,12 @@ export type Database = {
     Views: {
       donation_items_with_categories: {
         Row: {
-          category_id: string | null;
-          category_name: string | null;
-          description: string | null;
-          donation_id: string | null;
-          id: string;
-          quantity: number | null;
+          category_id: string | null
+          category_name: string | null
+          description: string | null
+          donation_id: string | null
+          id: string
+          quantity: number | null
         }
         Relationships: [
           {
@@ -875,28 +788,28 @@ export type Database = {
       }
       donation_statistics: {
         Row: {
-          completed_donations: number | null;
-          pending_donations: number | null;
-          success_rate: number | null;
-          total_donations: number | null;
-          total_people_helped: number | null;
+          completed_donations: number | null
+          pending_donations: number | null
+          success_rate: number | null
+          total_donations: number | null
+          total_people_helped: number | null
         }
         Relationships: []
       }
       donation_videos_with_details: {
         Row: {
-          assistant_name: string | null;
-          city: string | null;
-          created_at: string | null;
-          description: string | null;
-          donation_date: string | null;
-          donation_id: string | null;
-          id: string | null;
-          is_featured: boolean | null;
-          thumbnail_url: string | null;
-          title: string | null;
-          updated_at: string | null;
-          url: string | null;
+          assistant_name: string | null
+          city: string | null
+          created_at: string | null
+          description: string | null
+          donation_date: string | null
+          donation_id: string | null
+          id: string | null
+          is_featured: boolean | null
+          thumbnail_url: string | null
+          title: string | null
+          updated_at: string | null
+          url: string | null
         }
         Relationships: [
           {
@@ -910,10 +823,10 @@ export type Database = {
       }
       statistics_summary: {
         Row: {
-          children_stats: Json | null;
-          donation_stats: Json | null;
-          refresh_timestamp: string | null;
-          sponsor_stats: Json | null;
+          children_stats: Json | null
+          donation_stats: Json | null
+          refresh_timestamp: string | null
+          sponsor_stats: Json | null
         }
         Relationships: []
       }
@@ -921,71 +834,71 @@ export type Database = {
     Functions: {
       add_assistant: {
         Args: {
-          input_user_id: string;
+          input_user_id: string
         }
-        Returns: undefined;
+        Returns: undefined
       }
       approve_sponsorship_request: {
         Args: {
-          request_id: string;
-          admin_id: string;
+          request_id: string
+          admin_id: string
         }
-        Returns: undefined;
+        Returns: undefined
       }
       check_permission: {
         Args: {
-          user_id: string;
-          required_permission: string;
+          user_id: string
+          required_permission: string
         }
-        Returns: boolean;
+        Returns: boolean
       }
       create_notification: {
         Args: {
-          p_recipient_id: string;
-          p_type: string;
-          p_title: string;
-          p_content: string;
-          p_link?: string;
+          p_recipient_id: string
+          p_type: string
+          p_title: string
+          p_content: string
+          p_link?: string
         }
-        Returns: string;
+        Returns: string
       }
       get_user_permissions: {
         Args: {
-          user_role: string;
+          user_role: string
         }
-        Returns: Json;
+        Returns: Json
       }
       has_permission: {
         Args: {
-          user_id: string;
-          required_permission: string;
+          user_id: string
+          required_permission: string
         }
-        Returns: boolean;
+        Returns: boolean
       }
       is_admin: {
         Args: {
-          user_id: string;
+          user_id: string
         }
-        Returns: boolean;
+        Returns: boolean
       }
       send_notification: {
         Args: {
-          p_recipient_id: string;
-          p_type: string;
-          p_title: string;
-          p_content: string;
-          p_link?: string;
+          p_recipient_id: string
+          p_type: string
+          p_title: string
+          p_content: string
+          p_link?: string
         }
-        Returns: string;
+        Returns: string
       }
     }
     Enums: {
-      user_role: "admin" | "assistant" | "sponsor" | "visitor";
+      user_role: "admin" | "assistant" | "sponsor" | "visitor"
     }
     CompositeTypes: {
       email_template: {
-        subject: string | null;
-        html: string | null;
+        subject: string | null
+        html: string | null
       }
     }
   }

@@ -1,16 +1,9 @@
 @layer base {
   @media (max-width: 640px) {
-    /* Improved base styles */
     html {
       font-size: 14px;
-      -webkit-text-size-adjust: 100%;
     }
 
-    body {
-      overscroll-behavior-y: none;
-    }
-
-    /* Better container handling */
     .container {
       @apply px-4 max-w-[100vw] w-full mx-auto;
     }
@@ -30,7 +23,7 @@
     }
 
     /* Prevent text overflow */
-    h1, h2, h3, h4, h5, h6, p {
+    h1, h2, h3, h4, h5, h6 {
       @apply break-words;
     }
 
@@ -40,7 +33,7 @@
     input[type="password"],
     textarea {
       @apply w-full py-3 px-4;
-      font-size: 16px; /* Prevents iOS zoom */
+      font-size: 16px;
     }
 
     /* Better table handling on mobile */
@@ -50,7 +43,7 @@
     }
 
     /* Card adjustments for mobile */
-    .card {
+    .cuba-card {
       @apply mx-auto max-w-[calc(100vw-2rem)];
     }
 
@@ -59,26 +52,9 @@
       @apply gap-4;
     }
 
-    /* Loading states */
-    .loading-skeleton {
-      @apply animate-pulse bg-gray-200;
-    }
-
-    /* Image optimizations */
-    img {
-      @apply w-auto max-w-full h-auto;
-      content-visibility: auto;
-    }
-
     /* Enhanced touch feedback */
     .touch-feedback:active {
       @apply bg-gray-100/50 transition-colors duration-200;
-    }
-
-    /* Improved scrolling */
-    .scroll-container {
-      @apply overflow-auto overscroll-contain;
-      -webkit-overflow-scrolling: touch;
     }
   }
 }

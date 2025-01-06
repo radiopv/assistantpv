@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Task } from "@/integrations/supabase/types/tasks";
+import { Database } from "@/integrations/supabase/types/database";
+
+type Task = Database['public']['Tables']['tasks']['Row'];
 
 export const TasksList = () => {
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ export const TasksList = () => {
     queryKey: ['tasks'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('child_tasks')
+        .from('tasks')
         .select('*')
         .order('created_at', { ascending: false });
       
@@ -26,7 +28,7 @@ export const TasksList = () => {
   const handleCompleteTask = async (taskId: string) => {
     try {
       const { error } = await supabase
-        .from('child_tasks')
+        .from('tasks')
         .update({ status: 'completed' })
         .eq('id', taskId);
 
