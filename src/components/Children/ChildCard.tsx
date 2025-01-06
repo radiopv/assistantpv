@@ -252,14 +252,6 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
               >
                 {t("edit")}
               </Button>
-
-              <Button 
-                className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
-                variant="outline"
-                onClick={() => onSponsorClick(child)}
-              >
-                {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
-              </Button>
             </>
           )}
         </div>
