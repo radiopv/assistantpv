@@ -8,10 +8,12 @@ import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ChildrenList } from "@/components/Children/ChildrenList";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Children = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
@@ -27,7 +29,7 @@ const Children = () => {
         .order('name', { ascending: true });
 
       if (error) {
-        toast.error("Erreur lors du chargement des enfants");
+        toast.error(t("errorLoadingChildren"));
         throw error;
       }
 
@@ -86,7 +88,7 @@ const Children = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
@@ -95,12 +97,12 @@ const Children = () => {
   return (
     <div className="container mx-auto p-4 space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold">Liste des enfants</h1>
+        <h1 className="text-2xl font-bold">{t("childrenList")}</h1>
         <Button 
           onClick={() => navigate('/children/add')}
           className="w-full sm:w-auto min-h-[44px]"
         >
-          Ajouter un enfant
+          {t("addChild")}
         </Button>
       </div>
 

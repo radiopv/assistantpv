@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChildrenFiltersProps {
   searchTerm: string;
@@ -33,24 +34,25 @@ export const ChildrenFilters = ({
   ages,
 }: ChildrenFiltersProps) => {
   const { t } = useLanguage();
+  const isMobile = useIsMobile();
 
   return (
-    <div className="flex flex-col md:flex-row gap-4">
+    <div className="flex flex-col gap-4">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <Input
           placeholder={t("searchPlaceholder")}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10 bg-white"
+          className="pl-10 bg-white min-h-[44px]"
         />
       </div>
-      <div className="flex gap-2 flex-wrap md:flex-nowrap">
+      <div className={`grid gap-2 ${isMobile ? 'grid-cols-2' : 'sm:flex sm:flex-wrap sm:gap-4'}`}>
         <Select value={selectedCity} onValueChange={onCityChange}>
-          <SelectTrigger className="w-[180px] bg-white">
+          <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
             <SelectValue placeholder={t("city")} />
           </SelectTrigger>
-          <SelectContent className="bg-white">
+          <SelectContent className="bg-white max-h-[300px]">
             <SelectItem value="all">{t("allCities")}</SelectItem>
             {cities.map((city) => (
               <SelectItem key={city} value={city}>
@@ -61,7 +63,7 @@ export const ChildrenFilters = ({
         </Select>
 
         <Select value={selectedGender} onValueChange={onGenderChange}>
-          <SelectTrigger className="w-[180px] bg-white">
+          <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
             <SelectValue placeholder={t("gender")} />
           </SelectTrigger>
           <SelectContent className="bg-white">
@@ -72,7 +74,7 @@ export const ChildrenFilters = ({
         </Select>
 
         <Select value={selectedAge.toString()} onValueChange={onAgeChange}>
-          <SelectTrigger className="w-[180px] bg-white">
+          <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
             <SelectValue placeholder={t("age")} />
           </SelectTrigger>
           <SelectContent className="bg-white max-h-[300px]">
@@ -86,7 +88,7 @@ export const ChildrenFilters = ({
         </Select>
 
         <Select value={selectedStatus} onValueChange={onStatusChange}>
-          <SelectTrigger className="w-[180px] bg-white">
+          <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
             <SelectValue placeholder={t("status")} />
           </SelectTrigger>
           <SelectContent className="bg-white">
