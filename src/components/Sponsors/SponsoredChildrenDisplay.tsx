@@ -15,11 +15,17 @@ export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisp
     navigate(`/children/${childId}/album`);
   };
 
+  // Filtrer les doublons en utilisant un Set pour garder une trace des IDs uniques
+  const uniqueSponsorships = sponsorships?.filter((sponsorship, index, self) => 
+    sponsorship.children && 
+    index === self.findIndex(s => s.children?.id === sponsorship.children?.id)
+  );
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Enfants parrainés</h3>
       <div className="grid gap-4">
-        {sponsorships?.map((sponsorship: any) => (
+        {uniqueSponsorships?.map((sponsorship: any) => (
           sponsorship.children && (
             <Card key={sponsorship.id} className="p-4">
               <div className="flex items-center justify-between">
@@ -44,7 +50,7 @@ export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisp
             </Card>
           )
         ))}
-        {(!sponsorships || sponsorships.length === 0) && (
+        {(!uniqueSponsorships || uniqueSponsorships.length === 0) && (
           <p className="text-sm text-gray-500">Aucun enfant parrainé</p>
         )}
       </div>
