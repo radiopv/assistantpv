@@ -13,7 +13,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const DetailedStats = () => {
   const { user } = useAuth();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
 
   const { data: urgentNeeds, isLoading: urgentLoading, error: urgentError } = useQuery({
     queryKey: ['urgent-needs'],
@@ -49,6 +49,16 @@ export const DetailedStats = () => {
     }
   });
 
+  const NEED_CATEGORIES = {
+    education: "Éducation",
+    jouet: "Juguetes",
+    vetement: "Ropa",
+    nourriture: "Alimentación",
+    medicament: "Medicamentos",
+    hygiene: "Higiene",
+    autre: "Otros"
+  };
+
   const renderError = (message: string) => (
     <Alert variant="destructive">
       <AlertTriangle className="h-4 w-4" />
@@ -64,9 +74,11 @@ export const DetailedStats = () => {
 
   return (
     <Card className="p-4 sm:p-6 bg-white shadow-lg rounded-lg overflow-hidden">
-      <h3 className="text-base sm:text-xl font-semibold mb-4 text-gray-800">{t('urgentNeeds')}</h3>
+      <h3 className="text-base sm:text-xl font-semibold mb-4 text-gray-800">
+        {language === 'fr' ? 'Besoins Urgents' : 'Necesidades Urgentes'}
+      </h3>
       <div className="h-[300px] -mx-4 sm:mx-0">
-        {urgentError ? renderError(t('error')) : 
+        {urgentError ? renderError(language === 'fr' ? 'Erreur' : 'Error') : 
          urgentLoading ? renderSkeleton() : (
           <ScrollArea className="h-full px-4 sm:pr-4">
             <div className="space-y-4">
@@ -87,7 +99,7 @@ export const DetailedStats = () => {
                           variant="destructive"
                           className="px-2 py-1 text-xs sm:text-sm sm:px-3"
                         >
-                          {need.category}
+                          {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
                         </Badge>
                       ))}
                     </div>
@@ -96,7 +108,7 @@ export const DetailedStats = () => {
               })}
               {(!urgentNeeds || urgentNeeds.length === 0) && (
                 <div className="text-center text-gray-500 py-8">
-                  {t('noUrgentNeeds')}
+                  {language === 'fr' ? 'Aucun besoin urgent' : 'No hay necesidades urgentes'}
                 </div>
               )}
             </div>

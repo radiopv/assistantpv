@@ -10,7 +10,6 @@ export interface DashboardStats {
     total: number;
     people_helped: number;
   };
-  cities: number;
 }
 
 export interface DashboardResponse {
