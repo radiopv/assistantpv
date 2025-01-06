@@ -143,39 +143,46 @@ export const DetailedStats = () => {
                   : child.needs;
 
                 return (
-                  <div key={child.id} className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                    <p className="font-medium text-gray-900 mb-3 text-sm sm:text-base">{child.name}</p>
-                    <div className="flex flex-wrap gap-3">
+                  <div key={child.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+                    <p className="font-medium text-gray-900 mb-3">{child.name}</p>
+                    <div className="flex flex-col gap-3">
                       {needs.map((need: Need, index: number) => (
                         <div 
                           key={`${need.category}-${index}`} 
-                          className={`flex items-center gap-2 p-2 rounded-lg ${
+                          className={`flex items-center justify-between p-3 rounded-lg ${
                             need.is_urgent 
                               ? 'bg-red-50 border border-red-200' 
                               : 'bg-green-50 border border-green-200'
                           }`}
                         >
-                          <div className="flex items-center gap-2 min-w-[150px]">
+                          <div className="flex items-center gap-3">
                             {getNeedIcon(need.category)}
-                            <span className="text-sm font-medium">
-                              {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                            </span>
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                              </span>
+                              <span className="text-sm text-gray-600">
+                                {need.description}
+                              </span>
+                            </div>
                           </div>
                           <Button
                             variant={need.is_urgent ? "destructive" : "default"}
                             size="sm"
-                            className="h-8 px-2"
                             onClick={() => handleToggleUrgent(child.id, need.category, needs)}
+                            className="min-w-[140px]"
                           >
                             {need.is_urgent ? (
-                              <Minus className="h-4 w-4 mr-1" />
+                              <>
+                                <Minus className="h-4 w-4 mr-1" />
+                                {language === 'fr' ? 'Retirer urgent' : 'Quitar urgente'}
+                              </>
                             ) : (
-                              <Plus className="h-4 w-4 mr-1" />
+                              <>
+                                <Plus className="h-4 w-4 mr-1" />
+                                {language === 'fr' ? 'Marquer urgent' : 'Marcar urgente'}
+                              </>
                             )}
-                            {need.is_urgent 
-                              ? (language === 'fr' ? 'Retirer urgent' : 'Quitar urgente')
-                              : (language === 'fr' ? 'Marquer urgent' : 'Marcar urgente')
-                            }
                           </Button>
                         </div>
                       ))}
