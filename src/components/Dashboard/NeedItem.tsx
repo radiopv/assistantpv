@@ -44,6 +44,43 @@ const NEED_CATEGORIES = {
     es: "Higiene",
     icon: Book,
     color: "text-cyan-500"
+  },
+  // Ajout des catégories en espagnol pour la correspondance
+  "Educación": {
+    fr: "Éducation",
+    es: "Educación",
+    icon: GraduationCap,
+    color: "text-yellow-500"
+  },
+  "Juguetes": {
+    fr: "Jouet",
+    es: "Juguetes",
+    icon: Sparkles,
+    color: "text-purple-500"
+  },
+  "Ropa": {
+    fr: "Vêtement",
+    es: "Ropa",
+    icon: Shirt,
+    color: "text-blue-500"
+  },
+  "Alimentación": {
+    fr: "Nourriture",
+    es: "Alimentación",
+    icon: Apple,
+    color: "text-green-500"
+  },
+  "Medicamentos": {
+    fr: "Médicament",
+    es: "Medicamentos",
+    icon: Stethoscope,
+    color: "text-red-500"
+  },
+  "Higiene": {
+    fr: "Hygiène",
+    es: "Higiene",
+    icon: Book,
+    color: "text-cyan-500"
   }
 };
 
