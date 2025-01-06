@@ -1,4 +1,3 @@
-import { Database } from "../database";
 import { RequestStatus } from "../request-status";
 
 export interface ChildAssignmentRequestTable {
@@ -14,7 +13,7 @@ export interface ChildAssignmentRequestTable {
   Insert: Omit<ChildAssignmentRequestTable["Row"], "id" | "created_at" | "updated_at"> & {
     id?: string;
     created_at?: string;
-    updated_at?: string;
+    updated_at?: string | null;
   };
   Update: Partial<ChildAssignmentRequestTable["Row"]>;
   Relationships: [

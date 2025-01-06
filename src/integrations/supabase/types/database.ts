@@ -144,7 +144,61 @@ export interface Database {
       };
     };
     Views: {
-      [_ in never]: never;
+      donation_items_with_categories: {
+        Row: {
+          category_id: string | null;
+          category_name: string | null;
+          description: string | null;
+          donation_id: string | null;
+          id: string;
+          quantity: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "donation_items_donation_id_fkey";
+            columns: ["donation_id"];
+            isOneToOne: false;
+            referencedRelation: "donations";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      donation_statistics: {
+        Row: {
+          completed_donations: number | null;
+          pending_donations: number | null;
+          success_rate: number | null;
+          total_donations: number | null;
+          total_people_helped: number | null;
+        };
+        Relationships: [];
+      };
+      donation_videos_with_details: {
+        Row: {
+          assistant_name: string | null;
+          city: string | null;
+          created_at: string | null;
+          description: string | null;
+          donation_date: string | null;
+          donation_id: string | null;
+          id: string | null;
+          is_featured: boolean | null;
+          thumbnail_url: string | null;
+          title: string | null;
+          updated_at: string | null;
+          url: string | null;
+        };
+        Relationships: [];
+      };
+      statistics_summary: {
+        Row: {
+          children_stats: Record<string, any> | null;
+          donation_stats: Record<string, any> | null;
+          refresh_timestamp: string | null;
+          sponsor_stats: Record<string, any> | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       send_email: {
