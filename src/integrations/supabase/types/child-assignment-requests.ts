@@ -12,7 +12,11 @@ export interface ChildAssignmentRequest {
 
 export interface ChildAssignmentRequestTable {
   Row: ChildAssignmentRequest;
-  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'>;
+  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'> & {
+    id?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
   Update: Partial<ChildAssignmentRequest>;
   Relationships: [
     {

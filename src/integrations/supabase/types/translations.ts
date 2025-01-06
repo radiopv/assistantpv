@@ -1,11 +1,11 @@
-export interface TranslationType {
+export type TranslationType = {
   [key: string]: string | {
     [key: string]: string | {
       [key: string]: string;
     };
   };
-}
+};
 
-export interface FlatTranslationType {
+export type FlatTranslationType = {
   [key: string]: string;
-}
+};

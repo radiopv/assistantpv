@@ -7,7 +7,7 @@ export interface SponsorshipRequest {
   facebook_url?: string;
   phone?: string;
   motivation?: string;
-  status: string;
+  status: 'pending' | 'approved' | 'rejected';
   terms_accepted: boolean;
   created_at: string;
   updated_at?: string;

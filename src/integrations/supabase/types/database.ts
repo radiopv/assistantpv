@@ -4,7 +4,35 @@ import { Json } from './json';
 export interface Database {
   public: {
     Tables: {
-      child_assignment_requests: ChildAssignmentRequestTable['Row'];
+      child_assignment_requests: {
+        Row: {
+          id: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at: string;
+          updated_at?: string;
+        };
+        Insert: {
+          id?: string;
+          child_id: string;
+          requester_email: string;
+          name: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          child_id?: string;
+          requester_email?: string;
+          name?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       children: {
         Row: {
           id: string;
