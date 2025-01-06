@@ -1,1 +1,1 @@
-export type RequestStatus = "pending" | "approved" | "rejected";
+export type RequestStatus = 'pending' | 'approved' | 'rejected';
