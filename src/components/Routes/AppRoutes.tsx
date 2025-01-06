@@ -16,6 +16,7 @@ import Settings from "@/pages/Settings";
 import AssistantPhotos from "@/pages/AssistantPhotos";
 import MediaManagement from "@/pages/MediaManagement";
 import BecomeSponsor from "@/pages/BecomeSponsor";
+import CitiesManagement from "@/pages/admin/CitiesManagement";
 
 // Admin pages
 import Statistics from "@/pages/admin/Statistics";
@@ -53,6 +54,7 @@ const AppRoutes = () => {
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<FAQ />} />
         <Route path="/admin/sponsorships" element={<SponsorshipManagement />} />
+        <Route path="/admin/cities" element={<CitiesManagement />} />
       </Route>
     </Routes>
   );
