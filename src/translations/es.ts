@@ -178,4 +178,34 @@ export const spanishTranslations = {
   childRequestApprovedContent: "Nos complace informarle que su solicitud para añadir a {name} ha sido aprobada.",
   childRequestRejectedSubject: "Su solicitud para añadir un niño ha sido rechazada",
   childRequestRejectedContent: "Lamentamos informarle que su solicitud para añadir a {name} ha sido rechazada.",
+  
+  // Assistant related translations
+  assistantPhotos: "Fotos de los niños",
+  assistantPhotoInstructions: "Agregue y administre las fotos de los niños para los padrinos",
+  clickToViewAndAdd: "Haga clic en una tarjeta para ver y agregar fotos",
+  photosAddedSuccess: "Fotos agregadas con éxito y padrino notificado",
+  noPhotos: "Sin fotos",
+  viewAlbum: "Ver álbum",
+  addPhotosAndVideos: "Agregar fotos y videos",
+  uploadingFile: "Subiendo archivo {current}/{total}",
+  uploadComplete: "Subida completada con éxito",
+  
+  // Task related translations
+  tasks: "Tareas",
+  taskList: "Lista de tareas",
+  noTasks: "No hay tareas pendientes",
+  verifyProfile: "Verificar perfil",
+  missingPhotos: "Fotos faltantes",
+  markAsComplete: "Marcar como completada",
+  taskCreated: "Tarea creada",
+  taskCompleted: "Tarea completada",
+  newTaskNotification: "Nueva tarea asignada",
+  
+  // Common mobile translations
+  loading: "Cargando...",
+  error: "Error",
+  retry: "Reintentar",
+  loadMore: "Cargar más",
+  goBack: "Volver",
+  menu: "Menú",
 };
