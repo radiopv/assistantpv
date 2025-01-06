@@ -1,6 +1,5 @@
 import { ChildAssignmentRequestTable } from './child-assignment-requests';
 import { SponsorshipRequestTable } from './sponsorship-requests';
-import { Json } from './json';
 
 export interface Database {
   public: {

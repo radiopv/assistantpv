@@ -18,4 +18,13 @@ export interface ChildAssignmentRequestTable {
     updated_at?: string;
   };
   Update: Partial<ChildAssignmentRequest>;
+  Relationships: [
+    {
+      foreignKeyName: "child_assignment_requests_child_id_fkey";
+      columns: ["child_id"];
+      isOneToOne: false;
+      referencedRelation: "children";
+      referencedColumns: ["id"];
+    }
+  ];
 }
