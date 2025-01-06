@@ -52,7 +52,9 @@ export const ChildAssignmentValidation = () => {
         description: t("childRequestApproved")
       });
 
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      queryClient.invalidateQueries({
+        queryKey: ['child-assignment-requests']
+      });
     } catch (error) {
       console.error('Error approving request:', error);
       toast({
@@ -83,7 +85,9 @@ export const ChildAssignmentValidation = () => {
         description: t("childRequestRejected")
       });
 
-      queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
+      queryClient.invalidateQueries({
+        queryKey: ['child-assignment-requests']
+      });
     } catch (error) {
       console.error('Error rejecting request:', error);
       toast({
