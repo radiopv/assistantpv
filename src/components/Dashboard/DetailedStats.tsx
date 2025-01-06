@@ -72,13 +72,13 @@ export const DetailedStats = () => {
   };
 
   const NEED_CATEGORIES = {
-    education: language === 'fr' ? "Éducation" : "Educación",
-    jouet: language === 'fr' ? "Jouets" : "Juguetes",
-    vetement: language === 'fr' ? "Vêtements" : "Ropa",
-    nourriture: language === 'fr' ? "Nourriture" : "Alimentación",
-    medicament: language === 'fr' ? "Médicaments" : "Medicamentos",
-    hygiene: language === 'fr' ? "Hygiène" : "Higiene",
-    autre: language === 'fr' ? "Autres" : "Otros"
+    education: "Éducation",
+    jouet: "Juguetes",
+    vetement: "Ropa",
+    nourriture: "Alimentación",
+    medicament: "Medicamentos",
+    hygiene: "Higiene",
+    autre: "Otros"
   };
 
   const handleToggleUrgent = async (childId: string, needCategory: string, currentNeeds: Need[]) => {
@@ -142,41 +142,29 @@ export const DetailedStats = () => {
                 const needs = typeof child.needs === 'string' 
                   ? JSON.parse(child.needs) 
                   : child.needs;
+                
+                const urgentNeeds = needs.filter((need: Need) => need.is_urgent);
 
                 return (
-                  <div key={child.id} className="p-3 sm:p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
-                    <p className="font-medium text-gray-900 mb-3 text-sm sm:text-base">{child.name}</p>
-                    <div className="flex flex-wrap gap-3">
+                  <div key={child.id} className="p-3 sm:p-4 bg-red-50 rounded-lg border border-red-100 hover:shadow-md transition-shadow">
+                    <p className="font-medium text-gray-900 mb-2 text-sm sm:text-base">{child.name}</p>
+                    <div className="flex flex-wrap gap-2">
                       {needs.map((need: Need, index: number) => (
-                        <div 
-                          key={`${need.category}-${index}`} 
-                          className={`flex items-center gap-2 p-2 rounded-lg ${
-                            need.is_urgent 
-                              ? 'bg-red-50 border border-red-200' 
-                              : 'bg-green-50 border border-green-200'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-[150px]">
-                            {getNeedIcon(need.category)}
-                            <span className="text-sm font-medium">
-                              {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                            </span>
-                          </div>
-                          <Button
+                        <div key={`${need.category}-${index}`} className="flex items-center gap-2">
+                          <Badge 
                             variant={need.is_urgent ? "destructive" : "default"}
+                            className="px-2 py-1 text-xs sm:text-sm sm:px-3 flex items-center gap-2"
+                          >
+                            {getNeedIcon(need.category)}
+                            {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                          </Badge>
+                          <Button
+                            variant="ghost"
                             size="sm"
-                            className="h-8 px-2"
+                            className="h-6 w-6 p-0"
                             onClick={() => handleToggleUrgent(child.id, need.category, needs)}
                           >
-                            {need.is_urgent ? (
-                              <Minus className="h-4 w-4 mr-1" />
-                            ) : (
-                              <Plus className="h-4 w-4 mr-1" />
-                            )}
-                            {need.is_urgent 
-                              ? (language === 'fr' ? 'Retirer urgent' : 'Quitar urgente')
-                              : (language === 'fr' ? 'Marquer urgent' : 'Marcar urgente')
-                            }
+                            {need.is_urgent ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                           </Button>
                         </div>
                       ))}
