@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { MainLayout } from "@/components/Layout/MainLayout";
-import { PublicLayout } from "@/components/Layout/PublicLayout";
+import MainLayout from "@/components/Layout/MainLayout";
+import PublicLayout from "@/components/Layout/PublicLayout";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";

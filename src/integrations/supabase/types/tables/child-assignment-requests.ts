@@ -1,4 +1,4 @@
-import { RequestStatus } from '../request-status';
+import { Database } from '../database';
 
 export interface ChildAssignmentRequestsTable {
   Row: {
@@ -6,7 +6,7 @@ export interface ChildAssignmentRequestsTable {
     child_id: string;
     requester_email: string;
     name: string;
-    status: RequestStatus;
+    status: 'pending' | 'approved' | 'rejected';
     created_at: string;
     updated_at: string | null;
   };

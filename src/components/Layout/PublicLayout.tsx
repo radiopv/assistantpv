@@ -5,7 +5,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { LayoutDashboard, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-const PublicLayout = () => {
+export const PublicLayout = () => {
   const { session, user } = useAuth();
 
   const menuItems = [
