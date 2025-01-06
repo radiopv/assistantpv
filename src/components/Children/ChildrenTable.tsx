@@ -143,12 +143,9 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
                   <TableCell colSpan={5} className="bg-gray-50 p-4">
                     <div className="space-y-4">
                       <h3 className="font-medium">{t("editChildInfo")}</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Add your edit form fields here */}
-                        <p className="text-gray-600">
-                          {t("editingInstructions")}
-                        </p>
-                      </div>
+                      <p className="text-gray-600">
+                        {t("editingInstructions")}
+                      </p>
                     </div>
                   </TableCell>
                 </TableRow>
