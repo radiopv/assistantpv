@@ -26,7 +26,7 @@ export const SponsorDialog = ({ child, sponsors, isOpen, onClose }: SponsorDialo
       
       const updateData = {
         is_sponsored: sponsorId !== "none",
-        sponsor_id: sponsorId === "none" ? null : parseInt(sponsorId),
+        sponsor_id: sponsorId === "none" ? null : sponsorId,
         sponsor_name: sponsors?.find(s => s.id === sponsorId)?.name || null,
         sponsor_email: sponsors?.find(s => s.id === sponsorId)?.email || null,
       };

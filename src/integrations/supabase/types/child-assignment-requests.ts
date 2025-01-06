@@ -4,6 +4,10 @@ export interface ChildAssignmentRequest {
   requester_email: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at?: string;
+  child_id?: string;
+  sponsor_id?: string;
+  notes?: string;
+  updated_at?: string;
 }
 
 export interface Database {

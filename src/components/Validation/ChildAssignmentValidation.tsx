@@ -6,9 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { sendEmail } from "@/api/email";
-import { Database } from "@/integrations/supabase/types";
-
-type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 
 export const ChildAssignmentValidation = () => {
   const { toast } = useToast();
