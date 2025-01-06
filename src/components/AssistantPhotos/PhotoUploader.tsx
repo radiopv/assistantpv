@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, ImagePlus, VideoIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -21,20 +21,22 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
 
   const translations = {
     fr: {
-      selectFiles: "Sélectionner des fichiers",
+      selectFiles: "Ajouter des médias",
       upload: "Upload",
       uploadWithCount: "Upload ({count} fichiers)",
       error: "Une erreur est survenue pendant l'upload",
       uploadingFile: "Upload du fichier {current}/{total}",
-      uploadComplete: "Upload terminé avec succès"
+      uploadComplete: "Upload terminé avec succès",
+      addPhotosAndVideos: "Ajouter des photos et vidéos"
     },
     es: {
-      selectFiles: "Seleccionar archivos",
+      selectFiles: "Agregar medios",
       upload: "Subir",
       uploadWithCount: "Subir ({count} archivos)",
       error: "Ocurrió un error durante la subida",
       uploadingFile: "Subiendo archivo {current}/{total}",
-      uploadComplete: "Subida completada con éxito"
+      uploadComplete: "Subida completada con éxito",
+      addPhotosAndVideos: "Agregar fotos y videos"
     }
   };
 
@@ -140,14 +142,17 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
         <Button
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
+          size="lg"
+          className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600"
         >
-          <Upload className="w-4 h-4 mr-2" />
-          {t.selectFiles}
+          <ImagePlus className="w-5 h-5" />
+          <VideoIcon className="w-5 h-5" />
+          <span>{t.addPhotosAndVideos}</span>
         </Button>
         {previews.length > 0 && (
-          <Button onClick={uploadFiles} disabled={uploading}>
+          <Button onClick={uploadFiles} disabled={uploading} variant="secondary" size="lg">
             {uploading ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
             ) : null}
             {uploading 
               ? t.uploadingFile.replace('{current}', (currentFileIndex + 1).toString()).replace('{total}', previews.length.toString())
