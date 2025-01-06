@@ -7,9 +7,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { DonationCategorySelect } from "./DonationCategorySelect";
 import { DonationBasicInfo } from "./DonationBasicInfo";
 import { DonorInfo } from "./DonorInfo";
-import { PhotoUpload } from "./PhotoUpload";
 import { DonationSubmitButton } from "./DonationSubmitButton";
+import { DonationMediaUpload } from "./Media/DonationMediaUpload";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface DonationFormProps {
   onDonationComplete?: () => void;
@@ -24,15 +30,14 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
   const [comments, setComments] = useState("");
   const [donorName, setDonorName] = useState("");
   const [isAnonymous, setIsAnonymous] = useState(false);
-  const [photos, setPhotos] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isMediaOpen, setIsMediaOpen] = useState(false);
+  const [donationId, setDonationId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const translations = {
     fr: {
-      categories: "Catégories",
-      comments: "Commentaires",
-      commentsPlaceholder: "Détails supplémentaires sur le don",
+      addMedia: "Ajouter des photos/vidéos",
       error: "Erreur",
       errorMessage: "Veuillez sélectionner au moins une catégorie et remplir tous les champs obligatoires.",
       donationRegistered: "Don enregistré",
@@ -40,17 +45,12 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       errorSaving: "Une erreur est survenue lors de l'enregistrement du don."
     },
     es: {
-      categories: "Categorías",
-      comments: "Comentarios",
-      commentsPlaceholder: "Detalles adicionales sobre la donación",
+      addMedia: "Agregar fotos/videos",
       error: "Error",
       errorMessage: "Por favor, seleccione al menos una categoría y complete todos los campos obligatorios.",
       donationRegistered: "Donación registrada",
       successMessage: "La donación se ha registrado con éxito.",
-      errorSaving: "Ocurrió un error al guardar la donación.",
-      photos: "Fotos",
-      submit: "Enviar donación",
-      loading: "Enviando..."
+      errorSaving: "Ocurrió un error al guardar la donación."
     }
   };
 
@@ -63,30 +63,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       }
       return [...prev, categoryId];
     });
-  };
-
-  const handlePhotoUpload = async (files: FileList) => {
-    const uploadPromises = Array.from(files).map(async (file) => {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('donation-photos')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('donation-photos')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
-    });
-
-    return Promise.all(uploadPromises);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,11 +79,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
     try {
       setLoading(true);
 
-      let photoUrls: string[] = [];
-      if (photos && photos.length > 0) {
-        photoUrls = await handlePhotoUpload(photos);
-      }
-
       const { data: donation, error: donationError } = await supabase
         .from('donations')
         .insert({
@@ -116,7 +87,6 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
           people_helped: parseInt(quantity),
           donation_date: new Date().toISOString(),
           comments: comments,
-          photos: photoUrls,
           status: 'completed'
         })
         .select()
@@ -148,19 +118,13 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         if (donorError) throw donorError;
       }
 
+      setDonationId(donation.id);
+      setIsMediaOpen(true);
+
       toast({
         title: t.donationRegistered,
         description: t.successMessage,
       });
-
-      setSelectedCategories([]);
-      setQuantity("");
-      setCity("");
-      setComments("");
-      setDonorName("");
-      setIsAnonymous(false);
-      setPhotos(null);
-      onDonationComplete?.();
 
     } catch (error: any) {
       toast({
@@ -172,6 +136,18 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleMediaUploadComplete = () => {
+    setSelectedCategories([]);
+    setQuantity("");
+    setCity("");
+    setComments("");
+    setDonorName("");
+    setIsAnonymous(false);
+    setDonationId(null);
+    setIsMediaOpen(false);
+    onDonationComplete?.();
   };
 
   return (
@@ -212,7 +188,22 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
           onAnonymousChange={setIsAnonymous}
         />
 
-        <PhotoUpload onPhotosChange={setPhotos} />
+        {donationId && (
+          <Collapsible open={isMediaOpen} onOpenChange={setIsMediaOpen}>
+            <CollapsibleTrigger className="flex items-center gap-2">
+              {isMediaOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {t.addMedia}
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="pt-4">
+                <DonationMediaUpload
+                  donationId={donationId}
+                  onUploadComplete={handleMediaUploadComplete}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
 
         <DonationSubmitButton 
           loading={loading}
