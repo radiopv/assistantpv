@@ -4,16 +4,15 @@ export interface Need {
   category: string;
   description: string;
   is_urgent: boolean;
+  [key: string]: string | boolean; // Ajout de l'index signature pour la compatibilité Json
 }
 
 export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
   if (!jsonNeeds) return [];
   
   try {
-    // Si jsonNeeds est une chaîne, essayons de la parser
     const needsArray = typeof jsonNeeds === 'string' ? JSON.parse(jsonNeeds) : jsonNeeds;
     
-    // Assurons-nous que nous avons un tableau
     if (!Array.isArray(needsArray)) return [];
 
     return needsArray.map(need => {
