@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Database } from "@/integrations/supabase/types/database";
+
+type Task = Database['public']['Tables']['tasks']['Row'];
 
 export const TasksList = () => {
   const navigate = useNavigate();
@@ -18,7 +21,7 @@ export const TasksList = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as Task[];
     }
   });
 
@@ -61,7 +64,7 @@ export const TasksList = () => {
                   <Button 
                     variant="link" 
                     className="px-0 text-blue-600"
-                    onClick={() => handleNavigateToProfile(task.child_id)}
+                    onClick={() => handleNavigateToProfile(task.child_id!)}
                   >
                     Voir le profil
                   </Button>
