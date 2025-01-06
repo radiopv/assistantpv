@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { NotificationBar } from "./NotificationBar";
 import { DashboardStats } from "@/types/dashboard";
 
 interface DashboardHeaderProps {
@@ -20,7 +19,6 @@ export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
             {t('welcomeMessage')}
           </p>
         </div>
-        <NotificationBar />
       </div>
     </div>
   );
