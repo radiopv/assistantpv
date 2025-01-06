@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
-interface SidebarLinkProps {
+export interface SidebarLinkProps {
   href: string;
   label: string;
   icon: LucideIcon;

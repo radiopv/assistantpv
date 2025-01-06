@@ -1,30 +1,66 @@
-import { BarChart, CheckSquare, Languages, Mail, HelpCircle, Users, Settings } from "lucide-react";
-import { SidebarLink } from "@/components/Layout/Sidebar/SidebarLink";
+import { cn } from "@/lib/utils";
+import { LucideIcon } from "lucide-react";
+import { SidebarLink } from "./SidebarLink";
 
-export const AdminSection = () => {
+interface SidebarSectionProps {
+  title: string;
+  links: Array<{
+    href: string;
+    label: string;
+    icon: LucideIcon;
+    show?: boolean;
+    subItems?: Array<{
+      href: string;
+      label: string;
+      icon: LucideIcon;
+      show?: boolean;
+    }>;
+  }>;
+  currentPath: string;
+  onClose?: () => void;
+}
+
+export const SidebarSection = ({ 
+  title, 
+  links, 
+  currentPath,
+  onClose 
+}: SidebarSectionProps) => {
+  const visibleLinks = links.filter(link => link.show !== false);
+
+  if (visibleLinks.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="space-y-1">
-      <SidebarLink to="/admin/statistics" icon={BarChart}>
-        Statistiques
-      </SidebarLink>
-      <SidebarLink to="/admin/validation" icon={CheckSquare}>
-        Validation
-      </SidebarLink>
-      <SidebarLink to="/admin/translations" icon={Languages}>
-        Traductions
-      </SidebarLink>
-      <SidebarLink to="/admin/emails" icon={Mail}>
-        Emails
-      </SidebarLink>
-      <SidebarLink to="/admin/faq" icon={HelpCircle}>
-        FAQ
-      </SidebarLink>
-      <SidebarLink to="/admin/sponsorships" icon={Users}>
-        Parrainages
-      </SidebarLink>
-      <SidebarLink to="/admin/cities" icon={Settings}>
-        Gestion des villes
-      </SidebarLink>
+    <div>
+      <h2 className="px-3 text-lg font-semibold tracking-tight">
+        {title}
+      </h2>
+      <div className="space-y-1 p-2">
+        {visibleLinks.map((link) => (
+          <div key={link.href}>
+            <SidebarLink
+              href={link.href}
+              label={link.label}
+              icon={link.icon}
+              isActive={currentPath === link.href}
+              onClose={onClose}
+            />
+            {link.subItems?.filter(subItem => subItem.show !== false).map((subItem) => (
+              <SidebarLink
+                key={subItem.href}
+                href={subItem.href}
+                label={subItem.label}
+                icon={subItem.icon}
+                isActive={currentPath === subItem.href}
+                onClose={onClose}
+                className="ml-4"
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
