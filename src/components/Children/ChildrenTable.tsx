@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { UserPlus, ArrowUpDown } from "lucide-react";
+import { UserPlus, ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useState } from "react";
@@ -19,6 +19,7 @@ type SortConfig = {
 export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: ChildrenTableProps) => {
   const { t } = useLanguage();
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: '', direction: 'asc' });
+  const [expandedRow, setExpandedRow] = useState<string | null>(null);
 
   const formatAge = (birthDate: string) => {
     if (!birthDate) return t("ageNotAvailable");
@@ -78,6 +79,10 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
     </Button>
   );
 
+  const toggleRow = (childId: string) => {
+    setExpandedRow(expandedRow === childId ? null : childId);
+  };
+
   return (
     <div className="w-full overflow-auto">
       <Table>
@@ -92,33 +97,64 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
         </TableHeader>
         <TableBody>
           {getSortedChildren().map((child) => (
-            <TableRow key={child.id}>
-              <TableCell className="font-medium">{child.name}</TableCell>
-              <TableCell>{formatAge(child.birth_date)}</TableCell>
-              <TableCell>{child.city}</TableCell>
-              <TableCell>
-                <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                    !child.is_sponsored
-                      ? "bg-green-100 text-green-800"
-                      : "bg-blue-100 text-blue-800"
-                  }`}
-                >
-                  {child.is_sponsored ? t("sponsored") : t("available")}
-                </span>
-              </TableCell>
-              <TableCell className="text-right">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onSponsorClick(child)}
-                  className="w-full sm:w-auto"
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
-                </Button>
-              </TableCell>
-            </TableRow>
+            <>
+              <TableRow 
+                key={child.id}
+                className="cursor-pointer hover:bg-gray-50"
+                onClick={() => toggleRow(child.id)}
+              >
+                <TableCell className="font-medium">{child.name}</TableCell>
+                <TableCell>{formatAge(child.birth_date)}</TableCell>
+                <TableCell>{child.city}</TableCell>
+                <TableCell>
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                      !child.is_sponsored
+                        ? "bg-green-100 text-green-800"
+                        : "bg-blue-100 text-blue-800"
+                    }`}
+                  >
+                    {child.is_sponsored ? t("sponsored") : t("available")}
+                  </span>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSponsorClick(child);
+                      }}
+                      className="w-full sm:w-auto"
+                    >
+                      <UserPlus className="h-4 w-4 mr-2" />
+                      {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
+                    </Button>
+                    {expandedRow === child.id ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+              {expandedRow === child.id && (
+                <TableRow>
+                  <TableCell colSpan={5} className="bg-gray-50 p-4">
+                    <div className="space-y-4">
+                      <h3 className="font-medium">{t("editChildInfo")}</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Add your edit form fields here */}
+                        <p className="text-gray-600">
+                          {t("editingInstructions")}
+                        </p>
+                      </div>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </>
           ))}
         </TableBody>
       </Table>
