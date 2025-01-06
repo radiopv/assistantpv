@@ -8,6 +8,7 @@ import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { toast } from "sonner";
 import { logActivity } from "@/utils/activity-logger";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const AssistantPhotos = () => {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
@@ -15,14 +16,16 @@ const AssistantPhotos = () => {
 
   const translations = {
     fr: {
-      title: "Ajout photos et vidéos enfants",
-      instructions: "Cette page vous permet d'ajouter des photos et des vidéos à l'album d'un enfant. Ces médias seront visibles par le parrain dans le profil de l'enfant qu'il parraine.",
-      photosAdded: "Médias ajoutés avec succès et parrain notifié",
+      title: "Album photo des enfants",
+      subtitle: "Ajoutez et gérez les photos des enfants pour les parrains",
+      instructions: "Sélectionnez un enfant pour voir son album et ajouter des photos. Les photos seront visibles par le parrain dans le profil de l'enfant.",
+      photosAdded: "Photos ajoutées avec succès et parrain notifié",
     },
     es: {
-      title: "Agregar fotos y videos de niños",
-      instructions: "Esta página le permite agregar fotos y videos al álbum de un niño. Estos medios serán visibles para el padrino en el perfil del niño que apadrina.",
-      photosAdded: "Medios agregados con éxito y padrino notificado",
+      title: "Álbum de fotos de los niños",
+      subtitle: "Agregue y administre las fotos de los niños para los padrinos",
+      instructions: "Seleccione un niño para ver su álbum y agregar fotos. Las fotos serán visibles por el padrino en el perfil del niño.",
+      photosAdded: "Fotos agregadas con éxito y padrino notificado",
     }
   };
 
@@ -51,8 +54,8 @@ const AssistantPhotos = () => {
     if (child?.sponsorships?.[0]?.sponsor_id) {
       await supabase.from('messages').insert({
         recipient_id: child.sponsorships[0].sponsor_id,
-        subject: `Nouvelles photos/vidéos de ${child.name}`,
-        content: `De nouveaux médias ont été ajoutés à l'album de ${child.name}. Vous pouvez les consulter dans son profil.`,
+        subject: `Nouvelles photos de ${child.name}`,
+        content: `De nouvelles photos ont été ajoutées à l'album de ${child.name}. Vous pouvez les consulter dans son profil.`,
         is_read: false
       });
     }
@@ -68,30 +71,31 @@ const AssistantPhotos = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <h1 className="text-2xl font-bold">{t.title}</h1>
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold">{t.title}</h1>
+        <p className="text-lg text-gray-600">{t.subtitle}</p>
+      </div>
       
-      <p className="text-gray-600 mb-6">
-        {t.instructions}
-      </p>
-
       <Card className="p-6">
-        <div className="space-y-6">
-          <ChildSelector
-            children={children || []}
-            selectedChild={selectedChild}
-            onSelect={setSelectedChild}
-          />
+        <ScrollArea className="h-[calc(100vh-12rem)]">
+          <div className="space-y-6">
+            <ChildSelector
+              children={children || []}
+              selectedChild={selectedChild}
+              onSelect={setSelectedChild}
+            />
 
-          {selectedChild && (
-            <>
-              <PhotoUploader
-                childId={selectedChild}
-                onUploadSuccess={handleUploadSuccess}
-              />
-              <AlbumMediaGrid childId={selectedChild} />
-            </>
-          )}
-        </div>
+            {selectedChild && (
+              <div className="space-y-8">
+                <PhotoUploader
+                  childId={selectedChild}
+                  onUploadSuccess={handleUploadSuccess}
+                />
+                <AlbumMediaGrid childId={selectedChild} />
+              </div>
+            )}
+          </div>
+        </ScrollArea>
       </Card>
     </div>
   );

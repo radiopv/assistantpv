@@ -2,13 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play } from "lucide-react";
+import { Play, ImagePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AlbumMediaGridProps {
   childId: string;
 }
 
 export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
+  const { language } = useLanguage();
   const { data: media, isLoading } = useQuery({
     queryKey: ['album-media', childId],
     queryFn: async () => {
@@ -23,9 +26,22 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     }
   });
 
+  const translations = {
+    fr: {
+      noPhotos: "Aucune photo dans l'album",
+      addPhotos: "Ajouter des photos",
+    },
+    es: {
+      noPhotos: "No hay fotos en el álbum",
+      addPhotos: "Agregar fotos",
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
+
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
           <Skeleton key={i} className="aspect-square rounded-lg" />
         ))}
@@ -33,10 +49,20 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     );
   }
 
+  if (!media?.length) {
+    return (
+      <Card className="p-8 flex flex-col items-center justify-center space-y-4">
+        <ImagePlus className="w-12 h-12 text-gray-400" />
+        <p className="text-gray-500 text-center">{t.noPhotos}</p>
+        <Button variant="outline">{t.addPhotos}</Button>
+      </Card>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-      {media?.map((item) => (
-        <Card key={item.id} className="overflow-hidden relative group">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      {media.map((item) => (
+        <Card key={item.id} className="overflow-hidden relative group hover:shadow-lg transition-shadow">
           {item.type === 'video' ? (
             <div className="relative aspect-square">
               <video
@@ -49,11 +75,14 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
               </div>
             </div>
           ) : (
-            <img
-              src={item.url}
-              alt="Album media"
-              className="w-full h-full object-cover aspect-square"
-            />
+            <div className="aspect-square overflow-hidden">
+              <img
+                src={item.url}
+                alt="Album media"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                onClick={() => window.open(item.url, '_blank')}
+              />
+            </div>
           )}
         </Card>
       ))}

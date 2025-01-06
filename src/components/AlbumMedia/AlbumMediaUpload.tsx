@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { Upload } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AlbumMediaUploadProps {
   childId: string;
@@ -14,6 +15,26 @@ interface AlbumMediaUploadProps {
 export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      addPhoto: "Ajouter une photo",
+      uploading: "Upload en cours...",
+      upload: "Upload",
+      success: "Photo ajoutée avec succès",
+      error: "Une erreur est survenue lors de l'upload",
+    },
+    es: {
+      addPhoto: "Agregar una foto",
+      uploading: "Subiendo...",
+      upload: "Subir",
+      success: "Foto agregada con éxito",
+      error: "Ocurrió un error durante la subida",
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -47,16 +68,16 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
       if (dbError) throw dbError;
 
       toast({
-        title: "Photo ajoutée",
-        description: "La photo a été ajoutée avec succès à l'album.",
+        title: t.success,
+        description: t.success,
       });
 
       onUploadComplete?.();
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'upload.",
+        title: t.error,
+        description: t.error,
       });
     } finally {
       setUploading(false);
@@ -65,18 +86,26 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
   return (
     <div className="space-y-4">
-      <Label htmlFor="photo">Ajouter une photo</Label>
-      <Input
-        id="photo"
-        type="file"
-        accept="image/*"
-        onChange={handleUpload}
-        disabled={uploading}
-      />
-      <Button disabled={uploading}>
-        <Upload className="w-4 h-4 mr-2" />
-        {uploading ? "Upload en cours..." : "Upload"}
-      </Button>
+      <Label htmlFor="photo">{t.addPhoto}</Label>
+      <div className="flex items-center gap-4">
+        <Input
+          id="photo"
+          type="file"
+          accept="image/*"
+          onChange={handleUpload}
+          disabled={uploading}
+          className="hidden"
+        />
+        <Button 
+          onClick={() => document.getElementById('photo')?.click()}
+          disabled={uploading}
+          variant="outline"
+          className="w-full"
+        >
+          <ImagePlus className="w-4 h-4 mr-2" />
+          {uploading ? t.uploading : t.upload}
+        </Button>
+      </div>
     </div>
   );
 };
