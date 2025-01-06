@@ -12,10 +12,16 @@ export const AssistantStats = () => {
   const { data: stats, isLoading, error } = useQuery<ActivityLogType[]>({
     queryKey: ['assistant-stats'],
     queryFn: async () => {
+      // On joint la table activity_logs avec la table profiles pour obtenir le rôle
       const { data, error } = await supabase
         .from('activity_logs')
-        .select('*')
-        .eq('user_type', 'assistant')
+        .select(`
+          *,
+          profiles:user_id (
+            role
+          )
+        `)
+        .eq('profiles.role', 'assistant')
         .order('created_at', { ascending: false })
         .limit(5);
 
