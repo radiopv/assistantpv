@@ -1,3 +1,4 @@
+import { Json } from './json';
 import { Task, TasksTable } from './tasks';
 
 export type Database = {
@@ -68,7 +69,7 @@ export type Database = {
           title?: string | null
           type?: string
           updated_at?: string | null
-          url?: string | null
+          url?: string
         }
         Relationships: [
           {
@@ -276,8 +277,8 @@ export type Database = {
           encryption_key?: string | null;
           id?: string;
           is_encrypted?: boolean | null;
-          room_id?: string | null;
-          sender_id?: string | null;
+          room_id?: string;
+          sender_id?: string;
         }
         Update: {
           content?: string;
@@ -483,7 +484,7 @@ export type Database = {
           assistant_name?: string;
           city?: string;
           comments?: string | null;
-          created_at?: string | null;
+          created_at?: string;
           donation_date?: string;
           id?: string;
           people_helped?: number;
