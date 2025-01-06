@@ -15,14 +15,14 @@ const NEED_CATEGORIES = {
     icon: GraduationCap,
     color: "text-yellow-500"
   },
-  jouets: {
-    fr: "Jouets",
+  jouet: {
+    fr: "Jouet",
     es: "Juguetes",
     icon: Sparkles,
     color: "text-purple-500"
   },
-  vetements: {
-    fr: "Vêtements",
+  vetement: {
+    fr: "Vêtement",
     es: "Ropa",
     icon: Shirt,
     color: "text-blue-500"
@@ -33,8 +33,8 @@ const NEED_CATEGORIES = {
     icon: Apple,
     color: "text-green-500"
   },
-  medicaments: {
-    fr: "Médicaments",
+  medicament: {
+    fr: "Médicament",
     es: "Medicamentos",
     icon: Stethoscope,
     color: "text-red-500"
@@ -50,7 +50,7 @@ const NEED_CATEGORIES = {
 export const NeedItem = ({ need, onToggleUrgent, language }: NeedItemProps) => {
   console.log('Need category:', need.category); // Pour déboguer
   
-  const category = NEED_CATEGORIES[need.category.toLowerCase() as keyof typeof NEED_CATEGORIES];
+  const category = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES];
   const Icon = category?.icon || HelpCircle;
   const categoryName = category ? category[language] : (language === 'fr' ? 'Autre' : 'Otro');
   const iconColor = category?.color || "text-gray-500";
