@@ -6,7 +6,8 @@ export enum TableNames {
   MESSAGES = 'messages',
   ALBUM_MEDIA = 'album_media',
   TESTIMONIALS = 'temoignage',
-  ACTIVITY_LOGS = 'activity_logs'
+  ACTIVITY_LOGS = 'activity_logs',
+  SPONSORSHIP_REQUESTS = 'sponsorship_requests'
 }
 
 export type DatabaseTableName = keyof typeof TableNames;

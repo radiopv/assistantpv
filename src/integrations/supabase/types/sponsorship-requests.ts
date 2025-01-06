@@ -1,11 +1,10 @@
-export type RequestStatus = 'pending' | 'approved' | 'rejected';
+import { RequestStatus } from './request-status';
 
 export interface SponsorshipRequest {
   id: string;
   child_id: string;
-  requester_email: string;
-  name: string;
   email: string;
+  full_name: string;
   facebook_url?: string;
   phone?: string;
   motivation?: string;
@@ -19,6 +18,10 @@ export interface SponsorshipRequest {
 
 export interface SponsorshipRequestTable {
   Row: SponsorshipRequest;
-  Insert: Omit<SponsorshipRequest, 'id' | 'created_at' | 'updated_at'>;
+  Insert: Omit<SponsorshipRequest, 'id' | 'created_at' | 'updated_at'> & {
+    id?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
   Update: Partial<SponsorshipRequest>;
 }
