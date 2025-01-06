@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import { AlertTriangle, GraduationCap, Shirt, Apple, Stethoscope, Sparkles, Book, HelpCircle, Plus, Minus } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Need } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -123,17 +122,17 @@ export const DetailedStats = () => {
   );
 
   const renderSkeleton = () => (
-    <div className="h-[300px] w-full">
+    <div className="h-[600px] w-full">
       <Skeleton className="h-full w-full" />
     </div>
   );
 
   return (
-    <Card className="p-4 sm:p-6 bg-white shadow-lg rounded-lg overflow-hidden">
+    <Card className="p-4 sm:p-6 bg-white shadow-lg rounded-lg overflow-hidden h-[calc(100vh-12rem)]">
       <h3 className="text-base sm:text-xl font-semibold mb-4 text-gray-800">
         {language === 'fr' ? 'Besoins Urgents' : 'Necesidades Urgentes'}
       </h3>
-      <div className="h-[300px] -mx-4 sm:mx-0">
+      <div className="h-[calc(100%-3rem)] -mx-4 sm:mx-0">
         {urgentError ? renderError(language === 'fr' ? 'Erreur' : 'Error') : 
          urgentLoading ? renderSkeleton() : (
           <ScrollArea className="h-full px-4 sm:pr-4">
