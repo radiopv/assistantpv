@@ -16,7 +16,8 @@ import {
   Image,
   CheckCircle2,
   Mail,
-  Heart
+  Heart,
+  MapPin
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -119,6 +120,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       href: "/admin/emails",
       label: t("emailManager"),
       icon: Mail,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/cities",
+      label: t("citiesManagement"),
+      icon: MapPin,
       show: isAdmin,
     },
     {
