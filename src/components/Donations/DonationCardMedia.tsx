@@ -38,7 +38,10 @@ export const DonationCardMedia = ({
           .from('donation-photos')
           .upload(filePath, file);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('Upload error:', uploadError);
+          throw uploadError;
+        }
 
         const { data: { publicUrl } } = supabase.storage
           .from('donation-photos')
@@ -51,7 +54,11 @@ export const DonationCardMedia = ({
             url: publicUrl,
           });
 
-        if (dbError) throw dbError;
+        if (dbError) {
+          console.error('Database error:', dbError);
+          throw dbError;
+        }
+
         return publicUrl;
       });
 
