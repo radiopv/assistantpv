@@ -2,9 +2,14 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { SponsorFormFields } from "./SponsorFormFields";
 import { ErrorAlert } from "../ErrorAlert";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { X, Plus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 interface EditSponsorDialogProps {
   sponsor: any;
@@ -17,6 +22,20 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Fetch available children
+  const { data: availableChildren } = useQuery({
+    queryKey: ['available-children'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('children')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      return data || [];
+    },
+  });
 
   useEffect(() => {
     if (sponsor) {
@@ -32,7 +51,8 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
         is_anonymous: sponsor.is_anonymous || false,
         role: sponsor.role || '',
         photo_url: sponsor.photo_url || '',
-        show_name_publicly: sponsor.show_name_publicly || false
+        show_name_publicly: sponsor.show_name_publicly || false,
+        sponsorships: sponsor.sponsorships || []
       });
     }
   }, [sponsor]);
@@ -91,13 +111,6 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
         photo_url: publicUrl
       }));
 
-      const { error: updateError } = await supabase
-        .from('sponsors')
-        .update({ photo_url: publicUrl })
-        .eq('id', sponsor.id);
-
-      if (updateError) throw updateError;
-
       toast({
         title: "Photo mise à jour",
         description: "La photo a été mise à jour avec succès",
@@ -107,7 +120,85 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Impossible de mettre à jour la photo. Veuillez réessayer.",
+        description: "Impossible de mettre à jour la photo",
+      });
+    }
+  };
+
+  const handleAddChild = async (childId: string) => {
+    try {
+      const { error } = await supabase
+        .from('sponsorships')
+        .insert({
+          sponsor_id: sponsor.id,
+          child_id: childId,
+          start_date: new Date().toISOString(),
+          status: 'active'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "L'enfant a été ajouté au parrainage",
+      });
+
+      // Refresh sponsor data
+      const { data: updatedSponsorships } = await supabase
+        .from('sponsorships')
+        .select(`
+          *,
+          children (
+            id,
+            name,
+            age,
+            city,
+            photo_url
+          )
+        `)
+        .eq('sponsor_id', sponsor.id);
+
+      setFormData(prev => ({
+        ...prev,
+        sponsorships: updatedSponsorships
+      }));
+
+    } catch (error) {
+      console.error('Error adding child:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible d'ajouter l'enfant",
+      });
+    }
+  };
+
+  const handleRemoveChild = async (sponsorshipId: string) => {
+    try {
+      const { error } = await supabase
+        .from('sponsorships')
+        .delete()
+        .eq('id', sponsorshipId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "L'enfant a été retiré du parrainage",
+      });
+
+      // Update local state
+      setFormData(prev => ({
+        ...prev,
+        sponsorships: prev.sponsorships.filter((s: any) => s.id !== sponsorshipId)
+      }));
+
+    } catch (error) {
+      console.error('Error removing child:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de retirer l'enfant",
       });
     }
   };
@@ -154,31 +245,91 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Modifier le parrain</DialogTitle>
         </DialogHeader>
 
-        {error && <ErrorAlert message={error} />}
+        <ScrollArea className="flex-1">
+          {error && <ErrorAlert message={error} />}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <SponsorFormFields
-            formData={formData}
-            handleInputChange={handleInputChange}
-            handleSwitchChange={handleSwitchChange}
-            handleSelectChange={handleSelectChange}
-            handlePhotoChange={handlePhotoChange}
-          />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Informations du parrain</h3>
+                <SponsorFormFields
+                  formData={formData}
+                  handleInputChange={handleInputChange}
+                  handleSwitchChange={handleSwitchChange}
+                  handleSelectChange={handleSelectChange}
+                  handlePhotoChange={handlePhotoChange}
+                />
+              </div>
 
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Annuler
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Enregistrement..." : "Enregistrer"}
-            </Button>
-          </div>
-        </form>
+              <div>
+                <h3 className="text-lg font-semibold mb-4">Enfants parrainés</h3>
+                <div className="space-y-4">
+                  {formData.sponsorships?.map((sponsorship: any) => (
+                    sponsorship.children && (
+                      <Card key={sponsorship.id} className="relative">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-2 right-2"
+                          onClick={() => handleRemoveChild(sponsorship.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <CardHeader className="flex flex-row items-center gap-4">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={sponsorship.children.photo_url} alt={sponsorship.children.name} />
+                            <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h4 className="text-sm font-semibold">{sponsorship.children.name}</h4>
+                            <p className="text-sm text-gray-500">{sponsorship.children.city}</p>
+                          </div>
+                        </CardHeader>
+                      </Card>
+                    )
+                  ))}
+
+                  <div className="mt-4">
+                    <h4 className="text-sm font-semibold mb-2">Ajouter un enfant</h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {availableChildren?.filter((child: any) => 
+                        !formData.sponsorships?.some((s: any) => s.children?.id === child.id)
+                      ).map((child: any) => (
+                        <Card key={child.id} className="cursor-pointer hover:bg-gray-50" onClick={() => handleAddChild(child.id)}>
+                          <CardContent className="flex items-center gap-2 p-2">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={child.photo_url} alt={child.name} />
+                              <AvatarFallback>{child.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{child.name}</p>
+                              <p className="text-xs text-gray-500 truncate">{child.city}</p>
+                            </div>
+                            <Plus className="h-4 w-4 text-gray-400" />
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={onClose}>
+                Annuler
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Enregistrement..." : "Enregistrer"}
+              </Button>
+            </div>
+          </form>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
