@@ -15,12 +15,14 @@ export const TestimonialValidation = () => {
   const { data: testimonials, isLoading, error } = useQuery({
     queryKey: ['pending-testimonials'],
     queryFn: async () => {
+      console.log("Fetching pending testimonials");
       const { data, error } = await supabase
         .from('temoignage')
         .select('*')
         .eq('is_approved', false);
       
       if (error) throw error;
+      console.log("Fetched testimonials:", data);
       return data;
     }
   });
