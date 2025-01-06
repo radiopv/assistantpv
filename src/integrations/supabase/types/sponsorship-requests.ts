@@ -1,3 +1,5 @@
+export type RequestStatus = 'pending' | 'approved' | 'rejected';
+
 export interface SponsorshipRequest {
   id: string;
   child_id: string;
@@ -7,7 +9,7 @@ export interface SponsorshipRequest {
   facebook_url?: string;
   phone?: string;
   motivation?: string;
-  status: 'pending' | 'approved' | 'rejected';
+  status: RequestStatus;
   terms_accepted: boolean;
   created_at: string;
   updated_at?: string;
