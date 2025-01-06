@@ -1,14 +1,22 @@
-import { ChildAssignmentRequestTable } from './tables/child-assignment-requests';
-import { Database as GeneratedDatabase } from './types';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { SponsorshipRequestsTable } from './tables/sponsorship-requests';
+import { ChildrenTable } from './tables/children';
+import { SponsorsTable } from './tables/sponsors';
+import { SponsorshipsTable } from './tables/sponsorships';
+import { AlbumMediaTable } from './tables/album-media';
+import { TestimonialsTable } from './tables/testimonials';
 
-export interface Database extends GeneratedDatabase {
+export interface Database {
   public: {
     Tables: {
-      child_assignment_requests: ChildAssignmentRequestTable;
-    } & GeneratedDatabase['public']['Tables'];
-    Views: GeneratedDatabase['public']['Views'];
-    Functions: GeneratedDatabase['public']['Functions'];
-    Enums: GeneratedDatabase['public']['Enums'];
-    CompositeTypes: GeneratedDatabase['public']['CompositeTypes'];
+      sponsorship_requests: SponsorshipRequestsTable;
+      children: ChildrenTable;
+      sponsors: SponsorsTable;
+      sponsorships: SponsorshipsTable;
+      album_media: AlbumMediaTable;
+      testimonials: TestimonialsTable;
+    };
   };
 }
+
+export type SupabaseClientType = SupabaseClient<Database>;

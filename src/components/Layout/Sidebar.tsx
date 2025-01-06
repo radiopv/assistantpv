@@ -6,7 +6,6 @@ import {
   LayoutDashboard, 
   Users, 
   Gift, 
-  MessageSquare,
   Settings,
   Baby,
   UserPlus,
@@ -80,12 +79,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
           show: user?.permissions?.donations || isAdmin,
         }
       ]
-    },
-    {
-      href: "/messages",
-      label: t("messages"),
-      icon: MessageSquare,
-      show: true,
     },
   ];
 

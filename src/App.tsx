@@ -14,7 +14,6 @@ import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
 import ChildProfile from "@/pages/ChildProfile";
 import Donations from "@/pages/Donations";
-import Messages from "@/pages/Messages";
 import Settings from "@/pages/Settings";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import AssistantPhotos from "@/pages/AssistantPhotos";
@@ -36,33 +35,32 @@ const App = () => {
         <LanguageProvider>
           <AuthProvider>
             <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/become-sponsor" element={<BecomeSponsor />} />
-            </Route>
-            
-            <Route element={<MainLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/children" element={<Children />} />
-              <Route path="/children/add" element={<AddChild />} />
-              <Route path="/children/:id" element={<ChildProfile />} />
-              <Route path="/donations" element={<Donations />} />
-              <Route path="/donations/add" element={<Donations />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/assistant/photos" element={<AssistantPhotos />} />
-              <Route path="/media" element={<MediaManagement />} />
-              <Route path="/sponsorship" element={<SponsorshipManagement />} />
+              <Route element={<PublicLayout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/become-sponsor" element={<BecomeSponsor />} />
+              </Route>
               
-              {/* Admin routes */}
-              <Route path="/admin/validation" element={<Validation />} />
-              <Route path="/admin/statistics" element={<Statistics />} />
-              <Route path="/admin/translations" element={<Translations />} />
-              <Route path="/admin/emails" element={<Emails />} />
-              <Route path="/admin/faq" element={<FAQ />} />
-              <Route path="/admin/permissions" element={<Permissions />} />
-            </Route>
+              <Route element={<MainLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/children" element={<Children />} />
+                <Route path="/children/add" element={<AddChild />} />
+                <Route path="/children/:id" element={<ChildProfile />} />
+                <Route path="/donations" element={<Donations />} />
+                <Route path="/donations/add" element={<Donations />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/assistant/photos" element={<AssistantPhotos />} />
+                <Route path="/media" element={<MediaManagement />} />
+                <Route path="/sponsorship" element={<SponsorshipManagement />} />
+                
+                {/* Admin routes */}
+                <Route path="/admin/validation" element={<Validation />} />
+                <Route path="/admin/statistics" element={<Statistics />} />
+                <Route path="/admin/translations" element={<Translations />} />
+                <Route path="/admin/emails" element={<Emails />} />
+                <Route path="/admin/faq" element={<FAQ />} />
+                <Route path="/admin/permissions" element={<Permissions />} />
+              </Route>
             </Routes>
             <Toaster />
           </AuthProvider>
