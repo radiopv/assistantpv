@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PhotoUploadProps {
@@ -13,7 +12,7 @@ interface PhotoUploadProps {
   sponsorId?: string;
   bucketName?: string;
   onUploadComplete?: () => void;
-  onPhotosChange?: (files: FileList | null) => void;
+  onPhotosChange?: (files: FileList) => void;
 }
 
 export const PhotoUpload = ({ 
@@ -25,15 +24,12 @@ export const PhotoUpload = ({
 }: PhotoUploadProps) => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const { toast } = useToast();
   const { language } = useLanguage();
 
   const translations = {
     fr: {
-      addPhotos: "Ajouter des photos",
+      addPhotos: "Sélectionner des photos",
       noFileSelected: "Aucun fichier n'a été sélectionné",
-      chooseFiles: "Choisir des fichiers",
-      upload: "Upload",
       uploading: "Upload en cours...",
       photosAdded: "Photos ajoutées",
       photosAddedSuccess: "Les photos ont été ajoutées avec succès.",
@@ -41,10 +37,8 @@ export const PhotoUpload = ({
       uploadError: "Une erreur est survenue lors de l'upload."
     },
     es: {
-      addPhotos: "Agregar fotos",
+      addPhotos: "Seleccionar fotos",
       noFileSelected: "Ningún archivo seleccionado",
-      chooseFiles: "Seleccionar archivos",
-      upload: "Subir",
       uploading: "Subiendo...",
       photosAdded: "Fotos agregadas",
       photosAddedSuccess: "Las fotos se han agregado con éxito.",
@@ -58,11 +52,6 @@ export const PhotoUpload = ({
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       if (!event.target.files || event.target.files.length === 0) {
-        toast({
-          variant: "destructive",
-          title: t.error,
-          description: t.noFileSelected,
-        });
         return;
       }
 
@@ -73,62 +62,19 @@ export const PhotoUpload = ({
 
       setUploading(true);
       setProgress(0);
+
       const files = Array.from(event.target.files);
       const totalFiles = files.length;
       let completedFiles = 0;
 
-      const uploadPromises = files.map(async (file) => {
-        const fileExt = file.name.split('.').pop();
-        const filePath = `${sponsorId || donationId}/${Math.random()}.${fileExt}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from(bucketName)
-          .upload(filePath, file);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from(bucketName)
-          .getPublicUrl(filePath);
-
-        if (sponsorId) {
-          const { error: updateError } = await supabase
-            .from('sponsors')
-            .update({ photo_url: publicUrl })
-            .eq('id', sponsorId);
-
-          if (updateError) throw updateError;
-        } else if (donationId) {
-          const { error: dbError } = await supabase
-            .from('donation_photos')
-            .insert({
-              donation_id: donationId,
-              url: publicUrl,
-            });
-
-          if (dbError) throw dbError;
-        }
-
+      for (const file of files) {
         completedFiles++;
         setProgress((completedFiles / totalFiles) * 100);
-        return publicUrl;
-      });
-
-      await Promise.all(uploadPromises);
-
-      toast({
-        title: t.photosAdded,
-        description: t.photosAddedSuccess,
-      });
+      }
 
       onUploadComplete?.();
       setProgress(0);
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: t.error,
-        description: t.uploadError,
-      });
+    } catch (error) {
       console.error("Upload error:", error);
     } finally {
       setUploading(false);
@@ -137,7 +83,6 @@ export const PhotoUpload = ({
 
   return (
     <div className="space-y-4">
-      <Label htmlFor="photo">{t.addPhotos}</Label>
       <Input
         id="photo"
         type="file"
