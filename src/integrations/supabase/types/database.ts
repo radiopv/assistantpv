@@ -330,7 +330,7 @@ export type Database = {
           description: string | null
           donation_id: string | null
           id: string
-          quantity: number
+          quantity: number;
           updated_at: string | null
         }
         Insert: {
@@ -339,7 +339,7 @@ export type Database = {
           description?: string | null
           donation_id?: string | null
           id?: string
-          quantity: number
+          quantity: number;
           updated_at?: string | null
         }
         Update: {
@@ -348,7 +348,7 @@ export type Database = {
           description?: string | null
           donation_id?: string | null
           id?: string
-          quantity?: number
+          quantity?: number;
           updated_at?: string | null
         }
         Relationships: [
@@ -389,21 +389,21 @@ export type Database = {
           donation_date: string;
           id?: string;
           people_helped: number;
-          photos?: string[] | null;
-          status?: string | null;
-          updated_at?: string | null;
+          photos?: string[] | null
+          status?: string | null
+          updated_at?: string | null
         }
         Update: {
           assistant_name?: string;
           city?: string;
-          comments?: string | null;
-          created_at?: string | null;
+          comments?: string | null
+          created_at?: string | null
           donation_date?: string;
           id?: string;
           people_helped?: number;
-          photos?: string[] | null;
-          status?: string | null;
-          updated_at?: string | null;
+          photos?: string[] | null
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -471,7 +471,7 @@ export type Database = {
           latitude?: number;
           longitude?: number;
           sponsored_count?: number | null;
-          updated_at?: string | null;
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -655,7 +655,7 @@ export type Database = {
           name: string
           password_hash?: string | null
           permissions?: Json | null
-          phone?: string | null
+          phone?: string
           photo_url?: string | null
           privacy_settings?: Json | null
           role?: string | null
@@ -742,7 +742,7 @@ export type Database = {
           sponsor_id?: string | null
           sponsorships?: string | null
           start_date?: string
-          status?: string
+          status: string
           termination_comment?: string | null
           termination_date?: string | null
           termination_reason?: string | null

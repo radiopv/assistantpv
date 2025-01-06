@@ -1,4 +1,4 @@
-export const es = {
+export const spanishTranslations = {
   // Auth
   login: "Iniciar sesión",
   logout: "Cerrar sesión",

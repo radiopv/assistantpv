@@ -1,4 +1,4 @@
-export const fr = {
+export const frenchTranslations = {
   // Auth
   login: "Connexion",
   logout: "Déconnexion",
