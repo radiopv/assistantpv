@@ -1,44 +1,33 @@
-import { Database } from './database';
-
-export type SponsorshipWithDetails = Database['public']['Tables']['sponsorships']['Row'] & {
-  sponsors: {
-    id: string;
-    name: string;
-    email: string;
-    photo_url: string | null;
-  };
-  children: {
-    id: string;
-    name: string;
-    photo_url: string | null;
-    age: number;
-  };
-};
-
-export type GroupedSponsorship = {
-  sponsor: {
-    id: string;
-    name: string;
-    email: string;
-    photo_url: string | null;
-  };
-  sponsorships: Array<{
-    id: string;
-    child: {
-      id: string;
-      name: string;
-      photo_url: string | null;
-      age: number;
-    };
-  }>;
-};
-
 export interface SponsorshipRequest {
+  child_id: string | null;
+  created_at: string | null;
+  email: string;
+  facebook_url: string | null;
+  full_name: string;
   id: string;
-  child_id: string;
-  requester_email: string;
-  name: string;
-  status: 'pending' | 'approved' | 'rejected';
-  created_at?: string;
-  updated_at?: string;
+  motivation: string | null;
+  phone: string | null;
+  status: string;
+  terms_accepted: boolean;
+  updated_at: string | null;
+  city: string | null;
+  is_long_term: boolean | null;
+  is_one_time?: boolean | null;
 }
+
+export type SponsorshipTables = {
+  sponsorship_requests: {
+    Row: SponsorshipRequest;
+    Insert: Partial<SponsorshipRequest> & Pick<SponsorshipRequest, 'email' | 'full_name' | 'status'>;
+    Update: Partial<SponsorshipRequest>;
+    Relationships: [
+      {
+        foreignKeyName: "sponsorship_requests_child_id_fkey";
+        columns: ["child_id"];
+        referencedRelation: "children";
+        referencedColumns: ["id"];
+        isOneToOne: false;
+      }
+    ];
+  };
+};

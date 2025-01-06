@@ -1,36 +1,64 @@
 export const frenchTranslations = {
-  sponsorship: {
-    management: "Gestion des Parrainages",
-    newSponsorship: "Nouveau Parrainage",
-    createSponsorship: "Créer un nouveau parrainage",
-    deleteSponsorship: "Supprimer le parrainage",
-    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer ce parrainage ? Cette action ne peut pas être annulée.",
-    sponsoredChild: "Enfant parrainé",
-    success: {
-      created: "Le parrainage a été créé avec succès",
-      deleted: "Le parrainage a été supprimé avec succès"
-    },
-    error: {
-      create: "Une erreur est survenue lors de la création du parrainage",
-      delete: "Une erreur est survenue lors de la suppression du parrainage"
-    }
-  },
-  error: "Erreur",
+  // Auth
+  login: "Connexion",
+  logout: "Déconnexion",
+  email: "Email",
+  password: "Mot de passe",
+  forgotPassword: "Mot de passe oublié ?",
+  resetPassword: "Réinitialiser le mot de passe",
+  register: "S'inscrire",
+  invalidCredentials: "Email ou mot de passe invalide",
+
+  // Navigation
+  dashboard: "Tableau de bord",
+  children: "Enfants",
+  donations: "Dons",
+  messages: "Messages",
+  settings: "Paramètres",
+  profile: "Profil",
+  admin: "Administration",
+  help: "Aide",
+
+  // Children
+  addChild: "Ajouter un enfant",
+  editChild: "Modifier l'enfant",
+  removeChild: "Supprimer l'enfant",
+  childName: "Nom de l'enfant",
+  childAge: "Âge",
+  childGender: "Genre",
+  childCity: "Ville",
+  childDescription: "Description",
+  childNeeds: "Besoins",
+  childPhotos: "Photos des enfants",
+  sponsorshipManagement: "Gestion des parrainages",
+
+  // Common actions
+  save: "Enregistrer",
+  cancel: "Annuler",
+  confirm: "Confirmer",
   loading: "Chargement...",
+  error: "Erreur",
+  success: "Succès",
+  warning: "Attention",
+  info: "Information",
+  required: "Requis",
+  optional: "Optionnel",
+  active: "Actif",
+  inactive: "Inactif",
+  enabled: "Activé",
+  disabled: "Désactivé",
+  edit: "Modifier",
+  remove: "Supprimer",
+  view: "Voir",
+  search: "Rechercher",
+  filter: "Filtrer",
+  sort: "Trier",
+  export: "Exporter",
+  import: "Importer",
+  download: "Télécharger",
+  upload: "Uploader",
+  process: "Traiter",
   approve: "Approuver",
   reject: "Rejeter",
-  success: "Succès",
-  childRequestApproved: "La demande de parrainage a été approuvée",
-  childRequestRejected: "La demande de parrainage a été rejetée",
-  errorApprovingChildRequest: "Erreur lors de l'approbation de la demande",
-  errorRejectingChildRequest: "Erreur lors du rejet de la demande",
-  noChildRequestsPending: "Aucune demande de parrainage en attente",
-  childRequestApprovedSubject: "Votre demande de parrainage a été approuvée",
-  childRequestApprovedContent: "Bonjour {name}, votre demande de parrainage a été approuvée.",
-  childRequestRejectedSubject: "Votre demande de parrainage a été rejetée",
-  childRequestRejectedContent: "Bonjour {name}, votre demande de parrainage a été rejetée.",
-  logout: "Déconnexion",
-  editProfile: "Modifier le profil"
-};
-
-export default frenchTranslations;
+  submit: "Soumettre"
+} as const;

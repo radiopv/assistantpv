@@ -10,18 +10,14 @@ export interface ChildAssignmentRequest {
   updated_at?: string;
 }
 
-export type ChildAssignmentRequestInsert = Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'> & {
-  id?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type ChildAssignmentRequestUpdate = Partial<ChildAssignmentRequest>;
-
 export interface ChildAssignmentRequestTable {
   Row: ChildAssignmentRequest;
-  Insert: ChildAssignmentRequestInsert;
-  Update: ChildAssignmentRequestUpdate;
+  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'> & {
+    id?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
+  Update: Partial<ChildAssignmentRequest>;
   Relationships: [
     {
       foreignKeyName: "child_assignment_requests_child_id_fkey";
