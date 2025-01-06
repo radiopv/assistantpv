@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
 import { Database } from "@/integrations/supabase/types";
 
 export const useChildAssignment = () => {
