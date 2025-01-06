@@ -23,7 +23,11 @@ export const DetailedStats = () => {
       console.log('Fetching urgent needs...');
       const { data, error } = await supabase
         .from('children')
-        .select('id, name, needs')
+        .select(`
+          id,
+          name,
+          needs
+        `)
         .not('needs', 'is', null);
       
       if (error) {
@@ -34,6 +38,8 @@ export const DetailedStats = () => {
       if (user) {
         await logActivity(user.id, "A consulté les besoins urgents");
       }
+
+      console.log('Raw data from children table:', data);
 
       const childrenWithUrgentNeeds = data.filter(child => {
         if (!child.needs) return false;
@@ -47,6 +53,7 @@ export const DetailedStats = () => {
         }
       });
 
+      console.log('Filtered children with urgent needs:', childrenWithUrgentNeeds);
       return childrenWithUrgentNeeds;
     }
   });
