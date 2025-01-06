@@ -1,5 +1,9 @@
 export interface TranslationType {
-  [key: string]: string | TranslationType;
+  [key: string]: string | {
+    [key: string]: string | {
+      [key: string]: string;
+    };
+  };
 }
 
 export interface FlatTranslationType {
