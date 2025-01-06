@@ -45,7 +45,7 @@ export const spanishTranslations = {
   translationManager: "Gestor de traducciones",
   addChild: "Agregar niño",
   addDonation: "Agregar donación",
-  addChildPhotos: "Agregar fotos de niños",
+  addChildPhotos: "Álbum de fotos Padrino",
   photoPageInstructions: "Esta página permite agregar fotos a los perfiles de los niños. Las fotos serán visibles para los padrinos en el perfil de su ahijado.",
   
   // Common actions
