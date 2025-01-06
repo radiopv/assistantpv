@@ -65,6 +65,7 @@ export const DonationCardMedia = ({
       onPhotosUpdate();
       setShowPhotoUpload(false);
     } catch (error) {
+      console.error('Upload error:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
