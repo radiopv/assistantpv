@@ -108,7 +108,8 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
 
   const handleCreateTask = async () => {
     try {
-      const { error } = await supabase
+      // Créer la tâche
+      const { data: task, error: taskError } = await supabase
         .from('tasks')
         .insert({
           title: `Vérification du profil de ${child.name}`,
@@ -116,9 +117,34 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
           type: "profile_verification",
           child_id: child.id,
           status: "pending"
-        });
+        })
+        .select()
+        .single();
 
-      if (error) throw error;
+      if (taskError) throw taskError;
+
+      // Envoyer une notification aux assistants
+      const { data: assistants, error: assistantsError } = await supabase
+        .from('sponsors')
+        .select('id')
+        .eq('role', 'assistant');
+
+      if (assistantsError) throw assistantsError;
+
+      // Créer une notification pour chaque assistant
+      const notifications = assistants.map(assistant => ({
+        recipient_id: assistant.id,
+        title: "Nouvelle tâche de vérification",
+        content: `Une nouvelle tâche a été créée pour vérifier le profil de ${child.name}`,
+        type: "task_created",
+        link: `/tasks`
+      }));
+
+      const { error: notifError } = await supabase
+        .from('notifications')
+        .insert(notifications);
+
+      if (notifError) throw notifError;
 
       toast({
         title: "Tâche créée",

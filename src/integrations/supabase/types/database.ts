@@ -56,7 +56,7 @@ export type Database = {
           title?: string | null
           type: string
           updated_at?: string | null
-          url: string
+          url?: string
         }
         Update: {
           child_id?: string | null
@@ -82,8 +82,8 @@ export type Database = {
           }
         ]
       }
-      tasks: Tasks
-      children: Children
+      tasks: Tasks;
+      children: Children;
       badges: {
         Row: {
           category: string | null
@@ -386,24 +386,24 @@ export type Database = {
           city: string
           comments?: string | null
           created_at?: string | null
-          donation_date: string
-          id?: string
-          people_helped: number
-          photos?: string[] | null
-          status?: string | null
-          updated_at?: string | null
+          donation_date: string;
+          id?: string;
+          people_helped: number;
+          photos?: string[] | null;
+          status?: string | null;
+          updated_at?: string | null;
         }
         Update: {
-          assistant_name?: string
-          city?: string
-          comments?: string | null
-          created_at?: string | null
-          donation_date?: string
-          id?: string
-          people_helped?: number
-          photos?: string[] | null
-          status?: string | null
-          updated_at?: string | null
+          assistant_name?: string;
+          city?: string;
+          comments?: string | null;
+          created_at?: string | null;
+          donation_date?: string;
+          id?: string;
+          people_helped?: number;
+          photos?: string[] | null;
+          status?: string | null;
+          updated_at?: string | null;
         }
         Relationships: []
       }
@@ -458,20 +458,20 @@ export type Database = {
           city_name: string
           created_at?: string | null
           id?: number
-          latitude: number
-          longitude: number
+          latitude: number;
+          longitude: number;
           sponsored_count?: number | null
           updated_at?: string | null
         }
         Update: {
           child_count?: number | null
-          city_name?: string
+          city_name?: string;
           created_at?: string | null
-          id?: number
-          latitude?: number
-          longitude?: number
-          sponsored_count?: number | null
-          updated_at?: string | null
+          id?: number;
+          latitude?: number;
+          longitude?: number;
+          sponsored_count?: number | null;
+          updated_at?: string | null;
         }
         Relationships: []
       }
