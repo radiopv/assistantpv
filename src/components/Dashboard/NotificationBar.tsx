@@ -41,7 +41,7 @@ export const NotificationBar = () => {
         const { count, error } = await supabase
           .from('messages')
           .select('*', { count: 'exact', head: true })
-          .is('is_read', false);
+          .eq('is_read', false);
         
         if (error) {
           console.warn('Messages table not accessible:', error.message);

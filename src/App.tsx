@@ -1,12 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/sonner";
-import MainLayout from "@/components/Layout/MainLayout";
-import PublicLayout from "@/components/Layout/PublicLayout";
-import { AuthProvider } from "@/components/Auth/AuthProvider";
+import { Toaster } from "@/components/ui/toaster";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// Pages
+import { AuthProvider } from "@/components/Auth/AuthProvider";
+import MainLayout from "@/components/Layout/MainLayout";
+import PublicLayout from "@/components/Layout/PublicLayout";
 import Home from "@/pages/Home";
 import Login from "@/pages/auth/Login";
 import Dashboard from "@/pages/Dashboard";
@@ -16,58 +14,48 @@ import ChildProfile from "@/pages/ChildProfile";
 import Donations from "@/pages/Donations";
 import Messages from "@/pages/Messages";
 import Settings from "@/pages/Settings";
-import BecomeSponsor from "@/pages/BecomeSponsor";
 import AssistantPhotos from "@/pages/AssistantPhotos";
-import MediaManagement from "@/pages/MediaManagement";
-import SponsorshipManagement from "@/pages/SponsorshipManagement";
-import Validation from "@/pages/admin/Validation";
+import FAQ from "@/pages/admin/FAQ";
 import Statistics from "@/pages/admin/Statistics";
 import Translations from "@/pages/admin/Translations";
+import Validation from "@/pages/admin/Validation";
 import Emails from "@/pages/admin/Emails";
-import FAQ from "@/pages/admin/FAQ";
-import Permissions from "@/pages/admin/Permissions";
 
+// Create a client
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <LanguageProvider>
+      <LanguageProvider>
+        <Router>
           <AuthProvider>
             <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/become-sponsor" element={<BecomeSponsor />} />
-            </Route>
-            
-            <Route element={<MainLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/children" element={<Children />} />
-              <Route path="/children/add" element={<AddChild />} />
-              <Route path="/children/:id" element={<ChildProfile />} />
-              <Route path="/donations" element={<Donations />} />
-              <Route path="/donations/add" element={<Donations />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/assistant/photos" element={<AssistantPhotos />} />
-              <Route path="/media" element={<MediaManagement />} />
-              <Route path="/sponsorship" element={<SponsorshipManagement />} />
+              <Route path="/" element={<PublicLayout />}>
+                <Route index element={<Home />} />
+                <Route path="login" element={<Login />} />
+              </Route>
               
-              {/* Admin routes */}
-              <Route path="/admin/validation" element={<Validation />} />
-              <Route path="/admin/statistics" element={<Statistics />} />
-              <Route path="/admin/translations" element={<Translations />} />
-              <Route path="/admin/emails" element={<Emails />} />
-              <Route path="/admin/faq" element={<FAQ />} />
-              <Route path="/admin/permissions" element={<Permissions />} />
-            </Route>
+              <Route path="/" element={<MainLayout />}>
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="children" element={<Children />} />
+                <Route path="children/add" element={<AddChild />} />
+                <Route path="children/:id" element={<ChildProfile />} />
+                <Route path="donations" element={<Donations />} />
+                <Route path="messages" element={<Messages />} />
+                <Route path="settings" element={<Settings />} />
+                <Route path="assistant/photos" element={<AssistantPhotos />} />
+                <Route path="admin/faq" element={<FAQ />} />
+                <Route path="admin/statistics" element={<Statistics />} />
+                <Route path="admin/translations" element={<Translations />} />
+                <Route path="admin/validation" element={<Validation />} />
+                <Route path="admin/emails" element={<Emails />} />
+              </Route>
             </Routes>
-            <Toaster />
           </AuthProvider>
-        </LanguageProvider>
-      </Router>
+        </Router>
+        <Toaster />
+      </LanguageProvider>
     </QueryClientProvider>
   );
 };

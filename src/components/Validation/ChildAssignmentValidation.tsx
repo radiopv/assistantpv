@@ -36,11 +36,6 @@ export const ChildAssignmentValidation = () => {
     try {
       console.log('Approving request:', request);
       
-      if (!request.requester_email) {
-        throw new Error("Email du demandeur manquant");
-      }
-
-      // 1. Update the request status
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
         .update({ status: 'approved' })
@@ -48,64 +43,8 @@ export const ChildAssignmentValidation = () => {
 
       if (updateError) throw updateError;
 
-      // 2. Create sponsor if doesn't exist
-      const { data: existingSponsor, error: sponsorQueryError } = await supabase
-        .from('sponsors')
-        .select('id')
-        .eq('email', request.requester_email)
-        .maybeSingle();
-
-      if (sponsorQueryError) throw sponsorQueryError;
-
-      let sponsorId: string;
-
-      if (!existingSponsor) {
-        const { data: newSponsor, error: sponsorError } = await supabase
-          .from('sponsors')
-          .insert({
-            email: request.requester_email,
-            name: request.name,
-            role: 'sponsor'
-          })
-          .select('id')
-          .single();
-
-        if (sponsorError) throw sponsorError;
-        if (!newSponsor) throw new Error("Échec de la création du parrain");
-        
-        sponsorId = newSponsor.id;
-      } else {
-        sponsorId = existingSponsor.id;
-      }
-
-      // 3. Update child's sponsor information
-      const { error: childError } = await supabase
-        .from('children')
-        .update({
-          is_sponsored: true,
-          sponsor_id: sponsorId,
-          sponsor_name: request.name,
-          sponsor_email: request.requester_email
-        })
-        .eq('id', request.child_id);
-
-      if (childError) throw childError;
-
-      // 4. Create sponsorship record
-      const { error: sponsorshipError } = await supabase
-        .from('sponsorships')
-        .insert({
-          sponsor_id: sponsorId,
-          child_id: request.child_id,
-          start_date: new Date().toISOString(),
-          status: 'active'
-        });
-
-      if (sponsorshipError) throw sponsorshipError;
-
-      // Send notification email
       await sendEmail({
-        from: "noreply@example.com",
+        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestApprovedSubject"),
         html: t("childRequestApprovedContent", { name: request.name })
@@ -139,7 +78,7 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        from: "noreply@example.com",
+        from: "noreply@lovable.dev",
         to: [request.requester_email],
         subject: t("childRequestRejectedSubject"),
         html: t("childRequestRejectedContent", { name: request.name })

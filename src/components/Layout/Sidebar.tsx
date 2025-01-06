@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -15,8 +15,7 @@ import {
   Languages,
   Image,
   CheckCircle2,
-  Mail,
-  Edit
+  Mail
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -31,6 +30,8 @@ interface SidebarProps {
 const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
   const { signOut, user } = useAuth();
   const { t } = useLanguage();
+  const location = useLocation();
+
   const isAdmin = user?.role === 'admin';
 
   const assistantLinks = [
@@ -54,14 +55,8 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
         },
         {
           href: "/assistant/photos",
-          label: t("childPhotos"),
+          label: t("addChildPhotos"),
           icon: Image,
-          show: true,
-        },
-        {
-          href: "/sponsorship-management",
-          label: t("sponsorshipManagement"),
-          icon: Users,
           show: true,
         }
       ]
@@ -75,7 +70,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
         {
           href: "/donations/add",
           label: t("addDonation"),
-          icon: Gift,
+          icon: UserPlus,
           show: user?.permissions?.donations || isAdmin,
         }
       ]

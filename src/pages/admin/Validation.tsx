@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { TestimonialValidation } from "@/components/Validation/TestimonialValidation";
 import { SponsorshipValidation } from "@/components/Validation/SponsorshipValidation";
 import { PhotoValidation } from "@/components/Validation/PhotoValidation";
-import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignment/ChildAssignmentValidation";
+import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignmentValidation";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('child_assignment_requests')
         .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending') as { count: number | null };
+        .eq('status', 'pending');
       return count || 0;
     }
   });
@@ -40,7 +40,7 @@ const ValidationPage = () => {
       const { count } = await supabase
         .from('album_media')
         .select('*', { count: 'exact', head: true })
-        .is('is_approved', null);
+        .eq('is_approved', false);
       return count || 0;
     }
   });
@@ -49,7 +49,7 @@ const ValidationPage = () => {
     queryKey: ['pending-testimonial-count'],
     queryFn: async () => {
       const { count } = await supabase
-        .from('temoignage')
+        .from('testimonials')
         .select('*', { count: 'exact', head: true })
         .eq('is_approved', false);
       return count || 0;

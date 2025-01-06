@@ -1,83 +1,121 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
 import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ProgressIndicator } from "./PhotoUpload/ProgressIndicator";
-import { UploadStatus } from "./PhotoUpload/UploadStatus";
-import { PhotoPreview } from "./PhotoUpload/PhotoPreview";
 
 interface PhotoUploadProps {
+  donationId?: string;
+  sponsorId?: string;
+  bucketName?: string;
+  onUploadComplete?: () => void;
   onPhotosChange?: (files: FileList | null) => void;
 }
 
-export const PhotoUpload = ({ onPhotosChange }: PhotoUploadProps) => {
-  const [photos, setPhotos] = useState<File[]>([]);
+export const PhotoUpload = ({ 
+  donationId, 
+  sponsorId,
+  bucketName = 'donation-photos',
+  onUploadComplete, 
+  onPhotosChange 
+}: PhotoUploadProps) => {
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [uploadStatus, setUploadStatus] = useState<'success' | 'error' | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { language } = useLanguage();
 
-  const t = language === 'fr' ? {
-    selectPhotos: "Sélectionner des photos",
-    upload: "Téléverser",
-  } : {
-    selectPhotos: "Seleccionar fotos",
-    upload: "Subir",
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.length) return;
-    
-    const newPhotos = Array.from(e.target.files);
-    setPhotos(prev => [...prev, ...newPhotos]);
-    if (onPhotosChange) {
-      onPhotosChange(e.target.files);
+  const translations = {
+    fr: {
+      addPhotos: "Ajouter des photos",
+      noFileSelected: "Aucun fichier n'a été sélectionné",
+      chooseFiles: "Choisir des fichiers",
+      upload: "Upload",
+      uploading: "Upload en cours...",
+      photosAdded: "Photos ajoutées",
+      photosAddedSuccess: "Les photos ont été ajoutées avec succès.",
+      error: "Erreur",
+      uploadError: "Une erreur est survenue lors de l'upload."
+    },
+    es: {
+      addPhotos: "Agregar fotos",
+      noFileSelected: "Ningún archivo seleccionado",
+      chooseFiles: "Seleccionar archivos",
+      upload: "Subir",
+      uploading: "Subiendo...",
+      photosAdded: "Fotos agregadas",
+      photosAddedSuccess: "Las fotos se han agregado con éxito.",
+      error: "Error",
+      uploadError: "Ocurrió un error durante la subida."
     }
-    setUploadStatus(null);
   };
 
-  const removePhoto = (index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
-    setUploadStatus(null);
-  };
+  const t = translations[language as keyof typeof translations];
 
-  const handleUpload = async () => {
-    if (!photos.length) return;
-
-    setUploading(true);
-    setProgress(0);
-    setUploadStatus(null);
-
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      const totalPhotos = photos.length;
-      let completed = 0;
+      if (!event.target.files || event.target.files.length === 0) {
+        return;
+      }
 
-      for (const photo of photos) {
-        const fileExt = photo.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
+      if (onPhotosChange) {
+        onPhotosChange(event.target.files);
+        return;
+      }
+
+      setUploading(true);
+      const files = Array.from(event.target.files);
+      const uploadPromises = files.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${sponsorId || donationId}/${Math.random()}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
-          .from('donation-photos')
-          .upload(fileName, photo);
+          .from(bucketName)
+          .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        completed++;
-        setProgress((completed / totalPhotos) * 100);
-      }
+        const { data: { publicUrl } } = supabase.storage
+          .from(bucketName)
+          .getPublicUrl(filePath);
 
-      setUploadStatus('success');
-      setPhotos([]);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      setUploadStatus('error');
+        if (sponsorId) {
+          const { error: updateError } = await supabase
+            .from('sponsors')
+            .update({ photo_url: publicUrl })
+            .eq('id', sponsorId);
+
+          if (updateError) throw updateError;
+        } else if (donationId) {
+          const { error: dbError } = await supabase
+            .from('donation_photos')
+            .insert({
+              donation_id: donationId,
+              url: publicUrl,
+            });
+
+          if (dbError) throw dbError;
+        }
+
+        return publicUrl;
+      });
+
+      await Promise.all(uploadPromises);
+
+      toast({
+        title: t.photosAdded,
+        description: t.photosAddedSuccess,
+      });
+
+      onUploadComplete?.();
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: t.error,
+        description: t.uploadError,
+      });
+      console.error("Upload error:", error);
     } finally {
       setUploading(false);
     }
@@ -85,37 +123,19 @@ export const PhotoUpload = ({ onPhotosChange }: PhotoUploadProps) => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4">
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleFileSelect}
-          className="hidden"
-        />
-        <Button
-          onClick={() => fileInputRef.current?.click()}
-          variant="outline"
-          disabled={uploading}
-        >
-          <Upload className="w-4 h-4 mr-2" />
-          {t.selectPhotos}
-        </Button>
-        {photos.length > 0 && (
-          <Button onClick={handleUpload} disabled={uploading}>
-            {t.upload} ({photos.length})
-          </Button>
-        )}
-      </div>
-
-      {uploading && <ProgressIndicator progress={progress} />}
-      
-      <UploadStatus status={uploadStatus} />
-
-      {photos.length > 0 && (
-        <PhotoPreview photos={photos} onRemove={removePhoto} />
-      )}
+      <Label htmlFor="photo">{t.addPhotos}</Label>
+      <Input
+        id="photo"
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={handleUpload}
+        disabled={uploading}
+      />
+      <Button disabled={uploading}>
+        <Upload className="w-4 h-4 mr-2" />
+        {uploading ? t.uploading : t.upload}
+      </Button>
     </div>
   );
 };

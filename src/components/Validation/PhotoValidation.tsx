@@ -19,11 +19,10 @@ export const PhotoValidation = () => {
   const { data: photos, refetch } = useQuery({
     queryKey: ["pending-photos"],
     queryFn: async () => {
-      console.log("Fetching pending photos...");
+      // First try to get featured photos that haven't been approved yet
       const { data, error } = await supabase
         .from("album_media")
         .select("*")
-        .is("is_approved", null)
         .eq("is_featured", true);
 
       if (error) {
@@ -31,7 +30,8 @@ export const PhotoValidation = () => {
         throw error;
       }
 
-      return data;
+      // Filter locally for is_approved being null since the column might not exist yet
+      return data.filter(photo => photo.is_approved === null);
     },
   });
 

@@ -2,8 +2,15 @@ import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { LayoutDashboard, Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { 
+  LayoutDashboard, 
+  Menu,
+} from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const PublicLayout = () => {
   const { session, user } = useAuth();
@@ -28,44 +35,36 @@ const PublicLayout = () => {
           </Link>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-10 w-10">
+              <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="mobile-menu p-0">
-              <div className="flex flex-col h-full">
-                <div className="flex-1 overflow-y-auto py-6 px-4">
-                  <div className="space-y-4">
-                    {menuItems.map((item) => (
-                      <Link
-                        key={item.href}
-                        to={item.href}
-                        className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 p-2 rounded-md hover:bg-gray-100"
-                      >
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.label}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-                <div className="border-t p-4">
-                  {session ? (
-                    isAdminOrAssistant ? (
-                      <Link to="/dashboard">
-                        <Button className="w-full h-12 text-base">
-                          <LayoutDashboard className="mr-2 h-5 w-5" />
-                          Administration
-                        </Button>
-                      </Link>
-                    ) : null
-                  ) : (
-                    <Link to="/login">
-                      <Button className="w-full h-12 text-base">
+            <SheetContent side="left">
+              <div className="flex flex-col space-y-4 mt-8">
+                {menuItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.label}</span>
+                  </Link>
+                ))}
+                {session ? (
+                  isAdminOrAssistant ? (
+                    <Link to="/dashboard">
+                      <Button className="w-full">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
                         Administration
                       </Button>
                     </Link>
-                  )}
-                </div>
+                  ) : null
+                ) : (
+                  <Link to="/login">
+                    <Button className="w-full">Administration</Button>
+                  </Link>
+                )}
               </div>
             </SheetContent>
           </Sheet>
