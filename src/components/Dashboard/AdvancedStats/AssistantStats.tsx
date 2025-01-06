@@ -4,11 +4,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { type ActivityLogType } from "@/types/activity";
 
 export const AssistantStats = () => {
   const { language } = useLanguage();
 
-  const { data: stats, isLoading, error } = useQuery({
+  const { data: stats, isLoading, error } = useQuery<ActivityLogType[]>({
     queryKey: ['assistant-stats'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -44,7 +45,7 @@ export const AssistantStats = () => {
       <div className="space-y-2">
         {stats?.map((log) => (
           <div key={log.id} className="p-3 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">{log.description}</p>
+            <p className="text-sm text-gray-600">{log.action}</p>
             <p className="text-xs text-gray-400">
               {new Date(log.created_at).toLocaleDateString()}
             </p>
