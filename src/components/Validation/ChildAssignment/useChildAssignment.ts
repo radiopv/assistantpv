@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { TableNames } from "@/integrations/supabase/types/database-tables";
 import { RequestStatus } from "@/integrations/supabase/types/request-status";
 
 export const useChildAssignment = () => {
@@ -20,7 +19,7 @@ export const useChildAssignment = () => {
         .returns<ChildAssignmentRequest[]>();
 
       if (error) throw error;
-      return data;
+      return data || [];
     }
   });
 
