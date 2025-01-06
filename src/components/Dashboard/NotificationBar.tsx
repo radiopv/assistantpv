@@ -81,6 +81,7 @@ export const NotificationBar = () => {
         size="icon" 
         className="relative"
         onClick={handleNotificationsClick}
+        title="Notifications"
       >
         <Bell className="h-5 w-5" />
         {notifications && notifications > 0 && (
@@ -95,6 +96,7 @@ export const NotificationBar = () => {
         size="icon" 
         className="relative"
         onClick={handleMessagesClick}
+        title="Messages"
       >
         <MessageSquare className="h-5 w-5" />
         {messages && messages > 0 && (
@@ -109,6 +111,7 @@ export const NotificationBar = () => {
         size="icon" 
         className="relative"
         onClick={handleTasksClick}
+        title="Tâches"
       >
         <CheckSquare className="h-5 w-5" />
       </Button>
