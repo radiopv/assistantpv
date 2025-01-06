@@ -185,6 +185,7 @@ export const spanishTranslations = {
   errorUpdatingCity: "Error al actualizar la ciudad",
   searchCity: "Buscar ciudad",
   donationsCount: "Número de donaciones",
-  actions: "Acciones",
+  tableActions: "Acciones", // Changed from 'actions' to 'tableActions' to avoid duplicate
   similarCityWarning: "Atención: Ya existe una ciudad similar",
+  continueQuestion: "¿Desea continuar?",
 };

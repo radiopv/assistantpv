@@ -52,8 +52,9 @@ export const frenchTranslations = {
   errorUpdatingCity: "Erreur lors de la mise à jour de la ville",
   searchCity: "Rechercher une ville",
   donationsCount: "Nombre de donations",
-  actions: "Actions",
+  tableActions: "Actions", // Changed from 'actions' to 'tableActions' to avoid duplicate
   similarCityWarning: "Attention: Une ville similaire existe déjà",
+  continueQuestion: "Voulez-vous continuer ?",
 
   // Common actions
   save: "Enregistrer",

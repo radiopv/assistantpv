@@ -48,7 +48,6 @@ const CitiesManagement = () => {
       const existingName = city.name.toLowerCase().trim();
       if (existingName === normalizedName) return false;
       
-      // Check for similar names using Levenshtein distance or simple contains
       return existingName.includes(normalizedName) || 
              normalizedName.includes(existingName) ||
              (existingName.length > 3 && normalizedName.length > 3 && 
@@ -112,7 +111,7 @@ const CitiesManagement = () => {
                 <TableRow>
                   <TableHead>{t("cityName")}</TableHead>
                   <TableHead>{t("donationsCount")}</TableHead>
-                  <TableHead className="w-[100px]">{t("actions")}</TableHead>
+                  <TableHead className="w-[100px]">{t("tableActions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
