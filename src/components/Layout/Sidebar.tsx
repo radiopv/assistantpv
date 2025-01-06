@@ -13,7 +13,6 @@ import {
   Languages,
   Image,
   CheckCircle2,
-  Mail,
   Edit,
   Heart
 } from "lucide-react";
@@ -98,12 +97,6 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       href: "/admin/statistics",
       label: t("statistics"),
       icon: ChartBar,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/emails",
-      label: t("emailManager"),
-      icon: Mail,
       show: isAdmin,
     },
     {
