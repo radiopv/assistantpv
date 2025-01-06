@@ -43,7 +43,7 @@ const AppRoutes = () => {
         <Route path="/donations/add" element={<AddDonation />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/assistant-photos" element={<AssistantPhotos />} />
+        <Route path="/assistant/photos" element={<AssistantPhotos />} />
         <Route path="/media" element={<MediaManagement />} />
         
         {/* Admin routes */}
