@@ -12,7 +12,6 @@ import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { NeedCheckboxes } from "./Needs/NeedCheckboxes";
 import { notifyActiveSponsor } from "@/utils/sponsor-notifications";
-import { AlertCircle } from "lucide-react";
 
 interface ChildCardProps {
   child: any;
@@ -102,60 +101,6 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
         variant: "destructive",
         title: t("error"),
         description: t("childUpdateError"),
-      });
-    }
-  };
-
-  const handleCreateTask = async () => {
-    try {
-      // Créer la tâche
-      const { data: task, error: taskError } = await supabase
-        .from('tasks')
-        .insert({
-          title: `Vérification du profil de ${child.name}`,
-          description: "Un assistant doit vérifier les informations de ce profil",
-          type: "profile_verification",
-          child_id: child.id,
-          status: "pending"
-        })
-        .select()
-        .single();
-
-      if (taskError) throw taskError;
-
-      // Envoyer une notification aux assistants
-      const { data: assistants, error: assistantsError } = await supabase
-        .from('sponsors')
-        .select('id')
-        .eq('role', 'assistant');
-
-      if (assistantsError) throw assistantsError;
-
-      // Créer une notification pour chaque assistant
-      const notifications = assistants.map(assistant => ({
-        recipient_id: assistant.id,
-        title: "Nouvelle tâche de vérification",
-        content: `Une nouvelle tâche a été créée pour vérifier le profil de ${child.name}`,
-        type: "task_created",
-        link: `/tasks`
-      }));
-
-      const { error: notifError } = await supabase
-        .from('notifications')
-        .insert(notifications);
-
-      if (notifError) throw notifError;
-
-      toast({
-        title: "Tâche créée",
-        description: "Une tâche de vérification a été créée pour cet enfant",
-      });
-    } catch (error) {
-      console.error('Error creating task:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de créer la tâche",
       });
     }
   };
@@ -330,23 +275,13 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
               </Button>
             </>
           ) : (
-            <>
-              <Button 
-                className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
-                variant="outline"
-                onClick={() => setIsEditing(true)}
-              >
-                {t("edit")}
-              </Button>
-              <Button
-                className="w-full sm:w-3/4 flex items-center gap-2 text-orange-600 hover:text-orange-700 hover:bg-orange-50"
-                variant="ghost"
-                onClick={handleCreateTask}
-              >
-                <AlertCircle className="w-4 h-4" />
-                Demander une vérification
-              </Button>
-            </>
+            <Button 
+              className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
+              variant="outline"
+              onClick={() => setIsEditing(true)}
+            >
+              {t("edit")}
+            </Button>
           )}
         </div>
       </div>

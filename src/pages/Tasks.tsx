@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { TasksList } from "@/components/Tasks/TasksList";
 
 const Tasks = () => {
   return (
@@ -11,7 +10,9 @@ const Tasks = () => {
       <Card className="p-6">
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-800">Liste des tâches</h2>
-          <TasksList />
+          <p className="text-gray-600">
+            Aucune tâche pour le moment.
+          </p>
         </div>
       </Card>
     </div>
