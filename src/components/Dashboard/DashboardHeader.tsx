@@ -1,80 +1,71 @@
 import { Card } from "@/components/ui/card";
-import { DashboardStats } from "@/types/dashboard";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { DashboardStats } from "@/types/dashboard";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { AlertCircle } from "lucide-react";
 
 interface DashboardHeaderProps {
   stats: DashboardStats;
 }
 
 export const DashboardHeader = ({ stats }: DashboardHeaderProps) => {
-  const { language } = useLanguage();
+  const { t } = useLanguage();
+  const navigate = useNavigate();
 
-  const translations = {
-    fr: {
-      welcomeMessage: "Bienvenue sur votre tableau de bord",
-      totalChildren: "Enfants",
-      sponsoredChildren: "Parrainés",
-      availableChildren: "Disponibles",
-      urgentNeeds: "Besoins urgents",
-      sponsors: "Parrains",
-      donations: "Dons",
-      peopleHelped: "Personnes aidées"
-    },
-    es: {
-      welcomeMessage: "Bienvenido a su panel de control",
-      totalChildren: "Niños",
-      sponsoredChildren: "Apadrinados",
-      availableChildren: "Disponibles",
-      urgentNeeds: "Necesidades urgentes",
-      sponsors: "Padrinos",
-      donations: "Donaciones",
-      peopleHelped: "Personas ayudadas"
-    }
+  const handleEditNeeds = (childId: string) => {
+    navigate(`/children/${childId}/edit`);
   };
-
-  const t = translations[language as keyof typeof translations];
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">{t.welcomeMessage}</h1>
+      <div className="flex flex-col gap-4">
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t('dashboard')}
+        </h1>
+        <p className="text-muted-foreground">
+          {t('dashboardDescription')}
+        </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-500">{t.totalChildren}</p>
-          <p className="text-2xl font-bold">{stats.children.total}</p>
-        </Card>
-
-        <Card className="p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-500">{t.sponsoredChildren}</p>
-          <p className="text-2xl font-bold">{stats.children.sponsored}</p>
-        </Card>
-
-        <Card className="p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-500">{t.availableChildren}</p>
-          <p className="text-2xl font-bold">{stats.children.available}</p>
-        </Card>
-
-        <Card className="p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-500">{t.urgentNeeds}</p>
-          <p className="text-2xl font-bold">{stats.children.urgent_needs}</p>
-        </Card>
-
-        <Card className="p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-500">{t.sponsors}</p>
-          <p className="text-2xl font-bold">{stats.sponsors}</p>
-        </Card>
-
-        <Card className="p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-500">{t.donations}</p>
-          <p className="text-2xl font-bold">{stats.donations.total}</p>
-        </Card>
-
-        <Card className="p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-500">{t.peopleHelped}</p>
-          <p className="text-2xl font-bold">{stats.donations.people_helped}</p>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {stats?.urgent_needs?.length > 0 ? (
+          stats.urgent_needs.map((need: any) => (
+            <Card key={need.child_id} className="p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="h-5 w-5 text-red-500" />
+                  <h3 className="font-semibold">{need.child_name}</h3>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleEditNeeds(need.child_id)}
+                >
+                  Modifier
+                </Button>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">
+                  Besoins urgents :
+                </p>
+                <ul className="list-disc list-inside text-sm">
+                  {need.needs.map((n: any, index: number) => (
+                    <li key={index} className="text-red-600">
+                      {n.category} {n.description && `- ${n.description}`}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Card>
+          ))
+        ) : (
+          <Card className="p-4">
+            <p className="text-sm text-muted-foreground">
+              Aucun besoin urgent pour le moment
+            </p>
+          </Card>
+        )}
       </div>
     </div>
   );
