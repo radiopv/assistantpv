@@ -16,22 +16,22 @@ export const PhotoValidation = () => {
   const { t } = useLanguage();
   const queryClient = useQueryClient();
 
-  const { data: photos, refetch } = useQuery({
+  const { data: photos, isLoading } = useQuery({
     queryKey: ["pending-photos"],
     queryFn: async () => {
-      // First try to get featured photos that haven't been approved yet
+      console.log("Fetching pending photos");
       const { data, error } = await supabase
         .from("album_media")
         .select("*")
-        .eq("is_featured", true);
+        .is("is_approved", null);
 
       if (error) {
         console.error("Error fetching photos:", error);
         throw error;
       }
 
-      // Filter locally for is_approved being null since the column might not exist yet
-      return data.filter(photo => photo.is_approved === null);
+      console.log("Fetched photos:", data);
+      return data;
     },
   });
 
@@ -79,6 +79,10 @@ export const PhotoValidation = () => {
       toast.error(t("errorRejectingPhoto"));
     }
   };
+
+  if (isLoading) {
+    return <div className="text-center p-4">{t("loading")}</div>;
+  }
 
   if (!photos?.length) {
     return <div className="text-center p-4">{t("noPhotosToValidate")}</div>;
