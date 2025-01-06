@@ -45,13 +45,21 @@ export const DetailedStats = () => {
         if (!child.needs) return false;
         
         try {
-          const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
-          return Array.isArray(needs) && needs.some((need: Need) => need.is_urgent === true);
+          // Parse needs if it's a string, otherwise use it directly
+          const needsArray = typeof child.needs === 'string' 
+            ? JSON.parse(child.needs) 
+            : child.needs;
+
+          // Ensure needs is an array and has at least one urgent need
+          return Array.isArray(needsArray) && needsArray.some((need: Need) => need.is_urgent === true);
         } catch (e) {
           console.error('Error processing needs for child:', child.name, e);
           return false;
         }
-      });
+      }).map(child => ({
+        ...child,
+        needs: typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs
+      }));
 
       console.log('Filtered children with urgent needs:', childrenWithUrgentNeeds);
       return childrenWithUrgentNeeds;
@@ -116,10 +124,8 @@ export const DetailedStats = () => {
           <ScrollArea className="h-full px-4 sm:pr-4">
             <div className="space-y-4">
               {urgentNeeds?.map((child) => {
-                const needs = typeof child.needs === 'string' 
-                  ? JSON.parse(child.needs) 
-                  : child.needs;
-
+                const needs = Array.isArray(child.needs) ? child.needs : [];
+                
                 return (
                   <div key={child.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
                     <p className="font-medium text-gray-900 mb-3">{child.name}</p>
