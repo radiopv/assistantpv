@@ -1,4 +1,4 @@
-const es = {
+export const spanishTranslations = {
   common: {
     loading: "Cargando...",
     error: "Error",
@@ -38,5 +38,3 @@ const es = {
     },
   },
 };
-
-export default es;
