@@ -3,7 +3,7 @@ import { RequestStatus } from "../request-status";
 export interface SponsorshipRequestTable {
   Row: {
     id: string;
-    child_id: string;
+    child_id: string | null;
     email: string;
     facebook_url: string | null;
     full_name: string;
@@ -11,14 +11,14 @@ export interface SponsorshipRequestTable {
     phone: string | null;
     status: RequestStatus;
     terms_accepted: boolean;
-    created_at: string;
+    created_at: string | null;
     updated_at: string | null;
     city: string | null;
     is_long_term: boolean | null;
   };
   Insert: Omit<SponsorshipRequestTable["Row"], "id" | "created_at" | "updated_at"> & {
     id?: string;
-    created_at?: string;
+    created_at?: string | null;
     updated_at?: string | null;
   };
   Update: Partial<SponsorshipRequestTable["Row"]>;

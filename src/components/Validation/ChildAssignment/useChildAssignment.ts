@@ -17,7 +17,7 @@ export const useChildAssignment = () => {
         .from('child_assignment_requests')
         .select('*')
         .eq('status', 'pending')
-        .returns<Database['public']['Tables']['child_assignment_requests']['Row'][]>();
+        .returns<ChildAssignmentRequest[]>();
 
       if (error) throw error;
       return data || [];
