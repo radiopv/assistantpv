@@ -14,19 +14,19 @@ export const TasksList = () => {
     queryKey: ['tasks'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('tasks')
+        .from('child_tasks')
         .select('*')
-        .order('created_at', { ascending: false }) as { data: Task[], error: any };
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as Task[];
     }
   });
 
   const handleCompleteTask = async (taskId: string) => {
     try {
       const { error } = await supabase
-        .from('tasks')
+        .from('child_tasks')
         .update({ status: 'completed' })
         .eq('id', taskId);
 

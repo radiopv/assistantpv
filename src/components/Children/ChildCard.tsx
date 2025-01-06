@@ -9,31 +9,31 @@ import { toast } from "sonner";
 
 interface ChildCardProps {
   childId: string;
+  onViewProfile?: (id: string) => void;
+  onSponsorClick?: (child: any) => void;
 }
 
-export const ChildCard = ({ childId }: ChildCardProps) => {
+export const ChildCard = ({ childId, onViewProfile, onSponsorClick }: ChildCardProps) => {
   const queryClient = useQueryClient();
 
   const { data: tasks, isLoading } = useQuery({
     queryKey: ['tasks', childId],
-    queryFn: () => fetchTasks(childId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('child_tasks')
+        .select('*')
+        .eq('child_id', childId)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Task[];
+    },
   });
-
-  const fetchTasks = async (childId: string) => {
-    const { data, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('child_id', childId)
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    return data as Task[];
-  };
 
   const completeTaskMutation = useMutation({
     mutationFn: async (taskId: string) => {
       const { error } = await supabase
-        .from('tasks')
+        .from('child_tasks')
         .update({ status: 'completed' })
         .eq('id', taskId);
 
