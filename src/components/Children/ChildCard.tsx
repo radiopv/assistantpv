@@ -50,6 +50,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
   };
 
   const handleNeedsChange = (needs: any[]) => {
+    console.log("Updating needs:", needs);
     setEditedChild(prev => ({
       ...prev,
       needs: needs
