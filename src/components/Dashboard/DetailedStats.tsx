@@ -3,14 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
-import { AlertTriangle, GraduationCap, Shirt, Apple, Stethoscope, Sparkles, Book, HelpCircle, Plus, Minus } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Need } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { logActivity } from "@/utils/activity-logger";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { NeedItem } from "./NeedItem";
 
 export const DetailedStats = () => {
   const { user } = useAuth();
@@ -50,35 +50,6 @@ export const DetailedStats = () => {
       return childrenWithUrgentNeeds;
     }
   });
-
-  const getNeedIcon = (category: string) => {
-    switch (category) {
-      case "education":
-        return <GraduationCap className="text-yellow-500" />;
-      case "jouet":
-        return <Sparkles className="text-purple-500" />;
-      case "vetement":
-        return <Shirt className="text-blue-500" />;
-      case "nourriture":
-        return <Apple className="text-green-500" />;
-      case "medicament":
-        return <Stethoscope className="text-red-500" />;
-      case "hygiene":
-        return <Book className="text-cyan-500" />;
-      default:
-        return <HelpCircle className="text-gray-500" />;
-    }
-  };
-
-  const NEED_CATEGORIES = {
-    education: language === 'fr' ? "Éducation" : "Educación",
-    jouet: language === 'fr' ? "Jouets" : "Juguetes",
-    vetement: language === 'fr' ? "Vêtements" : "Ropa",
-    nourriture: language === 'fr' ? "Nourriture" : "Alimentación",
-    medicament: language === 'fr' ? "Médicaments" : "Medicamentos",
-    hygiene: language === 'fr' ? "Hygiène" : "Higiene",
-    autre: language === 'fr' ? "Autres" : "Otros"
-  };
 
   const handleToggleUrgent = async (childId: string, needCategory: string, currentNeeds: Need[]) => {
     try {
@@ -147,44 +118,12 @@ export const DetailedStats = () => {
                     <p className="font-medium text-gray-900 mb-3">{child.name}</p>
                     <div className="flex flex-col gap-3">
                       {needs.map((need: Need, index: number) => (
-                        <div 
-                          key={`${need.category}-${index}`} 
-                          className={`flex items-center justify-between p-3 rounded-lg ${
-                            need.is_urgent 
-                              ? 'bg-red-50 border border-red-200' 
-                              : 'bg-green-50 border border-green-200'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            {getNeedIcon(need.category)}
-                            <div className="flex flex-col">
-                              <span className="font-medium">
-                                {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                              </span>
-                              <span className="text-sm text-gray-600">
-                                {need.description}
-                              </span>
-                            </div>
-                          </div>
-                          <Button
-                            variant={need.is_urgent ? "destructive" : "default"}
-                            size="sm"
-                            onClick={() => handleToggleUrgent(child.id, need.category, needs)}
-                            className="min-w-[140px]"
-                          >
-                            {need.is_urgent ? (
-                              <>
-                                <Minus className="h-4 w-4 mr-1" />
-                                {language === 'fr' ? 'Retirer urgent' : 'Quitar urgente'}
-                              </>
-                            ) : (
-                              <>
-                                <Plus className="h-4 w-4 mr-1" />
-                                {language === 'fr' ? 'Marquer urgent' : 'Marcar urgente'}
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                        <NeedItem
+                          key={`${need.category}-${index}`}
+                          need={need}
+                          onToggleUrgent={() => handleToggleUrgent(child.id, need.category, needs)}
+                          language={language}
+                        />
                       ))}
                     </div>
                   </div>
