@@ -1,29 +1,10 @@
+import { ChildAssignmentRequestTable } from './child-assignment-requests';
+import { Json } from './json';
+
 export interface Database {
   public: {
     Tables: {
-      child_assignment_requests: {
-        Row: {
-          id: string;
-          requester_email: string;
-          name: string;
-          status: 'pending' | 'approved' | 'rejected';
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          requester_email: string;
-          name: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          requester_email?: string;
-          name?: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-        };
-      };
+      child_assignment_requests: ChildAssignmentRequestTable['Row'];
       children: {
         Row: {
           id: string;

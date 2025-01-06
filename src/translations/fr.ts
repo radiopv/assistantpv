@@ -1,3 +1,5 @@
+import { TranslationType } from '@/integrations/supabase/types/translations';
+
 export const frenchTranslations: TranslationType = {
   sponsorship: {
     management: "Gestion des parrainages",
@@ -37,5 +39,3 @@ export const frenchTranslations: TranslationType = {
   errorApprovingRequest: "Erreur lors de l'approbation de la demande",
   errorRejectingRequest: "Erreur lors du rejet de la demande"
 };
-
-export type { TranslationType } from '@/integrations/supabase/types/translations';
