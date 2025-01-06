@@ -6,6 +6,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 import { NeedsSection } from "./Needs/NeedsSection";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ProfilePhotoSection } from "./ProfilePhoto/ProfilePhotoSection";
+import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ChildCardProps {
   child: any;
@@ -36,6 +41,8 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
   const { t } = useLanguage();
   const [selectedNeed, setSelectedNeed] = useState<string | null>(null);
   const [comment, setComment] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedChild, setEditedChild] = useState(child);
 
   const handleNeedClick = (needCategory: string) => {
     setSelectedNeed(needCategory === selectedNeed ? null : needCategory);
@@ -50,17 +57,79 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
     setComment("");
   };
 
+  const handleInputChange = (field: string, value: string) => {
+    setEditedChild(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handlePhotoUpdate = (url: string) => {
+    setEditedChild(prev => ({
+      ...prev,
+      photo_url: url
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const { error } = await supabase
+        .from('children')
+        .update({
+          name: editedChild.name,
+          description: editedChild.description,
+          story: editedChild.story,
+          comments: editedChild.comments,
+          photo_url: editedChild.photo_url,
+          city: editedChild.city
+        })
+        .eq('id', child.id);
+
+      if (error) throw error;
+
+      toast({
+        title: t("childUpdated"),
+        description: t("childUpdateSuccess"),
+      });
+      
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating child:', error);
+      toast({
+        variant: "destructive",
+        title: t("error"),
+        description: t("childUpdateError"),
+      });
+    }
+  };
+
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg">
       <div className="relative">
-        <img
-          src={child.photo_url || "/placeholder.svg"}
-          alt={child.name}
-          className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-105"
-        />
+        {isEditing ? (
+          <ProfilePhotoSection
+            child={editedChild}
+            editing={true}
+            onPhotoUpdate={handlePhotoUpdate}
+          />
+        ) : (
+          <img
+            src={child.photo_url || "/placeholder.svg"}
+            alt={child.name}
+            className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        )}
         <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/50 to-transparent">
           <div className="flex justify-between items-start">
-            <h3 className="font-semibold text-lg text-white">{child.name}</h3>
+            {isEditing ? (
+              <Input
+                value={editedChild.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className="text-white bg-transparent border-white/30"
+              />
+            ) : (
+              <h3 className="font-semibold text-lg text-white">{child.name}</h3>
+            )}
             <span
               className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
                 !child.is_sponsored
@@ -82,7 +151,15 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           </div>
           <div>
             <p className="text-gray-400">{t("city")}</p>
-            <p className="font-medium">{child.city}</p>
+            {isEditing ? (
+              <Input
+                value={editedChild.city}
+                onChange={(e) => handleInputChange('city', e.target.value)}
+                className="mt-1"
+              />
+            ) : (
+              <p className="font-medium">{child.city}</p>
+            )}
           </div>
           {child.is_sponsored && child.sponsor_name && (
             <div className="col-span-2">
@@ -92,12 +169,41 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           )}
         </div>
 
-        {child.description && (
-          <div>
-            <ScrollArea className="h-20">
-              <p className="text-sm text-gray-600">{child.description}</p>
-            </ScrollArea>
+        {isEditing ? (
+          <div className="space-y-4">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">{t("description")}</p>
+              <Textarea
+                value={editedChild.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                className="min-h-[80px]"
+              />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">{t("story")}</p>
+              <Textarea
+                value={editedChild.story}
+                onChange={(e) => handleInputChange('story', e.target.value)}
+                className="min-h-[80px]"
+              />
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">{t("comments")}</p>
+              <Textarea
+                value={editedChild.comments}
+                onChange={(e) => handleInputChange('comments', e.target.value)}
+                className="min-h-[80px]"
+              />
+            </div>
           </div>
+        ) : (
+          child.description && (
+            <div>
+              <ScrollArea className="h-20">
+                <p className="text-sm text-gray-600">{child.description}</p>
+              </ScrollArea>
+            </div>
+          )
         )}
 
         <NeedsSection
@@ -111,21 +217,40 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
         />
         
         <div className="flex flex-col items-center gap-2">
-          <Button 
-            className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
-            variant="outline"
-            onClick={() => onViewProfile(child.id)}
-          >
-            {t("profile")}
-          </Button>
+          {isEditing ? (
+            <>
+              <Button 
+                className="w-full sm:w-3/4 bg-green-600 hover:bg-green-700 text-white"
+                onClick={handleSave}
+              >
+                {t("save")}
+              </Button>
+              <Button 
+                className="w-full sm:w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-900"
+                onClick={() => setIsEditing(false)}
+              >
+                {t("cancel")}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
+                variant="outline"
+                onClick={() => setIsEditing(true)}
+              >
+                {t("edit")}
+              </Button>
 
-          <Button 
-            className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
-            variant="outline"
-            onClick={() => onSponsorClick(child)}
-          >
-            {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
-          </Button>
+              <Button 
+                className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200"
+                variant="outline"
+                onClick={() => onSponsorClick(child)}
+              >
+                {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </Card>
