@@ -3,17 +3,9 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Trash2, Mail, MailOpen, User } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
-import { fr } from "date-fns/locale";
 import { toast } from "sonner";
-
-interface Sender {
-  name: string;
-  role: string;
-}
+import { MessageHeader } from "./MessageHeader";
+import { MessageContent } from "./MessageContent";
 
 interface Message {
   id: string;
@@ -23,10 +15,13 @@ interface Message {
   recipient_id: string;
   created_at: string;
   is_read: boolean;
-  sender?: Sender;
+  sender?: {
+    name: string;
+    role: string;
+  };
 }
 
-export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Message) => void }) => {
+export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Message | null) => void }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
 
@@ -72,14 +67,25 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("messages")
         .select(`
           *,
           sender:sender_id(name, role)
-        `)
-        .or(`recipient_id.eq.${user?.id},sender_id.eq.${user?.id}`)
-        .order("created_at", { ascending: false });
+        `);
+
+      // Si c'est un parrain, il ne voit que ses messages avec Vitia
+      if (user?.role === "sponsor") {
+        query = query.or(`recipient_id.eq.${user?.id},sender_id.eq.${user?.id}`);
+      }
+      // Si c'est Vitia, elle voit tous les messages des parrains
+      else if (user?.name === "Vitia") {
+        query = query.or(`recipient_id.eq.${user?.id},sender_id.eq.${user?.id}`);
+      }
+
+      query = query.order("created_at", { ascending: false });
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching messages:", error);
@@ -131,7 +137,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
     return () => {
       subscription.unsubscribe();
     };
-  }, [user?.id]);
+  }, [user?.id, user?.role, user?.name]);
 
   return (
     <Card className="h-[600px] w-full">
@@ -141,59 +147,23 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
             <div
               key={message.id}
               className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors group"
+              onClick={() => {
+                onSelectMessage(message);
+                if (!message.is_read) {
+                  markAsRead(message.id);
+                }
+              }}
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-gray-500" />
-                  <span className="font-semibold">{message.sender?.name}</span>
-                  <Badge variant={message.sender?.role === "admin" ? "destructive" : "secondary"}>
-                    {message.sender?.role}
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">
-                    {formatDistanceToNow(new Date(message.created_at), {
-                      addSuffix: true,
-                      locale: fr,
-                    })}
-                  </span>
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteMessage(message.id);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <div 
-                onClick={() => {
-                  onSelectMessage(message);
-                  if (!message.is_read) {
-                    markAsRead(message.id);
-                  }
-                }}
-                className="space-y-2"
-              >
-                <div className="flex items-center gap-2">
-                  {message.is_read ? (
-                    <MailOpen className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Mail className="h-4 w-4 text-primary" />
-                  )}
-                  <h3 className="font-medium">{message.subject}</h3>
-                </div>
-                <p className="text-sm text-gray-600 line-clamp-2 pl-6">{message.content}</p>
-                {!message.is_read && (
-                  <Badge className="ml-6" variant="default">
-                    Nouveau
-                  </Badge>
-                )}
-              </div>
+              <MessageHeader 
+                sender={message.sender}
+                createdAt={message.created_at}
+                onDelete={() => handleDeleteMessage(message.id)}
+              />
+              <MessageContent 
+                subject={message.subject}
+                content={message.content}
+                isRead={message.is_read}
+              />
             </div>
           ))}
         </div>

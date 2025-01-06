@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,41 +18,62 @@ export const NewMessageDialog = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [recipients, setRecipients] = useState<Recipient[]>([]);
-  const [selectedRecipient, setSelectedRecipient] = useState("");
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
   const { user } = useAuth();
   const { toast } = useToast();
 
   const loadRecipients = async () => {
-    const { data: userData } = await supabase
-      .from("sponsors")
-      .select("role")
-      .eq("id", user?.id)
-      .single();
+    try {
+      const { data: userData } = await supabase
+        .from("sponsors")
+        .select("role")
+        .eq("id", user?.id)
+        .single();
 
-    let query = supabase.from("sponsors").select("id, name, role");
+      let query = supabase.from("sponsors").select("id, name, role");
 
-    if (userData?.role === "sponsor") {
-      query = query.in("role", ["admin", "assistant"]);
-    } else if (userData?.role === "assistant") {
-      query = query.in("role", ["admin", "sponsor"]);
-    } else if (userData?.role === "admin") {
-      query = query.in("role", ["admin", "assistant", "sponsor"]);
+      // Si c'est un parrain, il ne peut envoyer qu'à Vitia
+      if (userData?.role === "sponsor") {
+        query = query.eq("name", "Vitia");
+      } 
+      // Si c'est Vitia, elle ne peut voir que les parrains qui lui ont écrit
+      else if (userData?.name === "Vitia") {
+        const { data: senderIds } = await supabase
+          .from("messages")
+          .select("sender_id")
+          .eq("recipient_id", user?.id);
+
+        const uniqueSenderIds = [...new Set(senderIds?.map(msg => msg.sender_id))];
+        
+        if (uniqueSenderIds.length > 0) {
+          query = query.in("id", uniqueSenderIds).eq("role", "sponsor");
+        } else {
+          setRecipients([]);
+          return;
+        }
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Error loading recipients:", error);
+        return;
+      }
+
+      setRecipients(data || []);
+    } catch (error) {
+      console.error("Error in loadRecipients:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de charger les destinataires",
+      });
     }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Error loading recipients:", error);
-      return;
-    }
-
-    setRecipients(data || []);
   };
 
   const handleSubmit = async () => {
-    if (!selectedRecipient || !subject || !content) {
+    if (!recipients[0]?.id || !subject || !content) {
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -66,7 +86,7 @@ export const NewMessageDialog = () => {
 
     try {
       const { error: messageError } = await supabase.from("messages").insert({
-        recipient_id: selectedRecipient,
+        recipient_id: recipients[0].id,
         subject,
         content,
         sender_id: user?.id,
@@ -80,7 +100,6 @@ export const NewMessageDialog = () => {
       });
 
       setOpen(false);
-      setSelectedRecipient("");
       setSubject("");
       setContent("");
     } catch (error) {
@@ -111,24 +130,21 @@ export const NewMessageDialog = () => {
           <DialogTitle>Nouveau message</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Destinataire
-            </label>
-            <Select value={selectedRecipient} onValueChange={setSelectedRecipient}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner un destinataire" />
-              </SelectTrigger>
-              <SelectContent>
-                {recipients.map((recipient) => (
-                  <SelectItem key={recipient.id} value={recipient.id}>
-                    {recipient.name} ({recipient.role})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {recipients.length > 0 ? (
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Destinataire
+              </label>
+              <div className="p-2 border rounded">
+                {recipients[0].name}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center text-gray-500">
+              Aucun destinataire disponible
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-sm font-medium">Sujet</label>
             <Input
@@ -150,7 +166,7 @@ export const NewMessageDialog = () => {
             <Button variant="outline" onClick={() => setOpen(false)}>
               Annuler
             </Button>
-            <Button onClick={handleSubmit} disabled={loading} className="gap-2">
+            <Button onClick={handleSubmit} disabled={loading || recipients.length === 0} className="gap-2">
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               <Send className="h-4 w-4" />
               Envoyer
