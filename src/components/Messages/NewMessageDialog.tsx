@@ -27,7 +27,7 @@ export const NewMessageDialog = () => {
     try {
       const { data: userData } = await supabase
         .from("sponsors")
-        .select("role")
+        .select("id, name, role")
         .eq("id", user?.id)
         .single();
 
