@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Settings, Edit, Save } from "lucide-react";
+import { Settings, Edit, Save, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { SearchInput } from "@/components/ui/search-input";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CitiesManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingCity, setEditingCity] = useState<{ original: string; new: string } | null>(null);
+  const { t } = useLanguage();
 
   const { data: cities, isLoading, refetch } = useQuery({
     queryKey: ['donation-cities'],
@@ -23,38 +25,60 @@ const CitiesManagement = () => {
 
       if (error) throw error;
 
-      // Count occurrences of each city
       const cityCount = data.reduce((acc: { [key: string]: number }, curr) => {
         acc[curr.city] = (acc[curr.city] || 0) + 1;
         return acc;
       }, {});
 
-      // Convert to array of objects with count
       return Object.entries(cityCount).map(([city, count]) => ({
         name: city,
         count: count
       })).sort((a, b) => b.count - a.count);
     },
     meta: {
-      errorMessage: "Erreur lors du chargement des villes"
+      errorMessage: t("errorUpdatingCity")
     }
   });
 
+  const findSimilarCity = useCallback((cityName: string) => {
+    if (!cities) return null;
+    
+    const normalizedName = cityName.toLowerCase().trim();
+    return cities.find(city => {
+      const existingName = city.name.toLowerCase().trim();
+      if (existingName === normalizedName) return false;
+      
+      // Check for similar names using Levenshtein distance or simple contains
+      return existingName.includes(normalizedName) || 
+             normalizedName.includes(existingName) ||
+             (existingName.length > 3 && normalizedName.length > 3 && 
+              (existingName.slice(0, 4) === normalizedName.slice(0, 4)));
+    });
+  }, [cities]);
+
   const handleUpdateCity = async (originalCity: string, newCity: string) => {
     try {
+      const similarCity = findSimilarCity(newCity);
+      if (similarCity) {
+        const confirm = window.confirm(
+          `${t("similarCityWarning")}: ${similarCity.name}. ${t("continueQuestion")}`
+        );
+        if (!confirm) return;
+      }
+
       const { error } = await supabase
         .from('donations')
-        .update({ city: newCity })
+        .update({ city: newCity.trim() })
         .eq('city', originalCity);
 
       if (error) throw error;
 
-      toast.success("Ville mise à jour avec succès");
+      toast.success(t("cityUpdated"));
       setEditingCity(null);
       refetch();
     } catch (error) {
       console.error('Error updating city:', error);
-      toast.error("Erreur lors de la mise à jour de la ville");
+      toast.error(t("errorUpdatingCity"));
     }
   };
 
@@ -66,9 +90,9 @@ const CitiesManagement = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gestion des Villes</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t("citiesManagement")}</h1>
           <p className="text-gray-600 mt-2">
-            Gérez et corrigez les noms des villes dans la base de données des donations
+            {t("citiesManagementDescription")}
           </p>
         </div>
         <Settings className="w-8 h-8 text-gray-400" />
@@ -77,7 +101,7 @@ const CitiesManagement = () => {
       <Card className="p-6">
         <div className="space-y-4">
           <SearchInput
-            placeholder="Rechercher une ville..."
+            placeholder={t("searchCity")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -86,9 +110,9 @@ const CitiesManagement = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Ville</TableHead>
-                  <TableHead>Nombre de donations</TableHead>
-                  <TableHead className="w-[100px]">Actions</TableHead>
+                  <TableHead>{t("cityName")}</TableHead>
+                  <TableHead>{t("donationsCount")}</TableHead>
+                  <TableHead className="w-[100px]">{t("actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -96,14 +120,19 @@ const CitiesManagement = () => {
                   <TableRow key={city.name}>
                     <TableCell>
                       {editingCity?.original === city.name ? (
-                        <Input
-                          value={editingCity.new}
-                          onChange={(e) => setEditingCity({ 
-                            ...editingCity, 
-                            new: e.target.value 
-                          })}
-                          className="max-w-[200px]"
-                        />
+                        <div className="flex items-center gap-2">
+                          <Input
+                            value={editingCity.new}
+                            onChange={(e) => setEditingCity({ 
+                              ...editingCity, 
+                              new: e.target.value 
+                            })}
+                            className="max-w-[200px]"
+                          />
+                          {findSimilarCity(editingCity.new) && (
+                            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                          )}
+                        </div>
                       ) : (
                         city.name
                       )}

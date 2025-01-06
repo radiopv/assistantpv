@@ -178,4 +178,13 @@ export const spanishTranslations = {
   childRequestApprovedContent: "Nos complace informarle que su solicitud para añadir a {name} ha sido aprobada.",
   childRequestRejectedSubject: "Su solicitud para añadir un niño ha sido rechazada",
   childRequestRejectedContent: "Lamentamos informarle que su solicitud para añadir a {name} ha sido rechazada.",
+  citiesManagement: "Gestión de ciudades",
+  cityName: "Nombre de la ciudad",
+  updateCity: "Actualizar ciudad",
+  cityUpdated: "Ciudad actualizada con éxito",
+  errorUpdatingCity: "Error al actualizar la ciudad",
+  searchCity: "Buscar ciudad",
+  donationsCount: "Número de donaciones",
+  actions: "Acciones",
+  similarCityWarning: "Atención: Ya existe una ciudad similar",
 };

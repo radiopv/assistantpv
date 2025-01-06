@@ -45,7 +45,16 @@ export const frenchTranslations = {
   translationManager: "Gestionnaire de traductions",
   addChild: "Ajouter un enfant",
   addDonation: "Ajouter un don",
-  
+  citiesManagement: "Gestion des villes",
+  cityName: "Nom de la ville",
+  updateCity: "Mettre à jour la ville",
+  cityUpdated: "Ville mise à jour avec succès",
+  errorUpdatingCity: "Erreur lors de la mise à jour de la ville",
+  searchCity: "Rechercher une ville",
+  donationsCount: "Nombre de donations",
+  actions: "Actions",
+  similarCityWarning: "Attention: Une ville similaire existe déjà",
+
   // Common actions
   save: "Enregistrer",
   cancel: "Annuler",
@@ -99,7 +108,7 @@ export const frenchTranslations = {
   testimonialApproved: "Témoignage approuvé avec succès",
   testimonialRejected: "Témoignage rejeté",
   errorApprovingTestimonial: "Erreur lors de l'approbation du témoignage",
-  errorRejectingTestimonial: "Erreur lors du rejet du témoignage",
+  errorRejectingTestimonial: "Erreur lors du rejet de la demande",
   validation: "Validation",
 
   // Photo validation
