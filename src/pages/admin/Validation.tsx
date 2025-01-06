@@ -48,10 +48,12 @@ const ValidationPage = () => {
   const { data: testimonialCount } = useQuery({
     queryKey: ['pending-testimonial-count'],
     queryFn: async () => {
+      console.log("Fetching testimonial count");
       const { count } = await supabase
-        .from('testimonials')
+        .from('temoignage')
         .select('*', { count: 'exact', head: true })
         .eq('is_approved', false) as { count: number };
+      console.log("Testimonial count:", count);
       return count || 0;
     }
   });
