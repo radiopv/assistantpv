@@ -7,6 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ErrorAlert } from "../ErrorAlert";
 import { useQuery } from "@tanstack/react-query";
+import { SponsorInfo } from "./SponsorInfo";
+import { SponsoredChildrenDisplay } from "./SponsoredChildrenDisplay";
+import { Card } from "@/components/ui/card";
 
 interface SponsorshipAccordionProps {
   sponsor: any;
@@ -69,131 +72,6 @@ export const SponsorshipAccordion = ({ sponsor, onUpdate }: SponsorshipAccordion
     }));
   };
 
-  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    
-    const file = e.target.files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-
-    try {
-      if (formData.photo_url) {
-        const oldPhotoPath = formData.photo_url.split('/').pop();
-        if (oldPhotoPath) {
-          await supabase.storage
-            .from('sponsor-photos')
-            .remove([`${sponsor.id}/${oldPhotoPath}`]);
-        }
-      }
-
-      const { error: uploadError } = await supabase.storage
-        .from('sponsor-photos')
-        .upload(`${sponsor.id}/${fileName}`, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('sponsor-photos')
-        .getPublicUrl(`${sponsor.id}/${fileName}`);
-
-      setFormData(prev => ({
-        ...prev,
-        photo_url: publicUrl
-      }));
-
-      toast({
-        title: "Photo mise à jour",
-        description: "La photo a été mise à jour avec succès",
-      });
-    } catch (error) {
-      console.error('Error updating photo:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de mettre à jour la photo",
-      });
-    }
-  };
-
-  const handleAddChild = async (childId: string) => {
-    try {
-      const { error } = await supabase
-        .from('sponsorships')
-        .insert({
-          sponsor_id: sponsor.id,
-          child_id: childId,
-          start_date: new Date().toISOString(),
-          status: 'active'
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Succès",
-        description: "L'enfant a été ajouté au parrainage",
-      });
-
-      // Refresh sponsor data
-      const { data: updatedSponsorships } = await supabase
-        .from('sponsorships')
-        .select(`
-          *,
-          children (
-            id,
-            name,
-            age,
-            city,
-            photo_url
-          )
-        `)
-        .eq('sponsor_id', sponsor.id);
-
-      setFormData(prev => ({
-        ...prev,
-        sponsorships: updatedSponsorships
-      }));
-
-      onUpdate();
-    } catch (error) {
-      console.error('Error adding child:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible d'ajouter l'enfant",
-      });
-    }
-  };
-
-  const handleRemoveChild = async (sponsorshipId: string) => {
-    try {
-      const { error } = await supabase
-        .from('sponsorships')
-        .delete()
-        .eq('id', sponsorshipId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Succès",
-        description: "L'enfant a été retiré du parrainage",
-      });
-
-      setFormData(prev => ({
-        ...prev,
-        sponsorships: prev.sponsorships.filter((s: any) => s.id !== sponsorshipId)
-      }));
-
-      onUpdate();
-    } catch (error) {
-      console.error('Error removing child:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de retirer l'enfant",
-      });
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -233,41 +111,100 @@ export const SponsorshipAccordion = ({ sponsor, onUpdate }: SponsorshipAccordion
   };
 
   return (
-    <Accordion type="single" collapsible className="w-full">
-      <AccordionItem value="sponsor-info">
-        <AccordionTrigger className="text-lg font-semibold">
-          Informations du parrain
-        </AccordionTrigger>
-        <AccordionContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && <ErrorAlert message={error} />}
-            <SponsorFormFields
-              formData={formData}
-              handleInputChange={handleInputChange}
-              handleSwitchChange={handleSwitchChange}
-              handleSelectChange={handleSelectChange}
-              handlePhotoChange={handlePhotoChange}
-            />
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Enregistrement..." : "Enregistrer"}
-            </Button>
-          </form>
-        </AccordionContent>
-      </AccordionItem>
+    <div className="space-y-6">
+      <Card className="p-6">
+        <SponsorInfo sponsor={formData} />
+      </Card>
 
-      <AccordionItem value="sponsored-children">
-        <AccordionTrigger className="text-lg font-semibold">
-          Enfants parrainés
-        </AccordionTrigger>
-        <AccordionContent>
-          <SponsorChildrenList
-            sponsorships={formData.sponsorships}
-            availableChildren={availableChildren || []}
-            onAddChild={handleAddChild}
-            onRemoveChild={handleRemoveChild}
-          />
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+      <Card className="p-6">
+        <SponsoredChildrenDisplay sponsorships={formData.sponsorships} />
+      </Card>
+
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="edit-info">
+          <AccordionTrigger className="text-lg font-semibold">
+            Modifier les informations
+          </AccordionTrigger>
+          <AccordionContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {error && <ErrorAlert message={error} />}
+              <SponsorFormFields
+                formData={formData}
+                handleInputChange={handleInputChange}
+                handleSwitchChange={handleSwitchChange}
+                handleSelectChange={handleSelectChange}
+              />
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Enregistrement..." : "Enregistrer"}
+              </Button>
+            </form>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="edit-children">
+          <AccordionTrigger className="text-lg font-semibold">
+            Gérer les enfants parrainés
+          </AccordionTrigger>
+          <AccordionContent>
+            <SponsorChildrenList
+              sponsorships={formData.sponsorships}
+              availableChildren={availableChildren || []}
+              onAddChild={async (childId) => {
+                try {
+                  const { error } = await supabase
+                    .from('sponsorships')
+                    .insert({
+                      sponsor_id: sponsor.id,
+                      child_id: childId,
+                      start_date: new Date().toISOString(),
+                      status: 'active'
+                    });
+
+                  if (error) throw error;
+
+                  toast({
+                    title: "Succès",
+                    description: "L'enfant a été ajouté au parrainage",
+                  });
+
+                  onUpdate();
+                } catch (error) {
+                  console.error('Error adding child:', error);
+                  toast({
+                    variant: "destructive",
+                    title: "Erreur",
+                    description: "Impossible d'ajouter l'enfant",
+                  });
+                }
+              }}
+              onRemoveChild={async (sponsorshipId) => {
+                try {
+                  const { error } = await supabase
+                    .from('sponsorships')
+                    .delete()
+                    .eq('id', sponsorshipId);
+
+                  if (error) throw error;
+
+                  toast({
+                    title: "Succès",
+                    description: "L'enfant a été retiré du parrainage",
+                  });
+
+                  onUpdate();
+                } catch (error) {
+                  console.error('Error removing child:', error);
+                  toast({
+                    variant: "destructive",
+                    title: "Erreur",
+                    description: "Impossible de retirer l'enfant",
+                  });
+                }
+              }}
+            />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    </div>
   );
 };
