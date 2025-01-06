@@ -15,14 +15,20 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
   const { data: media, isLoading } = useQuery({
     queryKey: ['album-media', childId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: childData } = await supabase
+        .from('children')
+        .select('name')
+        .eq('id', childId)
+        .single();
+
+      const { data: mediaData, error } = await supabase
         .from('album_media')
         .select('*')
         .eq('child_id', childId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return { media: mediaData, childName: childData?.name };
     }
   });
 
@@ -30,10 +36,12 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     fr: {
       noPhotos: "Aucune photo dans l'album",
       addPhotos: "Ajouter des photos",
+      albumOf: "Album de"
     },
     es: {
       noPhotos: "No hay fotos en el álbum",
       addPhotos: "Agregar fotos",
+      albumOf: "Álbum de"
     }
   };
 
@@ -49,7 +57,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     );
   }
 
-  if (!media?.length) {
+  if (!media?.media?.length) {
     return (
       <Card className="p-8 flex flex-col items-center justify-center space-y-4">
         <ImagePlus className="w-12 h-12 text-gray-400" />
@@ -60,32 +68,37 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-      {media.map((item) => (
-        <Card key={item.id} className="overflow-hidden relative group hover:shadow-lg transition-shadow">
-          {item.type === 'video' ? (
-            <div className="relative aspect-square">
-              <video
-                src={item.url}
-                className="w-full h-full object-cover cursor-pointer"
-                onClick={() => window.open(item.url, '_blank')}
-              />
-              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Play className="w-12 h-12 text-white" />
+    <div className="space-y-6">
+      <h2 className="text-2xl font-semibold text-center">
+        {t.albumOf} {media.childName}
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {media.media.map((item) => (
+          <Card key={item.id} className="overflow-hidden relative group hover:shadow-lg transition-shadow">
+            {item.type === 'video' ? (
+              <div className="relative aspect-square">
+                <video
+                  src={item.url}
+                  className="w-full h-full object-cover cursor-pointer"
+                  onClick={() => window.open(item.url, '_blank')}
+                />
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Play className="w-12 h-12 text-white" />
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="aspect-square overflow-hidden">
-              <img
-                src={item.url}
-                alt="Album media"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                onClick={() => window.open(item.url, '_blank')}
-              />
-            </div>
-          )}
-        </Card>
-      ))}
+            ) : (
+              <div className="aspect-square overflow-hidden">
+                <img
+                  src={item.url}
+                  alt={`Photo de ${media.childName}`}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                  onClick={() => window.open(item.url, '_blank')}
+                />
+              </div>
+            )}
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
