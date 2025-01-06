@@ -1,23 +1,22 @@
-import { RequestStatus } from '../request-status';
-
-export interface ChildAssignmentRequest {
-  id: string;
-  child_id: string;
-  requester_email: string;
-  name: string;
-  status: RequestStatus;
-  created_at: string;
-  updated_at?: string;
-}
+import { Database } from "../database";
+import { RequestStatus } from "../request-status";
 
 export interface ChildAssignmentRequestTable {
-  Row: ChildAssignmentRequest;
-  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at' | 'updated_at'> & {
+  Row: {
+    id: string;
+    child_id: string;
+    requester_email: string;
+    name: string;
+    status: RequestStatus;
+    created_at: string;
+    updated_at: string | null;
+  };
+  Insert: Omit<ChildAssignmentRequestTable["Row"], "id" | "created_at" | "updated_at"> & {
     id?: string;
     created_at?: string;
     updated_at?: string;
   };
-  Update: Partial<ChildAssignmentRequest>;
+  Update: Partial<ChildAssignmentRequestTable["Row"]>;
   Relationships: [
     {
       foreignKeyName: "child_assignment_requests_child_id_fkey";
@@ -28,3 +27,5 @@ export interface ChildAssignmentRequestTable {
     }
   ];
 }
+
+export type ChildAssignmentRequest = ChildAssignmentRequestTable["Row"];

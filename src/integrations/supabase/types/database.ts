@@ -87,7 +87,7 @@ export interface Database {
           content: string;
           link?: string | null;
           is_read?: boolean;
-          created_at?: string;
+          created_at: string;
         };
         Update: {
           id?: string;
@@ -128,7 +128,7 @@ export interface Database {
           status?: string;
           attempts?: number;
           last_attempt?: string | null;
-          created_at?: string;
+          created_at: string;
         };
         Update: {
           id?: string;

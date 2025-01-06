@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RequestStatus } from "@/integrations/supabase/types/request-status";
+import { Database } from "@/integrations/supabase/types/database";
 
 export const useChildAssignment = () => {
   const queryClient = useQueryClient();
@@ -16,7 +17,7 @@ export const useChildAssignment = () => {
         .from('child_assignment_requests')
         .select('*')
         .eq('status', 'pending')
-        .returns<ChildAssignmentRequest[]>();
+        .returns<Database['public']['Tables']['child_assignment_requests']['Row'][]>();
 
       if (error) throw error;
       return data || [];
