@@ -163,69 +163,92 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
           )}
         </div>
 
-        {isEditing ? (
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-500 mb-1">{t("description")}</p>
-              <Textarea
-                value={editedChild.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                className="min-h-[80px]"
-              />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 mb-1">{t("story")}</p>
-              <Textarea
-                value={editedChild.story}
-                onChange={(e) => handleInputChange('story', e.target.value)}
-                className="min-h-[80px]"
-              />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 mb-1">{t("comments")}</p>
-              <Textarea
-                value={editedChild.comments}
-                onChange={(e) => handleInputChange('comments', e.target.value)}
-                className="min-h-[80px]"
-              />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 mb-1">{t("needs")}</p>
-              <NeedCheckboxes
-                needs={convertJsonToNeeds(editedChild.needs)}
-                onNeedsChange={handleNeedsChange}
-              />
-            </div>
-          </div>
-        ) : (
-          <>
-            {child.description && (
+        <div className="space-y-4">
+          {isEditing ? (
+            <>
               <div>
-                <ScrollArea className="h-20">
-                  <p className="text-sm text-gray-600">{child.description}</p>
-                </ScrollArea>
+                <p className="text-sm text-gray-500 mb-1">{t("description")}</p>
+                <Textarea
+                  value={editedChild.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  className="min-h-[80px]"
+                />
               </div>
-            )}
-            <div>
-              <p className="text-sm text-gray-500 mb-1">{t("needs")}</p>
-              <div className="grid grid-cols-2 gap-2">
-                {convertJsonToNeeds(child.needs).map((need, index) => (
-                  <div
-                    key={`${need.category}-${index}`}
-                    className={`px-3 py-2 rounded-lg text-sm ${
-                      need.is_urgent
-                        ? "bg-red-100 text-red-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}
-                  >
-                    {need.category}
-                    {need.is_urgent && " (!)"} 
-                  </div>
-                ))}
+              <div>
+                <p className="text-sm text-gray-500 mb-1">{t("story")}</p>
+                <Textarea
+                  value={editedChild.story}
+                  onChange={(e) => handleInputChange('story', e.target.value)}
+                  className="min-h-[80px]"
+                />
               </div>
+              <div>
+                <p className="text-sm text-gray-500 mb-1">{t("comments")}</p>
+                <Textarea
+                  value={editedChild.comments}
+                  onChange={(e) => handleInputChange('comments', e.target.value)}
+                  className="min-h-[80px]"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              {child.description && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t("description")}</p>
+                  <ScrollArea className="h-20">
+                    <p className="text-sm text-gray-600">{child.description}</p>
+                  </ScrollArea>
+                </div>
+              )}
+              {child.story && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t("story")}</p>
+                  <ScrollArea className="h-20">
+                    <p className="text-sm text-gray-600">{child.story}</p>
+                  </ScrollArea>
+                </div>
+              )}
+              {child.comments && (
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">{t("comments")}</p>
+                  <ScrollArea className="h-20">
+                    <p className="text-sm text-gray-600">{child.comments}</p>
+                  </ScrollArea>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        <div>
+          <p className="text-sm text-gray-500 mb-1">{t("needs")}</p>
+          {isEditing ? (
+            <NeedCheckboxes
+              needs={convertJsonToNeeds(editedChild.needs)}
+              onNeedsChange={handleNeedsChange}
+            />
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              {convertJsonToNeeds(child.needs).map((need, index) => (
+                <div
+                  key={`${need.category}-${index}`}
+                  className={`px-3 py-2 rounded-lg text-sm ${
+                    need.is_urgent
+                      ? "bg-red-100 text-red-800"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {need.category}
+                  {need.is_urgent && " (!)"} 
+                  {need.description && (
+                    <p className="text-xs mt-1 text-gray-600">{need.description}</p>
+                  )}
+                </div>
+              ))}
             </div>
-          </>
-        )}
+          )}
+        </div>
         
         <div className="flex flex-col items-center gap-2">
           {isEditing ? (
@@ -244,15 +267,13 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
               </Button>
             </>
           ) : (
-            <>
-              <Button 
-                className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
-                variant="outline"
-                onClick={() => setIsEditing(true)}
-              >
-                {t("edit")}
-              </Button>
-            </>
+            <Button 
+              className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
+              variant="outline"
+              onClick={() => setIsEditing(true)}
+            >
+              {t("edit")}
+            </Button>
           )}
         </div>
       </div>
