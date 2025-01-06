@@ -64,7 +64,7 @@ export const NeedItem = ({ need, onToggleUrgent, language }: NeedItemProps) => {
       }`}
     >
       <div className="flex items-center gap-3">
-        <Icon className={iconColor} />
+        <Icon className={`h-5 w-5 ${iconColor}`} />
         <div className="flex flex-col">
           <span className="font-medium text-gray-900">
             {categoryName}
