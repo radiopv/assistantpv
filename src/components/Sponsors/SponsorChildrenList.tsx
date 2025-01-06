@@ -17,42 +17,58 @@ export const SponsorChildrenList = ({
   onAddChild,
   onRemoveChild
 }: SponsorChildrenListProps) => {
+  // Créer un Set des IDs des enfants déjà parrainés pour une recherche efficace
+  const sponsoredChildrenIds = new Set(
+    sponsorships
+      ?.filter(s => s.children)
+      .map(s => s.children.id)
+  );
+
+  // Filtrer les enfants disponibles pour exclure ceux déjà parrainés
+  const filteredAvailableChildren = availableChildren.filter(
+    child => !sponsoredChildrenIds.has(child.id)
+  );
+
   return (
     <div>
       <h3 className="text-lg font-semibold mb-4">Enfants parrainés</h3>
       <div className="space-y-4">
-        {sponsorships?.map((sponsorship: any) => (
-          sponsorship.children && (
-            <Card key={sponsorship.id} className="relative">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-2 right-2"
-                onClick={() => onRemoveChild(sponsorship.id)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-              <CardHeader className="flex flex-row items-center gap-4">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={sponsorship.children.photo_url} alt={sponsorship.children.name} />
-                  <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <h4 className="text-sm font-semibold">{sponsorship.children.name}</h4>
-                  <p className="text-sm text-gray-500">{sponsorship.children.city}</p>
-                </div>
-              </CardHeader>
-            </Card>
+        {/* N'afficher que les parrainages uniques basés sur l'ID de l'enfant */}
+        {sponsorships
+          ?.filter((sponsorship, index, self) => 
+            sponsorship.children && 
+            index === self.findIndex(s => s.children?.id === sponsorship.children?.id)
           )
-        ))}
+          .map((sponsorship: any) => (
+            sponsorship.children && (
+              <Card key={sponsorship.id} className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-2 right-2"
+                  onClick={() => onRemoveChild(sponsorship.id)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+                <CardHeader className="flex flex-row items-center gap-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={sponsorship.children.photo_url} alt={sponsorship.children.name} />
+                    <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h4 className="text-sm font-semibold">{sponsorship.children.name}</h4>
+                    <p className="text-sm text-gray-500">{sponsorship.children.city}</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            )
+          ))}
 
         <div className="mt-4">
           <h4 className="text-sm font-semibold mb-2">Ajouter un enfant</h4>
           <ScrollArea className="h-[200px]">
             <div className="grid grid-cols-2 gap-2">
-              {availableChildren?.filter((child: any) => 
-                !sponsorships?.some((s: any) => s.children?.id === child.id)
-              ).map((child: any) => (
+              {filteredAvailableChildren.map((child: any) => (
                 <Card 
                   key={child.id} 
                   className="cursor-pointer hover:bg-gray-50" 
