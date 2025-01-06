@@ -1,10 +1,8 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/tables/child-assignment-requests";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { RequestStatus } from "@/integrations/supabase/types/request-status";
-import { Database } from "@/integrations/supabase/types/database";
+import { ChildAssignmentRequest } from "@/integrations/supabase/types";
 
 export const useChildAssignment = () => {
   const queryClient = useQueryClient();
@@ -29,7 +27,7 @@ export const useChildAssignment = () => {
       const { error } = await supabase
         .from('child_assignment_requests')
         .update({ 
-          status: 'approved' as RequestStatus,
+          status: 'approved',
           updated_at: new Date().toISOString()
         })
         .eq('id', request.id);
@@ -49,7 +47,7 @@ export const useChildAssignment = () => {
       const { error } = await supabase
         .from('child_assignment_requests')
         .update({ 
-          status: 'rejected' as RequestStatus,
+          status: 'rejected',
           updated_at: new Date().toISOString()
         })
         .eq('id', request.id);

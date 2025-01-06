@@ -7,11 +7,15 @@ import { TestimonialsTable } from './tables/testimonials';
 import { ChildAssignmentRequestsTable } from './tables/child-assignment-requests';
 
 export interface Database {
-  sponsorship_requests: SponsorshipRequestTable;
-  children: ChildrenTable;
-  sponsors: SponsorsTable;
-  sponsorships: SponsorshipsTable;
-  album_media: AlbumMediaTable;
-  testimonials: TestimonialsTable;
-  child_assignment_requests: ChildAssignmentRequestsTable;
+  public: {
+    Tables: {
+      children: ChildrenTable;
+      sponsors: SponsorsTable;
+      sponsorships: SponsorshipsTable;
+      sponsorship_requests: SponsorshipRequestTable;
+      album_media: AlbumMediaTable;
+      testimonials: TestimonialsTable;
+      child_assignment_requests: ChildAssignmentRequestsTable;
+    };
+  };
 }
