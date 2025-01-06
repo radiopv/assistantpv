@@ -72,6 +72,39 @@ export const SponsorshipAccordion = ({ sponsor, onUpdate }: SponsorshipAccordion
     }));
   };
 
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!e.target.files || e.target.files.length === 0) return;
+
+      const file = e.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${sponsor.id}/${Math.random()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('sponsor-photos')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('sponsor-photos')
+        .getPublicUrl(filePath);
+
+      setFormData(prev => ({ ...prev, photo_url: publicUrl }));
+      toast({
+        title: "Photo téléchargée",
+        description: "La photo a été mise à jour avec succès.",
+      });
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors du téléchargement de la photo.",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -133,6 +166,7 @@ export const SponsorshipAccordion = ({ sponsor, onUpdate }: SponsorshipAccordion
                 handleInputChange={handleInputChange}
                 handleSwitchChange={handleSwitchChange}
                 handleSelectChange={handleSelectChange}
+                handlePhotoChange={handlePhotoChange}
               />
               <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Enregistrement..." : "Enregistrer"}
