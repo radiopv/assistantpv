@@ -37,7 +37,7 @@ const formatAge = (birthDate: string | undefined | null) => {
   return `${years} ${t("years")}`;
 };
 
-export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
+export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
   const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editedChild, setEditedChild] = useState(child);
