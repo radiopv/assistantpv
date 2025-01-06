@@ -12,8 +12,45 @@ type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_req
 
 export const ChildAssignmentValidation = () => {
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const queryClient = useQueryClient();
+
+  const translations = {
+    fr: {
+      loading: "Chargement...",
+      success: "Succès",
+      error: "Erreur",
+      childRequestApproved: "Demande approuvée avec succès",
+      childRequestRejected: "Demande rejetée avec succès",
+      errorApprovingChildRequest: "Erreur lors de l'approbation de la demande",
+      errorRejectingChildRequest: "Erreur lors du rejet de la demande",
+      approve: "Approuver",
+      reject: "Rejeter",
+      noChildRequestsPending: "Aucune demande en attente",
+      childRequestApprovedSubject: "Votre demande a été approuvée",
+      childRequestApprovedContent: "Votre demande pour {name} a été approuvée",
+      childRequestRejectedSubject: "Votre demande a été rejetée",
+      childRequestRejectedContent: "Votre demande pour {name} a été rejetée"
+    },
+    es: {
+      loading: "Cargando...",
+      success: "Éxito",
+      error: "Error",
+      childRequestApproved: "Solicitud aprobada con éxito",
+      childRequestRejected: "Solicitud rechazada con éxito",
+      errorApprovingChildRequest: "Error al aprobar la solicitud",
+      errorRejectingChildRequest: "Error al rechazar la solicitud",
+      approve: "Aprobar",
+      reject: "Rechazar",
+      noChildRequestsPending: "No hay solicitudes pendientes",
+      childRequestApprovedSubject: "Su solicitud ha sido aprobada",
+      childRequestApprovedContent: "Su solicitud para {name} ha sido aprobada",
+      childRequestRejectedSubject: "Su solicitud ha sido rechazada",
+      childRequestRejectedContent: "Su solicitud para {name} ha sido rechazada"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
@@ -43,24 +80,24 @@ export const ChildAssignmentValidation = () => {
 
       await sendEmail({
         to: [request.requester_email],
-        subject: t("childRequestApprovedSubject"),
-        html: t("childRequestApprovedContent", { name: request.name })
+        subject: t.childRequestApprovedSubject,
+        html: t.childRequestApprovedContent.replace('{name}', request.name)
       });
 
       toast({
-        title: t("success"),
-        description: t("childRequestApproved")
+        title: t.success,
+        description: t.childRequestApproved
       });
 
-      queryClient.invalidateQueries({
+      queryClient.invalidateQueries({ 
         queryKey: ['child-assignment-requests']
       });
     } catch (error) {
       console.error('Error approving request:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("errorApprovingChildRequest")
+        title: t.error,
+        description: t.errorApprovingChildRequest
       });
     }
   };
@@ -76,30 +113,30 @@ export const ChildAssignmentValidation = () => {
 
       await sendEmail({
         to: [request.requester_email],
-        subject: t("childRequestRejectedSubject"),
-        html: t("childRequestRejectedContent", { name: request.name })
+        subject: t.childRequestRejectedSubject,
+        html: t.childRequestRejectedContent.replace('{name}', request.name)
       });
 
       toast({
-        title: t("success"),
-        description: t("childRequestRejected")
+        title: t.success,
+        description: t.childRequestRejected
       });
 
-      queryClient.invalidateQueries({
+      queryClient.invalidateQueries({ 
         queryKey: ['child-assignment-requests']
       });
     } catch (error) {
       console.error('Error rejecting request:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("errorRejectingChildRequest")
+        title: t.error,
+        description: t.errorRejectingChildRequest
       });
     }
   };
 
   if (isLoading) {
-    return <p className="text-center">{t("loading")}</p>;
+    return <p className="text-center">{t.loading}</p>;
   }
 
   return (
@@ -122,7 +159,7 @@ export const ChildAssignmentValidation = () => {
                 onClick={() => handleApprove(request)}
               >
                 <Check className="w-4 h-4 mr-1" />
-                {t("approve")}
+                {t.approve}
               </Button>
               <Button
                 variant="outline"
@@ -131,7 +168,7 @@ export const ChildAssignmentValidation = () => {
                 onClick={() => handleReject(request)}
               >
                 <X className="w-4 h-4 mr-1" />
-                {t("reject")}
+                {t.reject}
               </Button>
             </div>
           </div>
@@ -139,7 +176,7 @@ export const ChildAssignmentValidation = () => {
       ))}
       {!requests?.length && (
         <p className="text-center text-gray-500">
-          {t("noChildRequestsPending")}
+          {t.noChildRequestsPending}
         </p>
       )}
     </div>
