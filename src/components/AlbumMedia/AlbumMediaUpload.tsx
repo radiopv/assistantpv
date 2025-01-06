@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { notifyActiveSponsor } from "@/utils/sponsor-notifications";
 
 interface AlbumMediaUploadProps {
   childId: string;
@@ -66,6 +67,15 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         });
 
       if (dbError) throw dbError;
+
+      // Notify sponsor about new media
+      await notifyActiveSponsor(
+        childId,
+        t.success,
+        file.type.startsWith('image/') 
+          ? "Une nouvelle photo a été ajoutée à l'album"
+          : "Une nouvelle vidéo a été ajoutée à l'album"
+      );
 
       toast({
         title: t.success,

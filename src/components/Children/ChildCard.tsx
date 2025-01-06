@@ -11,6 +11,7 @@ import { ProfilePhotoSection } from "./ProfilePhoto/ProfilePhotoSection";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { NeedCheckboxes } from "./Needs/NeedCheckboxes";
+import { notifyActiveSponsor } from "@/utils/sponsor-notifications";
 
 interface ChildCardProps {
   child: any;
@@ -80,6 +81,13 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
         .eq('id', child.id);
 
       if (error) throw error;
+
+      // Notify sponsor about changes
+      await notifyActiveSponsor(
+        child.id,
+        "Mise à jour des informations",
+        `Les informations de ${editedChild.name} ont été mises à jour. Vous pouvez consulter les changements dans son profil.`
+      );
 
       toast({
         title: t("childUpdated"),
