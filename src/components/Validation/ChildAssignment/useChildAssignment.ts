@@ -3,9 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { TableNames } from "@/integrations/supabase/types/database-tables";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const useChildAssignment = () => {
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
 
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
@@ -33,10 +35,10 @@ export const useChildAssignment = () => {
       if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
-      toast.success("Request approved successfully");
+      toast.success(t("requestApproved"));
     } catch (error) {
       console.error('Error approving request:', error);
-      toast.error("Error approving request");
+      toast.error(t("errorApprovingRequest"));
     }
   };
 
@@ -53,10 +55,10 @@ export const useChildAssignment = () => {
       if (error) throw error;
 
       await queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
-      toast.success("Request rejected successfully");
+      toast.success(t("requestRejected"));
     } catch (error) {
       console.error('Error rejecting request:', error);
-      toast.error("Error rejecting request");
+      toast.error(t("errorRejectingRequest"));
     }
   };
 

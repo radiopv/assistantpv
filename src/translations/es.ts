@@ -1,4 +1,6 @@
-export const spanishTranslations = {
+import { TranslationType } from '@/integrations/supabase/types/translations';
+
+export const spanishTranslations: TranslationType = {
   sponsorship: {
     management: "Gestión de Apadrinamientos",
     newSponsorship: "Nuevo Apadrinamiento",

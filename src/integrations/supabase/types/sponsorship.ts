@@ -6,7 +6,7 @@ export interface SponsorshipRequest {
   email: string;
   full_name: string;
   status: 'pending' | 'approved' | 'rejected';
-  created_at?: string;
+  created_at: string;
   updated_at?: string;
   motivation?: string;
   phone?: string;
@@ -21,19 +21,21 @@ export interface SponsorshipWithDetails {
   sponsor_id: string;
   child_id: string;
   start_date: string;
+  end_date?: string;
   status: string;
-  is_anonymous: boolean;
+  created_at: string;
+  updated_at?: string;
   sponsors: {
     id: string;
     name: string;
     email: string;
-    photo_url: string | null;
+    photo_url?: string;
     is_active: boolean;
   };
   children: {
     id: string;
     name: string;
-    photo_url: string | null;
+    photo_url?: string;
     age: number;
   };
 }
@@ -43,7 +45,7 @@ export interface GroupedSponsorship {
     id: string;
     name: string;
     email: string;
-    photo_url: string | null;
+    photo_url?: string;
     is_active: boolean;
   };
   sponsorships: Array<{
@@ -51,7 +53,7 @@ export interface GroupedSponsorship {
     child: {
       id: string;
       name: string;
-      photo_url: string | null;
+      photo_url?: string;
       age: number;
     };
     start_date: string;

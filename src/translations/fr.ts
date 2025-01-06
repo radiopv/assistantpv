@@ -1,4 +1,4 @@
-export const frenchTranslations = {
+export const frenchTranslations: TranslationType = {
   sponsorship: {
     management: "Gestion des parrainages",
     newSponsorship: "Nouveau parrainage",
@@ -31,9 +31,11 @@ export const frenchTranslations = {
   sponsored: "Parrainé",
   available: "Disponible",
   reassign: "Réassigner",
-  select: "Sélectionner"
+  select: "Sélectionner",
+  requestApproved: "Demande approuvée",
+  requestRejected: "Demande rejetée",
+  errorApprovingRequest: "Erreur lors de l'approbation de la demande",
+  errorRejectingRequest: "Erreur lors du rejet de la demande"
 };
 
-export type TranslationType = {
-  [key: string]: string | TranslationType;
-};
+export type { TranslationType } from '@/integrations/supabase/types/translations';
