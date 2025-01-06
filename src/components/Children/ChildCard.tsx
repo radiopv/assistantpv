@@ -1,11 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Task } from "@/integrations/supabase/types/tasks";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
-const ChildCard = ({ childId }) => {
+interface ChildCardProps {
+  childId: string;
+}
+
+export const ChildCard = ({ childId }: ChildCardProps) => {
+  const queryClient = useQueryClient();
+
   const { data: tasks, isLoading } = useQuery({
     queryKey: ['tasks', childId],
     queryFn: () => fetchTasks(childId),
@@ -16,10 +24,32 @@ const ChildCard = ({ childId }) => {
       .from('tasks')
       .select('*')
       .eq('child_id', childId)
-      .order('created_at', { ascending: false }) as { data: Task[], error: any };
+      .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return data;
+    return data as Task[];
+  };
+
+  const completeTaskMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      const { error } = await supabase
+        .from('tasks')
+        .update({ status: 'completed' })
+        .eq('id', taskId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast.success("Tâche marquée comme terminée");
+    },
+    onError: () => {
+      toast.error("Erreur lors de la mise à jour de la tâche");
+    }
+  });
+
+  const handleCompleteTask = (taskId: string) => {
+    completeTaskMutation.mutate(taskId);
   };
 
   if (isLoading) {
@@ -59,5 +89,3 @@ const ChildCard = ({ childId }) => {
     </div>
   );
 };
-
-export default ChildCard;

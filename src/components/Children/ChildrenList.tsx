@@ -145,7 +145,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
           {children.map((child) => (
             <div key={child.id} className="space-y-2">
               <ChildCard
-                child={child}
+                childId={child.id}
                 onViewProfile={onViewProfile}
                 onSponsorClick={setSelectedChild}
               />
