@@ -9,10 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       aid_categories: {
         Row: {
           created_at: string | null
           description: string | null
+          display_order: number | null
+          icon_name: string | null
           id: string
           name: string
           updated_at: string | null
@@ -20,6 +54,8 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
+          display_order?: number | null
+          icon_name?: string | null
           id?: string
           name: string
           updated_at?: string | null
@@ -27,6 +63,8 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
+          display_order?: number | null
+          icon_name?: string | null
           id?: string
           name?: string
           updated_at?: string | null
@@ -38,13 +76,14 @@ export type Database = {
           child_id: string | null
           created_at: string | null
           description: string | null
-          featured_until: string | null
           id: string
           is_approved: boolean | null
           is_featured: boolean | null
           is_public: boolean | null
+          sponsor_id: string | null
+          sponsorship_id: string | null
           title: string | null
-          type: string
+          type: string | null
           updated_at: string | null
           url: string
         }
@@ -52,13 +91,14 @@ export type Database = {
           child_id?: string | null
           created_at?: string | null
           description?: string | null
-          featured_until?: string | null
           id?: string
           is_approved?: boolean | null
           is_featured?: boolean | null
           is_public?: boolean | null
+          sponsor_id?: string | null
+          sponsorship_id?: string | null
           title?: string | null
-          type: string
+          type?: string | null
           updated_at?: string | null
           url: string
         }
@@ -66,97 +106,157 @@ export type Database = {
           child_id?: string | null
           created_at?: string | null
           description?: string | null
-          featured_until?: string | null
           id?: string
           is_approved?: boolean | null
           is_featured?: boolean | null
           is_public?: boolean | null
+          sponsor_id?: string | null
+          sponsorship_id?: string | null
           title?: string | null
-          type?: string
+          type?: string | null
           updated_at?: string | null
-          url?: string | null
+          url?: string
         }
         Relationships: [
           {
-            foreignKeyName: "album_media_child_id_fkey"
+            foreignKeyName: "album_media_new_child_id_fkey"
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "album_media_new_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_media_new_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_media_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_album_media_sponsors"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_album_media_sponsorships"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      album_media_backup: {
+        Row: {
+          badge_id: string | null
+          child_id: string | null
+          created_at: string | null
+          description: string | null
+          featured_until: string | null
+          id: string | null
+          is_approved: boolean | null
+          is_featured: boolean | null
+          is_public: boolean | null
+          sponsor_id: string | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          url: string | null
+        }
+        Insert: {
+          badge_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured_until?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          sponsor_id?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url?: string | null
+        }
+        Update: {
+          badge_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured_until?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          sponsor_id?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url?: string | null
+        }
+        Relationships: []
       }
       badges: {
         Row: {
-          category: string | null
           created_at: string | null
-          description: string | null
-          icon: string | null
           id: string
           name: string
-          points: number | null
-          requirements: Json | null
-          updated_at: string | null
         }
         Insert: {
-          category?: string | null
           created_at?: string | null
-          description?: string | null
-          icon?: string | null
           id?: string
           name: string
-          points?: number | null
-          requirements?: Json | null
-          updated_at?: string | null
         }
         Update: {
-          category?: string | null
           created_at?: string | null
-          description?: string | null
-          icon?: string | null
           id?: string
           name?: string
-          points?: number | null
-          requirements?: Json | null
-          updated_at?: string | null
         }
         Relationships: []
       }
       birthday_reminders: {
         Row: {
-          child_id: string | null
+          child_id: string
           created_at: string | null
-          days_before: number[] | null
-          email: string | null
-          email_enabled: boolean | null
           id: string
-          phone: string | null
-          sms_enabled: boolean | null
-          sponsor_id: string | null
+          reminder_date: string
+          reminder_sent: boolean | null
+          sponsor_id: string
           updated_at: string | null
         }
         Insert: {
-          child_id?: string | null
+          child_id: string
           created_at?: string | null
-          days_before?: number[] | null
-          email?: string | null
-          email_enabled?: boolean | null
           id?: string
-          phone?: string | null
-          sms_enabled?: boolean | null
-          sponsor_id?: string | null
+          reminder_date: string
+          reminder_sent?: boolean | null
+          sponsor_id: string
           updated_at?: string | null
         }
         Update: {
-          child_id?: string | null
+          child_id?: string
           created_at?: string | null
-          days_before?: number[] | null
-          email?: string | null
-          email_enabled?: boolean | null
           id?: string
-          phone?: string | null
-          sms_enabled?: boolean | null
-          sponsor_id?: string | null
+          reminder_date?: string
+          reminder_sent?: boolean | null
+          sponsor_id?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -168,6 +268,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "birthday_reminders_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "birthday_reminders_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -176,80 +283,51 @@ export type Database = {
           },
         ]
       }
-      chat_messages: {
+      child_assignment_requests: {
         Row: {
-          content: string
+          child_id: string | null
           created_at: string | null
-          encryption_key: string | null
           id: string
-          is_encrypted: boolean | null
-          room_id: string | null
-          sender_id: string | null
+          notes: string | null
+          sponsor_id: string | null
+          status: string | null
+          updated_at: string | null
         }
         Insert: {
-          content: string
+          child_id?: string | null
           created_at?: string | null
-          encryption_key?: string | null
           id?: string
-          is_encrypted?: boolean | null
-          room_id?: string | null
-          sender_id?: string | null
+          notes?: string | null
+          sponsor_id?: string | null
+          status?: string | null
+          updated_at?: string | null
         }
         Update: {
-          content?: string
+          child_id?: string | null
           created_at?: string | null
-          encryption_key?: string | null
           id?: string
-          is_encrypted?: boolean | null
-          room_id?: string | null
-          sender_id?: string | null
+          notes?: string | null
+          sponsor_id?: string | null
+          status?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "chat_messages_room_id_fkey"
-            columns: ["room_id"]
+            foreignKeyName: "child_assignment_requests_child_id_fkey"
+            columns: ["child_id"]
             isOneToOne: false
-            referencedRelation: "chat_rooms"
+            referencedRelation: "children"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "chat_messages_sender_id_fkey"
-            columns: ["sender_id"]
+            foreignKeyName: "child_assignment_requests_child_id_fkey"
+            columns: ["child_id"]
             isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_room_participants: {
-        Row: {
-          joined_at: string | null
-          role: string | null
-          room_id: string
-          sponsor_id: string
-        }
-        Insert: {
-          joined_at?: string | null
-          role?: string | null
-          room_id: string
-          sponsor_id: string
-        }
-        Update: {
-          joined_at?: string | null
-          role?: string | null
-          room_id?: string
-          sponsor_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_room_participants_room_id_fkey"
-            columns: ["room_id"]
-            isOneToOne: false
-            referencedRelation: "chat_rooms"
+            referencedRelation: "children_with_needs"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "chat_room_participants_sponsor_id_fkey"
+            foreignKeyName: "child_assignment_requests_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
@@ -257,83 +335,121 @@ export type Database = {
           },
         ]
       }
-      chat_rooms: {
+      child_needs: {
         Row: {
-          created_at: string | null
-          created_by: string | null
+          category_id: string
+          child_id: string
+          created_at: string
+          description: string
           id: string
-          is_active: boolean | null
-          name: string
-          type: string | null
+          is_urgent: boolean
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          child_id: string
+          created_at?: string
+          description: string
+          id?: string
+          is_urgent?: boolean
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          child_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          is_urgent?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_category"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "aid_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_child"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_child"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      child_requests: {
+        Row: {
+          additional_info: string | null
+          child_id: string | null
+          created_at: string | null
+          id: string
+          reason: string
+          sponsor_id: string | null
+          status: string | null
           updated_at: string | null
         }
         Insert: {
+          additional_info?: string | null
+          child_id?: string | null
           created_at?: string | null
-          created_by?: string | null
           id?: string
-          is_active?: boolean | null
-          name: string
-          type?: string | null
+          reason: string
+          sponsor_id?: string | null
+          status?: string | null
           updated_at?: string | null
         }
         Update: {
+          additional_info?: string | null
+          child_id?: string | null
           created_at?: string | null
-          created_by?: string | null
           id?: string
-          is_active?: boolean | null
-          name?: string
-          type?: string | null
+          reason?: string
+          sponsor_id?: string | null
+          status?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "chat_rooms_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: "child_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_requests_sponsor_id_fkey"
+            columns: ["sponsor_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
         ]
       }
-      child_display_options: {
-        Row: {
-          category: string
-          created_at: string | null
-          display_order: number | null
-          id: string
-          is_active: boolean | null
-          name: string
-          updated_at: string | null
-        }
-        Insert: {
-          category: string
-          created_at?: string | null
-          display_order?: number | null
-          id?: string
-          is_active?: boolean | null
-          name: string
-          updated_at?: string | null
-        }
-        Update: {
-          category?: string
-          created_at?: string | null
-          display_order?: number | null
-          id?: string
-          is_active?: boolean | null
-          name?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       children: {
         Row: {
-          age: number
+          age: number | null
           birth_date: string
           city: string | null
+          comments: string | null
           created_at: string | null
           description: string | null
-          comments: string | null
-          story: string | null
           end_date: string | null
           gender: string
           id: string
@@ -343,25 +459,20 @@ export type Database = {
           needs: Json | null
           photo_url: string | null
           sponsor_email: string | null
-          sponsor_facebook_url: string | null
-          sponsor_id: number | null
+          sponsor_id: string | null
           sponsor_name: string | null
-          sponsor_phone: string | null
-          sponsorship_id: number | null
-          sponsorship_status: string | null
-          sponsorships: string | null
           start_date: string | null
           status: string
+          story: string | null
           updated_at: string | null
         }
         Insert: {
-          age: number
+          age?: number | null
           birth_date: string
           city?: string | null
+          comments?: string | null
           created_at?: string | null
           description?: string | null
-          comments?: string | null
-          story?: string | null
           end_date?: string | null
           gender: string
           id?: string
@@ -371,25 +482,20 @@ export type Database = {
           needs?: Json | null
           photo_url?: string | null
           sponsor_email?: string | null
-          sponsor_facebook_url?: string | null
-          sponsor_id?: number | null
+          sponsor_id?: string | null
           sponsor_name?: string | null
-          sponsor_phone?: string | null
-          sponsorship_id?: number | null
-          sponsorship_status?: string | null
-          sponsorships?: string | null
-          start_date?: string
-          status: string
+          start_date?: string | null
+          status?: string
+          story?: string | null
           updated_at?: string | null
         }
         Update: {
-          age?: number
+          age?: number | null
           birth_date?: string
           city?: string | null
+          comments?: string | null
           created_at?: string | null
           description?: string | null
-          comments?: string | null
-          story?: string | null
           end_date?: string | null
           gender?: string
           id?: string
@@ -399,15 +505,11 @@ export type Database = {
           needs?: Json | null
           photo_url?: string | null
           sponsor_email?: string | null
-          sponsor_facebook_url?: string | null
-          sponsor_id?: number | null
+          sponsor_id?: string | null
           sponsor_name?: string | null
-          sponsor_phone?: string | null
-          sponsorship_id?: number | null
-          sponsorship_status?: string | null
-          sponsorships?: string | null
           start_date?: string | null
           status?: string
+          story?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -416,6 +518,41 @@ export type Database = {
             columns: ["location_id"]
             isOneToOne: false
             referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dashboard_preferences: {
+        Row: {
+          created_at: string | null
+          id: string
+          layout: Json | null
+          sponsor_id: string | null
+          updated_at: string | null
+          widgets: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          layout?: Json | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+          widgets?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          layout?: Json | null
+          sponsor_id?: string | null
+          updated_at?: string | null
+          widgets?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboard_preferences_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
         ]
@@ -450,116 +587,48 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "donation_items_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "aid_categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "donation_items_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "donation_items_with_categories"
-            referencedColumns: ["category_id"]
-          },
-          {
             foreignKeyName: "donation_items_donation_id_fkey"
             columns: ["donation_id"]
             isOneToOne: false
             referencedRelation: "donations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_donation_items_category"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "aid_categories"
+            referencedColumns: ["id"]
+          },
         ]
       }
-      donation_items_backup: {
-        Row: {
-          category_id: string | null
-          created_at: string | null
-          donation_id: string | null
-          id: string | null
-          quantity: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          category_id?: string | null
-          created_at?: string | null
-          donation_id?: string | null
-          id?: string | null
-          quantity?: number
-          updated_at?: string | null
-        }
-        Update: {
-          category_id?: string | null
-          created_at?: string | null
-          donation_id?: string | null
-          id?: string
-          quantity?: number
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      donation_locations: {
-        Row: {
-          address: string | null
-          contact_info: Json | null
-          created_at: string | null
-          id: string
-          latitude: number
-          longitude: number
-          name: string
-          type: string
-          updated_at: string | null
-        }
-        Insert: {
-          address?: string | null
-          contact_info?: Json | null
-          created_at?: string | null
-          id?: string
-          latitude: number
-          longitude: number
-          name: string
-          type: string
-          updated_at?: string | null
-        }
-        Update: {
-          address?: string | null
-          contact_info?: Json | null
-          created_at?: string | null
-          id?: string
-          latitude?: number
-          longitude?: number
-          name?: string
-          type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-
       donation_photos: {
         Row: {
           created_at: string
           donation_id: string | null
           id: number
+          is_featured: boolean | null
+          mime_type: string | null
           title: string | null
           url: string | null
-          is_featured: boolean | null
         }
         Insert: {
           created_at?: string
           donation_id?: string | null
           id?: number
+          is_featured?: boolean | null
+          mime_type?: string | null
           title?: string | null
           url?: string | null
-          is_featured?: boolean | null
         }
         Update: {
           created_at?: string
           donation_id?: string | null
           id?: number
+          is_featured?: boolean | null
+          mime_type?: string | null
           title?: string | null
           url?: string | null
-          is_featured?: boolean | null
         }
         Relationships: [
           {
@@ -571,7 +640,6 @@ export type Database = {
           },
         ]
       }
-
       donation_videos: {
         Row: {
           created_at: string | null
@@ -629,6 +697,7 @@ export type Database = {
           comments: string | null
           created_at: string | null
           donation_date: string
+          donation_items: string | null
           id: string
           people_helped: number
           photos: string[] | null
@@ -641,6 +710,7 @@ export type Database = {
           comments?: string | null
           created_at?: string | null
           donation_date: string
+          donation_items?: string | null
           id?: string
           people_helped: number
           photos?: string[] | null
@@ -653,6 +723,7 @@ export type Database = {
           comments?: string | null
           created_at?: string | null
           donation_date?: string
+          donation_items?: string | null
           id?: string
           people_helped?: number
           photos?: string[] | null
@@ -730,7 +801,7 @@ export type Database = {
           notification_id?: string | null
           recipient_email?: string
           status?: string | null
-          subject: string
+          subject?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -742,39 +813,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      email_templates: {
-        Row: {
-          content: string
-          created_at: string | null
-          days_after_start: number | null
-          id: string
-          name: string
-          subject: string
-          template_type: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string | null
-          days_after_start?: number | null
-          id?: string
-          name: string
-          subject: string
-          template_type?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string | null
-          days_after_start?: number | null
-          id?: string
-          name?: string
-          subject?: string
-          template_type?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
       }
       faq: {
         Row: {
@@ -795,7 +833,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           question: string
-          updated_at: string | null
+          updated_at?: string | null
         }
         Update: {
           answer?: string
@@ -809,12 +847,54 @@ export type Database = {
         }
         Relationships: []
       }
+      favorite_children: {
+        Row: {
+          child_id: string | null
+          created_at: string | null
+          id: string
+          sponsor_id: string | null
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string | null
+          id?: string
+          sponsor_id?: string | null
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string | null
+          id?: string
+          sponsor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorite_children_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorite_children_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorite_children_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       home_images: {
         Row: {
           created_at: string | null
           id: string
           is_mobile: boolean | null
-          layout_position: string | null
           position: string
           updated_at: string | null
           url: string
@@ -823,7 +903,6 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
-          layout_position?: string | null
           position: string
           updated_at?: string | null
           url: string
@@ -832,88 +911,99 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_mobile?: boolean | null
-          layout_position?: string | null
           position?: string
           updated_at?: string | null
           url?: string
         }
         Relationships: []
       }
-      homepage_config: {
+      homepage_content: {
         Row: {
-          button_link: string | null
-          button_text: string | null
+          content: string | null
           created_at: string | null
-          description: string | null
-          display_order: number | null
-          id: string
-          is_visible: boolean | null
-          section_name: string
-          subtitle: string | null
+          id: number
           title: string | null
           updated_at: string | null
         }
         Insert: {
-          button_link?: string | null
-          button_text?: string | null
+          content?: string | null
           created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          id?: string
-          is_visible?: boolean | null
-          section_name: string
-          subtitle?: string | null
+          id?: number
           title?: string | null
           updated_at?: string | null
         }
         Update: {
-          button_link?: string | null
-          button_text?: string | null
+          content?: string | null
           created_at?: string | null
-          description?: string | null
-          display_order?: number | null
-          id?: string
-          is_visible?: boolean | null
-          section_name?: string
-          subtitle?: string | null
+          id?: number
           title?: string | null
           updated_at?: string | null
         }
         Relationships: []
       }
-      link_checker: {
+      homepage_modules: {
         Row: {
+          content: Json | null
           created_at: string | null
-          error_message: string | null
           id: string
-          last_checked: string | null
-          page_url: string
-          redirect_url: string | null
-          status: string
+          is_active: boolean | null
+          module_type: string
+          name: string
+          order_index: number | null
+          settings: Json | null
           updated_at: string | null
-          url: string
         }
         Insert: {
+          content?: Json | null
           created_at?: string | null
-          error_message?: string | null
           id?: string
-          last_checked?: string | null
-          page_url: string
-          redirect_url?: string | null
-          status: string
-          updated_at: string | null
-          url: string
+          is_active?: boolean | null
+          module_type: string
+          name: string
+          order_index?: number | null
+          settings?: Json | null
+          updated_at?: string | null
         }
         Update: {
+          content?: Json | null
           created_at?: string | null
-          error_message?: string | null
           id?: string
-          last_checked?: string | null
-          page_url?: string
-          redirect_url?: string | null
-          status: string
+          is_active?: boolean | null
+          module_type?: string
+          name?: string
+          order_index?: number | null
+          settings?: Json | null
           updated_at?: string | null
-          url?: string
+        }
+        Relationships: []
+      }
+      homepage_sections: {
+        Row: {
+          content: Json | null
+          created_at: string | null
+          id: string
+          section_key: string
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          section_key: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json | null
+          created_at?: string | null
+          id?: string
+          section_key?: string
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -946,6 +1036,36 @@ export type Database = {
           latitude?: number
           longitude?: number
           sponsored_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      login_attempts: {
+        Row: {
+          attempt_count: number | null
+          created_at: string | null
+          email: string
+          id: string
+          is_locked: boolean | null
+          last_attempt: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attempt_count?: number | null
+          created_at?: string | null
+          email: string
+          id?: string
+          is_locked?: boolean | null
+          last_attempt?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attempt_count?: number | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_locked?: boolean | null
+          last_attempt?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -992,118 +1112,48 @@ export type Database = {
         }
         Relationships: []
       }
-      memories: {
+      message_recipients: {
         Row: {
-          child_id: string | null
-          comment: string | null
           created_at: string | null
           id: string
-          is_private: boolean | null
-          type: string
+          is_archived: boolean | null
+          is_read: boolean | null
+          is_starred: boolean | null
+          message_id: string | null
+          recipient_id: string | null
           updated_at: string | null
-          url: string
         }
         Insert: {
-          child_id?: string | null
-          comment?: string | null
           created_at?: string | null
           id?: string
-          is_private?: boolean | null
-          type: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          is_starred?: boolean | null
+          message_id?: string | null
+          recipient_id?: string | null
           updated_at?: string | null
-          url: string
         }
         Update: {
-          child_id?: string | null
-          comment?: string | null
           created_at?: string | null
           id?: string
-          is_private?: boolean | null
-          type: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          is_starred?: boolean | null
+          message_id?: string | null
+          recipient_id?: string | null
           updated_at?: string | null
-          url?: string
         }
         Relationships: [
           {
-            foreignKeyName: "memories_child_id_fkey"
-            columns: ["child_id"]
+            foreignKeyName: "message_recipients_message_id_fkey"
+            columns: ["message_id"]
             isOneToOne: false
-            referencedRelation: "children"
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      message_attachments: {
-        Row: {
-          created_at: string | null
-          file_name: string
-          file_size: number
-          file_type: string
-          file_url: string
-          id: string
-          message_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          file_name: string
-          file_size: number
-          file_type: string
-          file_url: string
-          id?: string
-          message_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          file_name?: string
-          file_size?: number
-          file_type?: string
-          file_url?: string
-          id?: string
-          message_id?: string | null
-        }
-        Relationships: []
-      }
-      message_templates: {
-        Row: {
-          category: string
-          content: string
-          created_at: string | null
-          created_by: string | null
-          created_by_role: string
-          id: string
-          is_global: boolean | null
-          name: string
-          subject: string
-          updated_at: string | null
-        }
-        Insert: {
-          category: string
-          content: string
-          created_at?: string | null
-          created_by?: string | null
-          created_by_role: string
-          id?: string
-          is_global?: boolean | null
-          name: string
-          subject: string
-          updated_at?: string | null
-        }
-        Update: {
-          category?: string
-          content?: string
-          created_at?: string | null
-          created_by?: string | null
-          created_by_role?: string
-          id?: string
-          is_global?: boolean | null
-          name?: string
-          subject?: string
-          updated_at?: string | null
-        }
-        Relationships: [
           {
-            foreignKeyName: "message_templates_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: "message_recipients_recipient_id_fkey"
+            columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
@@ -1113,12 +1163,10 @@ export type Database = {
       messages: {
         Row: {
           content: string
-          conversation_type: string | null
           created_at: string | null
           id: string
           is_archived: boolean | null
           is_read: boolean | null
-          is_starred: boolean | null
           parent_id: string | null
           recipient_id: string | null
           sender_id: string | null
@@ -1128,12 +1176,10 @@ export type Database = {
         }
         Insert: {
           content: string
-          conversation_type?: string | null
           created_at?: string | null
           id?: string
           is_archived?: boolean | null
           is_read?: boolean | null
-          is_starred?: boolean | null
           parent_id?: string | null
           recipient_id?: string | null
           sender_id?: string | null
@@ -1143,12 +1189,10 @@ export type Database = {
         }
         Update: {
           content?: string
-          conversation_type?: string | null
           created_at?: string | null
           id?: string
           is_archived?: boolean | null
           is_read?: boolean | null
-          is_starred?: boolean | null
           parent_id?: string | null
           recipient_id?: string | null
           sender_id?: string | null
@@ -1165,50 +1209,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "messages_recipient_id_fkey"
-            columns: ["recipient_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "messages_sender_id_fkey"
             columns: ["sender_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      messages_recipients: {
-        Row: {
-          created_at: string | null
-          id: string
-          is_read: boolean | null
-          message_id: string | null
-          recipient_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          is_read?: boolean | null
-          message_id?: string | null
-          recipient_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          is_read?: boolean | null
-          message_id?: string | null
-          recipient_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "messages_recipients_recipient_id_fkey"
-            columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
@@ -1269,8 +1271,8 @@ export type Database = {
           is_read?: boolean | null
           link?: string | null
           recipient_id?: string | null
-          title: string
-          type: string
+          title?: string
+          type?: string
           updated_at?: string | null
         }
         Relationships: [
@@ -1283,72 +1285,153 @@ export type Database = {
           },
         ]
       }
-      page_config: {
+      parrain: {
         Row: {
           created_at: string | null
-          id: string
-          is_visible: boolean | null
-          page_id: string
-          required_role: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          is_visible?: boolean | null
-          page_id: string
-          required_role?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          is_visible?: boolean | null
-          page_id?: string
-          required_role?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      permissions: {
-        Row: {
-          category: string
-          created_at: string | null
-          description: string | null
+          email: string
           id: string
           name: string
           updated_at: string | null
         }
         Insert: {
-          category: string
           created_at?: string | null
-          description?: string | null
+          email: string
           id?: string
           name: string
           updated_at?: string | null
         }
         Update: {
-          category?: string
           created_at?: string | null
-          description?: string | null
+          email?: string
           id?: string
           name?: string
           updated_at?: string | null
         }
         Relationships: []
       }
+      planned_visits: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          notes: string | null
+          purpose: string | null
+          sponsor_id: string | null
+          start_date: string
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          sponsor_id?: string | null
+          start_date: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          notes?: string | null
+          purpose?: string | null
+          sponsor_id?: string | null
+          start_date?: string
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "planned_visits_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      private_gallery: {
+        Row: {
+          child_id: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_featured: boolean | null
+          is_private: boolean | null
+          sponsor_id: string | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_private?: boolean | null
+          sponsor_id?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          is_private?: boolean | null
+          sponsor_id?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "private_gallery_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "private_gallery_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "private_gallery_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
+          created_at: string | null
           id: string
           role: string
           updated_at: string | null
         }
         Insert: {
+          created_at?: string | null
           id: string
-          role?: string
+          role: string
           updated_at?: string | null
         }
         Update: {
+          created_at?: string | null
           id?: string
           role?: string
           updated_at?: string | null
@@ -1380,7 +1463,7 @@ export type Database = {
           id?: string
           notification_sound?: boolean | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           browser_notifications?: boolean | null
@@ -1405,107 +1488,45 @@ export type Database = {
           },
         ]
       }
-      role_permissions: {
-        Row: {
-          created_at: string | null
-          id: string
-          permission_id: string | null
-          role: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          permission_id?: string | null
-          role: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          permission_id?: string | null
-          role: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "role_permissions_permission_id_fkey"
-            columns: ["permission_id"]
-            isOneToOne: false
-            referencedRelation: "permissions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      scheduled_tasks: {
-        Row: {
-          attempts: number | null
-          created_at: string | null
-          data: Json | null
-          execute_at: string
-          id: string
-          last_attempt: string | null
-          status: string | null
-          task_type: string
-          updated_at: string | null
-        }
-        Insert: {
-          attempts?: number | null
-          created_at?: string | null
-          data?: Json | null
-          execute_at: string
-          id: string
-          last_attempt?: string | null
-          status?: string
-          task_type: string
-          updated_at?: string | null
-        }
-        Update: {
-          attempts?: number | null
-          created_at?: string | null
-          data?: Json | null
-          execute_at?: string
-          id: string
-          last_attempt?: string | null
-          status?: string
-          task_type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       scheduled_visits: {
         Row: {
           created_at: string | null
           id: string
           notes: string | null
-          reminder_days_before: number | null
-          reminder_sent: boolean | null
           sponsorship_id: string | null
           status: string | null
           updated_at: string | null
-          visit_date: string
+          visit_date: string | null
+          visit_end_date: string | null
+          visit_start_date: string | null
+          wants_donation_pickup: boolean | null
+          wants_to_visit_child: boolean | null
         }
         Insert: {
           created_at?: string | null
           id?: string
           notes?: string | null
-          reminder_days_before?: number | null
-          reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date: string
+          updated_at?: string | null
+          visit_date?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Update: {
           created_at?: string | null
           id?: string
           notes?: string | null
-          reminder_days_before?: number | null
-          reminder_sent?: boolean | null
           sponsorship_id?: string | null
           status?: string | null
-          updated_at?: string
-          visit_date?: string
+          updated_at?: string | null
+          visit_date?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Relationships: [
           {
@@ -1520,104 +1541,79 @@ export type Database = {
       site_config: {
         Row: {
           created_at: string | null
+          description: string | null
           id: string
+          key: string
           logo_url: string | null
-          primary_color: string
-          secondary_color: string
-          site_name: string
+          primary_color: string | null
+          secondary_color: string | null
+          site_name: string | null
           updated_at: string | null
+          value: Json
         }
         Insert: {
           created_at?: string | null
+          description?: string | null
           id?: string
+          key: string
           logo_url?: string | null
-          primary_color?: string
-          secondary_color?: string
-          site_name: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          site_name?: string | null
           updated_at?: string | null
+          value?: Json
         }
         Update: {
           created_at?: string | null
+          description?: string | null
           id?: string
+          key?: string
           logo_url?: string | null
-          primary_color?: string
-          secondary_color?: string
-          site_name?: string
+          primary_color?: string | null
+          secondary_color?: string | null
+          site_name?: string | null
           updated_at?: string | null
+          value?: Json
         }
         Relationships: []
       }
-      sponsor_levels: {
+      sponsor_documents: {
         Row: {
-          benefits: Json | null
           created_at: string | null
           description: string | null
+          document_type: string | null
+          file_url: string
           id: string
-          min_points: number
-          name: string
+          sponsor_id: string | null
+          title: string
           updated_at: string | null
         }
         Insert: {
-          benefits?: Json | null
           created_at?: string | null
           description?: string | null
+          document_type?: string | null
+          file_url: string
           id?: string
-          min_points: number
-          name: string
+          sponsor_id?: string | null
+          title: string
           updated_at?: string | null
         }
         Update: {
-          benefits?: Json | null
           created_at?: string | null
           description?: string | null
+          document_type?: string | null
+          file_url?: string
           id?: string
-          min_points?: number
-          name?: string
+          sponsor_id?: string | null
+          title?: string
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      sponsor_memories: {
-        Row: {
-          child_id: string | null
-          created_at: string | null
-          description: string | null
-          id: string
-          type: string
-          updated_at: string | null
-          url: string
-        }
-        Insert: {
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          type: string
-          updated_at?: string | null
-          url: string
-        }
-        Update: {
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          type: string
-          updated_at?: string | null
-          url?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fk_child"
-            columns: ["child_id"]
+            foreignKeyName: "sponsor_documents_sponsor_id_fkey"
+            columns: ["sponsor_id"]
             isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsor_memories_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
+            referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
         ]
@@ -1635,39 +1631,51 @@ export type Database = {
           is_active: boolean | null
           is_anonymous: boolean | null
           last_login: string | null
-          name: string
+          name: string | null
           password_hash: string | null
           permissions: Json | null
           phone: string | null
           photo_url: string | null
           privacy_settings: Json | null
+          ranking_score: number | null
           role: string | null
           show_name_publicly: boolean | null
+          status: string | null
           total_points: number | null
           updated_at: string | null
+          visit_end_date: string | null
+          visit_start_date: string | null
+          wants_donation_pickup: boolean | null
+          wants_to_visit_child: boolean | null
         }
         Insert: {
           address?: string | null
           city?: string | null
           created_at?: string | null
           current_level_id?: string | null
-          email?: string
+          email?: string | null
           facebook_url?: string | null
           force_password_change?: boolean | null
           id?: string
           is_active?: boolean | null
           is_anonymous?: boolean | null
           last_login?: string | null
-          name: string
+          name?: string | null
           password_hash?: string | null
           permissions?: Json | null
           phone?: string | null
           photo_url?: string | null
           privacy_settings?: Json | null
+          ranking_score?: number | null
           role?: string | null
           show_name_publicly?: boolean | null
+          status?: string | null
           total_points?: number | null
           updated_at?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Update: {
           address?: string | null
@@ -1681,160 +1689,122 @@ export type Database = {
           is_active?: boolean | null
           is_anonymous?: boolean | null
           last_login?: string | null
-          name?: string
+          name?: string | null
           password_hash?: string | null
           permissions?: Json | null
           phone?: string | null
           photo_url?: string | null
           privacy_settings?: Json | null
+          ranking_score?: number | null
           role?: string | null
           show_name_publicly?: boolean | null
+          status?: string | null
           total_points?: number | null
           updated_at?: string | null
+          visit_end_date?: string | null
+          visit_start_date?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "sponsors_current_level_id_fkey"
-            columns: ["current_level_id"]
-            isOneToOne: false
-            referencedRelation: "sponsor_levels"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
-      sponsorship_audit_logs: {
+      sponsors_to_children: {
         Row: {
-          action: string
+          child_id: string | null
           created_at: string | null
-          details: Json | null
           id: string
-          performed_by: string | null
-          sponsorship_id: string | null
-        }
-        Insert: {
-          action: string
-          created_at?: string | null
-          details?: Json | null
-          id?: string
-          performed_by?: string | null
-          sponsorship_id?: string | null
-        }
-        Update: {
-          action?: string
-          created_at?: string | null
-          details?: Json | null
-          id?: string
-          performed_by?: string | null
-          sponsorship_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsorship_audit_logs_performed_by_fkey"
-            columns: ["performed_by"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_audit_logs_sponsorship_id_fkey"
-            columns: ["sponsorship_id"]
-            isOneToOne: false
-            referencedRelation: "sponsorships"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sponsorship_notes: {
-        Row: {
-          content: string
-          created_at: string | null
-          created_by: string | null
-          id: string
-          note_type: string | null
-          sponsorship_id: string | null
+          sponsor_id: string | null
           updated_at: string | null
         }
         Insert: {
-          content: string
+          child_id?: string | null
           created_at?: string | null
-          created_by?: string | null
           id?: string
-          note_type?: string | null
-          sponsorship_id?: string | null
+          sponsor_id?: string | null
           updated_at?: string | null
         }
         Update: {
-          content?: string
+          child_id?: string | null
           created_at?: string | null
-          created_by?: string | null
           id?: string
-          note_type?: string | null
-          sponsorship_id?: string | null
+          sponsor_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "sponsorship_notes_created_by_fkey"
-            columns: ["created_by"]
+            foreignKeyName: "sponsors_to_children_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsors_to_children_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsors_to_children_sponsor_id_fkey"
+            columns: ["sponsor_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "sponsorship_notes_sponsorship_id_fkey"
-            columns: ["sponsorship_id"]
-            isOneToOne: false
-            referencedRelation: "sponsorships"
-            referencedColumns: ["id"]
-          },
         ]
       }
-
       sponsorship_requests: {
         Row: {
           child_id: string | null
+          city: string | null
           created_at: string | null
           email: string
           facebook_url: string | null
           full_name: string
           id: string
+          is_long_term: boolean | null
+          is_one_time: boolean | null
           motivation: string | null
           phone: string | null
-          status: string
-          terms_accepted: boolean
+          sponsor_id: string | null
+          status: string | null
+          terms_accepted: boolean | null
           updated_at: string | null
-          city: string | null
-          is_long_term: boolean | null
         }
         Insert: {
           child_id?: string | null
+          city?: string | null
           created_at?: string | null
           email: string
           facebook_url?: string | null
           full_name: string
           id?: string
+          is_long_term?: boolean | null
+          is_one_time?: boolean | null
           motivation?: string | null
           phone?: string | null
-          status: string
-          terms_accepted?: boolean
+          sponsor_id?: string | null
+          status?: string | null
+          terms_accepted?: boolean | null
           updated_at?: string | null
-          city?: string | null
-          is_long_term?: boolean | null
         }
         Update: {
           child_id?: string | null
+          city?: string | null
           created_at?: string | null
           email?: string
           facebook_url?: string | null
           full_name?: string
           id?: string
+          is_long_term?: boolean | null
+          is_one_time?: boolean | null
           motivation?: string | null
           phone?: string | null
-          status?: string
-          terms_accepted?: boolean
+          sponsor_id?: string | null
+          status?: string | null
+          terms_accepted?: boolean | null
           updated_at?: string | null
-          city?: string | null
-          is_long_term?: boolean | null
         }
         Relationships: [
           {
@@ -1843,22 +1813,24 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
-          }
+          },
+          {
+            foreignKeyName: "sponsorship_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
         ]
       }
-
       sponsorships: {
         Row: {
-          auto_terminate_job_id: string | null
-          child_id: string | null
-          comments: string | null
+          child_id: string
           created_at: string | null
           end_date: string | null
           id: string
-          is_anonymous: boolean | null
           sponsor_id: string | null
-          sponsorships: string | null
-          start_date: string
+          start_date: string | null
           status: string
           termination_comment: string | null
           termination_date: string | null
@@ -1866,34 +1838,26 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          auto_terminate_job_id?: string | null
-          child_id?: string | null
-          comments?: string | null
+          child_id: string
           created_at?: string | null
           end_date?: string | null
           id?: string
-          is_anonymous?: boolean | null
           sponsor_id?: string | null
-          sponsorships?: string | null
-          start_date: string
-          status: string
+          start_date?: string | null
+          status?: string
           termination_comment?: string | null
           termination_date?: string | null
           termination_reason?: string | null
           updated_at?: string | null
         }
         Update: {
-          auto_terminate_job_id?: string | null
-          child_id?: string | null
-          comments?: string | null
+          child_id?: string
           created_at?: string | null
           end_date?: string | null
           id?: string
-          is_anonymous?: boolean | null
           sponsor_id?: string | null
-          sponsorships?: string | null
-          start_date: string
-          status: string
+          start_date?: string | null
+          status?: string
           termination_comment?: string | null
           termination_date?: string | null
           termination_reason?: string | null
@@ -1908,6 +1872,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "sponsorships_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "sponsorships_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -1916,37 +1887,34 @@ export type Database = {
           },
         ]
       }
-      statistics_config: {
+      tasks: {
         Row: {
-          category: string
+          child_id: string | null
           created_at: string | null
           description: string | null
-          id: string
-          is_visible: boolean | null
-          name: string
-          updated_at: string | null
+          id: number
+          is_completed: boolean | null
+          title: string
         }
         Insert: {
-          category: string
+          child_id?: string | null
           created_at?: string | null
           description?: string | null
-          id: string
-          is_visible?: boolean | null
-          name: string
-          updated_at?: string | null
+          id?: number
+          is_completed?: boolean | null
+          title: string
         }
         Update: {
-          category?: string
+          child_id?: string | null
           created_at?: string | null
           description?: string | null
-          id?: string
-          is_visible?: boolean | null
-          name?: string
-          updated_at?: string | null
+          id?: number
+          is_completed?: boolean | null
+          title?: string
         }
         Relationships: []
       }
-      testimonials: {
+      temoignage: {
         Row: {
           child_id: string | null
           content: string
@@ -1954,6 +1922,7 @@ export type Database = {
           id: string
           is_approved: boolean | null
           is_featured: boolean | null
+          parrain_id: string | null
           rating: number | null
           sponsor_id: string | null
           updated_at: string | null
@@ -1965,9 +1934,10 @@ export type Database = {
           id?: string
           is_approved?: boolean | null
           is_featured?: boolean | null
+          parrain_id?: string | null
           rating?: number | null
           sponsor_id?: string | null
-          updated_at?: string
+          updated_at?: string | null
         }
         Update: {
           child_id?: string | null
@@ -1976,216 +1946,17 @@ export type Database = {
           id?: string
           is_approved?: boolean | null
           is_featured?: boolean | null
+          parrain_id?: string | null
           rating?: number | null
           sponsor_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "testimonials_child_id_fkey"
-            columns: ["child_id"]
+            foreignKeyName: "fk_temoignage_parrain"
+            columns: ["parrain_id"]
             isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "testimonials_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      unified_media_browser: {
-        Row: {
-          category: string | null
-          created_at: string | null
-          description: string | null
-          id: string
-          metadata: Json | null
-          source_table: string
-          tags: string[] | null
-          thumbnail_url: string | null
-          title: string | null
-          type: string
-          updated_at: string | null
-          url: string
-          version: number | null
-        }
-        Insert: {
-          category?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          metadata?: Json | null
-          source_table: string
-          tags?: string[] | null
-          thumbnail_url?: string | null
-          title?: string
-          type: string
-          updated_at?: string | null
-          url: string
-          version?: number | null
-        }
-        Update: {
-          category?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          metadata?: Json | null
-          source_table?: string
-          tags?: string[] | null
-          thumbnail_url?: string | null
-          title?: string
-          type?: string
-          updated_at?: string | null
-          url?: string
-          version?: number | null
-        }
-        Relationships: []
-      }
-      user_achievements: {
-        Row: {
-          badge_id: string | null
-          created_at: string | null
-          earned_at: string | null
-          id: string
-          metadata: Json | null
-          points: number | null
-          sponsor_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          badge_id?: string | null
-          created_at?: string | null
-          earned_at?: string | null
-          id?: string
-          metadata: Json | null
-          points?: number | null
-          sponsor_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          badge_id?: string | null
-          created_at?: string | null
-          earned_at?: string | null
-          id?: string
-          metadata: Json | null
-          points?: number | null
-          sponsor_id?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_achievements_badge_id_fkey"
-            columns: ["badge_id"]
-            isOneToOne: false
-            referencedRelation: "badges"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_achievements_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_roles: {
-        Row: {
-          created_at: string | null
-          id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      activity_logs: {
-        Row: {
-          id: string
-          user_id: string
-          action: string
-          details: Json | null
-          created_at: string | null
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          action: string
-          details?: Json | null
-          created_at?: string | null
-        }
-        Update: {
-          id?: string
-          user_id: string
-          action: string
-          details?: Json | null
-          created_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "activity_logs_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      temoignage: {
-        Row: {
-          id: string
-          content: string
-          author: string
-          rating: number | null
-          is_approved: boolean
-          is_featured: boolean
-          sponsor_id: string | null
-          child_id: string | null
-          created_at: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          id?: string
-          content: string
-          author: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          id?: string
-          content?: string
-          author?: string
-          rating?: number | null
-          is_approved?: boolean
-          is_featured?: boolean
-          sponsor_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "temoignage_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
+            referencedRelation: "parrain"
             referencedColumns: ["id"]
           },
           {
@@ -2194,41 +1965,147 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "children"
             referencedColumns: ["id"]
-          }
+          },
+          {
+            foreignKeyName: "temoignage_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "temoignage_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
         ]
       }
-      child_assignment_requests: {
+      translation_reports: {
         Row: {
-          id: string;
-          name: string;
-          requester_email: string;
-          status: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-        };
+          created_at: string | null
+          id: string
+          report: Json
+        }
         Insert: {
-          name: string;
-          requester_email: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-        };
+          created_at?: string | null
+          id?: string
+          report: Json
+        }
         Update: {
-          name?: string;
-          requester_email?: string;
-          status?: 'pending' | 'approved' | 'rejected';
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-    };
+          created_at?: string | null
+          id?: string
+          report?: Json
+        }
+        Relationships: []
+      }
+      translations: {
+        Row: {
+          content: Json
+          created_at: string
+          id: number
+          language: string
+          updated_at: string
+        }
+        Insert: {
+          content: Json
+          created_at?: string
+          id?: number
+          language: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          id?: number
+          language?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_achievements: {
+        Row: {
+          achievement_data: Json | null
+          achievement_type: string
+          created_at: string | null
+          id: string
+          points: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          achievement_data?: Json | null
+          achievement_type: string
+          created_at?: string | null
+          id?: string
+          points?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          achievement_data?: Json | null
+          achievement_type?: string
+          created_at?: string | null
+          id?: string
+          points?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
     Views: {
+      children_with_needs: {
+        Row: {
+          age: number | null
+          birth_date: string | null
+          city: string | null
+          comments: string | null
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          gender: string | null
+          id: string | null
+          is_sponsored: boolean | null
+          location_id: number | null
+          name: string | null
+          needs: Json | null
+          photo_url: string | null
+          sponsor_name: string | null
+          start_date: string | null
+          status: string | null
+          story: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "children_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       donation_items_with_categories: {
         Row: {
           category_id: string | null
           category_name: string | null
+          created_at: string | null
           description: string | null
           donation_id: string | null
-          id: string
+          id: string | null
           quantity: number | null
+          updated_at: string | null
         }
         Relationships: [
           {
@@ -2236,6 +2113,13 @@ export type Database = {
             columns: ["donation_id"]
             isOneToOne: false
             referencedRelation: "donations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_donation_items_category"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "aid_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -2275,12 +2159,88 @@ export type Database = {
           },
         ]
       }
+      featured_photos_view: {
+        Row: {
+          child_id: string | null
+          child_name: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          is_anonymous: boolean | null
+          is_approved: boolean | null
+          is_featured: boolean | null
+          is_public: boolean | null
+          sponsor_id: string | null
+          sponsor_name: string | null
+          sponsorship_id: string | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          url: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "album_media_new_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_media_new_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children_with_needs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_media_new_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "album_media_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_album_media_sponsors"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_album_media_sponsorships"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       statistics_summary: {
         Row: {
           children_stats: Json | null
           donation_stats: Json | null
           refresh_timestamp: string | null
           sponsor_stats: Json | null
+        }
+        Relationships: []
+      }
+      unified_media_browser: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string | null
+          metadata: Json | null
+          source_table: string | null
+          type: string | null
+          url: string | null
         }
         Relationships: []
       }
@@ -2296,6 +2256,20 @@ export type Database = {
         Args: {
           request_id: string
           admin_id: string
+        }
+        Returns: undefined
+      }
+      attribuer_enfant: {
+        Args: {
+          nom_enfant: string
+          nom_parrain: string
+        }
+        Returns: undefined
+      }
+      attribuer_parrainage: {
+        Args: {
+          nom_enfant: string
+          nom_parrain: string
         }
         Returns: undefined
       }
@@ -2322,6 +2296,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      clean_old_login_attempts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      clean_old_performance_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_album_table: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -2344,8 +2326,28 @@ export type Database = {
         }
         Returns: string
       }
+      create_sponsorship_request: {
+        Args: {
+          p_child_id: string
+          p_sponsor_data: Json
+        }
+        Returns: undefined
+      }
       create_storage_bucket: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      create_table_if_not_exists: {
+        Args: {
+          table_name: string
+          definition: string
+        }
+        Returns: undefined
+      }
+      enable_rls: {
+        Args: {
+          table_name: string
+        }
         Returns: undefined
       }
       exec_sql: {
@@ -2393,6 +2395,12 @@ export type Database = {
           quantity: number
         }[]
       }
+      get_child_needs: {
+        Args: {
+          child_id: string
+        }
+        Returns: Json
+      }
       get_city_donation_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2405,6 +2413,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      get_daily_donation_trends: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          day: number
+          donations: number
+        }[]
+      }
       get_dashboard_statistics: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -2413,11 +2428,16 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
-      get_daily_donation_trends: {
+      get_default_reminder_preferences: {
+        Args: {
+          p_sponsor_id: string
+        }
+        Returns: Json
+      }
+      get_distinct_cities: {
         Args: Record<PropertyKey, never>
         Returns: {
-          day: number
-          donations: number
+          city: string
         }[]
       }
       get_featured_donation_videos: {
@@ -2429,6 +2449,51 @@ export type Database = {
           description: string
           thumbnail_url: string
           created_at: string
+        }[]
+      }
+      get_featured_photos: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          url: string
+          title: string
+          child_name: string
+          sponsor_name: string
+          created_at: string
+        }[]
+      }
+      get_filtered_children: {
+        Args: {
+          status_filter?: string
+          has_needs?: boolean
+          has_urgent_needs?: boolean
+          gender_filter?: string
+          min_age?: number
+          max_age?: number
+          name_search?: string
+        }
+        Returns: {
+          age: number | null
+          birth_date: string
+          city: string | null
+          comments: string | null
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          gender: string
+          id: string
+          is_sponsored: boolean | null
+          location_id: number | null
+          name: string
+          needs: Json | null
+          photo_url: string | null
+          sponsor_email: string | null
+          sponsor_id: string | null
+          sponsor_name: string | null
+          start_date: string | null
+          status: string
+          story: string | null
+          updated_at: string | null
         }[]
       }
       get_monthly_donation_stats: {
@@ -2517,6 +2582,10 @@ export type Database = {
         Returns: undefined
       }
       process_email_queue: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      process_scheduled_notifications: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -2633,7 +2702,12 @@ export type Database = {
       }
     }
     Enums: {
-      user_role: "admin" | "assistant" | "sponsor" | "visitor"
+      user_role:
+        | "admin"
+        | "assistant"
+        | "sponsor"
+        | "visitor"
+        | "future_sponsor"
     }
     CompositeTypes: {
       email_template: {
@@ -2643,3 +2717,100 @@ export type Database = {
     }
   }
 }
+
+type PublicSchema = Database[Extract<keyof Database, "public">]
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
+        PublicSchema["Views"])
+    ? (PublicSchema["Tables"] &
+        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof PublicSchema["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
+    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof PublicSchema["Enums"]
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
+    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
