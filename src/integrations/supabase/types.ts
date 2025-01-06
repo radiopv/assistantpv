@@ -901,7 +901,7 @@ export type Database = {
           page_url: string
           redirect_url?: string | null
           status: string
-          updated_at?: string | null
+          updated_at: string | null
           url: string
         }
         Update: {
@@ -1234,7 +1234,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
-          name: string
+          name?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -1467,7 +1467,7 @@ export type Database = {
           execute_at?: string
           id: string
           last_attempt?: string | null
-          status?: string | null
+          status?: string
           task_type?: string
           updated_at?: string | null
         }
@@ -2064,7 +2064,7 @@ export type Database = {
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           badge_id?: string | null
@@ -2074,7 +2074,7 @@ export type Database = {
           metadata: Json | null
           points?: number | null
           sponsor_id?: string | null
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -2128,8 +2128,8 @@ export type Database = {
         }
         Update: {
           id?: string
-          user_id?: string
-          action?: string
+          user_id: string
+          action: string
           details?: Json | null
           created_at?: string | null
         }
@@ -2197,7 +2197,29 @@ export type Database = {
           }
         ]
       }
-    }
+      child_assignment_requests: {
+        Row: {
+          id: string;
+          name: string;
+          requester_email: string;
+          status: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+        };
+        Insert: {
+          name: string;
+          requester_email: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+        };
+        Update: {
+          name?: string;
+          requester_email?: string;
+          status?: 'pending' | 'approved' | 'rejected';
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+    };
     Views: {
       donation_items_with_categories: {
         Row: {

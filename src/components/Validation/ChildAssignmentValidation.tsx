@@ -6,7 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
 import { sendEmail } from "@/api/email";
-import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
+import { Database } from "@/integrations/supabase/types";
+
+type ChildAssignmentRequest = Database['public']['Tables']['child_assignment_requests']['Row'];
 
 export const ChildAssignmentValidation = () => {
   const { toast } = useToast();
@@ -19,14 +21,14 @@ export const ChildAssignmentValidation = () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending') as { data: ChildAssignmentRequest[], error: any };
+        .eq('status', 'pending');
       
       if (error) {
         console.error('Error fetching requests:', error);
         throw error;
       }
       
-      return data;
+      return data as ChildAssignmentRequest[];
     }
   });
 
@@ -47,7 +49,7 @@ export const ChildAssignmentValidation = () => {
 
       toast({
         title: t("success"),
-        description: t("childRequestApproved"),
+        description: t("childRequestApproved")
       });
 
       queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
@@ -56,7 +58,7 @@ export const ChildAssignmentValidation = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorApprovingChildRequest"),
+        description: t("errorApprovingChildRequest")
       });
     }
   };
@@ -78,7 +80,7 @@ export const ChildAssignmentValidation = () => {
 
       toast({
         title: t("success"),
-        description: t("childRequestRejected"),
+        description: t("childRequestRejected")
       });
 
       queryClient.invalidateQueries({ queryKey: ['child-assignment-requests'] });
@@ -87,7 +89,7 @@ export const ChildAssignmentValidation = () => {
       toast({
         variant: "destructive",
         title: t("error"),
-        description: t("errorRejectingChildRequest"),
+        description: t("errorRejectingChildRequest")
       });
     }
   };

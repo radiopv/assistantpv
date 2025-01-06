@@ -42,7 +42,10 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       errorMessage: "Veuillez sélectionner au moins une catégorie et remplir tous les champs obligatoires.",
       donationRegistered: "Don enregistré",
       successMessage: "Le don a été enregistré avec succès.",
-      errorSaving: "Une erreur est survenue lors de l'enregistrement du don."
+      errorSaving: "Une erreur est survenue lors de l'enregistrement du don.",
+      categories: "Catégories",
+      comments: "Commentaires",
+      commentsPlaceholder: "Ajoutez vos commentaires ici..."
     },
     es: {
       addMedia: "Agregar fotos/videos",
@@ -50,7 +53,10 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
       errorMessage: "Por favor, seleccione al menos una categoría y complete todos los campos obligatorios.",
       donationRegistered: "Donación registrada",
       successMessage: "La donación se ha registrado con éxito.",
-      errorSaving: "Ocurrió un error al guardar la donación."
+      errorSaving: "Ocurrió un error al guardar la donación.",
+      categories: "Categorías",
+      comments: "Comentarios",
+      commentsPlaceholder: "Agregue sus comentarios aquí..."
     }
   };
 
