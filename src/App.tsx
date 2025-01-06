@@ -12,6 +12,7 @@ import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
 import ChildProfile from "@/pages/ChildProfile";
 import Donations from "@/pages/Donations";
+import AddDonation from "@/pages/AddDonation";
 import Messages from "@/pages/Messages";
 import Settings from "@/pages/Settings";
 import AssistantPhotos from "@/pages/AssistantPhotos";
@@ -21,7 +22,6 @@ import Translations from "@/pages/admin/Translations";
 import Validation from "@/pages/admin/Validation";
 import Emails from "@/pages/admin/Emails";
 
-// Create a client
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -42,6 +42,7 @@ const App = () => {
                 <Route path="children/add" element={<AddChild />} />
                 <Route path="children/:id" element={<ChildProfile />} />
                 <Route path="donations" element={<Donations />} />
+                <Route path="donations/add" element={<AddDonation />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="assistant/photos" element={<AssistantPhotos />} />
