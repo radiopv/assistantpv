@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, UserPlus, ArrowUpDown } from "lucide-react";
+import { UserPlus, ArrowUpDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInYears, parseISO } from "date-fns";
 import { useState } from "react";
@@ -90,26 +90,15 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
                 </span>
               </TableCell>
               <TableCell className="text-right">
-                <div className="flex flex-col sm:flex-row justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onViewProfile(child.id)}
-                    className="w-full sm:w-auto"
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    {t("edit")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onSponsorClick(child)}
-                    className="w-full sm:w-auto"
-                  >
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
-                  </Button>
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onSponsorClick(child)}
+                  className="w-full sm:w-auto"
+                >
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
+                </Button>
               </TableCell>
             </TableRow>
           ))}
