@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { UserPlus, ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowUpDown, ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useState } from "react";
@@ -124,18 +124,17 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onSponsorClick(child);
+                        toggleRow(child.id);
                       }}
                       className="w-full sm:w-auto"
                     >
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      {child.is_sponsored ? t("editOrRemoveSponsor") : t("addSponsor")}
+                      {t("edit")}
+                      {expandedRow === child.id ? (
+                        <ChevronUp className="h-4 w-4 ml-2" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4 ml-2" />
+                      )}
                     </Button>
-                    {expandedRow === child.id ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
                   </div>
                 </TableCell>
               </TableRow>
