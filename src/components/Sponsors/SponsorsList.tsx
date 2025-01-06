@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { EditSponsorDialog } from "./EditSponsorDialog";
 import { SponsorCard } from "./SponsorCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SponsorshipAccordion } from "./SponsorshipAccordion";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -13,7 +13,6 @@ interface SponsorsListProps {
 
 export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsListProps) => {
   const [sponsors, setSponsors] = useState(initialSponsors);
-  const [editingSponsor, setEditingSponsor] = useState<any>(null);
   const navigate = useNavigate();
 
   const handleStatusChange = (sponsorId: string, field: string, value: boolean) => {
@@ -50,42 +49,52 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
       </TabsList>
 
       <TabsContent value="active">
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="space-y-6">
           {sponsors
             .filter(sponsor => sponsor.is_active)
             .map((sponsor) => (
-              <SponsorCard
-                key={sponsor.id}
-                sponsor={sponsor}
-                onEdit={setEditingSponsor}
-                onViewAlbum={viewAlbum}
-                onStatusChange={handleStatusChange}
-              />
+              <Card key={sponsor.id} className="p-6">
+                <SponsorshipAccordion
+                  sponsor={sponsor}
+                  onUpdate={() => {
+                    // Refresh the sponsors list
+                    setSponsors(prevSponsors =>
+                      prevSponsors.map(s =>
+                        s.id === sponsor.id
+                          ? { ...s, ...sponsor }
+                          : s
+                      )
+                    );
+                  }}
+                />
+              </Card>
             ))}
         </div>
       </TabsContent>
 
       <TabsContent value="inactive">
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="space-y-6">
           {sponsors
             .filter(sponsor => !sponsor.is_active)
             .map((sponsor) => (
-              <SponsorCard
-                key={sponsor.id}
-                sponsor={sponsor}
-                onEdit={setEditingSponsor}
-                onViewAlbum={viewAlbum}
-                onStatusChange={handleStatusChange}
-              />
+              <Card key={sponsor.id} className="p-6">
+                <SponsorshipAccordion
+                  sponsor={sponsor}
+                  onUpdate={() => {
+                    // Refresh the sponsors list
+                    setSponsors(prevSponsors =>
+                      prevSponsors.map(s =>
+                        s.id === sponsor.id
+                          ? { ...s, ...sponsor }
+                          : s
+                      )
+                    );
+                  }}
+                />
+              </Card>
             ))}
         </div>
       </TabsContent>
-
-      <EditSponsorDialog
-        sponsor={editingSponsor}
-        open={!!editingSponsor}
-        onClose={() => setEditingSponsor(null)}
-      />
     </Tabs>
   );
 };

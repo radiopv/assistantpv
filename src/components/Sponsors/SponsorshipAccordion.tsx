@@ -1,22 +1,34 @@
-import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { SponsorFormFields } from "./SponsorFormFields";
 import { SponsorChildrenList } from "./SponsorChildrenList";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { ErrorAlert } from "../ErrorAlert";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 
-interface EditSponsorDialogProps {
+interface SponsorshipAccordionProps {
   sponsor: any;
-  open: boolean;
-  onClose: () => void;
+  onUpdate: () => void;
 }
 
-export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogProps) => {
-  const [formData, setFormData] = useState<any>(null);
+export const SponsorshipAccordion = ({ sponsor, onUpdate }: SponsorshipAccordionProps) => {
+  const [formData, setFormData] = useState({
+    id: sponsor.id,
+    name: sponsor.name || '',
+    email: sponsor.email || '',
+    phone: sponsor.phone || '',
+    city: sponsor.city || '',
+    address: sponsor.address || '',
+    facebook_url: sponsor.facebook_url || '',
+    is_active: sponsor.is_active || false,
+    is_anonymous: sponsor.is_anonymous || false,
+    role: sponsor.role || '',
+    photo_url: sponsor.photo_url || '',
+    show_name_publicly: sponsor.show_name_publicly || false,
+    sponsorships: sponsor.sponsorships || []
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
@@ -34,26 +46,6 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
       return data || [];
     },
   });
-
-  useEffect(() => {
-    if (sponsor) {
-      setFormData({
-        id: sponsor.id,
-        name: sponsor.name || '',
-        email: sponsor.email || '',
-        phone: sponsor.phone || '',
-        city: sponsor.city || '',
-        address: sponsor.address || '',
-        facebook_url: sponsor.facebook_url || '',
-        is_active: sponsor.is_active || false,
-        is_anonymous: sponsor.is_anonymous || false,
-        role: sponsor.role || '',
-        photo_url: sponsor.photo_url || '',
-        show_name_publicly: sponsor.show_name_publicly || false,
-        sponsorships: sponsor.sponsorships || []
-      });
-    }
-  }, [sponsor]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target;
@@ -161,6 +153,7 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
         sponsorships: updatedSponsorships
       }));
 
+      onUpdate();
     } catch (error) {
       console.error('Error adding child:', error);
       toast({
@@ -185,12 +178,12 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
         description: "L'enfant a été retiré du parrainage",
       });
 
-      // Update local state
       setFormData(prev => ({
         ...prev,
         sponsorships: prev.sponsorships.filter((s: any) => s.id !== sponsorshipId)
       }));
 
+      onUpdate();
     } catch (error) {
       console.error('Error removing child:', error);
       toast({
@@ -230,7 +223,7 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
         title: "Succès",
         description: "Les informations du parrain ont été mises à jour",
       });
-      onClose();
+      onUpdate();
     } catch (error) {
       console.error('Error updating sponsor:', error);
       setError("Impossible de mettre à jour les informations");
@@ -239,52 +232,42 @@ export const EditSponsorDialog = ({ sponsor, open, onClose }: EditSponsorDialogP
     }
   };
 
-  if (!sponsor || !formData) return null;
-
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>Modifier le parrain</DialogTitle>
-        </DialogHeader>
-
-        <ScrollArea className="flex-1">
-          {error && <ErrorAlert message={error} />}
-
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="sponsor-info">
+        <AccordionTrigger className="text-lg font-semibold">
+          Informations du parrain
+        </AccordionTrigger>
+        <AccordionContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div>
-                <h3 className="text-lg font-semibold mb-4">Informations du parrain</h3>
-                <SponsorFormFields
-                  formData={formData}
-                  handleInputChange={handleInputChange}
-                  handleSwitchChange={handleSwitchChange}
-                  handleSelectChange={handleSelectChange}
-                  handlePhotoChange={handlePhotoChange}
-                />
-              </div>
-
-              <div>
-                <SponsorChildrenList
-                  sponsorships={formData.sponsorships}
-                  availableChildren={availableChildren || []}
-                  onAddChild={handleAddChild}
-                  onRemoveChild={handleRemoveChild}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                Annuler
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Enregistrement..." : "Enregistrer"}
-              </Button>
-            </div>
+            {error && <ErrorAlert message={error} />}
+            <SponsorFormFields
+              formData={formData}
+              handleInputChange={handleInputChange}
+              handleSwitchChange={handleSwitchChange}
+              handleSelectChange={handleSelectChange}
+              handlePhotoChange={handlePhotoChange}
+            />
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Enregistrement..." : "Enregistrer"}
+            </Button>
           </form>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="sponsored-children">
+        <AccordionTrigger className="text-lg font-semibold">
+          Enfants parrainés
+        </AccordionTrigger>
+        <AccordionContent>
+          <SponsorChildrenList
+            sponsorships={formData.sponsorships}
+            availableChildren={availableChildren || []}
+            onAddChild={handleAddChild}
+            onRemoveChild={handleRemoveChild}
+          />
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
