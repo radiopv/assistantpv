@@ -16,7 +16,7 @@ export const useChildAssignment = () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select('*')
-        .eq('status', 'pending');
+        .eq('status', 'pending') as { data: ChildAssignmentRequest[] | null, error: any };
       
       if (error) throw error;
       return data as ChildAssignmentRequest[];

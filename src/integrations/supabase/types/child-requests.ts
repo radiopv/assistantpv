@@ -1,13 +1,19 @@
-export interface ChildAssignmentRequest {
+export interface ChildRequest {
   id: string;
-  requester_email: string;
   name: string;
+  requester_email: string;
   status: 'pending' | 'approved' | 'rejected';
   created_at: string;
 }
 
 export interface ChildAssignmentRequests {
-  Row: ChildAssignmentRequest;
-  Insert: Omit<ChildAssignmentRequest, 'id' | 'created_at'>;
-  Update: Partial<ChildAssignmentRequest>;
+  Row: {
+    id: string;
+    name: string;
+    requester_email: string;
+    status: 'pending' | 'approved' | 'rejected';
+    created_at: string;
+  };
+  Insert: Omit<ChildRequest, 'id' | 'created_at'>;
+  Update: Partial<ChildRequest>;
 }

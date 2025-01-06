@@ -37,14 +37,29 @@ export const useSponsorshipManagement = () => {
         if (existingGroup) {
           existingGroup.sponsorships.push({
             id: curr.id,
-            child: curr.children
+            child: {
+              id: curr.children.id,
+              name: curr.children.name,
+              photo_url: curr.children.photo_url,
+              age: curr.children.age
+            }
           });
         } else {
           acc.push({
-            sponsor: curr.sponsors,
+            sponsor: {
+              id: curr.sponsors.id,
+              name: curr.sponsors.name,
+              email: curr.sponsors.email,
+              photo_url: curr.sponsors.photo_url
+            },
             sponsorships: [{
               id: curr.id,
-              child: curr.children
+              child: {
+                id: curr.children.id,
+                name: curr.children.name,
+                photo_url: curr.children.photo_url,
+                age: curr.children.age
+              }
             }]
           });
         }
@@ -56,12 +71,13 @@ export const useSponsorshipManagement = () => {
     }
   });
 
-  const { data: allChildren, isLoading: childrenLoading } = useQuery({
-    queryKey: ['all-children'],
+  const { data: availableChildren, isLoading: childrenLoading } = useQuery({
+    queryKey: ['available-children'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
         .select('*')
+        .eq('is_sponsored', false)
         .order('name');
 
       if (error) throw error;
@@ -84,7 +100,7 @@ export const useSponsorshipManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
-      queryClient.invalidateQueries({ queryKey: ['all-children'] });
+      queryClient.invalidateQueries({ queryKey: ['available-children'] });
       toast.success("Le parrainage a été créé avec succès");
     },
     onError: () => {
@@ -103,7 +119,7 @@ export const useSponsorshipManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
-      queryClient.invalidateQueries({ queryKey: ['all-children'] });
+      queryClient.invalidateQueries({ queryKey: ['available-children'] });
       toast.success("Le parrainage a été supprimé avec succès");
     },
     onError: () => {
@@ -111,32 +127,11 @@ export const useSponsorshipManagement = () => {
     }
   });
 
-  const toggleSponsorshipStatus = async (childId: string) => {
-    const { data: child, error: fetchError } = await supabase
-      .from('children')
-      .select('is_sponsored')
-      .eq('id', childId)
-      .single();
-
-    if (fetchError) throw fetchError;
-
-    const { error: updateError } = await supabase
-      .from('children')
-      .update({ is_sponsored: !child.is_sponsored })
-      .eq('id', childId);
-
-    if (updateError) throw updateError;
-
-    queryClient.invalidateQueries({ queryKey: ['all-children'] });
-    queryClient.invalidateQueries({ queryKey: ['sponsorships'] });
-  };
-
   return {
     sponsorships,
-    allChildren,
+    availableChildren,
     isLoading: sponsorshipsLoading || childrenLoading,
     createSponsorship,
-    deleteSponsorship,
-    toggleSponsorshipStatus
+    deleteSponsorship
   };
 };

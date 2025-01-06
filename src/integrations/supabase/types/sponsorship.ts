@@ -1,5 +1,6 @@
-export interface SponsorshipWithDetails {
-  id: string;
+import { Database } from './database';
+
+export type SponsorshipWithDetails = Database['public']['Tables']['sponsorships']['Row'] & {
   sponsors: {
     id: string;
     name: string;
@@ -12,7 +13,7 @@ export interface SponsorshipWithDetails {
     photo_url: string | null;
     age: number;
   };
-}
+};
 
 export type GroupedSponsorship = {
   sponsor: {
