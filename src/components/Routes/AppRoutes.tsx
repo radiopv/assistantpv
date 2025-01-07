@@ -16,6 +16,7 @@ import Settings from "@/pages/Settings";
 import AssistantPhotos from "@/pages/AssistantPhotos";
 import MediaManagement from "@/pages/MediaManagement";
 import BecomeSponsor from "@/pages/BecomeSponsor";
+import AvailableChildren from "@/pages/public/AvailableChildren";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
 import Tasks from "@/pages/Tasks";
 
@@ -34,6 +35,8 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
+        <Route path="/become-sponsor/:childId" element={<BecomeSponsor />} />
+        <Route path="/available-children" element={<AvailableChildren />} />
       </Route>
 
       <Route element={<MainLayout />}>
