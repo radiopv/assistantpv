@@ -178,14 +178,14 @@ export const spanishTranslations = {
   childRequestApprovedContent: "Nos complace informarle que su solicitud para añadir a {name} ha sido aprobada.",
   childRequestRejectedSubject: "Su solicitud para añadir un niño ha sido rechazada",
   childRequestRejectedContent: "Lamentamos informarle que su solicitud para añadir a {name} ha sido rechazada.",
-  
-  // Public children page
-  findChildToSponsor: "Encuentra un niño para apadrinar",
-  filterByAge: "Filtrar por edad",
-  filterByGender: "Filtrar por género",
-  filterByCity: "Filtrar por ciudad",
-  filterByStatus: "Filtrar por estado",
-  searchChild: "Buscar un niño",
-  noChildrenFound: "No se encontraron niños con estos criterios",
-  viewProfile: "Ver perfil",
+  citiesManagement: "Gestión de ciudades",
+  cityName: "Nombre de la ciudad",
+  updateCity: "Actualizar ciudad",
+  cityUpdated: "Ciudad actualizada con éxito",
+  errorUpdatingCity: "Error al actualizar la ciudad",
+  searchCity: "Buscar ciudad",
+  donationsCount: "Número de donaciones",
+  tableActions: "Acciones", // Changed from 'actions' to 'tableActions' to avoid duplicate
+  similarCityWarning: "Atención: Ya existe una ciudad similar",
+  continueQuestion: "¿Desea continuar?",
 };
