@@ -3,19 +3,13 @@ import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
 import { 
-  Menu, 
   Home, 
   Users, 
   Gift, 
-  MessageSquare, 
-  Settings,
-  Languages,
-  CheckCircle2,
-  ChartBar,
-  HelpCircle,
-  Mail,
+  MessageSquare,
   Heart,
-  MapPin
+  Mail,
+  HelpCircle,
 } from "lucide-react";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -28,31 +22,26 @@ const MainLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  const isAdmin = user?.role === 'admin';
-
-  const assistantNavItems = [
-    { icon: Home, label: t('dashboard'), path: '/dashboard' },
-    { icon: Users, label: t('children'), path: '/children' },
-    { icon: Gift, label: t('donations'), path: '/donations' },
-    { icon: MessageSquare, label: t('messages'), path: '/messages' },
-  ];
-
-  const adminNavItems = [
-    { icon: Settings, label: t('permissions'), path: '/admin/permissions' },
-    { icon: Languages, label: t('translationManager'), path: '/admin/translations' },
-    { icon: CheckCircle2, label: t('validation'), path: '/admin/validation' },
-    { icon: ChartBar, label: t('statistics'), path: '/admin/statistics' },
-    { icon: Heart, label: t('sponsorshipManagement'), path: '/admin/sponsorships' },
-    { icon: Mail, label: t('emailManager'), path: '/admin/emails' },
-    { icon: HelpCircle, label: t('faq'), path: '/admin/faq' },
-    { icon: MapPin, label: t('citiesManagement'), path: '/admin/cities' },
-  ];
-
-  const mobileNavItems = isAdmin ? [...assistantNavItems, ...adminNavItems] : assistantNavItems;
-
   if (!user) {
     return null;
   }
+
+  const sponsorNavItems = [
+    { icon: Home, label: t('dashboard'), path: '/dashboard' },
+    { icon: Heart, label: t('sponsoredChildren'), path: '/sponsored-children' },
+    { icon: Gift, label: t('donations'), path: '/donations' },
+    { icon: MessageSquare, label: t('messages'), path: '/messages' },
+    { icon: HelpCircle, label: t('faq'), path: '/faq' },
+  ];
+
+  const regularNavItems = [
+    { icon: Home, label: t('dashboard'), path: '/dashboard' },
+    { icon: Users, label: t('children'), path: '/children' },
+    { icon: Mail, label: t('contact'), path: '/contact' },
+    { icon: HelpCircle, label: t('faq'), path: '/faq' },
+  ];
+
+  const navItems = user.role === 'sponsor' ? sponsorNavItems : regularNavItems;
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -62,7 +51,7 @@ const MainLayout = () => {
 
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
         <nav className="flex justify-around items-center h-16 overflow-x-auto">
-          {mobileNavItems.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
