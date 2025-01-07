@@ -14,7 +14,7 @@ export const CallToAction = () => {
           Votre soutien peut faire une réelle différence dans la vie d'un enfant
         </p>
         <Button
-          onClick={() => navigate("/children")}
+          onClick={() => navigate("/become-sponsor")}
           size="lg"
           className="bg-white text-primary hover:bg-white/90"
         >
