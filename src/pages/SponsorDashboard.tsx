@@ -2,20 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
-import {
-  User,
-  Calendar,
-  Plane,
-  Gift,
-  MessageSquare,
-  Heart,
-  Image,
-} from "lucide-react";
+import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/SponsoredChildCard";
+import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
+import { DashboardActions } from "@/components/Sponsors/Dashboard/DashboardActions";
+import { Button } from "@/components/ui/button";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -51,8 +43,8 @@ const SponsorDashboard = () => {
         .from("planned_visits")
         .select("*")
         .eq("sponsor_id", user?.id)
-        .gte("visit_date", new Date().toISOString())
-        .order("visit_date", { ascending: true });
+        .gte("start_date", new Date().toISOString())
+        .order("start_date", { ascending: true });
 
       if (error) throw error;
       return data;
@@ -84,47 +76,11 @@ const SponsorDashboard = () => {
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Photo et informations de l'enfant */}
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div className="aspect-video relative rounded-lg overflow-hidden">
-              <img
-                src={sponsoredChild.photo_url || "/placeholder.svg"}
-                alt={sponsoredChild.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <User className="w-5 h-5" />
-              <h2 className="text-xl font-semibold">{sponsoredChild.name}</h2>
-            </div>
-            <p className="text-gray-600">{sponsoredChild.city}</p>
-          </div>
-        </Card>
-
-        {/* Dates importantes */}
-        <Card className="p-6">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              <h3 className="font-semibold">Dates importantes</h3>
-            </div>
-            
-            <div className="space-y-2">
-              <p className="flex items-center gap-2">
-                <Gift className="w-4 h-4 text-primary" />
-                Anniversaire : {format(new Date(sponsoredChild.birth_date), 'dd MMMM', { locale: fr })}
-              </p>
-              
-              {plannedVisits?.map((visit) => (
-                <p key={visit.id} className="flex items-center gap-2">
-                  <Plane className="w-4 h-4 text-primary" />
-                  Visite prévue : {format(new Date(visit.visit_date), 'dd MMMM yyyy', { locale: fr })}
-                </p>
-              ))}
-            </div>
-          </div>
-        </Card>
+        <SponsoredChildCard child={sponsoredChild} />
+        <ImportantDatesCard 
+          birthDate={sponsoredChild.birth_date} 
+          plannedVisits={plannedVisits || []} 
+        />
       </div>
 
       <Tabs defaultValue="actions" className="w-full">
@@ -134,67 +90,10 @@ const SponsorDashboard = () => {
         </TabsList>
 
         <TabsContent value="actions" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button
-              onClick={() => navigate("/messages")}
-              variant="outline"
-              className="h-auto p-4 flex items-center gap-3"
-            >
-              <MessageSquare className="w-5 h-5" />
-              <div className="text-left">
-                <p className="font-semibold">Message à l'assistant</p>
-                <p className="text-sm text-gray-600">
-                  Communiquez avec votre assistant
-                </p>
-              </div>
-            </Button>
-
-            <Button
-              onClick={() => navigate("/testimonials/new")}
-              variant="outline"
-              className="h-auto p-4 flex items-center gap-3"
-            >
-              <Heart className="w-5 h-5" />
-              <div className="text-left">
-                <p className="font-semibold">Ajouter un témoignage</p>
-                <p className="text-sm text-gray-600">
-                  Partagez votre expérience
-                </p>
-              </div>
-            </Button>
-
-            <Button
-              onClick={() => navigate(`/children/${sponsoredChild.id}/album`)}
-              variant="outline"
-              className="h-auto p-4 flex items-center gap-3"
-            >
-              <Image className="w-5 h-5" />
-              <div className="text-left">
-                <p className="font-semibold">Album photos</p>
-                <p className="text-sm text-gray-600">
-                  Gérez les photos de votre filleul(e)
-                </p>
-              </div>
-            </Button>
-
-            <Button
-              onClick={() => navigate("/planned-visits/new")}
-              variant="outline"
-              className="h-auto p-4 flex items-center gap-3"
-            >
-              <Plane className="w-5 h-5" />
-              <div className="text-left">
-                <p className="font-semibold">Planifier une visite</p>
-                <p className="text-sm text-gray-600">
-                  Organisez votre prochaine visite
-                </p>
-              </div>
-            </Button>
-          </div>
+          <DashboardActions />
         </TabsContent>
 
         <TabsContent value="gallery" className="space-y-4">
-          {/* Cette section sera implémentée avec l'album photo */}
           <Card className="p-6">
             <p>Album photos à venir...</p>
           </Card>
