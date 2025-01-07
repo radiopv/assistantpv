@@ -5,6 +5,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { 
   LayoutDashboard, 
   Menu,
+  Users
 } from "lucide-react";
 import {
   Sheet,
@@ -21,6 +22,11 @@ const PublicLayout = () => {
       label: "Accueil",
       icon: LayoutDashboard,
     },
+    {
+      href: "/available-children",
+      label: "Enfants disponibles",
+      icon: Users,
+    }
   ];
 
   const isAdminOrAssistant = user?.role === 'admin' || user?.role === 'assistant';
