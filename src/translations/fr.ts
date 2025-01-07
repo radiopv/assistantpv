@@ -160,14 +160,4 @@ export const frenchTranslations = {
   childRequestApprovedContent: "Nous sommes heureux de vous informer que votre demande d'ajout pour {name} a été approuvée.",
   childRequestRejectedSubject: "Votre demande d'ajout d'enfant a été refusée",
   childRequestRejectedContent: "Nous sommes désolés de vous informer que votre demande d'ajout pour {name} a été refusée.",
-
-  // Public children page
-  findChildToSponsor: "Trouvez un enfant à parrainer",
-  filterByAge: "Filtrer par âge",
-  filterByGender: "Filtrer par genre",
-  filterByCity: "Filtrer par ville",
-  filterByStatus: "Filtrer par statut",
-  searchChild: "Rechercher un enfant",
-  noChildrenFound: "Aucun enfant trouvé avec ces critères",
-  viewProfile: "Voir le profil",
 };
