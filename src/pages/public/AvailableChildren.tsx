@@ -10,6 +10,7 @@ import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { Need } from "@/types/needs";
 
 const translations = {
   fr: {
@@ -42,7 +43,7 @@ export default function AvailableChildren() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
-  const [selectedAge, setSelectedAge] = useState("all");
+  const [selectedAge, setSelectedAge] = useState<string>("all");
   const [selectedStatus, setSelectedStatus] = useState("available");
 
   const { data: cities = [] } = useQuery({
@@ -92,7 +93,7 @@ export default function AvailableChildren() {
       }
 
       if (selectedAge !== "all") {
-        query = query.eq("age", selectedAge);
+        query = query.eq("age", parseInt(selectedAge));
       }
 
       const { data, error } = await query;
@@ -103,7 +104,6 @@ export default function AvailableChildren() {
 
   const handleSponsorClick = async (childId: string) => {
     try {
-      // Redirect to sponsorship form
       navigate(`/become-sponsor/${childId}`);
       toast.success(t.sponsorSuccess);
     } catch (error) {
@@ -157,55 +157,59 @@ export default function AvailableChildren() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {children.map((child) => (
-            <Card key={child.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative">
-                <img
-                  src={child.photo_url || "/placeholder.svg"}
-                  alt={child.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-4 space-y-4">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-semibold">{child.name}</h3>
-                  <div className="flex items-center text-gray-600">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    <span>{child.age} {t.age}</span>
-                  </div>
+          {children.map((child) => {
+            const childNeeds = Array.isArray(child.needs) ? child.needs : [];
+            
+            return (
+              <Card key={child.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="aspect-video relative">
+                  <img
+                    src={child.photo_url || "/placeholder.svg"}
+                    alt={child.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-
-                <div className="flex items-center text-gray-600">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  <span>{child.city}</span>
-                </div>
-
-                {child.needs && child.needs.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium text-gray-600">{t.needs}:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {child.needs.map((need: any, index: number) => (
-                        <Badge 
-                          key={index}
-                          variant={need.is_urgent ? "destructive" : "secondary"}
-                        >
-                          {need.category}
-                        </Badge>
-                      ))}
+                <div className="p-4 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-xl font-semibold">{child.name}</h3>
+                    <div className="flex items-center text-gray-600">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      <span>{child.age} {t.age}</span>
                     </div>
                   </div>
-                )}
 
-                <Button 
-                  className="w-full" 
-                  onClick={() => handleSponsorClick(child.id)}
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  {t.sponsor}
-                </Button>
-              </div>
-            </Card>
-          ))}
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="w-4 h-4 mr-1" />
+                    <span>{child.city}</span>
+                  </div>
+
+                  {childNeeds.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-gray-600">{t.needs}:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {childNeeds.map((need: Need, index: number) => (
+                          <Badge 
+                            key={`${need.category}-${index}`}
+                            variant={need.is_urgent ? "destructive" : "secondary"}
+                          >
+                            {need.category}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleSponsorClick(child.id)}
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    {t.sponsor}
+                  </Button>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
