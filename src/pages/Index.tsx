@@ -76,13 +76,13 @@ const Index = () => {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto mb-8">
           {user.role === 'sponsor' ? (
             <>
-              <Link to="/sponsored-children">
+              <Link to="/sponsor/children">
                 <Button variant="outline" className="w-full h-24 flex flex-col items-center justify-center gap-2">
                   <List className="h-6 w-6" />
                   {t('mySponsoredChildren')}
                 </Button>
               </Link>
-              <Link to="/profile">
+              <Link to="/sponsor/profile">
                 <Button variant="outline" className="w-full h-24 flex flex-col items-center justify-center gap-2">
                   <User className="h-6 w-6" />
                   {t('myProfile')}
