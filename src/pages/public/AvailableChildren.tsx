@@ -52,7 +52,8 @@ export default function AvailableChildren() {
       const { data, error } = await supabase
         .from("children")
         .select("city")
-        .not("city", "is", null);
+        .not("city", "is", null)
+        .order('city');
       
       if (error) throw error;
       return [...new Set(data.map(item => item.city))];
@@ -77,8 +78,11 @@ export default function AvailableChildren() {
     queryFn: async () => {
       let query = supabase
         .from("children")
-        .select("*")
-        .eq("status", "available");
+        .select("*");
+
+      if (selectedStatus !== "all") {
+        query = query.eq("status", selectedStatus);
+      }
 
       if (searchTerm) {
         query = query.ilike("name", `%${searchTerm}%`);

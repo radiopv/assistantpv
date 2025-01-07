@@ -114,7 +114,7 @@ export const ChildrenFilters = ({
           </SelectContent>
         </Select>
 
-        <Select value={selectedAge.toString()} onValueChange={onAgeChange}>
+        <Select value={selectedAge} onValueChange={onAgeChange}>
           <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
             <SelectValue placeholder={t.age} />
           </SelectTrigger>
