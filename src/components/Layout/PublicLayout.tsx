@@ -5,21 +5,37 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { 
   LayoutDashboard, 
   Menu,
+  Home,
+  Users,
+  Heart,
+  LogIn
 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const PublicLayout = () => {
   const { session, user } = useAuth();
+  const { t } = useLanguage();
 
   const menuItems = [
     {
       href: "/",
-      label: "Accueil",
-      icon: LayoutDashboard,
+      label: t("home"),
+      icon: Home,
+    },
+    {
+      href: "/available-children",
+      label: t("childrenWaitingSponsorship"),
+      icon: Users,
+    },
+    {
+      href: "/sponsored-children",
+      label: t("sponsoredChildren"),
+      icon: Heart,
     },
   ];
 
@@ -56,13 +72,16 @@ const PublicLayout = () => {
                     <Link to="/dashboard">
                       <Button className="w-full">
                         <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Administration
+                        {t("dashboard")}
                       </Button>
                     </Link>
                   ) : null
                 ) : (
                   <Link to="/login">
-                    <Button className="w-full">Administration</Button>
+                    <Button className="w-full">
+                      <LogIn className="mr-2 h-4 w-4" />
+                      {t("login")}
+                    </Button>
                   </Link>
                 )}
               </div>
@@ -98,13 +117,16 @@ const PublicLayout = () => {
                   <Link to="/dashboard">
                     <Button>
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Administration
+                      {t("dashboard")}
                     </Button>
                   </Link>
                 ) : null
               ) : (
                 <Link to="/login">
-                  <Button>Administration</Button>
+                  <Button>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    {t("login")}
+                  </Button>
                 </Link>
               )}
             </div>

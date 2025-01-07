@@ -18,6 +18,8 @@ import MediaManagement from "@/pages/MediaManagement";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
 import Tasks from "@/pages/Tasks";
+import AvailableChildren from "@/pages/public/AvailableChildren";
+import SponsoredChildren from "@/pages/public/SponsoredChildren";
 
 // Admin pages
 import Statistics from "@/pages/admin/Statistics";
@@ -34,6 +36,8 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
+        <Route path="/available-children" element={<AvailableChildren />} />
+        <Route path="/sponsored-children" element={<SponsoredChildren />} />
       </Route>
 
       <Route element={<MainLayout />}>
