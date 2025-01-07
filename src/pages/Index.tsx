@@ -8,11 +8,7 @@ import Login from "@/pages/auth/Login";
 const Index = () => {
   const { user, loading } = useAuth();
   
-  console.log("Index page - User:", user);
-  console.log("Index page - Loading:", loading);
-  
   if (loading) {
-    console.log("Index page - Showing loading skeleton");
     return (
       <div className="container mx-auto p-4 space-y-4">
         <Skeleton className="h-12 w-64 mx-auto" />
@@ -22,13 +18,19 @@ const Index = () => {
   }
   
   if (!user) {
-    console.log("Index page - Showing login form");
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto p-4">
           <h1 className="text-3xl font-bold text-center mb-8 text-primary">
             ASSISTANT PV
           </h1>
+          <div className="max-w-4xl mx-auto">
+            <img 
+              src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7"
+              alt="Assistant PV"
+              className="w-full h-auto rounded-lg shadow-lg mb-8"
+            />
+          </div>
           <Login />
         </div>
       </div>
@@ -36,11 +38,9 @@ const Index = () => {
   }
 
   if (user.role === 'admin' || user.role === 'assistant') {
-    console.log("Index page - Redirecting to dashboard");
     return <Navigate to="/dashboard" />;
   }
 
-  console.log("Index page - Showing messages");
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto p-4 space-y-6">
