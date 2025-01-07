@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Children } from "@/integrations/supabase/types";
+import type { Database } from "@/integrations/supabase/types";
+
+type Child = Database["public"]["Tables"]["children"]["Row"];
 
 export const FeaturedChildren = () => {
-  const [children, setChildren] = useState<Children["Row"][]>([]);
+  const [children, setChildren] = useState<Child[]>([]);
 
   useEffect(() => {
     const fetchFeaturedChildren = async () => {
