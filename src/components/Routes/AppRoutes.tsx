@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import Login from "@/pages/auth/Login";
 import Dashboard from "@/pages/Dashboard";
 import Children from "@/pages/Children";
+import PublicChildren from "@/pages/PublicChildren";
 import AddChild from "@/pages/AddChild";
 import ChildProfile from "@/pages/ChildProfile";
 import Donations from "@/pages/Donations";
@@ -34,6 +35,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
+        <Route path="/children" element={<PublicChildren />} />
       </Route>
 
       <Route element={<MainLayout />}>
