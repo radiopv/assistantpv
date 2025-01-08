@@ -33,7 +33,7 @@ const PublicLayout = () => {
       icon: Users,
     },
     {
-      href: "/public-donations",  // Changé de /donations à /public-donations
+      href: "/donations",
       label: t("donations"),
       icon: Gift,
     },
