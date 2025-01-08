@@ -11,6 +11,7 @@ export const FeaturedTestimonials = () => {
   const { data: testimonials, isLoading } = useQuery({
     queryKey: ['featured-testimonials'],
     queryFn: async () => {
+      console.log("Fetching testimonials...");
       const { data, error } = await supabase
         .from('temoignage')
         .select(`
@@ -23,7 +24,12 @@ export const FeaturedTestimonials = () => {
         .order('created_at', { ascending: false })
         .limit(3);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching testimonials:", error);
+        throw error;
+      }
+      
+      console.log("Testimonials fetched:", data);
       return data;
     }
   });
