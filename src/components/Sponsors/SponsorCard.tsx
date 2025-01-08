@@ -2,7 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Edit, Eye } from "lucide-react";
+import { Edit, Eye, UserPlus } from "lucide-react";
+import { useState } from "react";
+import { SponsorshipAssociationDialog } from "./SponsorshipAssociationDialog";
 
 interface SponsorCardProps {
   sponsor: any;
@@ -17,6 +19,8 @@ export const SponsorCard = ({
   onViewAlbum,
   onStatusChange 
 }: SponsorCardProps) => {
+  const [showAssociationDialog, setShowAssociationDialog] = useState(false);
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center gap-4">
@@ -28,9 +32,19 @@ export const SponsorCard = ({
           <h3 className="text-lg font-semibold">{sponsor.name}</h3>
           <p className="text-sm text-gray-500">{sponsor.email}</p>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => onEdit(sponsor)}>
-          <Edit className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setShowAssociationDialog(true)}
+            title="Ajouter un enfant"
+          >
+            <UserPlus className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => onEdit(sponsor)}>
+            <Edit className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
@@ -85,6 +99,13 @@ export const SponsorCard = ({
           </div>
         </div>
       </CardContent>
+
+      <SponsorshipAssociationDialog
+        isOpen={showAssociationDialog}
+        onClose={() => setShowAssociationDialog(false)}
+        sponsors={[sponsor]}
+        child={null}
+      />
     </Card>
   );
 };
