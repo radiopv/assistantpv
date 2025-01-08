@@ -48,7 +48,7 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Protected routes */}
-      <Route element={<MainLayout />}>
+      <Route element={<MainLayout>{/* Children will be rendered via Outlet */}</MainLayout>}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />

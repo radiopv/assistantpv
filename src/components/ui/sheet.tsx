@@ -11,11 +11,13 @@ interface SheetProps {
 interface SheetTriggerProps {
   children: React.ReactNode;
   className?: string;
+  asChild?: boolean;
 }
 
 interface SheetContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
+  side?: 'left' | 'right';
 }
 
 interface SheetOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -54,15 +56,17 @@ export const Sheet = ({ children, open, onOpenChange }: SheetProps) => {
   );
 };
 
-export const SheetTrigger = ({ children, className }: SheetTriggerProps) => {
+export const SheetTrigger = ({ children, className, asChild }: SheetTriggerProps) => {
   const { onOpenChange } = React.useContext(SheetContext);
+  const Comp = asChild ? React.Fragment : 'button';
+  
   return (
-    <button 
+    <Comp 
       onClick={() => onOpenChange(true)}
       className={className}
     >
       {children}
-    </button>
+    </Comp>
   );
 };
 
@@ -88,7 +92,7 @@ export const SheetOverlay = React.forwardRef<HTMLDivElement, SheetOverlayProps>(
 SheetOverlay.displayName = "SheetOverlay";
 
 export const SheetContent = React.forwardRef<HTMLDivElement, SheetContentProps>(
-  ({ children, className, ...props }, ref) => {
+  ({ children, className, side = 'right', ...props }, ref) => {
     const { open } = React.useContext(SheetContext);
     if (!open) return null;
 
@@ -96,7 +100,8 @@ export const SheetContent = React.forwardRef<HTMLDivElement, SheetContentProps>(
       <div
         ref={ref}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 h-full w-3/4 bg-cuba-warmBeige p-6 shadow-lg transition-transform duration-300 ease-in-out data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full sm:max-w-sm",
+          "fixed inset-y-0 z-50 h-full w-3/4 bg-cuba-warmBeige p-6 shadow-lg transition-transform duration-300 ease-in-out data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full sm:max-w-sm",
+          side === 'left' ? 'left-0' : 'right-0',
           className
         )}
         {...props}
