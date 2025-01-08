@@ -17,6 +17,7 @@ import Settings from "@/pages/Settings";
 import Donations from "@/pages/Donations";
 import AddDonation from "@/pages/AddDonation";
 import AssistantPhotos from "@/pages/AssistantPhotos";
+import AssistantSponsorship from "@/pages/AssistantSponsorship";
 import MediaManagement from "@/pages/MediaManagement";
 import AddChild from "@/pages/AddChild";
 import FAQ from "@/pages/public/FAQ";
@@ -69,6 +70,7 @@ export const AppRoutes = () => {
         
         {/* Assistant Features */}
         <Route path="/assistant/photos" element={<AssistantPhotos />} />
+        <Route path="/assistant/sponsorship" element={<AssistantSponsorship />} />
         <Route path="/media-management" element={<MediaManagement />} />
         <Route path="/new-testimonial" element={<NewTestimonial />} />
         

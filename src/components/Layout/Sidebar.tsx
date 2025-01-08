@@ -17,7 +17,8 @@ import {
   CheckCircle2,
   Mail,
   Heart,
-  MapPin
+  MapPin,
+  Link
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -59,6 +60,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
           href: "/assistant/photos",
           label: t("addChildPhotos"),
           icon: Image,
+          show: true,
+        },
+        {
+          href: "/assistant/sponsorship",
+          label: "Association Parrains-Enfants",
+          icon: Link,
           show: true,
         }
       ]
