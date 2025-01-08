@@ -11,6 +11,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Need } from "@/types/needs";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const translations = {
   fr: {
@@ -38,6 +39,7 @@ const translations = {
 export default function AvailableChildren() {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const { user } = useAuth();
   const t = translations[language as keyof typeof translations];
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,7 +110,26 @@ export default function AvailableChildren() {
 
   const handleSponsorClick = async (childId: string) => {
     try {
-      navigate(`/become-sponsor/${childId}`);
+      if (!user) {
+        // If user is not logged in, redirect to sponsorship form
+        navigate(`/become-sponsor/${childId}`);
+        return;
+      }
+
+      // If user is logged in, create a sponsorship request
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          sponsor_id: user.id,
+          full_name: user.name,
+          email: user.email,
+          status: 'pending',
+          terms_accepted: true
+        });
+
+      if (error) throw error;
+
       toast.success(t.sponsorSuccess);
     } catch (error) {
       console.error("Error initiating sponsorship:", error);
