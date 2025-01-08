@@ -13,7 +13,7 @@ export const FeaturedAlbum = () => {
         .select(`
           *,
           children:child_id (name),
-          sponsors:sponsor_id (name, is_anonymous)
+          sponsors:sponsors!album_media_new_sponsor_id_fkey (name, is_anonymous)
         `)
         .eq('is_featured', true)
         .eq('is_approved', true)
