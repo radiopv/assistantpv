@@ -8,6 +8,35 @@ import { AssociationHeader } from "./AssociationHeader";
 import { AssociationGrid } from "./AssociationGrid";
 import { TransferConfirmationDialog } from "./TransferConfirmationDialog";
 
+interface Sponsor {
+  id: string;
+  name: string;
+}
+
+interface Sponsorship {
+  id: string;
+  sponsor: Sponsor;
+}
+
+interface Child {
+  id: string;
+  name: string;
+  age: number;
+  birth_date: string;
+  city: string;
+  comments: string;
+  created_at: string;
+  description: string;
+  end_date: string;
+  gender: string;
+  is_sponsored: boolean;
+  location_id: number;
+  photo_url: string | null;
+  sponsor_id: string | null;
+  sponsor_name: string | null;
+  sponsorships: Sponsorship[];
+}
+
 const AssistantSponsorship = () => {
   const { toast } = useToast();
   const [searchChild, setSearchChild] = useState("");
@@ -15,7 +44,7 @@ const AssistantSponsorship = () => {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [selectedSponsor, setSelectedSponsor] = useState<string | null>(null);
   const [showTransferDialog, setShowTransferDialog] = useState(false);
-  const [currentSponsor, setCurrentSponsor] = useState<any>(null);
+  const [currentSponsor, setCurrentSponsor] = useState<Sponsor | null>(null);
   const { language, setLanguage } = useLanguage();
 
   const { data: children = [], isLoading: isLoadingChildren } = useQuery({
@@ -35,7 +64,7 @@ const AssistantSponsorship = () => {
         `);
 
       if (error) throw error;
-      return data;
+      return data as Child[];
     },
   });
 
@@ -88,8 +117,8 @@ const AssistantSponsorship = () => {
 
     const selectedChildData = children.find((c) => c.id === selectedChild);
     
-    if (selectedChildData?.sponsor) {
-      setCurrentSponsor(selectedChildData.sponsor);
+    if (selectedChildData?.sponsorships[0]?.sponsor) {
+      setCurrentSponsor(selectedChildData.sponsorships[0].sponsor);
       setShowTransferDialog(true);
       return;
     }
