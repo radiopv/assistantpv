@@ -29,7 +29,8 @@ export const FeaturedChildren = () => {
         .from("children")
         .select("*")
         .eq("is_sponsored", false)
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false })
+        .limit(6);
 
       if (error) {
         console.error("Error fetching children:", error);

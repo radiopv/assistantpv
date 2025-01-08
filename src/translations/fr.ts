@@ -45,4 +45,5 @@ export const frenchTranslations = {
   sponsorOf: "parrain de",
   anonymousSponsor: "Parrain anonyme",
   noTestimonials: "Aucun témoignage pour le moment",
+  childrenWaitingForSponsorship: "Enfants en attente de parrainage",
 };
