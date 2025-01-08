@@ -6,10 +6,53 @@ import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Home = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+
+  // Fetch homepage sections
+  const { data: sections, isLoading } = useQuery({
+    queryKey: ['homepage-sections'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('homepage_sections')
+        .select('*');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Find hero section
+  const heroSection = sections?.find(section => section.section_key === 'hero');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen">
+        <section className="relative h-[90vh] bg-cuba-gradient">
+          <div className="container mx-auto h-full">
+            <div className="flex flex-col lg:flex-row h-full">
+              <div className="w-full lg:w-1/2 h-[50vh] lg:h-full relative">
+                <Skeleton className="absolute inset-0" />
+              </div>
+              <div className="w-full lg:w-1/2 p-6 lg:p-12 bg-white/90 backdrop-blur-sm">
+                <div className="max-w-xl mx-auto space-y-8">
+                  <div className="text-center lg:text-left animate-fade-in">
+                    <Skeleton className="h-12 w-3/4 mb-4" />
+                    <Skeleton className="h-6 w-full mb-8" />
+                    <Skeleton className="h-10 w-40" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -33,29 +76,29 @@ const Home = () => {
                 {/* Hero Content */}
                 <div className="text-center lg:text-left animate-fade-in">
                   <h1 className="text-4xl lg:text-5xl font-bold text-primary mb-4">
-                    {t('heroTitle') || "Changez une vie aujourd'hui"}
+                    {heroSection?.title || t('heroTitle')}
                   </h1>
                   <p className="text-xl text-gray-600 mb-8">
-                    {t('heroSubtitle') || "Faites une différence dans la vie d'un enfant cubain"}
+                    {heroSection?.subtitle || t('heroSubtitle')}
                   </p>
                   <Button 
                     onClick={() => navigate("/become-sponsor")}
                     size="lg"
                     className="bg-primary hover:bg-primary-hover text-white transform transition-all duration-300 hover:scale-105"
                   >
-                    {t('becomeSponsor') || "Devenir parrain"}
+                    {t('becomeSponsor')}
                   </Button>
                 </div>
 
                 {/* Featured Testimonials */}
                 <div className="mb-8 animate-fade-in" style={{ animationDelay: '200ms' }}>
-                  <h2 className="text-2xl font-bold mb-4">{t('testimonials') || "Témoignages"}</h2>
+                  <h2 className="text-2xl font-bold mb-4">{t('testimonials')}</h2>
                   <FeaturedTestimonials />
                 </div>
 
                 {/* Featured Album */}
                 <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-                  <h2 className="text-2xl font-bold mb-4">{t('featuredPhotos') || "Photos"}</h2>
+                  <h2 className="text-2xl font-bold mb-4">{t('featuredPhotos')}</h2>
                   <FeaturedAlbum />
                 </div>
               </div>
