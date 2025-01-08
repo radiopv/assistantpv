@@ -18,7 +18,6 @@ interface FormData {
   facebook_url: string;
   is_long_term: boolean;
   is_one_time: boolean;
-  terms_accepted: boolean;
 }
 
 const BecomeSponsor = () => {
@@ -34,8 +33,7 @@ const BecomeSponsor = () => {
     motivation: "",
     facebook_url: "",
     is_long_term: true,
-    is_one_time: false,
-    terms_accepted: false
+    is_one_time: false
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -48,31 +46,19 @@ const BecomeSponsor = () => {
       setFormData(prev => ({ 
         ...prev, 
         is_one_time: !prev.is_one_time,
-        is_long_term: prev.is_one_time // If one_time becomes true, long_term becomes false
+        is_long_term: prev.is_one_time
       }));
     } else if (name === 'is_long_term') {
       setFormData(prev => ({ 
         ...prev, 
         is_long_term: !prev.is_long_term,
-        is_one_time: prev.is_long_term // If long_term becomes true, one_time becomes false
+        is_one_time: prev.is_long_term
       }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: !prev[name as keyof FormData] }));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.terms_accepted) {
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: t("pleaseAcceptTerms"),
-      });
-      return;
-    }
-
     setLoading(true);
     try {
       const { error } = await supabase
@@ -196,19 +182,7 @@ const BecomeSponsor = () => {
                 checked={formData.is_one_time}
                 onCheckedChange={() => handleCheckboxChange('is_one_time')}
               />
-              <Label htmlFor="is_one_time">Je souhaite un parrainage ponctuel (une seule fois)</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms_accepted"
-                required
-                checked={formData.terms_accepted}
-                onCheckedChange={() => handleCheckboxChange('terms_accepted')}
-              />
-              <Label htmlFor="terms_accepted">
-                {t("acceptTerms")}
-              </Label>
+              <Label htmlFor="is_one_time">{t("oneTimeSponsorship")}</Label>
             </div>
 
             <p className="text-sm text-gray-500">

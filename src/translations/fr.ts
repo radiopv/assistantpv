@@ -106,4 +106,23 @@ export const frenchTranslations = {
   errorInvalidChild: "Enfant invalide",
   errorSponsorClick: "Erreur lors de la demande de parrainage",
   learnMore: "En savoir plus",
+
+  // BecomeSponsor translations
+  becomeSponsor: "Devenir parrain",
+  sponsorshipDescription: "Remplissez ce formulaire pour commencer votre parrainage. Nous vous contacterons rapidement.",
+  fullName: "Nom complet",
+  city: "Ville",
+  phone: "Téléphone",
+  email: "Email",
+  facebookUrl: "Lien Facebook (optionnel)",
+  motivation: "Votre motivation",
+  longTermSponsorship: "Je souhaite un parrainage à long terme",
+  oneTimeSponsorship: "Je souhaite un parrainage ponctuel (une seule fois)",
+  submitting: "Envoi en cours...",
+  submitRequest: "Envoyer ma demande",
+  error: "Erreur",
+  success: "Succès",
+  sponsorshipRequestSubmitted: "Votre demande de parrainage a été envoyée avec succès. Nous vous contacterons bientôt.",
+  errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.",
+  sponsorshipTerminationNote: "Note : Vous pourrez mettre fin à votre parrainage à tout moment en nous contactant.",
 };
