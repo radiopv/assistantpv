@@ -65,6 +65,13 @@ export default function AvailableChildren() {
         .from("children")
         .select("*");
 
+      // Convert gender filter from frontend values to database values
+      if (selectedGender === "masculine") {
+        query = query.eq("gender", "M");
+      } else if (selectedGender === "feminine") {
+        query = query.eq("gender", "F");
+      }
+
       // Apply base filters
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
@@ -74,16 +81,12 @@ export default function AvailableChildren() {
         query = query.eq("city", selectedCity);
       }
 
-      // Convert gender filter from frontend values to database values
-      if (selectedGender === "masculine") {
-        query = query.eq("gender", "M");
-      } else if (selectedGender === "feminine") {
-        query = query.eq("gender", "F");
-      }
-
       // Apply age filter as a number
       if (selectedAge !== "all") {
-        query = query.eq("age", parseInt(selectedAge));
+        const ageNumber = parseInt(selectedAge);
+        if (!isNaN(ageNumber)) {
+          query = query.eq("age", ageNumber);
+        }
       }
 
       const { data, error } = await query;
@@ -95,8 +98,11 @@ export default function AvailableChildren() {
 
       // Apply search filter in memory since it's more flexible
       return data.filter(child => {
-        const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesSearch;
+        if (searchTerm) {
+          const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
+          if (!matchesSearch) return false;
+        }
+        return true;
       });
     }
   });
