@@ -982,6 +982,7 @@ export type Database = {
           content: Json | null
           created_at: string | null
           id: string
+          order_index: number | null
           section_key: string
           subtitle: string | null
           title: string | null
@@ -991,6 +992,7 @@ export type Database = {
           content?: Json | null
           created_at?: string | null
           id?: string
+          order_index?: number | null
           section_key: string
           subtitle?: string | null
           title?: string | null
@@ -1000,6 +1002,7 @@ export type Database = {
           content?: Json | null
           created_at?: string | null
           id?: string
+          order_index?: number | null
           section_key?: string
           subtitle?: string | null
           title?: string | null
