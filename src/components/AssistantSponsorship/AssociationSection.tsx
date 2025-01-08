@@ -21,18 +21,18 @@ export function AssociationSection({
   return (
     <div className="mt-8 p-4 border rounded-lg bg-gray-50">
       <h3 className="text-lg font-semibold mb-4">{t("createAssociation")}</h3>
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-        <div className="space-y-2">
-          <p className="font-medium">{t("selectedChild")}:</p>
-          <p className="text-gray-700">
+      <div className="grid md:grid-cols-2 gap-4">
+        <div>
+          <p className="mb-2">{t("selectedChild")}:</p>
+          <p className="font-medium">
             {selectedChild
               ? children.find((c) => c.id === selectedChild)?.name
               : t("noChildSelected")}
           </p>
         </div>
-        <div className="space-y-2">
-          <p className="font-medium">{t("selectedSponsor")}:</p>
-          <p className="text-gray-700">
+        <div>
+          <p className="mb-2">{t("selectedSponsor")}:</p>
+          <p className="font-medium">
             {selectedSponsor
               ? sponsors.find((s) => s.id === selectedSponsor)?.name
               : t("noSponsorSelected")}
@@ -40,7 +40,7 @@ export function AssociationSection({
         </div>
       </div>
       <Button
-        className="mt-6 w-full sm:w-auto"
+        className="mt-4 w-full md:w-auto"
         onClick={onCreateAssociation}
         disabled={!selectedChild || !selectedSponsor}
       >
