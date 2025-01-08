@@ -29,7 +29,11 @@ export default function AvailableChildren() {
         .not("city", "is", null)
         .order('city');
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching cities:", error);
+        throw error;
+      }
+      
       return [...new Set(data.map(item => item.city))];
     }
   });
@@ -43,7 +47,11 @@ export default function AvailableChildren() {
         .not("age", "is", null)
         .order('age');
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching ages:", error);
+        throw error;
+      }
+      
       return [...new Set(data.map(item => item.age))].sort((a, b) => a - b);
     }
   });
@@ -51,24 +59,43 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      const { data, error } = await supabase
+      console.log("Fetching with filters:", { selectedGender, selectedAge });
+      
+      let query = supabase
         .from("children")
         .select("*");
+
+      // Apply base filters
+      if (selectedStatus === "available") {
+        query = query.eq("is_sponsored", false);
+      }
+
+      if (selectedCity !== "all") {
+        query = query.eq("city", selectedCity);
+      }
+
+      // Convert gender filter
+      if (selectedGender !== "all") {
+        const genderValue = selectedGender === "masculine" ? "M" : "F";
+        query = query.eq("gender", genderValue);
+      }
+
+      // Apply age filter
+      if (selectedAge !== "all") {
+        query = query.eq("age", parseInt(selectedAge));
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error("Error fetching children:", error);
         throw error;
       }
 
-      // Apply filters in memory like in the Children component
+      // Apply search filter in memory
       return data.filter(child => {
         const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCity = selectedCity === "all" || child.city === selectedCity;
-        const matchesGender = selectedGender === "all" || child.gender === selectedGender;
-        const matchesAge = selectedAge === "all" || child.age === parseInt(selectedAge);
-        const matchesStatus = selectedStatus === "all" || child.status === selectedStatus;
-
-        return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
+        return matchesSearch;
       });
     }
   });
