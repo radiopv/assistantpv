@@ -42,7 +42,7 @@ export const useChildForm = () => {
 
   const validateForm = (t: any): string | null => {
     if (!formData.name.trim()) return t.nameRequired;
-    if (!["male", "female"].includes(formData.gender)) return t.genderRequired;
+    if (!formData.gender) return t.genderRequired;
     if (!formData.birth_date) return t.birthDateRequired;
     
     const age = calculateAge(formData.birth_date);
