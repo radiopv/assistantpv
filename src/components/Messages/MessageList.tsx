@@ -15,13 +15,20 @@ interface Message {
   recipient_id: string;
   created_at: string;
   is_read: boolean;
+  is_starred: boolean;
+  is_archived: boolean;
   sender?: {
     name: string;
     role: string;
   };
 }
 
-export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Message | null) => void }) => {
+interface MessageListProps {
+  onSelectMessage: (message: Message | null) => void;
+  searchTerm?: string;
+}
+
+export const MessageList = ({ onSelectMessage, searchTerm = "" }: MessageListProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
 
@@ -43,6 +50,46 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
     } catch (error) {
       console.error("Error deleting message:", error);
       toast.error("Erreur lors de la suppression du message");
+    }
+  };
+
+  const handleStarMessage = async (messageId: string, isStarred: boolean) => {
+    try {
+      const { error } = await supabase
+        .from("messages")
+        .update({ is_starred: !isStarred })
+        .eq("id", messageId);
+
+      if (error) throw error;
+
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === messageId ? { ...msg, is_starred: !isStarred } : msg
+        )
+      );
+    } catch (error) {
+      console.error("Error starring message:", error);
+      toast.error("Erreur lors du marquage du message");
+    }
+  };
+
+  const handleArchiveMessage = async (messageId: string, isArchived: boolean) => {
+    try {
+      const { error } = await supabase
+        .from("messages")
+        .update({ is_archived: !isArchived })
+        .eq("id", messageId);
+
+      if (error) throw error;
+
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === messageId ? { ...msg, is_archived: !isArchived } : msg
+        )
+      );
+    } catch (error) {
+      console.error("Error archiving message:", error);
+      toast.error("Erreur lors de l'archivage du message");
     }
   };
 
@@ -74,13 +121,14 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
           sender:sender_id(name, role)
         `);
 
-      // Si c'est un parrain, il ne voit que ses messages avec Vitia
       if (user?.role === "sponsor") {
         query = query.or(`recipient_id.eq.${user?.id},sender_id.eq.${user?.id}`);
-      }
-      // Si c'est Vitia, elle voit tous les messages des parrains
-      else if (user?.name === "Vitia") {
+      } else if (user?.name === "Vitia") {
         query = query.or(`recipient_id.eq.${user?.id},sender_id.eq.${user?.id}`);
+      }
+
+      if (searchTerm) {
+        query = query.or(`subject.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`);
       }
 
       query = query.order("created_at", { ascending: false });
@@ -137,7 +185,7 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
     return () => {
       subscription.unsubscribe();
     };
-  }, [user?.id, user?.role, user?.name]);
+  }, [user?.id, user?.role, user?.name, searchTerm]);
 
   return (
     <Card className="h-[600px] w-full">
@@ -158,6 +206,10 @@ export const MessageList = ({ onSelectMessage }: { onSelectMessage: (message: Me
                 sender={message.sender}
                 createdAt={message.created_at}
                 onDelete={() => handleDeleteMessage(message.id)}
+                onStar={() => handleStarMessage(message.id, message.is_starred)}
+                onArchive={() => handleArchiveMessage(message.id, message.is_archived)}
+                isStarred={message.is_starred}
+                isArchived={message.is_archived}
               />
               <MessageContent 
                 subject={message.subject}
