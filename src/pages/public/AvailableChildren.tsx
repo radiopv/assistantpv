@@ -36,6 +36,7 @@ export default function AvailableChildren() {
 
       // Add name search filter
       if (searchTerm) {
+        console.log("Searching for name:", searchTerm);
         query = query.ilike('name', `%${searchTerm}%`);
       }
 
@@ -63,6 +64,7 @@ export default function AvailableChildren() {
         throw error;
       }
 
+      console.log("Query results:", data);
       return data || [];
     }
   });
