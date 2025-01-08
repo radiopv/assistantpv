@@ -57,6 +57,30 @@ const AssistantSponsorship = () => {
     },
   });
 
+  const handleRemoveSponsorship = async (childId: string) => {
+    try {
+      const { error } = await supabase
+        .from('sponsorships')
+        .delete()
+        .eq('child_id', childId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Le parrainage a été supprimé avec succès",
+      });
+
+    } catch (error) {
+      console.error('Error removing sponsorship:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression du parrainage",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleAssociation = async () => {
     if (!selectedChild || !selectedSponsor) {
       toast({
@@ -139,6 +163,7 @@ const AssistantSponsorship = () => {
           searchTerm={searchChild}
           onSearchChange={setSearchChild}
           onSelectChild={setSelectedChild}
+          onRemoveSponsorship={handleRemoveSponsorship}
         />
 
         <SponsorsList
