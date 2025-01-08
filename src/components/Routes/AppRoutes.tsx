@@ -25,6 +25,7 @@ import FAQ from "@/pages/public/FAQ";
 import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
 import SponsorAlbum from "@/pages/sponsor/SponsorAlbum";
 import SponsorProfile from "@/pages/sponsor/SponsorProfile";
+import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 
 // Admin pages
 import Statistics from "@/pages/admin/Statistics";
@@ -53,6 +54,7 @@ const AppRoutes = () => {
         <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
         <Route path="/sponsor-album" element={<SponsorAlbum />} />
         <Route path="/sponsor-profile" element={<SponsorProfile />} />
+        <Route path="/testimonials/new" element={<NewTestimonial />} />
       </Route>
 
       <Route element={<MainLayout />}>
