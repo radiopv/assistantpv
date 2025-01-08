@@ -20,10 +20,11 @@ import {
   User,
   LayoutDashboard,
   Image,
-  UserPlus
+  UserPlus,
+  Link
 } from "lucide-react";
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const MainLayout = () => {
@@ -42,7 +43,7 @@ const MainLayout = () => {
     { icon: Users, label: 'Enfants', path: '/children' },
     { icon: UserPlus, label: 'Ajouter un enfant', path: '/children/add' },
     { icon: Image, label: 'Photos', path: '/assistant/photos' },
-    { icon: Heart, label: 'Association Parrains-Enfants', path: '/assistant/sponsorship' },
+    { icon: Link, label: 'Association Parrains-Enfants', path: '/assistant/sponsorship' },
     { icon: Gift, label: 'Donations', path: '/donations-management' },
     { icon: UserPlus, label: 'Ajouter une donation', path: '/donations/add' },
     { icon: MessageSquare, label: 'Messages', path: '/messages' },
@@ -94,7 +95,7 @@ const MainLayout = () => {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
         <nav className="flex justify-around items-center h-16 overflow-x-auto">
           {mobileNavItems.map((item) => (
-            <Link
+            <RouterLink
               key={item.path}
               to={item.path}
               className={`flex flex-col items-center p-2 min-w-[72px] ${
@@ -105,7 +106,7 @@ const MainLayout = () => {
             >
               <item.icon className="h-5 w-5" />
               <span className="text-xs mt-1 text-center">{item.label}</span>
-            </Link>
+            </RouterLink>
           ))}
         </nav>
       </div>
