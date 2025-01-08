@@ -14,7 +14,7 @@ import {
 import { ChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
 import { SponsorsList } from "@/components/AssistantSponsorship/SponsorsList";
 import { AssociationSection } from "@/components/AssistantSponsorship/AssociationSection";
-import { useSponsorship } from "@/hooks/useSponsorship";
+import { useSponsorship } from "@/hooks/useSponsorship.tsx"; // Fixed import path with .tsx extension
 
 export default function AssistantSponsorship() {
   const [searchChild, setSearchChild] = useState("");
