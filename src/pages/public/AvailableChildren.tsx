@@ -7,6 +7,7 @@ import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { AvailableChildrenGrid } from "@/components/Children/AvailableChildrenGrid";
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { differenceInYears, parseISO } from "date-fns";
 
 interface CategorizedChildren {
   infants: any[];
@@ -28,13 +29,13 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      console.log("Fetching with filters:", { selectedGender, selectedAge, selectedCity });
+      console.log("Fetching children with filters:", { selectedGender, selectedAge, selectedCity });
       
       let query = supabase
         .from("children")
         .select("*");
 
-      // Apply base filters
+      // Appliquer les filtres de base
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
       }
@@ -55,7 +56,7 @@ export default function AvailableChildren() {
         throw error;
       }
 
-      // Log the fetched data for debugging
+      // Log des données récupérées pour le débogage
       console.log("Fetched children data:", data);
 
       return data;
@@ -78,12 +79,11 @@ export default function AvailableChildren() {
         return acc;
       }
 
-      const birthDate = new Date(child.birth_date);
-      const today = new Date();
-      const ageInYears = today.getFullYear() - birthDate.getFullYear();
+      const birthDate = parseISO(child.birth_date);
+      const ageInYears = differenceInYears(new Date(), birthDate);
       
-      // Log age calculation for debugging
-      console.log(`Age calculation for ${child.name}:`, ageInYears);
+      // Log du calcul d'âge pour le débogage
+      console.log(`Calcul de l'âge pour ${child.name}:`, ageInYears);
 
       if (ageInYears <= 2) {
         acc.infants = acc.infants || [];
