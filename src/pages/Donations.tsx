@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Globe } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,7 +20,7 @@ const Donations = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<string>("date");
   const { user } = useAuth();
-  const { language } = useLanguage();
+  const { language, setLanguage } = useLanguage();
 
   const translations = {
     fr: {
@@ -30,7 +30,8 @@ const Donations = () => {
       addDonation: "Ajouter un don",
       noDonationsFound: "Aucun don trouvé",
       loading: "Chargement...",
-      error: "Une erreur est survenue"
+      error: "Une erreur est survenue",
+      toggleLanguage: "Changer de langue"
     },
     es: {
       donationsTitle: "Donaciones",
@@ -39,7 +40,8 @@ const Donations = () => {
       addDonation: "Agregar donación",
       noDonationsFound: "No se encontraron donaciones",
       loading: "Cargando...",
-      error: "Ha ocurrido un error"
+      error: "Ha ocurrido un error",
+      toggleLanguage: "Cambiar idioma"
     }
   };
 
@@ -145,13 +147,23 @@ const Donations = () => {
           <h1 className="text-3xl font-bold text-gray-900">{t.donationsTitle}</h1>
           <p className="text-gray-600 mt-2">{t.donationsSubtitle}</p>
         </div>
-        <Button 
-          className="bg-primary hover:bg-primary/90"
-          onClick={() => setShowForm(!showForm)}
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          {showForm ? t.close : t.addDonation}
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setLanguage(language === 'fr' ? 'es' : 'fr')}
+            title={t.toggleLanguage}
+          >
+            <Globe className="h-4 w-4" />
+          </Button>
+          <Button 
+            className="bg-primary hover:bg-primary/90"
+            onClick={() => setShowForm(!showForm)}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            {showForm ? t.close : t.addDonation}
+          </Button>
+        </div>
       </div>
 
       {donations && <DonationStats donations={donations} />}
