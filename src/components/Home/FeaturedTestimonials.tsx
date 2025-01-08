@@ -45,7 +45,7 @@ export const FeaturedTestimonials = () => {
   }
 
   if (!testimonials?.length) {
-    return <p className="text-gray-500">{t('noTestimonials') || "Aucun témoignage pour le moment"}</p>;
+    return <p className="text-gray-500">{t('noTestimonials')}</p>;
   }
 
   return (
