@@ -82,6 +82,11 @@ export const SidebarNav = () => {
       label: "Parrainages",
       icon: UserPlus,
     },
+    {
+      href: "/admin/sponsorship-management",
+      label: "Gestion des parrainages",
+      icon: UserPlus,
+    },
   ];
 
   const adminMenuItems = [
