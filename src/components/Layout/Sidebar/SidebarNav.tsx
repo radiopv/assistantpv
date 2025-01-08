@@ -19,6 +19,7 @@ import {
   Bell,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface SidebarLinkProps {
   href: string;
@@ -44,147 +45,127 @@ const SidebarLink = ({ href, label, icon: Icon, end }: SidebarLinkProps) => (
   </NavLink>
 );
 
-const sponsorLinks = [
-  {
-    href: "/dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/children",
-    label: "Enfants",
-    icon: Users,
-  },
-  {
-    href: "/donations",
-    label: "Dons",
-    icon: Gift,
-  },
-  {
-    href: "/assistant-photos",
-    label: "Photos",
-    icon: Image,
-  },
-  {
-    href: "/assistant-sponsorship",
-    label: "Parrainages",
-    icon: UserPlus,
-  },
-  {
-    href: "/messages",
-    label: "Messages",
-    icon: MessageSquare,
-  },
-  {
-    href: "/tasks",
-    label: "Tâches",
-    icon: CheckSquare,
-  },
-];
-
-const assistantLinks = [
-  {
-    href: "/dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/children",
-    label: "Enfants",
-    icon: Users,
-  },
-  {
-    href: "/donations",
-    label: "Dons",
-    icon: Gift,
-  },
-  {
-    href: "/assistant-photos",
-    label: "Photos",
-    icon: Image,
-  },
-  {
-    href: "/assistant-sponsorship",
-    label: "Parrainages",
-    icon: UserPlus,
-  },
-  {
-    href: "/messages",
-    label: "Messages",
-    icon: MessageSquare,
-  },
-  {
-    href: "/tasks",
-    label: "Tâches",
-    icon: CheckSquare,
-  },
-];
-
-const adminLinks = [
-  {
-    href: "/dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/admin/sponsorship-management",
-    label: "Gestion des parrainages",
-    icon: UserPlus,
-  },
-  {
-    href: "/admin/emails",
-    label: "Emails",
-    icon: Mail,
-  },
-  {
-    href: "/admin/translations",
-    label: "Traductions",
-    icon: Languages,
-  },
-  {
-    href: "/admin/notifications",
-    label: "Notifications",
-    icon: Bell,
-  },
-  {
-    href: "/admin/faq",
-    label: "FAQ",
-    icon: FileText,
-  },
-  {
-    href: "/admin/home-content-management",
-    label: "Contenu accueil",
-    icon: Home,
-  },
-  {
-    href: "/admin/link-checker",
-    label: "Vérificateur de liens",
-    icon: LinkIcon,
-  },
-  {
-    href: "/admin/validation",
-    label: "Validation",
-    icon: AlertTriangle,
-  },
-  {
-    href: "/settings",
-    label: "Paramètres",
-    icon: Settings,
-  },
-];
-
 export const SidebarNav = () => {
   const { t } = useLanguage();
+  const { user } = useAuth();
+
+  const isAdmin = user?.role === 'admin';
+  const isAssistant = user?.role === 'assistant';
+  const isSponsor = user?.role === 'sponsor';
+
+  const commonLinks = [
+    {
+      href: "/dashboard",
+      label: "Tableau de bord",
+      icon: LayoutDashboard,
+      show: true,
+    },
+    {
+      href: "/children",
+      label: "Enfants",
+      icon: Users,
+      show: true,
+    },
+    {
+      href: "/donations",
+      label: "Dons",
+      icon: Gift,
+      show: true,
+    },
+  ];
+
+  const sponsorLinks = [
+    {
+      href: "/messages",
+      label: "Messages",
+      icon: MessageSquare,
+      show: isSponsor,
+    },
+    {
+      href: "/tasks",
+      label: "Tâches",
+      icon: CheckSquare,
+      show: isSponsor,
+    },
+  ];
+
+  const assistantLinks = [
+    {
+      href: "/assistant-photos",
+      label: "Photos",
+      icon: Image,
+      show: isAssistant,
+    },
+    {
+      href: "/assistant-sponsorship",
+      label: "Parrainages",
+      icon: UserPlus,
+      show: isAssistant,
+    },
+  ];
+
+  const adminLinks = [
+    {
+      href: "/admin/sponsorship-management",
+      label: "Gestion des parrainages",
+      icon: UserPlus,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/emails",
+      label: "Emails",
+      icon: Mail,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/translations",
+      label: "Traductions",
+      icon: Languages,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/notifications",
+      label: "Notifications",
+      icon: Bell,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/faq",
+      label: "FAQ",
+      icon: FileText,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/home-content-management",
+      label: "Contenu accueil",
+      icon: Home,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/link-checker",
+      label: "Vérificateur de liens",
+      icon: LinkIcon,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/validation",
+      label: "Validation",
+      icon: AlertTriangle,
+      show: isAdmin,
+    },
+    {
+      href: "/settings",
+      label: "Paramètres",
+      icon: Settings,
+      show: isAdmin,
+    },
+  ];
+
+  const allLinks = [...commonLinks, ...sponsorLinks, ...assistantLinks, ...adminLinks].filter(link => link.show);
 
   return (
     <nav className="space-y-2 px-4">
-      {sponsorLinks.map((link) => (
-        <SidebarLink key={link.href} {...link} />
-      ))}
-      {assistantLinks.map((link) => (
-        <SidebarLink key={link.href} {...link} />
-      ))}
-      {adminLinks.map((link) => (
+      {allLinks.map((link) => (
         <SidebarLink key={link.href} {...link} />
       ))}
     </nav>
