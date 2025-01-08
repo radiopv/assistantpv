@@ -33,20 +33,20 @@ export default {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        foreground: "#333333", // Changed to a darker color
         primary: {
           DEFAULT: "#FF6F61", // Cuban Coral Red
-          foreground: "#FFFFFF",
+          foreground: "#333333", // Changed to darker color
           hover: "#FF8C42", // Cuban Orange
         },
         secondary: {
           DEFAULT: "#FFD966", // Cuban Pastel Yellow
-          foreground: "#333333",
+          foreground: "#333333", // Changed to darker color
           hover: "#FFE599",
         },
         accent: {
           DEFAULT: "#00B8D4", // Cuban Turquoise
-          foreground: "#FFFFFF",
+          foreground: "#333333", // Changed to darker color
           hover: "#00A0BA",
         },
         cuba: {
@@ -56,20 +56,20 @@ export default {
           mint: "#6DD47E",      // Tropical Mint
           orange: "#FF8C42",    // Intense Orange
           sand: "#F4E3C1",      // Soft Sand Beige
-          text: "#333333",      // Soft Black
-          textLight: "#666666", // Light Gray
+          text: "#333333",      // Darker text color
+          textLight: "#666666", // Darker light text
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          foreground: "#333333", // Changed to darker color
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          foreground: "#666666", // Changed to darker color
         },
         card: {
           DEFAULT: "#F4E3C1", // Using Cuban Sand color
-          foreground: "#333333",
+          foreground: "#333333", // Changed to darker color
         },
       },
       borderRadius: {
