@@ -33,6 +33,7 @@ export default function AssistantSponsorship() {
         .select(`
           *,
           sponsorships (
+            id,
             sponsor:sponsors (
               id,
               name
