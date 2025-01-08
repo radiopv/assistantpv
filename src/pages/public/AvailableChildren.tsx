@@ -40,12 +40,13 @@ export default function AvailableChildren() {
         query = query.ilike('name', `%${searchTerm}%`);
       }
 
+      // Status filter
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
       } else if (selectedStatus === "urgent") {
         query = query
           .eq("is_sponsored", false)
-          .contains('needs', [{ is_urgent: true }]);
+          .contains('needs', [{ "is_urgent": true }].map(JSON.stringify));
       }
 
       if (selectedCity !== "all") {
