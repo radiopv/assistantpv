@@ -8,6 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
+import { Switch } from "@/components/ui/switch";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Edit, Eye } from "lucide-react";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -38,6 +42,27 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
       );
     } catch (error) {
       console.error('Error updating sponsor verification:', error);
+    }
+  };
+
+  const handleStatusChange = async (sponsorId: string, field: string, value: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('sponsors')
+        .update({ [field]: value })
+        .eq('id', sponsorId);
+
+      if (error) throw error;
+      
+      setSponsors(prevSponsors =>
+        prevSponsors.map(s =>
+          s.id === sponsorId
+            ? { ...s, [field]: value }
+            : s
+        )
+      );
+    } catch (error) {
+      console.error('Error updating sponsor status:', error);
     }
   };
 
@@ -94,14 +119,47 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
           {filterAndSortSponsors(sponsors, true).map((sponsor) => (
             <Card key={sponsor.id} className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">Vérifié</span>
-                  <Checkbox
-                    checked={sponsor.is_verified}
-                    onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked)}
-                  />
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={sponsor.photo_url} alt={sponsor.name} />
+                    <AvatarFallback>{sponsor.name?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold">{sponsor.name}</h3>
+                    <p className="text-sm text-gray-500">{sponsor.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Vérifié</span>
+                    <Checkbox
+                      checked={sponsor.is_verified}
+                      onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked as boolean)}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Statut</span>
+                    <Switch
+                      checked={sponsor.is_active}
+                      onCheckedChange={(checked) => handleStatusChange(sponsor.id, 'is_active', checked)}
+                    />
+                  </div>
                 </div>
               </div>
+
+              <div className="grid gap-2 mb-4">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <p className="font-medium">Ville</p>
+                    <p className="text-gray-500">{sponsor.city || 'Non spécifié'}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Téléphone</p>
+                    <p className="text-gray-500">{sponsor.phone || 'Non spécifié'}</p>
+                  </div>
+                </div>
+              </div>
+
               <SponsorshipAccordion
                 sponsor={sponsor}
                 onUpdate={() => {
@@ -124,14 +182,47 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
           {filterAndSortSponsors(sponsors, false).map((sponsor) => (
             <Card key={sponsor.id} className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">Vérifié</span>
-                  <Checkbox
-                    checked={sponsor.is_verified}
-                    onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked)}
-                  />
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={sponsor.photo_url} alt={sponsor.name} />
+                    <AvatarFallback>{sponsor.name?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold">{sponsor.name}</h3>
+                    <p className="text-sm text-gray-500">{sponsor.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Vérifié</span>
+                    <Checkbox
+                      checked={sponsor.is_verified}
+                      onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked as boolean)}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">Statut</span>
+                    <Switch
+                      checked={sponsor.is_active}
+                      onCheckedChange={(checked) => handleStatusChange(sponsor.id, 'is_active', checked)}
+                    />
+                  </div>
                 </div>
               </div>
+
+              <div className="grid gap-2 mb-4">
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <p className="font-medium">Ville</p>
+                    <p className="text-gray-500">{sponsor.city || 'Non spécifié'}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium">Téléphone</p>
+                    <p className="text-gray-500">{sponsor.phone || 'Non spécifié'}</p>
+                  </div>
+                </div>
+              </div>
+
               <SponsorshipAccordion
                 sponsor={sponsor}
                 onUpdate={() => {
