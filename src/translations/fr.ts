@@ -67,6 +67,7 @@ export const frenchTranslations = {
   comments: "Commentaires",
   story: "Histoire",
   needs: "Besoins",
+  noUrgentChildren: "Aucun enfant avec des besoins urgents n'a été trouvé",
 
   // Status translations
   available: "Disponible",
@@ -111,9 +112,6 @@ export const frenchTranslations = {
   becomeSponsor: "Devenir parrain",
   sponsorshipDescription: "Remplissez ce formulaire pour commencer votre parrainage. Nous vous contacterons rapidement.",
   fullName: "Nom complet",
-  city: "Ville",
-  phone: "Téléphone",
-  email: "Email",
   facebookUrl: "Lien Facebook (optionnel)",
   motivation: "Votre motivation",
   longTermSponsorship: "Je souhaite un parrainage à long terme",

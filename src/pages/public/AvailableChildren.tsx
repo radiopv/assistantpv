@@ -34,7 +34,6 @@ export default function AvailableChildren() {
         .from("children")
         .select("*");
 
-      // Add name search filter
       if (searchTerm) {
         console.log("Searching for name:", searchTerm);
         query = query.ilike('name', `%${searchTerm}%`);
@@ -46,7 +45,7 @@ export default function AvailableChildren() {
       } else if (selectedStatus === "urgent") {
         query = query
           .eq("is_sponsored", false)
-          .contains('needs', [{ "is_urgent": true }].map(JSON.stringify));
+          .contains('needs', [{ is_urgent: true }]);
       }
 
       if (selectedCity !== "all") {
@@ -89,7 +88,7 @@ export default function AvailableChildren() {
       const birthDate = parseISO(child.birth_date);
       const ageInYears = differenceInYears(new Date(), birthDate);
       
-      console.log(`Calcul de l'âge pour ${child.name}:`, ageInYears);
+      console.log(`Age calculation for ${child.name}:`, ageInYears);
 
       if (ageInYears <= 2) {
         acc.infants = acc.infants || [];
@@ -175,7 +174,7 @@ export default function AvailableChildren() {
 
       {!filteredChildren?.length && (
         <div className="text-center py-8 text-gray-500">
-          {t("noCategoryChildren")}
+          {selectedStatus === "urgent" ? t("noUrgentChildren") : t("noCategoryChildren")}
         </div>
       )}
     </div>
