@@ -58,9 +58,7 @@ const SponsorDashboard = () => {
     return <div className="container mx-auto p-4">Chargement...</div>;
   }
 
-  const sponsoredChild = sponsorships?.[0]?.children;
-
-  if (!sponsoredChild) {
+  if (!sponsorships?.length) {
     return (
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Mon Espace Parrain</h1>
@@ -79,11 +77,19 @@ const SponsorDashboard = () => {
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
       <div className="grid md:grid-cols-2 gap-6">
-        <SponsoredChildCard child={sponsoredChild} />
-        <ImportantDatesCard 
-          birthDate={sponsoredChild.birth_date} 
-          plannedVisits={plannedVisits || []} 
-        />
+        {sponsorships.map((sponsorship) => (
+          <SponsoredChildCard key={sponsorship.id} child={sponsorship.children} />
+        ))}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        {sponsorships.map((sponsorship) => (
+          <ImportantDatesCard 
+            key={sponsorship.id}
+            birthDate={sponsorship.children.birth_date} 
+            plannedVisits={plannedVisits?.filter(v => v.child_id === sponsorship.children.id) || []} 
+          />
+        ))}
       </div>
 
       <Tabs defaultValue="actions" className="w-full">
@@ -98,9 +104,14 @@ const SponsorDashboard = () => {
         </TabsContent>
 
         <TabsContent value="gallery" className="space-y-4">
-          <Card className="p-6">
-            <AlbumMediaGrid childId={sponsoredChild.id} />
-          </Card>
+          <div className="grid gap-6">
+            {sponsorships.map((sponsorship) => (
+              <Card key={sponsorship.id} className="p-6">
+                <h3 className="text-lg font-semibold mb-4">Album de {sponsorship.children.name}</h3>
+                <AlbumMediaGrid childId={sponsorship.children.id} />
+              </Card>
+            ))}
+          </div>
         </TabsContent>
 
         <TabsContent value="visits" className="space-y-4">
