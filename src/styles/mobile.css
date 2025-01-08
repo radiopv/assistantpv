@@ -33,7 +33,7 @@
     input[type="password"],
     textarea {
       @apply w-full py-3 px-4;
-      font-size: 16px;
+      font-size: 16px; /* Prevents zoom on iOS */
     }
 
     /* Better table handling on mobile */

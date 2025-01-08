@@ -1,28 +1,17 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 
-interface SidebarHeaderProps {
-  onClose?: () => void;
-  isMobile?: boolean;
-}
-
-export const SidebarHeader = ({ onClose, isMobile }: SidebarHeaderProps) => {
+export const SidebarHeader = () => {
   return (
-    <div className="p-6 flex justify-between items-center">
-      <Link to="/" onClick={onClose}>
-        <h1 className="text-xl font-bold">Passion Varadero</h1>
+    <div className="p-6">
+      <Link to="/" className="flex items-center gap-2">
+        <img 
+          src="/logo.png" 
+          alt="Logo" 
+          className="w-8 h-8"
+          loading="lazy"
+        />
+        <span className="font-semibold text-xl">Passion Varadero</span>
       </Link>
-      {isMobile && (
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="md:hidden"
-          onClick={onClose}
-        >
-          <X className="h-6 w-6" />
-        </Button>
-      )}
     </div>
   );
 };
