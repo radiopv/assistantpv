@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { AvailableChildrenGrid } from "@/components/Children/AvailableChildrenGrid";
 import { useState, useMemo } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { differenceInYears, parseISO } from "date-fns";
 
 interface CategorizedChildren {
@@ -123,6 +122,21 @@ export default function AvailableChildren() {
     }
   };
 
+  const filteredChildren = useMemo(() => {
+    if (selectedAge === "all") {
+      return children;
+    }
+    
+    const ageRanges = {
+      "0-2": categorizedChildren.infants,
+      "3-5": categorizedChildren.toddlers,
+      "6-12": categorizedChildren.children,
+      "13+": categorizedChildren.teens
+    };
+    
+    return ageRanges[selectedAge as keyof typeof ageRanges] || [];
+  }, [children, selectedAge, categorizedChildren]);
+
   return (
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold text-center mb-8">
@@ -141,47 +155,22 @@ export default function AvailableChildren() {
         onAgeChange={setSelectedAge}
         onStatusChange={setSelectedStatus}
         cities={[]}
-        ages={[]}
+        ages={["0-2", "3-5", "6-12", "13+"]}
       />
 
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="all">{t("allAges")}</TabsTrigger>
-          <TabsTrigger value="infants">{t("infants")}</TabsTrigger>
-          <TabsTrigger value="toddlers">{t("toddlers")}</TabsTrigger>
-          <TabsTrigger value="children">{t("children")}</TabsTrigger>
-          <TabsTrigger value="teens">{t("teens")}</TabsTrigger>
-        </TabsList>
+      {!isLoading && filteredChildren && (
+        <AvailableChildrenGrid 
+          children={filteredChildren}
+          isLoading={isLoading}
+          onSponsorClick={handleSponsorClick}
+        />
+      )}
 
-        <TabsContent value="all">
-          <AvailableChildrenGrid 
-            children={children}
-            isLoading={isLoading}
-            onSponsorClick={handleSponsorClick}
-          />
-        </TabsContent>
-
-        {Object.entries({
-          infants: categorizedChildren.infants,
-          toddlers: categorizedChildren.toddlers,
-          children: categorizedChildren.children,
-          teens: categorizedChildren.teens
-        }).map(([category, categoryChildren]) => (
-          <TabsContent key={category} value={category}>
-            {categoryChildren?.length > 0 ? (
-              <AvailableChildrenGrid 
-                children={categoryChildren}
-                isLoading={isLoading}
-                onSponsorClick={handleSponsorClick}
-              />
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                {t("noCategoryChildren")}
-              </div>
-            )}
-          </TabsContent>
-        ))}
-      </Tabs>
+      {!filteredChildren?.length && (
+        <div className="text-center py-8 text-gray-500">
+          {t("noCategoryChildren")}
+        </div>
+      )}
     </div>
   );
 }
