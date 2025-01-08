@@ -26,7 +26,6 @@ const Home = () => {
     }
   });
 
-  // Find hero section
   const heroSection = sections?.find(section => section.section_key === 'hero');
 
   if (isLoading) {
@@ -89,18 +88,6 @@ const Home = () => {
                     {t('becomeSponsor')}
                   </Button>
                 </div>
-
-                {/* Featured Testimonials */}
-                <div className="mb-8 animate-fade-in" style={{ animationDelay: '200ms' }}>
-                  <h2 className="text-2xl font-bold mb-4">{t('testimonials')}</h2>
-                  <FeaturedTestimonials />
-                </div>
-
-                {/* Featured Album */}
-                <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-                  <h2 className="text-2xl font-bold mb-4">{t('featuredPhotos')}</h2>
-                  <FeaturedAlbum />
-                </div>
               </div>
             </div>
           </div>
@@ -108,13 +95,44 @@ const Home = () => {
       </section>
 
       {/* Featured Children Section */}
-      <FeaturedChildren />
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <FeaturedChildren />
+        </div>
+      </section>
+
+      {/* Testimonials and Album Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Featured Testimonials */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold mb-4">{t('testimonials')}</h2>
+              <FeaturedTestimonials />
+            </div>
+
+            {/* Featured Album */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold mb-4">{t('featuredPhotos')}</h2>
+              <FeaturedAlbum />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* How It Works Section */}
-      <HowItWorks />
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <HowItWorks />
+        </div>
+      </section>
 
       {/* Call to Action Section */}
-      <CallToAction />
+      <section className="py-16 bg-primary/5">
+        <div className="container mx-auto px-4">
+          <CallToAction />
+        </div>
+      </section>
     </div>
   );
 };
