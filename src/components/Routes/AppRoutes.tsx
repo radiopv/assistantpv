@@ -1,86 +1,60 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import MainLayout from "@/components/Layout/MainLayout";
-import PublicLayout from "@/components/Layout/PublicLayout";
-
-// Public pages
-import Home from "@/pages/Home";
-import Login from "@/pages/auth/Login";
-import FAQ from "@/pages/public/FAQ";
-import AvailableChildren from "@/pages/public/AvailableChildren";
-
-// Protected pages
+import { Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "./ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
+import Login from "@/pages/Login";
+import Register from "@/pages/Register";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
+import Profile from "@/pages/Profile";
 import Children from "@/pages/Children";
-import AddChild from "@/pages/AddChild";
 import ChildProfile from "@/pages/ChildProfile";
-import ChildDetails from "@/pages/ChildDetails";
+import Sponsorships from "@/pages/Sponsorships";
+import SponsorshipRequests from "@/pages/SponsorshipRequests";
 import Donations from "@/pages/Donations";
-import AddDonation from "@/pages/AddDonation";
-import Settings from "@/pages/Settings";
-import Tasks from "@/pages/Tasks";
-import AssistantPhotos from "@/pages/AssistantPhotos";
-import MediaManagement from "@/pages/MediaManagement";
-import BecomeSponsor from "@/pages/BecomeSponsor";
-import SponsorDashboard from "@/pages/SponsorDashboard";
-import PublicDonations from "@/pages/public/PublicDonations";
-import NewTestimonial from "@/pages/testimonials/NewTestimonial";
-import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
-import Translations from "@/pages/admin/Translations";
-import Validation from "@/pages/admin/Validation";
-import Statistics from "@/pages/admin/Statistics";
-import Emails from "@/pages/admin/Emails";
-import AdminFAQ from "@/pages/admin/FAQ";
-import CitiesManagement from "@/pages/admin/CitiesManagement";
-import Notifications from "@/pages/admin/Notifications";
-import LinkChecker from "@/pages/admin/LinkChecker";
+import DonationDetails from "@/pages/DonationDetails";
 import Messages from "@/pages/Messages";
+import Notifications from "@/pages/Notifications";
+import Settings from "@/pages/Settings";
+import NotFound from "@/pages/NotFound";
+import AvailableChildren from "@/pages/public/AvailableChildren";
+import ChildDetails from "@/pages/ChildDetails";
+import ChildrenManagement from "@/pages/admin/ChildrenManagement";
 
 export const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+      
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/children" element={<Children />} />
+      <Route path="/child/:id" element={<ChildProfile />} />
+      <Route path="/sponsorships" element={<Sponsorships />} />
+      <Route path="/sponsorship-requests" element={<SponsorshipRequests />} />
+      <Route path="/donations" element={<Donations />} />
+      <Route path="/donation/:id" element={<DonationDetails />} />
+      <Route path="/messages" element={<Messages />} />
+      <Route path="/notifications" element={<Notifications />} />
+      <Route path="/settings" element={<Settings />} />
+      
       {/* Public routes */}
-      <Route element={<PublicLayout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/faq" element={<FAQ />} />
-        <Route path="/available-children" element={<AvailableChildren />} />
-        <Route path="/public-donations" element={<PublicDonations />} />
-      </Route>
-
-      {/* Protected routes */}
-      <Route element={<MainLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/children" element={<Children />} />
-        <Route path="/children/add" element={<AddChild />} />
-        <Route path="/children/:id" element={<ChildProfile />} />
-        <Route path="/child/:id" element={<ChildDetails />} />
-        <Route path="/donations" element={<Donations />} />
-        <Route path="/donations/add" element={<AddDonation />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/tasks" element={<Tasks />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/assistant-photos" element={<AssistantPhotos />} />
-        <Route path="/media-management" element={<MediaManagement />} />
-        <Route path="/become-sponsor" element={<BecomeSponsor />} />
-        <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
-        <Route path="/testimonials/new" element={<NewTestimonial />} />
-
-        {/* Admin routes */}
-        <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
-        <Route path="/admin/translations" element={<Translations />} />
-        <Route path="/admin/validation" element={<Validation />} />
-        <Route path="/admin/statistics" element={<Statistics />} />
-        <Route path="/admin/emails" element={<Emails />} />
-        <Route path="/admin/faq" element={<AdminFAQ />} />
-        <Route path="/admin/cities" element={<CitiesManagement />} />
-        <Route path="/admin/notifications" element={<Notifications />} />
-        <Route path="/admin/link-checker" element={<LinkChecker />} />
-      </Route>
-
-      {/* Catch all redirect to home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/available-children" element={<AvailableChildren />} />
+      <Route path="/child/:id" element={<ChildDetails />} />
+      
+      {/* Admin routes */}
+      <Route
+        path="/admin/children"
+        element={
+          <ProtectedRoute roles={["admin", "assistant"]}>
+            <ChildrenManagement />
+          </ProtectedRoute>
+        }
+      />
+      
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
-
-export default AppRoutes;
