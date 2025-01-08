@@ -44,8 +44,9 @@ const PublicLayout = () => {
     }
   ];
 
-  const isAdminOrAssistant = user?.role === 'admin' || user?.role === 'assistant';
-  const isSponsor = user?.role === 'sponsor';
+  const isAdmin = user?.role === 'admin';
+  const isAssistant = user?.role === 'assistant';
+  const isSponsor = user?.role === 'sponsor' || (isAdmin && user?.children_sponsored?.length > 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -74,23 +75,24 @@ const PublicLayout = () => {
                   </Link>
                 ))}
                 {session ? (
-                  <>
-                    {isAdminOrAssistant ? (
+                  <div className="space-y-2">
+                    {(isAdmin || isAssistant) && (
                       <Link to="/dashboard">
                         <Button className="w-full">
                           <LayoutDashboard className="mr-2 h-4 w-4" />
                           {t("dashboard")}
                         </Button>
                       </Link>
-                    ) : isSponsor ? (
+                    )}
+                    {isSponsor && (
                       <Link to="/sponsor-dashboard">
                         <Button className="w-full">
                           <User className="mr-2 h-4 w-4" />
                           {t("profile")}
                         </Button>
                       </Link>
-                    ) : null}
-                  </>
+                    )}
+                  </div>
                 ) : (
                   <Link to="/login">
                     <Button className="w-full">{t("login")}</Button>
@@ -123,24 +125,25 @@ const PublicLayout = () => {
                 ))}
               </nav>
             </div>
-            <div>
+            <div className="flex items-center space-x-4">
               {session ? (
                 <>
-                  {isAdminOrAssistant ? (
+                  {(isAdmin || isAssistant) && (
                     <Link to="/dashboard">
                       <Button>
                         <LayoutDashboard className="mr-2 h-4 w-4" />
                         {t("dashboard")}
                       </Button>
                     </Link>
-                  ) : isSponsor ? (
+                  )}
+                  {isSponsor && (
                     <Link to="/sponsor-dashboard">
                       <Button>
                         <User className="mr-2 h-4 w-4" />
                         {t("profile")}
                       </Button>
                     </Link>
-                  ) : null}
+                  )}
                 </>
               ) : (
                 <Link to="/login">
