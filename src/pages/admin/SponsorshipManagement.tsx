@@ -1,16 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, UserPlus } from "lucide-react";
 import { SponsorsList } from "@/components/Sponsors/SponsorsList";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchInput } from "@/components/ui/search-input";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { SponsorshipAssociationDialog } from "@/components/Sponsors/SponsorshipAssociationDialog";
 
 const SponsorshipManagement = () => {
   const { t } = useLanguage();
   const [childSearchTerm, setChildSearchTerm] = useState("");
+  const [selectedChild, setSelectedChild] = useState<any>(null);
   
   const { data: sponsors, isLoading: sponsorsLoading } = useQuery({
     queryKey: ['sponsors'],
@@ -116,31 +119,43 @@ const SponsorshipManagement = () => {
             <div className="grid gap-4">
               {filteredChildren?.map((child) => (
                 <Card key={child.id} className="p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200">
-                      {child.photo_url ? (
-                        <img 
-                          src={child.photo_url} 
-                          alt={child.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-500">
-                          {child.name?.charAt(0)}
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold">{child.name}</h3>
-                      <p className="text-sm text-gray-500">
-                        {child.age} {t("years")} - {child.city}
-                      </p>
-                      {child.sponsorships?.[0]?.sponsors && (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200">
+                        {child.photo_url ? (
+                          <img 
+                            src={child.photo_url} 
+                            alt={child.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-500">
+                            {child.name?.charAt(0)}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{child.name}</h3>
                         <p className="text-sm text-gray-500">
-                          {t("sponsoredBy")}: {child.sponsorships[0].sponsors.name}
+                          {child.age} {t("years")} - {child.city}
                         </p>
-                      )}
+                        {child.sponsorships?.[0]?.sponsors && (
+                          <p className="text-sm text-gray-500">
+                            {t("sponsoredBy")}: {child.sponsorships[0].sponsors.name}
+                          </p>
+                        )}
+                      </div>
                     </div>
+                    {!child.sponsorships?.[0] && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setSelectedChild(child)}
+                        className="flex-shrink-0"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                      </Button>
+                    )}
                   </div>
                 </Card>
               ))}
@@ -148,6 +163,13 @@ const SponsorshipManagement = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <SponsorshipAssociationDialog
+        child={selectedChild}
+        sponsors={sponsors || []}
+        isOpen={!!selectedChild}
+        onClose={() => setSelectedChild(null)}
+      />
     </div>
   );
 };
