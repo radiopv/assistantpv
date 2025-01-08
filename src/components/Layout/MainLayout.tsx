@@ -16,7 +16,8 @@ import {
   Mail,
   Heart,
   MapPin,
-  Bell
+  Bell,
+  User
 } from "lucide-react";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -30,6 +31,7 @@ const MainLayout = () => {
   const location = useLocation();
 
   const isAdmin = user?.role === 'admin';
+  const isSponsor = user?.role === 'sponsor' || (isAdmin && user?.children_sponsored?.length > 0);
 
   const assistantNavItems = [
     { icon: Home, label: t('dashboard'), path: '/dashboard' },
@@ -50,7 +52,15 @@ const MainLayout = () => {
     { icon: Bell, label: t('notifications'), path: '/admin/notifications' },
   ];
 
-  const mobileNavItems = isAdmin ? [...assistantNavItems, ...adminNavItems] : assistantNavItems;
+  const sponsorNavItems = isSponsor ? [
+    { icon: User, label: t('profile'), path: '/sponsor-dashboard' }
+  ] : [];
+
+  const mobileNavItems = [
+    ...assistantNavItems,
+    ...(isAdmin ? adminNavItems : []),
+    ...(isSponsor ? sponsorNavItems : [])
+  ];
 
   if (!user) {
     return null;
