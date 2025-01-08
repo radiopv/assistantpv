@@ -14,20 +14,17 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section with Split Layout */}
-      <section className="relative min-h-[90vh] bg-cuba-gradient">
+      <section className="relative h-[90vh] bg-cuba-gradient">
         <div className="container mx-auto h-full">
           <div className="flex flex-col lg:flex-row h-full">
             {/* Left Side - Hero Image */}
-            <div className="w-full lg:w-1/2 relative h-[50vh] lg:h-full">
-              <div className="absolute inset-0">
-                <img 
-                  src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
-                  alt="Hero background"
-                  className="w-full h-full object-cover object-center"
-                  style={{ maxHeight: '90vh' }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20" />
-              </div>
+            <div className="w-full lg:w-1/2 h-[50vh] lg:h-full relative">
+              <img 
+                src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
+                alt="Hero background"
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20" />
             </div>
 
             {/* Right Side - Content */}
