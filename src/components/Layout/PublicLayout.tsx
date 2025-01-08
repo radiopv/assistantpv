@@ -112,6 +112,18 @@ const PublicLayout = () => {
               <Link to="/" className="font-bold text-xl">
                 Passion Varadero
               </Link>
+              <nav className="flex items-center space-x-4">
+                {menuItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.label}</span>
+                  </Link>
+                ))}
+              </nav>
             </div>
             <div className="flex items-center space-x-4">
               {session ? (
