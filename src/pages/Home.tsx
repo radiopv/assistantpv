@@ -13,11 +13,12 @@ const Home = () => {
           <div className="flex flex-col lg:flex-row h-full">
             {/* Left Side - Hero Image */}
             <div className="w-full lg:w-1/2 relative h-[50vh] lg:h-full">
-              <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute inset-0">
                 <img 
                   src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
                   alt="Hero background"
-                  className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700 ease-in-out"
+                  className="w-full h-full object-cover object-center"
+                  style={{ maxHeight: '90vh' }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20" />
               </div>
