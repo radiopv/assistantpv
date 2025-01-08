@@ -1,92 +1,126 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { createPortal } from "react-dom";
 
 interface SheetProps {
-  children: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  children: React.ReactNode;
 }
 
-const Sheet = React.forwardRef<HTMLDivElement, SheetProps>(
-  ({ children, open, onOpenChange, ...props }, ref) => {
-    return (
-      <div ref={ref} data-state={open ? "open" : "closed"} {...props}>
-        {children}
-      </div>
+interface SheetTriggerProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface SheetContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface SheetOverlayProps extends React.HTMLAttributes<HTMLDivElement> {
+  className?: string;
+}
+
+const SheetContext = React.createContext<{
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}>({
+  open: false,
+  onOpenChange: () => {},
+});
+
+export const Sheet = ({ children, open, onOpenChange }: SheetProps) => {
+  const [isOpen, setIsOpen] = React.useState(open || false);
+
+  React.useEffect(() => {
+    if (open !== undefined) {
+      setIsOpen(open);
+    }
+  }, [open]);
+
+  const handleOpenChange = React.useCallback(
+    (value: boolean) => {
+      setIsOpen(value);
+      onOpenChange?.(value);
+    },
+    [onOpenChange]
+  );
+
+  return (
+    <SheetContext.Provider value={{ open: isOpen, onOpenChange: handleOpenChange }}>
+      {children}
+    </SheetContext.Provider>
+  );
+};
+
+export const SheetTrigger = ({ children, className }: SheetTriggerProps) => {
+  const { onOpenChange } = React.useContext(SheetContext);
+  return (
+    <button 
+      onClick={() => onOpenChange(true)}
+      className={className}
+    >
+      {children}
+    </button>
+  );
+};
+
+export const SheetOverlay = React.forwardRef<HTMLDivElement, SheetOverlayProps>(
+  ({ className, ...props }, ref) => {
+    const { open, onOpenChange } = React.useContext(SheetContext);
+    if (!open) return null;
+
+    return createPortal(
+      <div
+        ref={ref}
+        className={cn(
+          "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          className
+        )}
+        onClick={() => onOpenChange(false)}
+        {...props}
+      />,
+      document.body
     );
   }
 );
-Sheet.displayName = "Sheet";
-
-const SheetTrigger = React.forwardRef<
-  HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
-  <button
-    ref={ref}
-    className={cn("inline-flex items-center justify-center", className)}
-    {...props}
-  />
-));
-SheetTrigger.displayName = "SheetTrigger";
-
-const SheetClose = SheetTrigger;
-
-const SheetPortal = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
-};
-
-const SheetOverlay = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    {...props}
-  />
-));
 SheetOverlay.displayName = "SheetOverlay";
 
-const SheetContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => (
-  <SheetPortal>
-    <SheetOverlay />
-    <div
-      ref={ref}
-      className={cn(
-        "fixed z-50 gap-4 bg-cuba-warmBeige p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
-        "inset-y-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  </SheetPortal>
-));
+export const SheetContent = React.forwardRef<HTMLDivElement, SheetContentProps>(
+  ({ children, className, ...props }, ref) => {
+    const { open } = React.useContext(SheetContext);
+    if (!open) return null;
+
+    return createPortal(
+      <div
+        ref={ref}
+        className={cn(
+          "fixed inset-y-0 right-0 z-50 h-full w-3/4 bg-cuba-warmBeige p-6 shadow-lg transition-transform duration-300 ease-in-out data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full sm:max-w-sm",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>,
+      document.body
+    );
+  }
+);
 SheetContent.displayName = "SheetContent";
 
-const SheetHeader = ({
+export const SheetHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn(
-      "flex flex-col space-y-2 text-center sm:text-left",
-      className
-    )}
+    className={cn("flex flex-col space-y-2 text-center sm:text-left", className)}
     {...props}
   />
 );
 SheetHeader.displayName = "SheetHeader";
 
-const SheetFooter = ({
+export const SheetFooter = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -100,7 +134,7 @@ const SheetFooter = ({
 );
 SheetFooter.displayName = "SheetFooter";
 
-const SheetTitle = React.forwardRef<
+export const SheetTitle = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
@@ -112,7 +146,7 @@ const SheetTitle = React.forwardRef<
 ));
 SheetTitle.displayName = "SheetTitle";
 
-const SheetDescription = React.forwardRef<
+export const SheetDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
@@ -124,15 +158,11 @@ const SheetDescription = React.forwardRef<
 ));
 SheetDescription.displayName = "SheetDescription";
 
-export {
-  Sheet,
-  SheetPortal,
-  SheetOverlay,
-  SheetTrigger,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetFooter,
-  SheetTitle,
-  SheetDescription,
+export const SheetClose = ({ children }: { children: React.ReactNode }) => {
+  const { onOpenChange } = React.useContext(SheetContext);
+  return (
+    <button onClick={() => onOpenChange(false)} className="absolute right-4 top-4">
+      {children}
+    </button>
+  );
 };
