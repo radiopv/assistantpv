@@ -24,13 +24,15 @@ import {
 import { useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const MainLayout = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isAdmin = user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor' || (isAdmin && user?.children_sponsored?.length > 0);
@@ -66,9 +68,13 @@ const MainLayout = () => {
     ...(isSponsor ? sponsorNavItems : [])
   ];
 
-  if (!user) {
-    return null;
-  }
+  const handleSponsorDashboardClick = () => {
+    if (!user) {
+      navigate('/login');
+    } else {
+      navigate('/sponsor-dashboard');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -97,7 +103,17 @@ const MainLayout = () => {
 
       <main className="flex-1 md:ml-64 pb-16 md:pb-0">
         <div className="p-4 border-b bg-white flex justify-between items-center">
-          <LanguageSelector />
+          <div className="flex items-center gap-4">
+            <LanguageSelector />
+            <Button
+              variant="ghost"
+              onClick={handleSponsorDashboardClick}
+              className="flex items-center gap-2"
+            >
+              <User className="h-4 w-4" />
+              {t('profile')}
+            </Button>
+          </div>
           <UserProfileMenu />
         </div>
         <div className="p-4 md:p-8">
