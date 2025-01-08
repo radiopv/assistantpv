@@ -10,6 +10,9 @@ import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDat
 import { DashboardActions } from "@/components/Sponsors/Dashboard/DashboardActions";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { convertJsonToNeeds } from "@/types/needs";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -28,7 +31,8 @@ const SponsorDashboard = () => {
             name,
             birth_date,
             photo_url,
-            city
+            city,
+            needs
           )
         `)
         .eq("sponsor_id", user?.id)
@@ -78,7 +82,45 @@ const SponsorDashboard = () => {
 
       <div className="grid md:grid-cols-2 gap-6">
         {sponsorships.map((sponsorship) => (
-          <SponsoredChildCard key={sponsorship.id} child={sponsorship.children} />
+          <div key={sponsorship.id} className="space-y-6">
+            <SponsoredChildCard child={sponsorship.children} />
+            
+            {/* Needs Section */}
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-4">Besoins de {sponsorship.children.name}</h3>
+              <ScrollArea className="h-[200px] w-full">
+                <div className="grid grid-cols-1 gap-3">
+                  {convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
+                    <div
+                      key={`${need.category}-${index}`}
+                      className={`p-3 rounded-lg ${
+                        need.is_urgent
+                          ? "bg-red-50 border border-red-200"
+                          : "bg-gray-50 border border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Badge
+                            variant={need.is_urgent ? "destructive" : "secondary"}
+                            className="mb-2"
+                          >
+                            {need.category}
+                            {need.is_urgent && " (!)"} 
+                          </Badge>
+                          {need.description && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              {need.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </ScrollArea>
+            </Card>
+          </div>
         ))}
       </div>
 
@@ -87,7 +129,7 @@ const SponsorDashboard = () => {
           <ImportantDatesCard 
             key={sponsorship.id}
             birthDate={sponsorship.children.birth_date} 
-            plannedVisits={plannedVisits?.filter(v => v.child_id === sponsorship.children.id) || []} 
+            plannedVisits={plannedVisits?.filter(v => v.sponsorship_id === sponsorship.id) || []} 
           />
         ))}
       </div>
