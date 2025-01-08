@@ -51,6 +51,14 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
+  if (!children.length) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        {t("noChildren")}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {children.map((child) => {
@@ -63,6 +71,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 src={child.photo_url || "/placeholder.svg"}
                 alt={child.name}
                 className="w-full h-full object-cover"
+                style={{ objectPosition: "center 20%" }} // Adjust to focus on face area
               />
             </div>
             <div className="p-4 space-y-4">

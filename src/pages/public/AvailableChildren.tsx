@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { AvailableChildrenGrid } from "@/components/Children/AvailableChildrenGrid";
 import { useState, useMemo } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function AvailableChildren() {
   const navigate = useNavigate();
@@ -34,17 +35,8 @@ export default function AvailableChildren() {
         query = query.eq("city", selectedCity);
       }
 
-      // Apply gender filter
       if (selectedGender !== "all") {
         query = query.eq("gender", selectedGender);
-      }
-
-      // Apply age filter as a number
-      if (selectedAge !== "all") {
-        const ageNumber = parseInt(selectedAge);
-        if (!isNaN(ageNumber)) {
-          query = query.eq("age", ageNumber);
-        }
       }
 
       const { data, error } = await query;
@@ -55,52 +47,47 @@ export default function AvailableChildren() {
         throw error;
       }
 
-      // Apply search filter in memory since it's more flexible
-      return data.filter(child => {
-        if (searchTerm) {
-          const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
-          if (!matchesSearch) return false;
-        }
-        return true;
-      });
+      // Log the fetched data for debugging
+      console.log("Fetched children data:", data);
+
+      return data;
     }
   });
 
-  const { data: cities = [] } = useQuery({
-    queryKey: ["cities"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("children")
-        .select("city")
-        .not("city", "is", null)
-        .order('city');
-      
-      if (error) {
-        console.error("Error fetching cities:", error);
-        throw error;
-      }
-      
-      return [...new Set(data.map(item => item.city))];
-    }
-  });
+  const categorizedChildren = useMemo(() => {
+    if (!children) return {};
 
-  const { data: ages = [] } = useQuery({
-    queryKey: ["ages"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("children")
-        .select("age")
-        .not("age", "is", null)
-        .order('age');
-      
-      if (error) {
-        console.error("Error fetching ages:", error);
-        throw error;
+    return children.reduce((acc, child) => {
+      if (!child.birth_date) {
+        acc.unknown = acc.unknown || [];
+        acc.unknown.push(child);
+        return acc;
       }
+
+      const birthDate = new Date(child.birth_date);
+      const today = new Date();
+      const ageInYears = today.getFullYear() - birthDate.getFullYear();
       
-      return [...new Set(data.map(item => item.age))].sort((a, b) => a - b);
-    }
-  });
+      // Log age calculation for debugging
+      console.log(`Age calculation for ${child.name}:`, ageInYears);
+
+      if (ageInYears <= 2) {
+        acc.infants = acc.infants || [];
+        acc.infants.push(child);
+      } else if (ageInYears <= 5) {
+        acc.toddlers = acc.toddlers || [];
+        acc.toddlers.push(child);
+      } else if (ageInYears <= 12) {
+        acc.children = acc.children || [];
+        acc.children.push(child);
+      } else {
+        acc.teens = acc.teens || [];
+        acc.teens.push(child);
+      }
+
+      return acc;
+    }, {});
+  }, [children]);
 
   const handleSponsorClick = async (childId: string) => {
     try {
@@ -119,7 +106,7 @@ export default function AvailableChildren() {
   return (
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-3xl font-bold text-center mb-8">
-        {t("title")}
+        {t("availableChildren")}
       </h1>
 
       <ChildrenFilters
@@ -133,22 +120,56 @@ export default function AvailableChildren() {
         onGenderChange={setSelectedGender}
         onAgeChange={setSelectedAge}
         onStatusChange={setSelectedStatus}
-        cities={cities}
-        ages={ages}
+        cities={[]}
+        ages={[]}
       />
 
-      <AvailableChildrenGrid 
-        children={children}
-        isLoading={isLoading}
-        onSponsorClick={handleSponsorClick}
-      />
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="all">{t("allAges")}</TabsTrigger>
+          <TabsTrigger value="infants">{t("infants")}</TabsTrigger>
+          <TabsTrigger value="toddlers">{t("toddlers")}</TabsTrigger>
+          <TabsTrigger value="children">{t("children")}</TabsTrigger>
+          <TabsTrigger value="teens">{t("teens")}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all">
+          <AvailableChildrenGrid 
+            children={children}
+            isLoading={isLoading}
+            onSponsorClick={handleSponsorClick}
+          />
+        </TabsContent>
+
+        {["infants", "toddlers", "children", "teens"].map((category) => (
+          <TabsContent key={category} value={category}>
+            {categorizedChildren[category]?.length > 0 ? (
+              <AvailableChildrenGrid 
+                children={categorizedChildren[category]}
+                isLoading={isLoading}
+                onSponsorClick={handleSponsorClick}
+              />
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                {t("noCategoryChildren")}
+              </div>
+            )}
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 }
 
 const translations = {
   fr: {
-    title: "Enfants disponibles pour le parrainage",
+    availableChildren: "Enfants disponibles pour le parrainage",
+    allAges: "Tous les âges",
+    infants: "Nourrissons (0-2 ans)",
+    toddlers: "Jeunes enfants (3-5 ans)",
+    children: "Enfants (6-12 ans)",
+    teens: "Adolescents (13+ ans)",
+    noCategoryChildren: "Aucun enfant dans cette catégorie",
     sponsor: "Parrainer cet enfant",
     age: "ans",
     needs: "Besoins",
@@ -158,7 +179,8 @@ const translations = {
     sponsorError: "Une erreur est survenue lors de la demande de parrainage",
     errorInvalidChild: "Enfant invalide",
     errorSponsorClick: "Erreur lors de la demande de parrainage",
-    errorFetchingChildren: "Erreur lors du chargement des enfants"
+    errorFetchingChildren: "Erreur lors du chargement des enfants",
+    sexe: "Sexe"
   },
   es: {
     title: "Niños disponibles para apadrinamiento",
