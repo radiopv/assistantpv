@@ -15,6 +15,9 @@ import {
 import { ChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
 import { SponsorsList } from "@/components/AssistantSponsorship/SponsorsList";
 import { AssociationSection } from "@/components/AssistantSponsorship/AssociationSection";
+import { Button } from "@/components/ui/button";
+import { Globe } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AssistantSponsorship() {
   const { toast } = useToast();
@@ -24,6 +27,54 @@ export default function AssistantSponsorship() {
   const [selectedSponsor, setSelectedSponsor] = useState<string | null>(null);
   const [showTransferDialog, setShowTransferDialog] = useState(false);
   const [currentSponsor, setCurrentSponsor] = useState<any>(null);
+  const { language, setLanguage } = useLanguage();
+
+  const translations = {
+    fr: {
+      title: "Association Parrains-Enfants",
+      transferTitle: "Confirmer le transfert",
+      transferDescription: "Cet enfant est déjà parrainé par {sponsor}. Souhaitez-vous transférer cet enfant à un autre parrain ?",
+      cancel: "Annuler",
+      confirmTransfer: "Confirmer le transfert",
+      loading: "Chargement...",
+      error: {
+        title: "Erreur",
+        selectBoth: "Veuillez sélectionner un enfant et un parrain",
+        association: "Une erreur est survenue lors de l'association",
+        transfer: "Une erreur est survenue lors du transfert",
+        removal: "Une erreur est survenue lors du retrait du parrainage"
+      },
+      success: {
+        title: "Succès",
+        association: "L'association a été créée avec succès",
+        removal: "Le parrainage a été retiré avec succès"
+      },
+      toggleLanguage: "Changer de langue"
+    },
+    es: {
+      title: "Asociación Padrinos-Niños",
+      transferTitle: "Confirmar transferencia",
+      transferDescription: "Este niño ya está apadrinado por {sponsor}. ¿Desea transferir este niño a otro padrino?",
+      cancel: "Cancelar",
+      confirmTransfer: "Confirmar transferencia",
+      loading: "Cargando...",
+      error: {
+        title: "Error",
+        selectBoth: "Por favor seleccione un niño y un padrino",
+        association: "Ocurrió un error durante la asociación",
+        transfer: "Ocurrió un error durante la transferencia",
+        removal: "Ocurrió un error durante la eliminación del apadrinamiento"
+      },
+      success: {
+        title: "Éxito",
+        association: "La asociación se ha creado con éxito",
+        removal: "El apadrinamiento se ha eliminado con éxito"
+      },
+      toggleLanguage: "Cambiar idioma"
+    }
+  };
+
+  const t = translations[language];
 
   const { data: children = [], isLoading: isLoadingChildren } = useQuery({
     queryKey: ["children"],
@@ -194,12 +245,22 @@ export default function AssistantSponsorship() {
   };
 
   if (isLoadingChildren || isLoadingSponsors) {
-    return <div>Chargement...</div>;
+    return <div>{t.loading}</div>;
   }
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      <h1 className="text-2xl font-bold mb-6">Association Parrains-Enfants</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">{t.title}</h1>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setLanguage(language === 'fr' ? 'es' : 'fr')}
+          title={t.toggleLanguage}
+        >
+          <Globe className="h-4 w-4" />
+        </Button>
+      </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         <ChildrenList
@@ -229,16 +290,15 @@ export default function AssistantSponsorship() {
       <AlertDialog open={showTransferDialog} onOpenChange={setShowTransferDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer le transfert</AlertDialogTitle>
+            <AlertDialogTitle>{t.transferTitle}</AlertDialogTitle>
             <AlertDialogDescription>
-              Cet enfant est déjà parrainé par {currentSponsor?.name}. 
-              Souhaitez-vous transférer cet enfant à un autre parrain ?
+              {t.transferDescription.replace("{sponsor}", currentSponsor?.name || "")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
             <AlertDialogAction onClick={handleTransfer}>
-              Confirmer le transfert
+              {t.confirmTransfer}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
