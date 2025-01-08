@@ -71,7 +71,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       show: true,
     },
     {
-      href: "/donations-management",
+      href: "/donations",
       label: t("donations"),
       icon: Gift,
       show: user?.permissions?.donations || isAdmin,
