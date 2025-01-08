@@ -49,7 +49,7 @@ const SponsorshipManagement = () => {
   });
 
   const { data: children, isLoading: childrenLoading } = useQuery({
-    queryKey: ['children'],
+    queryKey: ['unsponsored-children'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
@@ -67,6 +67,7 @@ const SponsorshipManagement = () => {
             )
           )
         `)
+        .eq('is_sponsored', false)  // Only fetch unsponsored children
         .order('name');
 
       if (error) {
@@ -97,7 +98,7 @@ const SponsorshipManagement = () => {
       <Tabs defaultValue="sponsors" className="w-full">
         <TabsList className="w-full">
           <TabsTrigger value="sponsors">{t("sponsors")}</TabsTrigger>
-          <TabsTrigger value="children">{t("children")}</TabsTrigger>
+          <TabsTrigger value="children">{t("availableChildren")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="sponsors">
@@ -139,26 +140,22 @@ const SponsorshipManagement = () => {
                         <p className="text-sm text-gray-500">
                           {child.age} {t("years")} - {child.city}
                         </p>
-                        {child.sponsorships?.[0]?.sponsors && (
-                          <p className="text-sm text-gray-500">
-                            {t("sponsoredBy")}: {child.sponsorships[0].sponsors.name}
-                          </p>
-                        )}
                       </div>
                     </div>
-                    {!child.sponsorships?.[0] && (
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => setSelectedChild(child)}
-                        className="flex-shrink-0"
-                      >
-                        <UserPlus className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setSelectedChild(child)}
+                      className="flex-shrink-0"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                    </Button>
                   </div>
                 </Card>
               ))}
+              {filteredChildren?.length === 0 && (
+                <p className="text-center text-gray-500">{t("noChildrenFound")}</p>
+              )}
             </div>
           </Card>
         </TabsContent>
