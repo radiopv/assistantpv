@@ -11,6 +11,14 @@ interface SponsorshipAccordionProps {
 export const SponsorshipAccordion = ({ sponsor, onUpdate }: SponsorshipAccordionProps) => {
   const { t } = useLanguage();
 
+  // Dédupliquer les enfants en utilisant un Set basé sur l'ID
+  const uniqueChildren = sponsor.sponsorships?.reduce((acc: any[], sponsorship: any) => {
+    if (sponsorship.children && !acc.some(item => item.children.id === sponsorship.children.id)) {
+      acc.push(sponsorship);
+    }
+    return acc;
+  }, []);
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1">
@@ -40,7 +48,7 @@ export const SponsorshipAccordion = ({ sponsor, onUpdate }: SponsorshipAccordion
           <div className="mt-4 space-y-4">
             <h3 className="font-semibold">{t("sponsoredChildren")}</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              {sponsor.sponsorships?.map((sponsorship: any) => (
+              {uniqueChildren?.map((sponsorship: any) => (
                 <div key={sponsorship.id} className="p-4 border rounded-lg">
                   <div className="flex items-center gap-3">
                     {sponsorship.children?.photo_url && (
