@@ -3,25 +3,19 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ImagePlus, Trash2, Star } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { PhotoUploadPreview } from "./PhotoAlbum/PhotoUploadPreview";
+import { PhotoGrid } from "./PhotoAlbum/PhotoGrid";
+import { DeletePhotoDialog } from "./PhotoAlbum/DeletePhotoDialog";
 
 interface PhotoAlbumSectionProps {
   childId: string;
   sponsorId: string;
+  childName: string;
 }
 
-export const PhotoAlbumSection = ({ childId, sponsorId }: PhotoAlbumSectionProps) => {
+export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [photoToDelete, setPhotoToDelete] = useState<string | null>(null);
   const queryClient = useQueryClient();
@@ -129,7 +123,7 @@ export const PhotoAlbumSection = ({ childId, sponsorId }: PhotoAlbumSectionProps
     <Card className="p-6">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Album Photos</h3>
+          <h3 className="text-lg font-semibold">Album Photos - {childName}</h3>
           <div className="flex gap-2">
             <input
               type="file"
@@ -148,71 +142,22 @@ export const PhotoAlbumSection = ({ childId, sponsorId }: PhotoAlbumSectionProps
           </div>
         </div>
 
-        {selectedFile && (
-          <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
-            <img
-              src={URL.createObjectURL(selectedFile)}
-              alt="Preview"
-              className="w-20 h-20 object-cover rounded"
-            />
-            <div className="flex-1">
-              <p className="text-sm font-medium">{selectedFile.name}</p>
-              <Button onClick={handleUpload} className="mt-2">
-                Uploader
-              </Button>
-            </div>
-          </div>
-        )}
+        <PhotoUploadPreview
+          selectedFile={selectedFile}
+          handleUpload={handleUpload}
+        />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {photos?.map((photo) => (
-            <div key={photo.id} className="relative group">
-              <img
-                src={photo.url}
-                alt=""
-                className="w-full aspect-square object-cover rounded-lg"
-              />
-              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={() => setPhotoToDelete(photo.id)}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={photo.is_featured ? "default" : "secondary"}
-                  size="icon"
-                  onClick={() => toggleFeatureMutation.mutate({
-                    id: photo.id,
-                    featured: !photo.is_featured
-                  })}
-                >
-                  <Star className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <PhotoGrid
+          photos={photos || []}
+          onPhotoDelete={(id) => setPhotoToDelete(id)}
+          onToggleFeature={(id, featured) => toggleFeatureMutation.mutate({ id, featured })}
+        />
 
-        <AlertDialog open={!!photoToDelete} onOpenChange={() => setPhotoToDelete(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-              <AlertDialogDescription>
-                Êtes-vous sûr de vouloir supprimer cette photo ? Cette action est irréversible.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => photoToDelete && deleteMutation.mutate(photoToDelete)}
-              >
-                Supprimer
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <DeletePhotoDialog
+          open={!!photoToDelete}
+          onClose={() => setPhotoToDelete(null)}
+          onConfirm={() => photoToDelete && deleteMutation.mutate(photoToDelete)}
+        />
       </div>
     </Card>
   );
