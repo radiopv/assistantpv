@@ -4,13 +4,17 @@ import { spanishTranslations } from '../translations/es';
 
 type Language = 'fr' | 'es';
 
+interface TranslationType {
+  [key: string]: string;
+}
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
 
-const translations = {
+const translations: Record<Language, TranslationType> = {
   fr: frenchTranslations,
   es: spanishTranslations
 };
@@ -39,7 +43,7 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
   const t = (key: string): string => {
     const currentTranslations = translations[language];
-    const translation = currentTranslations[key as keyof typeof currentTranslations];
+    const translation = currentTranslations[key];
     
     if (!translation) {
       console.warn(`Translation missing for key: ${key} in language: ${language}`);
