@@ -2,14 +2,15 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search } from "lucide-react";
+import { Search, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { SponsorCard } from "@/components/Sponsors/SponsorshipManagement/SponsorCard";
 
 export default function SponsorshipManagement() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
 
   const { data: sponsors, isLoading, refetch } = useQuery({
     queryKey: ["sponsors"],
@@ -151,7 +152,17 @@ export default function SponsorshipManagement() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">{t("sponsorshipManagement")}</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">{t("sponsorshipManagement")}</h1>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setLanguage(language === 'fr' ? 'es' : 'fr')}
+          className="w-9 px-0"
+        >
+          <Globe className="h-4 w-4" />
+        </Button>
+      </div>
 
       <div className="mb-6">
         <div className="relative">
