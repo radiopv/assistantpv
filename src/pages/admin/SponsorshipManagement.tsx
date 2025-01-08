@@ -4,13 +4,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserMinus } from "lucide-react";
+import { UserPlus, UserMinus, Search } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Input } from "@/components/ui/input";
 
 export default function SponsorshipManagement() {
   const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const { t } = useLanguage();
 
   const { data: sponsors, isLoading, refetch } = useQuery({
@@ -29,7 +31,8 @@ export default function SponsorshipManagement() {
               id,
               name,
               age,
-              city
+              city,
+              photo_url
             )
           )
         `)
@@ -128,21 +131,44 @@ export default function SponsorshipManagement() {
     }
   };
 
+  const filteredSponsors = sponsors?.filter(sponsor => {
+    const sponsorMatch = sponsor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        sponsor.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    const childrenMatch = sponsor.sponsorships?.some(s => 
+      s.child?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return sponsorMatch || childrenMatch;
+  });
+
   if (isLoading) {
     return <div>{t("loading")}</div>;
   }
 
-  const activeSponsors = sponsors?.filter(sponsor => 
+  const activeSponsors = filteredSponsors?.filter(sponsor => 
     sponsor.sponsorships?.some((s: any) => s.status === 'active')
   ).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
-  const inactiveSponsors = sponsors?.filter(sponsor => 
+  const inactiveSponsors = filteredSponsors?.filter(sponsor => 
     !sponsor.sponsorships?.some((s: any) => s.status === 'active')
   ).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
   return (
     <div className="container mx-auto py-6">
       <h1 className="text-2xl font-bold mb-6">{t("sponsorshipManagement")}</h1>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <Input
+            type="text"
+            placeholder={t("searchSponsorOrChild")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Active Sponsors Column */}
