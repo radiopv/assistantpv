@@ -25,21 +25,24 @@ export const AssociationGrid = ({
   onRemoveSponsorship,
 }: AssociationGridProps) => {
   return (
-    <div className="grid md:grid-cols-2 gap-8">
-      <ChildrenList
-        children={children}
-        searchTerm={searchChild}
-        onSearchChange={onSearchChildChange}
-        onSelectChild={onSelectChild}
-        onRemoveSponsorship={onRemoveSponsorship}
-      />
-
-      <SponsorsList
-        sponsors={sponsors}
-        searchTerm={searchSponsor}
-        onSearchChange={onSearchSponsorChange}
-        onSelectSponsor={onSelectSponsor}
-      />
+    <div className="grid gap-8 md:grid-cols-2 sm:grid-cols-1">
+      <div className="w-full min-w-0">
+        <ChildrenList
+          children={children}
+          searchTerm={searchChild}
+          onSearchChange={onSearchChildChange}
+          onSelectChild={onSelectChild}
+          onRemoveSponsorship={onRemoveSponsorship}
+        />
+      </div>
+      <div className="w-full min-w-0">
+        <SponsorsList
+          sponsors={sponsors}
+          searchTerm={searchSponsor}
+          onSearchChange={onSearchSponsorChange}
+          onSelectSponsor={onSelectSponsor}
+        />
+      </div>
     </div>
   );
 };
