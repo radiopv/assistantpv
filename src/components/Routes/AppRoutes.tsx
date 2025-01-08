@@ -30,6 +30,7 @@ import Translations from "@/pages/admin/Translations";
 import Emails from "@/pages/admin/Emails";
 import AdminFAQ from "@/pages/admin/FAQ";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
+import Notifications from "@/pages/admin/Notifications";
 
 const AppRoutes = () => {
   return (
@@ -62,10 +63,11 @@ const AppRoutes = () => {
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/emails" element={<Emails />} />
-        <Route path="/admin/faq" element={<FAQ />} />
+        <Route path="/admin/faq" element={<AdminFAQ />} />
         <Route path="/admin/sponsorships" element={<SponsorshipManagement />} />
         <Route path="/admin/cities" element={<CitiesManagement />} />
         <Route path="/admin/home-content" element={<HomeContentManagement />} />
+        <Route path="/admin/notifications" element={<Notifications />} />
       </Route>
     </Routes>
   );

@@ -15,7 +15,8 @@ import {
   HelpCircle,
   Mail,
   Heart,
-  MapPin
+  MapPin,
+  Bell
 } from "lucide-react";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -46,6 +47,7 @@ const MainLayout = () => {
     { icon: Mail, label: t('emailManager'), path: '/admin/emails' },
     { icon: HelpCircle, label: t('faq'), path: '/admin/faq' },
     { icon: MapPin, label: t('citiesManagement'), path: '/admin/cities' },
+    { icon: Bell, label: t('notifications'), path: '/admin/notifications' },
   ];
 
   const mobileNavItems = isAdmin ? [...assistantNavItems, ...adminNavItems] : assistantNavItems;
