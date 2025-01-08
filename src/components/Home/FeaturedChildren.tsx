@@ -69,9 +69,9 @@ export const FeaturedChildren = () => {
                       <p>{calculateAge(child.birth_date)} {t("years")}</p>
                       <p>{child.city}</p>
                     </div>
-                    {child.needs && child.needs.length > 0 && (
+                    {Array.isArray(child.needs) && child.needs.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
-                        {(child.needs as any[]).slice(0, 2).map((need: any, index: number) => (
+                        {child.needs.slice(0, 2).map((need: any, index: number) => (
                           <span
                             key={index}
                             className="inline-block px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full"
