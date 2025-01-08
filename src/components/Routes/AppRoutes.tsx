@@ -18,6 +18,7 @@ import MediaManagement from "@/pages/MediaManagement";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import AvailableChildren from "@/pages/public/AvailableChildren";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
+import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import Tasks from "@/pages/Tasks";
 
 // Admin pages
@@ -60,6 +61,7 @@ const AppRoutes = () => {
         <Route path="/admin/faq" element={<FAQ />} />
         <Route path="/admin/sponsorships" element={<SponsorshipManagement />} />
         <Route path="/admin/cities" element={<CitiesManagement />} />
+        <Route path="/admin/home-content" element={<HomeContentManagement />} />
       </Route>
     </Routes>
   );
