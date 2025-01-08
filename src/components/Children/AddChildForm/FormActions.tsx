@@ -1,31 +1,28 @@
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 
-export interface FormActionsProps {
+interface FormActionsProps {
   loading: boolean;
-  translations: {
-    addChild: string;
-  };
-  onCancel?: () => void;
+  onCancel: () => void;
+  translations: any;
 }
 
-export const FormActions = ({ loading, translations, onCancel }: FormActionsProps) => {
+export const FormActions = ({ loading, onCancel, translations }: FormActionsProps) => {
   return (
-    <div className="flex justify-end gap-4">
-      {onCancel && (
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Annuler
-        </Button>
-      )}
-      <Button type="submit" disabled={loading}>
-        {loading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Chargement...
-          </>
-        ) : (
-          translations.addChild
-        )}
+    <div className="flex gap-4 pt-4">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onCancel}
+        className="w-full md:w-auto"
+      >
+        {translations.cancel}
+      </Button>
+      <Button 
+        type="submit" 
+        disabled={loading}
+        className="w-full md:w-auto"
+      >
+        {loading ? translations.adding : translations.add}
       </Button>
     </div>
   );

@@ -16,7 +16,6 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { DonationPhotoUploader } from "./Media/DonationPhotoUploader";
 
 interface DonationFormProps {
   onDonationComplete?: () => void;
@@ -196,15 +195,20 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
         />
 
         {donationId && (
-          <div className="space-y-4">
-            <Label>Photos</Label>
-            <DonationPhotoUploader
-              donationId={donationId}
-              onUploadSuccess={() => {
-                onDonationComplete?.();
-              }}
-            />
-          </div>
+          <Collapsible open={isMediaOpen} onOpenChange={setIsMediaOpen}>
+            <CollapsibleTrigger className="flex items-center gap-2">
+              {isMediaOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              {t.addMedia}
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="pt-4">
+                <DonationMediaUpload
+                  donationId={donationId}
+                  onUploadComplete={handleMediaUploadComplete}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
         <DonationSubmitButton 
