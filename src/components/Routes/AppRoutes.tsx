@@ -4,7 +4,7 @@ import About from "@/pages/About";
 import Contact from "@/pages/Contact";
 import Notifications from "@/pages/Notifications";
 
-export const AppRoutes = () => {
+const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -14,3 +14,5 @@ export const AppRoutes = () => {
     </Routes>
   );
 };
+
+export default AppRoutes;
