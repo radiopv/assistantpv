@@ -2,12 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { ChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
-import { SponsorsList } from "@/components/AssistantSponsorship/SponsorsList";
-import { AssociationSection } from "@/components/AssistantSponsorship/AssociationSection";
-import { TransferDialog } from "./TransferDialog";
-import { LanguageToggle } from "./LanguageToggle";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { AssociationSection } from "@/components/AssistantSponsorship/AssociationSection";
+import { AssociationHeader } from "./AssociationHeader";
+import { AssociationGrid } from "./AssociationGrid";
+import { TransferConfirmationDialog } from "./TransferConfirmationDialog";
 
 const AssistantSponsorship = () => {
   const { toast } = useToast();
@@ -36,11 +35,7 @@ const AssistantSponsorship = () => {
         `);
 
       if (error) throw error;
-
-      return data.map(child => ({
-        ...child,
-        sponsor: child.sponsorships?.[0]?.sponsor || null
-      }));
+      return data;
     },
   });
 
@@ -57,14 +52,14 @@ const AssistantSponsorship = () => {
     },
   });
 
-  const handleRemoveSponsorship = async (childId: string) => {
+  const handleRemoveSponsorship = async (childId: string): Promise<void> => {
     try {
-      const { error } = await supabase
-        .from('sponsorships')
+      const { error: sponsorshipError } = await supabase
+        .from("sponsorships")
         .delete()
-        .eq('child_id', childId);
+        .eq("child_id", childId);
 
-      if (error) throw error;
+      if (sponsorshipError) throw sponsorshipError;
 
       toast({
         title: "Succès",
@@ -72,7 +67,7 @@ const AssistantSponsorship = () => {
       });
 
     } catch (error) {
-      console.error('Error removing sponsorship:', error);
+      console.error("Error removing sponsorship:", error);
       toast({
         title: "Erreur",
         description: "Une erreur est survenue lors de la suppression du parrainage",
@@ -149,30 +144,21 @@ const AssistantSponsorship = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Association Parrains-Enfants</h1>
-        <LanguageToggle 
-          language={language} 
-          onLanguageChange={setLanguage} 
-        />
-      </div>
+      <AssociationHeader 
+        onLanguageChange={() => setLanguage(language === 'fr' ? 'es' : 'fr')} 
+      />
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <ChildrenList
-          children={children}
-          searchTerm={searchChild}
-          onSearchChange={setSearchChild}
-          onSelectChild={setSelectedChild}
-          onRemoveSponsorship={handleRemoveSponsorship}
-        />
-
-        <SponsorsList
-          sponsors={sponsors}
-          searchTerm={searchSponsor}
-          onSearchChange={setSearchSponsor}
-          onSelectSponsor={setSelectedSponsor}
-        />
-      </div>
+      <AssociationGrid
+        children={children}
+        sponsors={sponsors}
+        searchChild={searchChild}
+        searchSponsor={searchSponsor}
+        onSearchChildChange={setSearchChild}
+        onSearchSponsorChange={setSearchSponsor}
+        onSelectChild={setSelectedChild}
+        onSelectSponsor={setSelectedSponsor}
+        onRemoveSponsorship={handleRemoveSponsorship}
+      />
 
       <AssociationSection
         selectedChild={selectedChild}
@@ -182,11 +168,11 @@ const AssistantSponsorship = () => {
         onCreateAssociation={handleAssociation}
       />
 
-      <TransferDialog
-        open={showTransferDialog}
-        onOpenChange={setShowTransferDialog}
-        currentSponsor={currentSponsor}
+      <TransferConfirmationDialog
+        showDialog={showTransferDialog}
+        onClose={() => setShowTransferDialog(false)}
         onConfirm={createAssociation}
+        currentSponsorName={currentSponsor?.name}
       />
     </div>
   );
