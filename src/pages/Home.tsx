@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
@@ -6,13 +9,14 @@ import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
+import { toast } from "sonner";
 
 const Home = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [isImageCropOpen, setIsImageCropOpen] = useState(false);
 
   // Fetch homepage sections
   const { data: sections, isLoading } = useQuery({
@@ -27,6 +31,39 @@ const Home = () => {
   });
 
   const heroSection = sections?.find(section => section.section_key === 'hero');
+
+  const handleImageCrop = async (croppedImageBlob: Blob) => {
+    try {
+      const file = new File([croppedImageBlob], 'hero-image.jpg', { type: 'image/jpeg' });
+      
+      const { data, error } = await supabase.storage
+        .from('homepage-media')
+        .upload('hero-image.jpg', file, {
+          upsert: true,
+        });
+
+      if (error) throw error;
+
+      // Update the hero section with the new image URL
+      const { error: updateError } = await supabase
+        .from('homepage_sections')
+        .update({
+          content: {
+            ...heroSection?.content,
+            imageUrl: `${process.env.SUPABASE_URL}/storage/v1/object/public/homepage-media/hero-image.jpg`
+          }
+        })
+        .eq('section_key', 'hero');
+
+      if (updateError) throw updateError;
+
+      toast.success("Image mise à jour avec succès");
+      setIsImageCropOpen(false);
+    } catch (error) {
+      console.error('Error updating hero image:', error);
+      toast.error("Erreur lors de la mise à jour de l'image");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -64,7 +101,8 @@ const Home = () => {
               <img 
                 src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
                 alt="Hero background"
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover cursor-pointer"
+                onClick={() => setIsImageCropOpen(true)}
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20" />
             </div>
@@ -133,6 +171,14 @@ const Home = () => {
           <CallToAction />
         </div>
       </section>
+
+      {/* Image Crop Dialog */}
+      <ImageCropDialog
+        open={isImageCropOpen}
+        onClose={() => setIsImageCropOpen(false)}
+        imageSrc="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
+        onCropComplete={handleImageCrop}
+      />
     </div>
   );
 };
