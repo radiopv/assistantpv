@@ -28,12 +28,12 @@ export const SidebarLink = ({
       <Button
         variant={isActive ? "secondary" : "ghost"}
         className={cn(
-          "w-full justify-start min-h-[44px]",
+          "w-full justify-start min-h-[44px] text-sm",
           isActive && "bg-primary/10",
           className
         )}
       >
-        <Icon className="mr-2 h-5 w-5" />
+        <Icon className="mr-2 h-4 w-4" />
         {label}
       </Button>
     </Link>
