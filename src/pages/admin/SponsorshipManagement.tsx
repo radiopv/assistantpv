@@ -4,14 +4,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserMinus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
+import { SponsorChildrenList } from "@/components/Sponsors/SponsorChildrenList";
 
 export default function SponsorshipManagement() {
-  const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { t } = useLanguage();
 
@@ -27,7 +26,7 @@ export default function SponsorshipManagement() {
             child_id,
             status,
             start_date,
-            child:children (
+            children:children (
               id,
               name,
               age,
@@ -135,7 +134,7 @@ export default function SponsorshipManagement() {
     const sponsorMatch = sponsor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         sponsor.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const childrenMatch = sponsor.sponsorships?.some(s => 
-      s.child?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      s.children?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     return sponsorMatch || childrenMatch;
   });
@@ -177,56 +176,24 @@ export default function SponsorshipManagement() {
           <div className="space-y-4">
             {activeSponsors.map((sponsor) => (
               <Card key={sponsor.id} className="p-4">
-                <Collapsible>
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        checked={sponsor.is_verified}
-                        onCheckedChange={(checked) => 
-                          handleVerificationChange(sponsor.id, checked as boolean)
-                        }
-                      />
-                      <CollapsibleTrigger className="hover:underline">
-                        <div>
-                          <h3 className="font-semibold">{sponsor.name}</h3>
-                          <p className="text-sm text-gray-500">{sponsor.email}</p>
-                        </div>
-                      </CollapsibleTrigger>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 px-2"
-                      onClick={() => handleAddChild(sponsor.id)}
-                    >
-                      <UserPlus className="h-4 w-4" />
-                    </Button>
+                <div className="flex items-center gap-2 mb-4">
+                  <Checkbox
+                    checked={sponsor.is_verified}
+                    onCheckedChange={(checked) => 
+                      handleVerificationChange(sponsor.id, checked as boolean)
+                    }
+                  />
+                  <div>
+                    <h3 className="font-semibold">{sponsor.name}</h3>
+                    <p className="text-sm text-gray-500">{sponsor.email}</p>
                   </div>
-
-                  <CollapsibleContent>
-                    <div className="space-y-2 mt-2">
-                      {sponsor.sponsorships
-                        ?.filter((s: any) => s.status === 'active')
-                        .sort((a: any, b: any) => a.child?.name.localeCompare(b.child?.name))
-                        .map((sponsorship: any) => (
-                          <div
-                            key={sponsorship.id}
-                            className="flex items-center justify-between p-2 bg-gray-50 rounded"
-                          >
-                            <span className="text-sm">{sponsorship.child?.name}</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-6 w-6 p-0"
-                              onClick={() => handleRemoveChild(sponsor.id, sponsorship.child_id)}
-                            >
-                              <UserMinus className="h-3 w-3 text-red-500" />
-                            </Button>
-                          </div>
-                        ))}
-                    </div>
-                  </CollapsibleContent>
-                </Collapsible>
+                </div>
+                <SponsorChildrenList
+                  sponsorships={sponsor.sponsorships}
+                  availableChildren={[]} // This will be populated when needed
+                  onAddChild={(childId) => handleAddChild(childId)}
+                  onRemoveChild={(sponsorshipId) => handleRemoveChild(sponsor.id, sponsorshipId)}
+                />
               </Card>
             ))}
           </div>
@@ -238,32 +205,18 @@ export default function SponsorshipManagement() {
           <div className="space-y-4">
             {inactiveSponsors.map((sponsor) => (
               <Card key={sponsor.id} className="p-4">
-                <Collapsible>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        checked={sponsor.is_verified}
-                        onCheckedChange={(checked) => 
-                          handleVerificationChange(sponsor.id, checked as boolean)
-                        }
-                      />
-                      <CollapsibleTrigger className="hover:underline">
-                        <div>
-                          <h3 className="font-semibold">{sponsor.name}</h3>
-                          <p className="text-sm text-gray-500">{sponsor.email}</p>
-                        </div>
-                      </CollapsibleTrigger>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 px-2"
-                      onClick={() => handleAddChild(sponsor.id)}
-                    >
-                      <UserPlus className="h-4 w-4" />
-                    </Button>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={sponsor.is_verified}
+                    onCheckedChange={(checked) => 
+                      handleVerificationChange(sponsor.id, checked as boolean)
+                    }
+                  />
+                  <div>
+                    <h3 className="font-semibold">{sponsor.name}</h3>
+                    <p className="text-sm text-gray-500">{sponsor.email}</p>
                   </div>
-                </Collapsible>
+                </div>
               </Card>
             ))}
           </div>
@@ -271,4 +224,4 @@ export default function SponsorshipManagement() {
       </div>
     </div>
   );
-}
+};
