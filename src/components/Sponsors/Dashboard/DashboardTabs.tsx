@@ -31,6 +31,7 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
               key={sponsorship.id}
               childId={sponsorship.children.id}
               sponsorId={userId}
+              childName={sponsorship.children.name}
             />
           ))}
         </Card>
