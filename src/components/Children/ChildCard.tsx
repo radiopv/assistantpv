@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NeedCheckboxes } from "./Needs/NeedCheckboxes";
 import { notifyActiveSponsor } from "@/utils/sponsor-notifications";
 import { useNavigate } from "react-router-dom";
+import { Info } from "lucide-react";
 
 interface ChildCardProps {
   child: any;
@@ -111,6 +112,11 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
     if (!isEditing) {
       navigate(`/child/${child.id}`);
     }
+  };
+
+  const handleLearnMore = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click event
+    navigate(`/child/${child.id}`);
   };
 
   return (
@@ -286,13 +292,22 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
               </Button>
             </>
           ) : (
-            <Button 
-              className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
-              variant="outline"
-              onClick={() => setIsEditing(true)}
-            >
-              {t("edit")}
-            </Button>
+            <>
+              <Button 
+                className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
+                variant="outline"
+                onClick={() => setIsEditing(true)}
+              >
+                {t("edit")}
+              </Button>
+              <Button
+                className="w-full sm:w-3/4 flex items-center gap-2 bg-primary hover:bg-primary/90 text-white"
+                onClick={handleLearnMore}
+              >
+                <Info className="h-4 w-4" />
+                {t("learnMore")}
+              </Button>
+            </>
           )}
         </div>
       </div>
