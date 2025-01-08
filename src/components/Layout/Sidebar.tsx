@@ -18,7 +18,8 @@ import {
   Mail,
   Heart,
   MapPin,
-  Link
+  Link,
+  LinkCheck
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -139,6 +140,12 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       href: "/admin/cities",
       label: t("citiesManagement"),
       icon: MapPin,
+      show: isAdmin,
+    },
+    {
+      href: "/admin/link-checker",
+      label: t("linkChecker"),
+      icon: LinkCheck,
       show: isAdmin,
     }
   ];

@@ -20,7 +20,7 @@ import AssistantPhotos from "@/pages/AssistantPhotos";
 import AssistantSponsorship from "@/pages/AssistantSponsorship";
 import MediaManagement from "@/pages/MediaManagement";
 import AddChild from "@/pages/AddChild";
-import FAQ from "@/pages/public/FAQ";
+import FAQ from "@/pages/admin/FAQ";
 import AvailableChildren from "@/pages/public/AvailableChildren";
 import PublicDonations from "@/pages/public/PublicDonations";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
@@ -34,6 +34,7 @@ import Emails from "@/pages/admin/Emails";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
 import Notifications from "@/pages/admin/Notifications";
+import LinkChecker from "@/pages/admin/LinkChecker";
 
 export const AppRoutes = () => {
   return (
@@ -85,9 +86,11 @@ export const AppRoutes = () => {
         <Route path="/admin/statistics" element={<Statistics />} />
         <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/emails" element={<Emails />} />
+        <Route path="/admin/faq" element={<FAQ />} />
         <Route path="/admin/home-content" element={<HomeContentManagement />} />
         <Route path="/admin/cities" element={<CitiesManagement />} />
         <Route path="/admin/notifications" element={<Notifications />} />
+        <Route path="/admin/link-checker" element={<LinkChecker />} />
       </Route>
 
       {/* Catch all redirect to home */}
