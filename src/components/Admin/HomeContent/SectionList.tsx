@@ -32,16 +32,14 @@ export const SectionList = ({ sections }: SectionListProps) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homepage-sections'] });
-      toast({
-        title: "Section mise à jour",
-        description: "Le contenu a été mis à jour avec succès",
+      toast("Section mise à jour", {
+        description: "Le contenu a été mis à jour avec succès"
       });
     },
     onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
+      toast("Erreur", {
         description: "Une erreur est survenue lors de la mise à jour",
+        style: { backgroundColor: 'red', color: 'white' }
       });
       console.error('Error updating section:', error);
     }
