@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { RequestCard } from "./RequestCard";
-import type { SponsorshipRequest } from "@/integrations/supabase/types/sponsorship";
+import type { Sponsorship } from "@/integrations/supabase/types/sponsorship";
 
 interface RequestsListProps {
-  requests: SponsorshipRequest[];
+  requests: Sponsorship[];
   onApprove: (id: string) => void;
   onReject: (id: string) => void;
 }
