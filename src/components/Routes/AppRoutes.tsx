@@ -52,8 +52,9 @@ export const AppRoutes = () => {
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/children" element={<Children />} />
+        {/* Move the add route before the :id route to prevent conflicts */}
+        <Route path="/children/add" element={<AddChild />} />
         <Route path="/children/:id" element={<ChildProfile />} />
-        <Route path="/add-child" element={<AddChild />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/settings" element={<Settings />} />
