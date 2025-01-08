@@ -33,12 +33,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const parsedUser = JSON.parse(storedUser);
           
           // Verify that the user exists in the sponsors table
-          const { data: sponsors, error } = await supabase
+          const { data: sponsor, error } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', parsedUser.id);
+            .eq('id', parsedUser.id)
+            .maybeSingle(); // Changed from single() to maybeSingle()
 
-          if (error || !sponsors || sponsors.length === 0) {
+          if (error || !sponsor) {
             console.error('User not found in sponsors table:', error);
             localStorage.removeItem('user');
             setUser(null);
@@ -46,7 +47,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return;
           }
 
-          const sponsor = sponsors[0];
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
