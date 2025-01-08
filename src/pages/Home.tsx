@@ -6,7 +6,6 @@ import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
 import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
-import { Navigation } from "@/components/Home/Navigation";
 import { HeroSection } from "@/components/Home/HeroSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -97,7 +96,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      <Navigation />
       <HeroSection 
         heroSection={heroSection} 
         onImageClick={() => setIsImageCropOpen(true)} 
