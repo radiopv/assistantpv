@@ -41,6 +41,7 @@ const PublicDonations = () => {
       const { data: donationsData, error: donationsError } = await supabase
         .from('donations')
         .select('*')
+        .eq('status', 'completed')
         .order('donation_date', { ascending: false });
       
       if (donationsError) throw donationsError;
@@ -153,7 +154,6 @@ const PublicDonations = () => {
                 <DonationCard 
                   key={donation.id} 
                   donation={donation}
-                  onDelete={refetch}
                 />
               ))}
             </div>
