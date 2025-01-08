@@ -1010,6 +1010,51 @@ export type Database = {
         }
         Relationships: []
       }
+      link_checker: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          id: string
+          is_internal: boolean | null
+          last_checked: string | null
+          priority: string | null
+          redirect_url: string | null
+          source_page: string
+          status: string | null
+          status_code: number | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          is_internal?: boolean | null
+          last_checked?: string | null
+          priority?: string | null
+          redirect_url?: string | null
+          source_page: string
+          status?: string | null
+          status_code?: number | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          is_internal?: boolean | null
+          last_checked?: string | null
+          priority?: string | null
+          redirect_url?: string | null
+          source_page?: string
+          status?: string | null
+          status_code?: number | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           child_count: number | null
