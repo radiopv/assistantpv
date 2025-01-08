@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { AvailableChildrenGrid } from "@/components/Children/AvailableChildrenGrid";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export default function AvailableChildren() {
   const navigate = useNavigate();
@@ -51,43 +51,25 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from("children")
         .select("*");
 
-      // Status filter
-      if (selectedStatus !== "all") {
-        query = query.eq("status", selectedStatus);
-      }
-
-      // Name search
-      if (searchTerm) {
-        query = query.ilike("name", `%${searchTerm}%`);
-      }
-
-      // City filter
-      if (selectedCity !== "all") {
-        query = query.eq("city", selectedCity);
-      }
-
-      // Gender filter - Make sure to match the exact values in the database
-      if (selectedGender !== "all") {
-        query = query.eq("gender", selectedGender);
-      }
-
-      // Age filter - Convert to number since age is stored as integer
-      if (selectedAge !== "all") {
-        query = query.eq("age", parseInt(selectedAge));
-      }
-
-      const { data, error } = await query;
-      
       if (error) {
         console.error("Error fetching children:", error);
         throw error;
       }
-      
-      return data;
+
+      // Apply filters in memory like in the Children component
+      return data.filter(child => {
+        const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCity = selectedCity === "all" || child.city === selectedCity;
+        const matchesGender = selectedGender === "all" || child.gender === selectedGender;
+        const matchesAge = selectedAge === "all" || child.age === parseInt(selectedAge);
+        const matchesStatus = selectedStatus === "all" || child.status === selectedStatus;
+
+        return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
+      });
     }
   });
 
