@@ -49,7 +49,7 @@ const MainLayout = () => {
     { icon: Languages, label: 'Traductions', path: '/admin/translations' },
     { icon: CheckCircle2, label: 'Validation', path: '/admin/validation' },
     { icon: ChartBar, label: 'Statistiques', path: '/admin/statistics' },
-    { icon: Heart, label: 'Gestion des parrainages', path: '/admin/sponsorships' },
+    { icon: Heart, label: 'Gestion des parrainages', path: '/admin/sponsorship-management' },
     { icon: Mail, label: 'Gestion des emails', path: '/admin/emails' },
     { icon: HelpCircle, label: 'FAQ', path: '/admin/faq' },
     { icon: MapPin, label: 'Gestion des villes', path: '/admin/cities' },

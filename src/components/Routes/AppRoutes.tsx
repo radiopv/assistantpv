@@ -78,7 +78,7 @@ export const AppRoutes = () => {
         <Route path="/sponsor-album" element={<SponsorAlbum />} />
 
         {/* Admin routes */}
-        <Route path="/admin/sponsorships" element={<SponsorshipManagement />} />
+        <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/statistics" element={<Statistics />} />
         <Route path="/admin/translations" element={<Translations />} />
