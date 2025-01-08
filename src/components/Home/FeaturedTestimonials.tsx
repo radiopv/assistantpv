@@ -17,8 +17,7 @@ export const FeaturedTestimonials = () => {
         .select(`
           *,
           children:child_id (name),
-          parrain:parrain_id (name),
-          sponsor:sponsor_id (name, is_anonymous)
+          parrain:parrain_id (name)
         `)
         .eq('is_approved', true)
         .eq('is_featured', true)
@@ -58,7 +57,7 @@ export const FeaturedTestimonials = () => {
           </blockquote>
           <footer className="mt-2 text-sm text-gray-500">
             <p>
-              {testimonial.sponsor?.is_anonymous ? t('anonymousSponsor') : testimonial.sponsor?.name || testimonial.parrain?.name}
+              {testimonial.parrain?.name || t('anonymousSponsor')}
               {testimonial.children?.name && ` - ${t('sponsorOf')} ${testimonial.children.name}`}
             </p>
             <time className="text-xs">
