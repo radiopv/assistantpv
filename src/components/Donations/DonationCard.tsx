@@ -1,12 +1,8 @@
 import { Card } from "@/components/ui/card";
-import { DonationDialog } from "./DonationDialog";
 import { DonationDetails } from "./DonationDetails";
 import { DonationCardHeader } from "./DonationCardHeader";
 import { DonationCardMedia } from "./DonationCardMedia";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { useDonationDelete } from "./hooks/useDonationDelete";
 import { useDonationMedia } from "./hooks/useDonationMedia";
-import { useDonationEdit } from "./hooks/useDonationEdit";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DonationCardProps {
@@ -19,21 +15,11 @@ interface DonationCardProps {
     status: string;
     comments: string | null;
   };
-  onDelete?: () => void;
-  isAdmin?: boolean;
-  canDelete?: boolean;
 }
 
-export const DonationCard = ({ 
-  donation, 
-  onDelete, 
-  isAdmin = false
-}: DonationCardProps) => {
-  const { user } = useAuth();
+export const DonationCard = ({ donation }: DonationCardProps) => {
   const { language } = useLanguage();
-  const { handleDelete } = useDonationDelete(onDelete);
-  const { photos, videos, refetchPhotos, refetchVideos } = useDonationMedia(donation.id);
-  const { showEditDialog, setShowEditDialog, handleSaveEdit } = useDonationEdit();
+  const { photos, videos } = useDonationMedia(donation.id);
 
   const translations = {
     fr: {
@@ -46,17 +32,11 @@ export const DonationCard = ({
 
   const t = translations[language as keyof typeof translations];
 
-  const userCanDelete = user?.role === 'admin' || user?.role === 'assistant';
-
   return (
     <Card className="p-4 w-full max-w-full overflow-hidden">
       <div className="space-y-4 w-full">
         <DonationCardHeader
           donation={donation}
-          isAdmin={isAdmin}
-          canDelete={userCanDelete}
-          onEdit={() => setShowEditDialog(true)}
-          onDelete={() => handleDelete(donation.id)}
         />
 
         <DonationDetails donation={donation} />
@@ -72,15 +52,8 @@ export const DonationCard = ({
           donationId={donation.id}
           photos={photos}
           videos={videos}
-          onPhotosUpdate={refetchPhotos}
-          onVideosUpdate={refetchVideos}
-        />
-
-        <DonationDialog
-          open={showEditDialog}
-          onClose={() => setShowEditDialog(false)}
-          donation={donation}
-          onSave={handleSaveEdit}
+          onPhotosUpdate={() => {}}
+          onVideosUpdate={() => {}}
         />
       </div>
     </Card>

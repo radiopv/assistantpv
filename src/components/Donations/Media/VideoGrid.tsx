@@ -1,11 +1,10 @@
-import { X, Play } from "lucide-react";
+import { Play } from "lucide-react";
 
 interface VideoGridProps {
   videos: any[];
-  onVideosUpdate: () => void;
 }
 
-export const VideoGrid = ({ videos, onVideosUpdate }: VideoGridProps) => {
+export const VideoGrid = ({ videos }: VideoGridProps) => {
   if (!videos || videos.length === 0) return null;
 
   return (
@@ -24,12 +23,6 @@ export const VideoGrid = ({ videos, onVideosUpdate }: VideoGridProps) => {
                 <Play className="w-12 h-12 text-white" />
               </div>
             </div>
-            <button
-              onClick={() => onVideosUpdate()}
-              className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <X className="h-4 w-4" />
-            </button>
           </div>
         ))}
       </div>
