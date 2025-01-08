@@ -6,6 +6,7 @@ import { Edit, Eye, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { SponsorshipAssociationDialog } from "./SponsorshipAssociationDialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SponsorCardProps {
   sponsor: any;
