@@ -53,7 +53,7 @@ export function SponsorsList({
               variant="outline"
               onClick={() => onSelectSponsor(sponsor.id)}
             >
-              {t("select")}
+              {t("selectSponsor")}
             </Button>
           </div>
         ))}
