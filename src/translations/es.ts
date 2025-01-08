@@ -119,23 +119,26 @@ export const spanishTranslations = {
   comingSoon: "Próximamente",
   loading: "Cargando...",
   
-  // Available Children Page
-  availableChildren: "Enfants en attente de parrainage",
-  searchChild: "Buscar un niño...",
-  allCities: "Todas las ciudades",
-  allGenders: "Sexo",
-  allAges: "Todos los edades",
-  allStatus: "Todos los estados",
-  noChildren: "Aucun enfant disponible avec ces critères",
-  noCategoryChildren: "Aucun enfant dans cette catégorie",
-  masculine: "Masculino",
-  feminine: "Femenino",
-  errorFetchingChildren: "Erreur lors de la récupération des enfants",
-  errorInvalidChild: "Enfant invalide",
-  errorSponsorClick: "Erreur lors de la demande de parrainage",
-  learnMore: "En savoir plus",
+  // Testimonial validation
+  author: "Autor",
+  content: "Contenido",
+  testimonialApproved: "Testimonio aprobado con éxito",
+  testimonialRejected: "Testimonio rechazado",
+  errorApprovingTestimonial: "Error al aprobar el testimonio",
+  errorRejectingTestimonial: "Error al rechazar el testimonio",
+  validation: "Validación",
 
-  // BecomeSponsor translations
+  // Photo validation
+  noPhotosToValidate: "No hay fotos para validar",
+  photoApproved: "Foto aprobada con éxito",
+  photoRejected: "Foto rechazada",
+  errorApprovingPhoto: "Error al aprobar la foto",
+  errorRejectingPhoto: "Error al rechazar la foto",
+  reject: "Rechazar",
+  childName: "Nombre del niño",
+  uploadDate: "Fecha de envío",
+
+  // Sponsorship
   becomeSponsor: "Conviértete en padrino",
   sponsorshipDescription: "Completa el formulario para comenzar el proceso de apadrinamiento",
   fullName: "Nombre completo",
@@ -147,7 +150,7 @@ export const spanishTranslations = {
   submitting: "Enviando...",
   submitRequest: "Enviar solicitud",
   pleaseAcceptTerms: "Por favor acepta los términos y condiciones",
-  
+
   // New translations
   createAssociation: "Crear asociación",
   selectedChild: "Niño seleccionado:",
@@ -159,6 +162,6 @@ export const spanishTranslations = {
   searchSponsor: "Buscar un padrino...",
   select: "Seleccionar",
   remove: "Eliminar",
-  sponsoredBy: "Apadrinado por", // Changed from duplicate 'sponsored'
+  sponsored: "Apadrinado por",
   notSponsored: "No apadrinado",
 };
