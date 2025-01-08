@@ -12,6 +12,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { toast } from "sonner";
+import { User } from "lucide-react";
 
 interface HomepageSection {
   section_key: string;
@@ -102,6 +103,45 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
+      {/* Navigation Bar */}
+      <nav className="bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center">
+            <div className="flex space-x-4">
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/")}
+                className="text-primary"
+              >
+                Accueil
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/children")}
+                className="text-primary"
+              >
+                Enfants disponibles
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/donations")}
+                className="text-primary"
+              >
+                Donations
+              </Button>
+            </div>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/sponsor-dashboard")}
+              className="flex items-center gap-2 text-primary"
+            >
+              <User className="h-4 w-4" />
+              Espace parrain
+            </Button>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section with Split Layout */}
       <section className="relative h-[90vh] bg-cuba-gradient">
         <div className="container mx-auto h-full">
