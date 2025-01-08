@@ -35,25 +35,25 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0072BB",
+          DEFAULT: "#0072BB", // Cuban Ocean Blue
           foreground: "#FFFFFF",
           hover: "#005d99",
         },
         secondary: {
-          DEFAULT: "#FF2400",
+          DEFAULT: "#FF2400", // Cuban Warm Orange/Red
           foreground: "#FFFFFF",
           hover: "#cc1d00",
         },
         accent: {
-          DEFAULT: "#FFD700",
+          DEFAULT: "#FFD700", // Cuban Gold
           foreground: "#000000",
           hover: "#ccac00",
         },
         cuba: {
-          turquoise: "#0072BB",
-          red: "#FF2400",
-          gold: "#FFD700",
-          offwhite: "#F5F5F5",
+          turquoise: "#0072BB", // Ocean Blue
+          red: "#FF2400",      // Warm Red
+          gold: "#FFD700",     // Warm Gold
+          offwhite: "#F5F5F5", // Light Background
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
