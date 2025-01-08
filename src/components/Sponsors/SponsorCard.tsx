@@ -130,7 +130,7 @@ export const SponsorCard = ({
         <SponsorshipAssociationDialog
           isOpen={showAssociationDialog}
           onClose={() => setShowAssociationDialog(false)}
-          sponsor={sponsor}
+          sponsorId={sponsor.id}
         />
       )}
     </Card>
