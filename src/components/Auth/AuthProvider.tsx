@@ -32,12 +32,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           
-          // Verify that the user exists in the sponsors table
           const { data: sponsor, error } = await supabase
             .from('sponsors')
             .select('*')
             .eq('id', parsedUser.id)
-            .maybeSingle(); // Changed from single() to maybeSingle()
+            .maybeSingle();
 
           if (error || !sponsor) {
             console.error('User not found in sponsors table:', error);

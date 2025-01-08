@@ -32,7 +32,10 @@ const Notifications = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('notifications')
-        .select('*')
+        .select(`
+          *,
+          sender:sender_id(name)
+        `)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -40,7 +43,10 @@ const Notifications = () => {
         return [];
       }
 
-      return data;
+      return data.map(notification => ({
+        ...notification,
+        sender_name: notification.sender?.name || 'Système'
+      }));
     }
   });
 
@@ -62,6 +68,7 @@ const Notifications = () => {
               <TableHead>Type</TableHead>
               <TableHead>Titre</TableHead>
               <TableHead>Contenu</TableHead>
+              <TableHead>Par</TableHead>
               <TableHead>Date</TableHead>
             </TableRow>
           </TableHeader>
@@ -71,6 +78,7 @@ const Notifications = () => {
                 <TableCell className="font-medium">{notification.type}</TableCell>
                 <TableCell>{notification.title}</TableCell>
                 <TableCell>{notification.content}</TableCell>
+                <TableCell>{notification.sender_name}</TableCell>
                 <TableCell>
                   {format(new Date(notification.created_at), 'dd/MM/yyyy HH:mm')}
                 </TableCell>
