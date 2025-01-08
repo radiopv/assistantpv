@@ -6,6 +6,8 @@ import { SearchInput } from "@/components/ui/search-input";
 import { Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -18,13 +20,34 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
   const [sortOrder, setSortOrder] = useState("recent");
   const { t } = useLanguage();
 
+  const handleVerificationChange = async (sponsorId: string, checked: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('sponsors')
+        .update({ is_verified: checked })
+        .eq('id', sponsorId);
+
+      if (error) throw error;
+      
+      setSponsors(prevSponsors =>
+        prevSponsors.map(s =>
+          s.id === sponsorId
+            ? { ...s, is_verified: checked }
+            : s
+        )
+      );
+    } catch (error) {
+      console.error('Error updating sponsor verification:', error);
+    }
+  };
+
   const filterAndSortSponsors = (sponsors: any[], isActive: boolean) => {
     let filtered = sponsors.filter(sponsor => {
       const searchString = `${sponsor.name} ${sponsor.email} ${sponsor.city}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       const hasChildren = sponsor.sponsorships?.length > 0;
       return searchString.includes(searchTermLower) && 
-             (isActive ? hasChildren : !hasChildren); // Changed this line to consider sponsors with children as active
+             (isActive ? hasChildren : !hasChildren);
     });
 
     return filtered.sort((a, b) => {
@@ -70,6 +93,15 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
         <div className="space-y-6">
           {filterAndSortSponsors(sponsors, true).map((sponsor) => (
             <Card key={sponsor.id} className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">Vérifié</span>
+                  <Checkbox
+                    checked={sponsor.is_verified}
+                    onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked)}
+                  />
+                </div>
+              </div>
               <SponsorshipAccordion
                 sponsor={sponsor}
                 onUpdate={() => {
@@ -91,6 +123,15 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
         <div className="space-y-6">
           {filterAndSortSponsors(sponsors, false).map((sponsor) => (
             <Card key={sponsor.id} className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">Vérifié</span>
+                  <Checkbox
+                    checked={sponsor.is_verified}
+                    onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked)}
+                  />
+                </div>
+              </div>
               <SponsorshipAccordion
                 sponsor={sponsor}
                 onUpdate={() => {
