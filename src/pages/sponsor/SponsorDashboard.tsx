@@ -12,6 +12,7 @@ import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/SponsoredChi
 import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
 import { SponsorTestimonials } from "@/components/Sponsors/Dashboard/SponsorTestimonials";
 import { DashboardTabs } from "@/components/Sponsors/Dashboard/DashboardTabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -82,94 +83,131 @@ const SponsorDashboard = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
-      {/* Tabs Section */}
-      <DashboardTabs
-        childId={sponsorships[0].children.id}
-        sponsorId={user?.id || ''}
-        plannedVisits={plannedVisits || []}
-      />
+      {/* Actions Tabs Section */}
+      <Tabs defaultValue="actions" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="actions">Actions</TabsTrigger>
+          <TabsTrigger value="gallery">Album Photos</TabsTrigger>
+          <TabsTrigger value="visits">Visites Prévues</TabsTrigger>
+        </TabsList>
 
-      {/* Child Information and Dates */}
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-6">
-          <SponsoredChildCard child={sponsorships[0].children} />
-          
-          {/* Description and Story Section */}
-          <Card className="p-4">
-            <div className="space-y-4">
-              {sponsorships[0].children.description && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Description</h3>
-                  <p className="text-gray-600">{sponsorships[0].children.description}</p>
+        <TabsContent value="actions">
+          <DashboardTabs
+            childId={sponsorships[0].children.id}
+            sponsorId={user?.id || ''}
+            plannedVisits={plannedVisits || []}
+          />
+        </TabsContent>
+
+        <TabsContent value="gallery">
+          <Card className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {sponsorships.map((sponsorship) => (
+                <div key={sponsorship.id} className="space-y-4">
+                  <h3 className="text-lg font-semibold">Album de {sponsorship.children.name}</h3>
+                  <DashboardTabs
+                    childId={sponsorship.children.id}
+                    sponsorId={user?.id || ''}
+                    plannedVisits={[]}
+                  />
                 </div>
-              )}
-              
-              {sponsorships[0].children.story && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Histoire</h3>
-                  <p className="text-gray-600">{sponsorships[0].children.story}</p>
-                </div>
-              )}
-              
-              {sponsorships[0].children.comments && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Commentaires</h3>
-                  <p className="text-gray-600">{sponsorships[0].children.comments}</p>
-                </div>
-              )}
+              ))}
             </div>
           </Card>
-          
-          {/* Needs Section */}
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Besoins de {sponsorships[0].children.name}</h3>
-            <ScrollArea className="h-[200px] w-full">
-              <div className="grid grid-cols-1 gap-3">
-                {convertJsonToNeeds(sponsorships[0].children.needs).map((need, index) => (
-                  <div
-                    key={`${need.category}-${index}`}
-                    className={`p-3 rounded-lg ${
-                      need.is_urgent
-                        ? "bg-red-50 border border-red-200"
-                        : "bg-gray-50 border border-gray-200"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Badge
-                          variant={need.is_urgent ? "destructive" : "secondary"}
-                          className="mb-2"
-                        >
-                          {need.category}
-                          {need.is_urgent && " (!)"} 
-                        </Badge>
-                        {need.description && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            {need.description}
-                          </p>
-                        )}
+        </TabsContent>
+
+        <TabsContent value="visits">
+          <Card className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {sponsorships.map((sponsorship) => (
+                <ImportantDatesCard
+                  key={sponsorship.id}
+                  birthDate={sponsorship.children.birth_date}
+                  plannedVisits={plannedVisits?.filter(v => v.sponsor_id === user?.id) || []}
+                />
+              ))}
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {/* Sponsored Children Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {sponsorships.map((sponsorship) => (
+          <div key={sponsorship.id} className="space-y-6">
+            <SponsoredChildCard child={sponsorship.children} />
+            
+            {/* Description and Story Section */}
+            <Card className="p-4">
+              <div className="space-y-4">
+                {sponsorship.children.description && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Description</h3>
+                    <p className="text-gray-600">{sponsorship.children.description}</p>
+                  </div>
+                )}
+                
+                {sponsorship.children.story && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Histoire</h3>
+                    <p className="text-gray-600">{sponsorship.children.story}</p>
+                  </div>
+                )}
+                
+                {sponsorship.children.comments && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Commentaires</h3>
+                    <p className="text-gray-600">{sponsorship.children.comments}</p>
+                  </div>
+                )}
+              </div>
+            </Card>
+            
+            {/* Needs Section */}
+            <Card className="p-4">
+              <h3 className="text-lg font-semibold mb-4">Besoins de {sponsorship.children.name}</h3>
+              <ScrollArea className="h-[200px] w-full">
+                <div className="grid grid-cols-1 gap-3">
+                  {convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
+                    <div
+                      key={`${need.category}-${index}`}
+                      className={`p-3 rounded-lg ${
+                        need.is_urgent
+                          ? "bg-red-50 border border-red-200"
+                          : "bg-gray-50 border border-gray-200"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Badge
+                            variant={need.is_urgent ? "destructive" : "secondary"}
+                            className="mb-2"
+                          >
+                            {need.category}
+                            {need.is_urgent && " (!)"} 
+                          </Badge>
+                          {need.description && (
+                            <p className="text-sm text-gray-600 mt-1">
+                              {need.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          </Card>
+                  ))}
+                </div>
+              </ScrollArea>
+            </Card>
 
-          {/* Testimonials Section */}
-          <Card className="p-4">
-            <SponsorTestimonials 
-              sponsorId={user?.id || ''} 
-              childId={sponsorships[0].children.id} 
-            />
-          </Card>
-        </div>
-
-        {/* Important Dates */}
-        <ImportantDatesCard 
-          birthDate={sponsorships[0].children.birth_date} 
-          plannedVisits={plannedVisits?.filter(v => v.sponsor_id === user?.id) || []} 
-        />
+            {/* Testimonials Section */}
+            <Card className="p-4">
+              <SponsorTestimonials 
+                sponsorId={user?.id || ''} 
+                childId={sponsorship.children.id} 
+              />
+            </Card>
+          </div>
+        ))}
       </div>
     </div>
   );
