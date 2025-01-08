@@ -35,28 +35,29 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0072BB", // Cuban Ocean Blue
+          DEFAULT: "#FF6F61", // Cuban Coral Red
           foreground: "#FFFFFF",
-          hover: "#005d99",
+          hover: "#FF8C42", // Cuban Orange
         },
         secondary: {
-          DEFAULT: "#FF2400", // Cuban Warm Orange/Red
-          foreground: "#FFFFFF",
-          hover: "#cc1d00",
+          DEFAULT: "#FFD966", // Cuban Pastel Yellow
+          foreground: "#333333",
+          hover: "#FFE599",
         },
         accent: {
-          DEFAULT: "#FFD700", // Cuban Gold
-          foreground: "#000000",
-          hover: "#ccac00",
+          DEFAULT: "#00B8D4", // Cuban Turquoise
+          foreground: "#FFFFFF",
+          hover: "#00A0BA",
         },
         cuba: {
-          turquoise: "#0072BB", // Ocean Blue
-          red: "#FF2400",      // Warm Red
-          gold: "#FFD700",     // Warm Gold
-          offwhite: "#F5F5F5", // Light Background
-          warmBeige: "#FDE1D3", // Warm Beige
-          softYellow: "#FEF7CD", // Soft Yellow
-          softOrange: "#FEC6A1", // Soft Orange
+          coral: "#FF6F61",     // Warm Coral Red
+          yellow: "#FFD966",    // Pastel Yellow
+          turquoise: "#00B8D4", // Vibrant Turquoise
+          mint: "#6DD47E",      // Tropical Mint
+          orange: "#FF8C42",    // Intense Orange
+          sand: "#F4E3C1",      // Soft Sand Beige
+          text: "#333333",      // Soft Black
+          textLight: "#666666", // Light Gray
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -67,8 +68,8 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#F4E3C1", // Using Cuban Sand color
+          foreground: "#333333",
         },
       },
       borderRadius: {
@@ -79,6 +80,7 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         title: ['Roboto', 'system-ui', 'sans-serif'],
+        display: ['Playfair Display', 'serif'], // Ajout d'une police décorative pour les titres
       },
       fontSize: {
         'fluid-sm': 'clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem)',
@@ -108,10 +110,15 @@ export default {
         "slide-up": "slide-up 0.3s ease-out",
       },
       backgroundImage: {
-        'cuba-gradient': 'linear-gradient(135deg, #0072BB 0%, #005d99 100%)',
-        'sunset-gradient': 'linear-gradient(to right, #FF2400, #FFD700)',
-        'beach-gradient': 'linear-gradient(to bottom, #0072BB, #F5F5F5)',
-        'warm-gradient': 'linear-gradient(to right, #FDE1D3, #FEC6A1)',
+        'cuba-gradient': 'linear-gradient(135deg, #FF6F61 0%, #FF8C42 100%)',
+        'sunset-gradient': 'linear-gradient(to right, #FF6F61, #FFD966)',
+        'ocean-gradient': 'linear-gradient(to bottom, #00B8D4, #F4E3C1)',
+        'warm-gradient': 'linear-gradient(to right, #F4E3C1, #FFD966)',
+      },
+      boxShadow: {
+        'cuba': '0 4px 14px 0 rgba(255, 111, 97, 0.1)',
+        'cuba-md': '0 6px 20px 0 rgba(255, 111, 97, 0.15)',
+        'cuba-lg': '0 8px 30px 0 rgba(255, 111, 97, 0.2)',
       },
     },
   },
