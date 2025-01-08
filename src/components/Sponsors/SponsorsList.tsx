@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SponsorshipAccordion } from "./SponsorshipAccordion";
 import { SearchInput } from "@/components/ui/search-input";
 import { Search, UserPlus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -70,9 +70,47 @@ export const SponsorsList = ({
     }
   };
 
+  const handleAddChild = async (sponsorId: string, childId: string) => {
+    try {
+      // Check if child is already sponsored
+      const { data: existingSponsorship, error: checkError } = await supabase
+        .from('sponsorships')
+        .select('id')
+        .eq('child_id', childId)
+        .eq('status', 'active')
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
+
+      if (existingSponsorship) {
+        toast.error(t("childAlreadySponsored"));
+        return;
+      }
+
+      // Create new sponsorship
+      const { error } = await supabase
+        .from('sponsorships')
+        .insert({
+          sponsor_id: sponsorId,
+          child_id: childId,
+          status: 'active',
+          start_date: new Date().toISOString()
+        });
+
+      if (error) throw error;
+
+      toast.success(t("sponsorshipCreated"));
+    } catch (error) {
+      console.error('Error adding child:', error);
+      toast.error(t("errorAddingChild"));
+    }
+  };
+
   const filterAndSortSponsors = (sponsors: any[], isActive: boolean) => {
     let filtered = sponsors.filter(sponsor => {
-      const searchString = `${sponsor.name} ${sponsor.email} ${sponsor.city}`.toLowerCase();
+      const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       const hasChildren = sponsor.sponsorships?.length > 0;
       return searchString.includes(searchTermLower) && 
@@ -101,7 +139,7 @@ export const SponsorsList = ({
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex-1">
           <SearchInput
-            placeholder={t("searchByNameEmailCity")}
+            placeholder={t("searchByNameEmail")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             icon={Search}
@@ -151,49 +189,42 @@ export const SponsorsList = ({
                 </div>
               </div>
 
-              <div className="grid gap-2 mb-4">
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <p className="font-medium">Ville</p>
-                    <p className="text-gray-500">{sponsor.city || 'Non spécifié'}</p>
-                  </div>
-                  <div>
-                    <p className="font-medium">Téléphone</p>
-                    <p className="text-gray-500">{sponsor.phone || 'Non spécifié'}</p>
-                  </div>
-                </div>
-              </div>
-
               <div className="space-y-4">
                 <h4 className="font-medium">Enfants parrainés</h4>
                 <div className="grid gap-4">
-                  {sponsor.sponsorships?.map((sponsorship: any) => (
-                    <div key={sponsorship.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={sponsorship.children?.photo_url} alt={sponsorship.children?.name} />
-                          <AvatarFallback>{sponsorship.children?.name?.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium cursor-pointer hover:text-primary" 
-                             onClick={() => onRemoveChild?.(sponsorship.id)}>
-                            {sponsorship.children?.name}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {sponsorship.children?.age} ans - {sponsorship.children?.city}
-                          </p>
+                  {/* Use Set to ensure unique children */}
+                  {Array.from(new Set(sponsor.sponsorships?.map((s: any) => s.child_id))).map((childId: string) => {
+                    const sponsorship = sponsor.sponsorships?.find((s: any) => s.child_id === childId);
+                    const child = sponsorship?.children;
+                    
+                    return child ? (
+                      <div key={sponsorship.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={child.photo_url} alt={child.name} />
+                            <AvatarFallback>{child.name?.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium cursor-pointer hover:text-primary" 
+                               onClick={() => onRemoveChild?.(sponsorship.id)}>
+                              {child.name}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {child.age} ans
+                            </p>
+                          </div>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => onRemoveChild?.(sponsorship.id)}
+                        >
+                          Retirer
+                        </Button>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                        onClick={() => onRemoveChild?.(sponsorship.id)}
-                      >
-                        Retirer
-                      </Button>
-                    </div>
-                  ))}
+                    ) : null;
+                  })}
                   <Button
                     variant="outline"
                     size="sm"
@@ -239,19 +270,6 @@ export const SponsorsList = ({
                       checked={sponsor.is_active}
                       onCheckedChange={(checked) => handleStatusChange(sponsor.id, 'is_active', checked)}
                     />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid gap-2 mb-4">
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <p className="font-medium">Ville</p>
-                    <p className="text-gray-500">{sponsor.city || 'Non spécifié'}</p>
-                  </div>
-                  <div>
-                    <p className="font-medium">Téléphone</p>
-                    <p className="text-gray-500">{sponsor.phone || 'Non spécifié'}</p>
                   </div>
                 </div>
               </div>
