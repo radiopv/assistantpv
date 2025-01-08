@@ -56,9 +56,9 @@ const MainLayout = () => {
     { icon: LayoutDashboard, label: t('homepage'), path: '/admin/homepage' },
   ];
 
-  const sponsorNavItems = isSponsor ? [
+  const sponsorNavItems = [
     { icon: User, label: t('profile'), path: '/sponsor-dashboard' }
-  ] : [];
+  ];
 
   const mobileNavItems = [
     ...assistantNavItems,
