@@ -8,21 +8,36 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsorshipAssociationDialogProps {
-  child: any;
-  sponsors: any[];
+  sponsor: any;
   isOpen: boolean;
   onClose: () => void;
 }
 
 export const SponsorshipAssociationDialog = ({ 
-  child, 
-  sponsors, 
+  sponsor, 
   isOpen, 
   onClose 
 }: SponsorshipAssociationDialogProps) => {
-  const [selectedSponsor, setSelectedSponsor] = useState<string>("");
+  const [selectedChild, setSelectedChild] = useState<string>("");
+  const [availableChildren, setAvailableChildren] = useState<any[]>([]);
   const queryClient = useQueryClient();
   const { t } = useLanguage();
+
+  // Fetch available children when dialog opens
+  const fetchAvailableChildren = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('children')
+        .select('id, name')
+        .eq('is_sponsored', false);
+
+      if (error) throw error;
+      setAvailableChildren(data || []);
+    } catch (error) {
+      console.error('Error fetching available children:', error);
+      toast.error(t("errorFetchingChildren"));
+    }
+  };
 
   const handleAssociation = async () => {
     try {
@@ -30,7 +45,7 @@ export const SponsorshipAssociationDialog = ({
       const { data: existingSponsorship, error: checkError } = await supabase
         .from('sponsorships')
         .select('id')
-        .eq('child_id', child.id)
+        .eq('child_id', selectedChild)
         .eq('status', 'active')
         .single();
 
@@ -47,28 +62,15 @@ export const SponsorshipAssociationDialog = ({
       const { error } = await supabase
         .from('sponsorships')
         .insert({
-          sponsor_id: selectedSponsor,
-          child_id: child.id,
+          sponsor_id: sponsor.id,
+          child_id: selectedChild,
           status: 'active',
           start_date: new Date().toISOString()
         });
 
       if (error) throw error;
 
-      // Update child status
-      const { error: updateError } = await supabase
-        .from('children')
-        .update({ 
-          is_sponsored: true,
-          sponsor_id: selectedSponsor,
-          sponsor_name: sponsors.find(s => s.id === selectedSponsor)?.name
-        })
-        .eq('id', child.id);
-
-      if (updateError) throw updateError;
-
       toast.success(t("sponsorshipCreated"));
-      queryClient.invalidateQueries({ queryKey: ['children'] });
       queryClient.invalidateQueries({ queryKey: ['sponsors'] });
       onClose();
     } catch (error) {
@@ -77,25 +79,32 @@ export const SponsorshipAssociationDialog = ({
     }
   };
 
+  // Fetch available children when dialog opens
+  useState(() => {
+    if (isOpen) {
+      fetchAvailableChildren();
+    }
+  });
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("associateSponsor")}</DialogTitle>
+          <DialogTitle>{t("associateChild")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <Select
-            value={selectedSponsor}
-            onValueChange={setSelectedSponsor}
+            value={selectedChild}
+            onValueChange={setSelectedChild}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t("selectSponsor")} />
+              <SelectValue placeholder={t("selectChild")} />
             </SelectTrigger>
             <SelectContent>
-              {sponsors.map((sponsor) => (
-                <SelectItem key={sponsor.id} value={sponsor.id}>
-                  {sponsor.name}
+              {availableChildren.map((child) => (
+                <SelectItem key={child.id} value={child.id}>
+                  {child.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -107,7 +116,7 @@ export const SponsorshipAssociationDialog = ({
             </Button>
             <Button 
               onClick={handleAssociation}
-              disabled={!selectedSponsor}
+              disabled={!selectedChild}
             >
               {t("associate")}
             </Button>

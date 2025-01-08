@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { SponsorshipAssociationDialog } from "./SponsorshipAssociationDialog";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -26,6 +27,8 @@ export const SponsorsList = ({
   const [sponsors, setSponsors] = useState(initialSponsors);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("recent");
+  const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { t } = useLanguage();
 
   const handleVerificationChange = async (sponsorId: string, checked: boolean) => {
@@ -70,42 +73,14 @@ export const SponsorsList = ({
     }
   };
 
-  const handleAddChild = async (sponsorId: string, childId: string) => {
-    try {
-      // Check if child is already sponsored
-      const { data: existingSponsorship, error: checkError } = await supabase
-        .from('sponsorships')
-        .select('id')
-        .eq('child_id', childId)
-        .eq('status', 'active')
-        .single();
+  const handleAddChildClick = (sponsor: any) => {
+    setSelectedSponsor(sponsor);
+    setIsDialogOpen(true);
+  };
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError;
-      }
-
-      if (existingSponsorship) {
-        toast.error(t("childAlreadySponsored"));
-        return;
-      }
-
-      // Create new sponsorship
-      const { error } = await supabase
-        .from('sponsorships')
-        .insert({
-          sponsor_id: sponsorId,
-          child_id: childId,
-          status: 'active',
-          start_date: new Date().toISOString()
-        });
-
-      if (error) throw error;
-
-      toast.success(t("sponsorshipCreated"));
-    } catch (error) {
-      console.error('Error adding child:', error);
-      toast.error(t("errorAddingChild"));
-    }
+  const handleDialogClose = () => {
+    setSelectedSponsor(null);
+    setIsDialogOpen(false);
   };
 
   const filterAndSortSponsors = (sponsors: any[], isActive: boolean) => {
@@ -192,7 +167,6 @@ export const SponsorsList = ({
               <div className="space-y-4">
                 <h4 className="font-medium">Enfants parrainés</h4>
                 <div className="grid gap-4">
-                  {/* Use Set to ensure unique children */}
                   {Array.from(new Set(sponsor.sponsorships?.map((s: any) => s.child_id))).map((childId: string) => {
                     const sponsorship = sponsor.sponsorships?.find((s: any) => s.child_id === childId);
                     const child = sponsorship?.children;
@@ -229,7 +203,7 @@ export const SponsorsList = ({
                     variant="outline"
                     size="sm"
                     className="flex items-center gap-2"
-                    onClick={() => {/* Handle adding child */}}
+                    onClick={() => handleAddChildClick(sponsor)}
                   >
                     <UserPlus className="h-4 w-4" />
                     Ajouter un enfant
@@ -281,7 +255,7 @@ export const SponsorsList = ({
                   variant="outline"
                   size="sm"
                   className="flex items-center gap-2"
-                  onClick={() => {/* Handle adding child */}}
+                  onClick={() => handleAddChildClick(sponsor)}
                 >
                   <UserPlus className="h-4 w-4" />
                   Ajouter un enfant
@@ -291,6 +265,14 @@ export const SponsorsList = ({
           ))}
         </div>
       </TabsContent>
+
+      {selectedSponsor && (
+        <SponsorshipAssociationDialog
+          sponsor={selectedSponsor}
+          isOpen={isDialogOpen}
+          onClose={handleDialogClose}
+        />
+      )}
     </Tabs>
   );
 };
