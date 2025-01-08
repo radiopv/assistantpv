@@ -2,7 +2,6 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
-import { MessageNotification } from "@/components/Messages/MessageNotification";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,7 +38,6 @@ const MainLayout = () => {
       <main className="flex-1 md:ml-64 pb-16 md:pb-0">
         <div className="p-4 border-b bg-white flex justify-between items-center">
           <div className="flex items-center gap-4">
-            <MessageNotification />
             <UserProfileMenu />
           </div>
         </div>

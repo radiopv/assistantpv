@@ -39,6 +39,16 @@ const publicLinks = [
     icon: User,
   },
   {
+    href: "/messages",
+    label: "Messages",
+    icon: MessageSquare,
+  },
+  {
+    href: "/tasks",
+    label: "Tâches",
+    icon: CheckSquare,
+  },
+  {
     href: "/faq",
     label: "FAQ",
     icon: FileText,
