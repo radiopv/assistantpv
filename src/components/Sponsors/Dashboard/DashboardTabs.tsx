@@ -3,14 +3,15 @@ import { Card } from "@/components/ui/card";
 import { DashboardActions } from "./DashboardActions";
 import { PhotoAlbumSection } from "./PhotoAlbumSection";
 import { VisitsSection } from "./VisitsSection";
+import { ImportantDatesCard } from "./ImportantDatesCard";
 
 interface DashboardTabsProps {
-  childId: string;
-  sponsorId: string;
+  sponsorships: any[];
+  userId: string;
   plannedVisits: any[];
 }
 
-export const DashboardTabs = ({ childId, sponsorId, plannedVisits }: DashboardTabsProps) => {
+export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: DashboardTabsProps) => {
   return (
     <Tabs defaultValue="actions" className="w-full">
       <TabsList className="grid w-full grid-cols-3">
@@ -19,17 +20,31 @@ export const DashboardTabs = ({ childId, sponsorId, plannedVisits }: DashboardTa
         <TabsTrigger value="visits">Visites Prévues</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="actions" className="space-y-4">
+      <TabsContent value="actions">
         <DashboardActions />
       </TabsContent>
 
-      <TabsContent value="gallery" className="space-y-4">
-        <PhotoAlbumSection childId={childId} sponsorId={sponsorId} />
+      <TabsContent value="gallery">
+        <Card className="p-6">
+          {sponsorships.map((sponsorship) => (
+            <PhotoAlbumSection
+              key={sponsorship.id}
+              childId={sponsorship.children.id}
+              sponsorId={userId}
+            />
+          ))}
+        </Card>
       </TabsContent>
 
-      <TabsContent value="visits" className="space-y-4">
+      <TabsContent value="visits">
         <Card className="p-6">
-          <VisitsSection visits={plannedVisits} />
+          {sponsorships.map((sponsorship) => (
+            <ImportantDatesCard
+              key={sponsorship.id}
+              birthDate={sponsorship.children.birth_date}
+              plannedVisits={plannedVisits?.filter(v => v.sponsor_id === userId)}
+            />
+          ))}
         </Card>
       </TabsContent>
     </Tabs>

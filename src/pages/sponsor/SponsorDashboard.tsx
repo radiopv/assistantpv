@@ -4,20 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { convertJsonToNeeds } from "@/types/needs";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/SponsoredChildCard";
-import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
-import { SponsorTestimonials } from "@/components/Sponsors/Dashboard/SponsorTestimonials";
 import { DashboardTabs } from "@/components/Sponsors/Dashboard/DashboardTabs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   const { data: sponsorships, isLoading } = useQuery({
     queryKey: ["sponsorships", user?.id],
@@ -83,130 +75,21 @@ const SponsorDashboard = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
-      {/* Actions Tabs Section */}
-      <Tabs defaultValue="actions" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="actions">Actions</TabsTrigger>
-          <TabsTrigger value="gallery">Album Photos</TabsTrigger>
-          <TabsTrigger value="visits">Visites Prévues</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="actions">
-          <DashboardTabs
-            childId={sponsorships[0].children.id}
-            sponsorId={user?.id || ''}
-            plannedVisits={plannedVisits || []}
-          />
-        </TabsContent>
-
-        <TabsContent value="gallery">
-          <Card className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {sponsorships.map((sponsorship) => (
-                <div key={sponsorship.id} className="space-y-4">
-                  <h3 className="text-lg font-semibold">Album de {sponsorship.children.name}</h3>
-                  <DashboardTabs
-                    childId={sponsorship.children.id}
-                    sponsorId={user?.id || ''}
-                    plannedVisits={[]}
-                  />
-                </div>
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="visits">
-          <Card className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {sponsorships.map((sponsorship) => (
-                <ImportantDatesCard
-                  key={sponsorship.id}
-                  birthDate={sponsorship.children.birth_date}
-                  plannedVisits={plannedVisits?.filter(v => v.sponsor_id === user?.id) || []}
-                />
-              ))}
-            </div>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {/* Common Actions and Tabs */}
+      <DashboardTabs 
+        sponsorships={sponsorships}
+        userId={user?.id || ''}
+        plannedVisits={plannedVisits || []}
+      />
 
       {/* Sponsored Children Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {sponsorships.map((sponsorship) => (
-          <div key={sponsorship.id} className="space-y-6">
-            <SponsoredChildCard child={sponsorship.children} />
-            
-            {/* Description and Story Section */}
-            <Card className="p-4">
-              <div className="space-y-4">
-                {sponsorship.children.description && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Description</h3>
-                    <p className="text-gray-600">{sponsorship.children.description}</p>
-                  </div>
-                )}
-                
-                {sponsorship.children.story && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Histoire</h3>
-                    <p className="text-gray-600">{sponsorship.children.story}</p>
-                  </div>
-                )}
-                
-                {sponsorship.children.comments && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Commentaires</h3>
-                    <p className="text-gray-600">{sponsorship.children.comments}</p>
-                  </div>
-                )}
-              </div>
-            </Card>
-            
-            {/* Needs Section */}
-            <Card className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Besoins de {sponsorship.children.name}</h3>
-              <ScrollArea className="h-[200px] w-full">
-                <div className="grid grid-cols-1 gap-3">
-                  {convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
-                    <div
-                      key={`${need.category}-${index}`}
-                      className={`p-3 rounded-lg ${
-                        need.is_urgent
-                          ? "bg-red-50 border border-red-200"
-                          : "bg-gray-50 border border-gray-200"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Badge
-                            variant={need.is_urgent ? "destructive" : "secondary"}
-                            className="mb-2"
-                          >
-                            {need.category}
-                            {need.is_urgent && " (!)"} 
-                          </Badge>
-                          {need.description && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              {need.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </Card>
-
-            {/* Testimonials Section */}
-            <Card className="p-4">
-              <SponsorTestimonials 
-                sponsorId={user?.id || ''} 
-                childId={sponsorship.children.id} 
-              />
-            </Card>
-          </div>
+          <SponsoredChildSection
+            key={sponsorship.id}
+            sponsorship={sponsorship}
+            userId={user?.id || ''}
+          />
         ))}
       </div>
     </div>
