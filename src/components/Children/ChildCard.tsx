@@ -12,6 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { NeedCheckboxes } from "./Needs/NeedCheckboxes";
 import { notifyActiveSponsor } from "@/utils/sponsor-notifications";
+import { useNavigate } from "react-router-dom";
 
 interface ChildCardProps {
   child: any;
@@ -42,6 +43,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
   const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editedChild, setEditedChild] = useState(child);
+  const navigate = useNavigate();
 
   const handleInputChange = (field: string, value: string) => {
     setEditedChild(prev => ({
@@ -105,8 +107,17 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
     }
   };
 
+  const handleCardClick = () => {
+    if (!isEditing) {
+      navigate(`/child/${child.id}`);
+    }
+  };
+
   return (
-    <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <Card 
+      className="group overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="relative">
         {isEditing ? (
           <ProfilePhotoSection

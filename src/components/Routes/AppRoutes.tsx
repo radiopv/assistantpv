@@ -26,6 +26,7 @@ import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
 import SponsorAlbum from "@/pages/sponsor/SponsorAlbum";
 import SponsorProfile from "@/pages/sponsor/SponsorProfile";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
+import ChildDetails from "@/pages/ChildDetails";
 
 // Admin pages
 import Statistics from "@/pages/admin/Statistics";
@@ -47,6 +48,7 @@ const AppRoutes = () => {
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/donations" element={<PublicDonations />} />
         <Route path="/faq" element={<FAQ />} />
+        <Route path="/child/:id" element={<ChildDetails />} />
       </Route>
 
       {/* Sponsor Routes */}

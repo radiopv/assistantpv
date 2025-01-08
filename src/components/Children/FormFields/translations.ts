@@ -28,7 +28,14 @@ export const translations = {
     genderRequired: "Le genre doit être 'male' ou 'female'",
     birthDateRequired: "La date de naissance est requise",
     birthDateInvalid: "La date de naissance est invalide",
-    errorMessage: "Une erreur est survenue lors de l'ajout de l'enfant"
+    errorLoadingChildDetails: "Erreur lors du chargement des détails de l'enfant",
+    back: "Retour",
+    generalInfo: "Informations générales",
+    cityNotAvailable: "Ville non renseignée",
+    ageNotAvailable: "Âge non renseigné",
+    years: "ans",
+    months: "mois",
+    needs: "Besoins",
   },
   es: {
     addChild: "Agregar niño",
@@ -59,6 +66,13 @@ export const translations = {
     genderRequired: "El género debe ser 'male' o 'female'",
     birthDateRequired: "La fecha de nacimiento es requerida",
     birthDateInvalid: "La fecha de nacimiento es inválida",
-    errorMessage: "Ocurrió un error al agregar al niño"
+    errorLoadingChildDetails: "Error al cargar los detalles del niño",
+    back: "Volver",
+    generalInfo: "Información general",
+    cityNotAvailable: "Ciudad no disponible",
+    ageNotAvailable: "Edad no disponible",
+    years: "años",
+    months: "meses",
+    needs: "Necesidades",
   }
 };
