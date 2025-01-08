@@ -13,6 +13,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { toast } from "sonner";
 
+interface HomepageSection {
+  section_key: string;
+  content: {
+    imageUrl?: string;
+    [key: string]: any;
+  };
+  title?: string;
+  subtitle?: string;
+}
+
 const Home = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -26,7 +36,7 @@ const Home = () => {
         .from('homepage_sections')
         .select('*');
       if (error) throw error;
-      return data;
+      return data as HomepageSection[];
     }
   });
 
@@ -49,7 +59,7 @@ const Home = () => {
         .from('homepage_sections')
         .update({
           content: {
-            ...heroSection?.content,
+            ...(heroSection?.content || {}),
             imageUrl: `${process.env.SUPABASE_URL}/storage/v1/object/public/homepage-media/hero-image.jpg`
           }
         })
