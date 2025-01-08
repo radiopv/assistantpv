@@ -111,7 +111,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       show: isAdmin,
     },
     {
-      href: "/admin/sponsorships",
+      href: "/admin/sponsorship",
       label: t("sponsorshipManagement"),
       icon: Heart,
       show: isAdmin,

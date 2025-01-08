@@ -23,9 +23,9 @@ import FAQ from "@/pages/public/FAQ";
 import AvailableChildren from "@/pages/public/AvailableChildren";
 import PublicDonations from "@/pages/public/PublicDonations";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
+import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 
 // Admin pages
-import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 import Validation from "@/pages/admin/Validation";
 import Statistics from "@/pages/admin/Statistics";
 import Translations from "@/pages/admin/Translations";
