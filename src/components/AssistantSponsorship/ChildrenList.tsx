@@ -19,7 +19,7 @@ interface ChildrenListProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onSelectChild: (id: string) => void;
-  onRemoveSponsorship?: () => void;
+  onRemoveSponsorship?: (childId: string) => void;
 }
 
 export const ChildrenList = ({
@@ -55,8 +55,11 @@ export const ChildrenList = ({
               <Button onClick={() => onSelectChild(child.id)}>
                 {t("select")}
               </Button>
-              {child.sponsorships.length > 0 && (
-                <Button variant="destructive" onClick={onRemoveSponsorship}>
+              {child.sponsorships.length > 0 && onRemoveSponsorship && (
+                <Button 
+                  variant="destructive" 
+                  onClick={() => onRemoveSponsorship(child.id)}
+                >
                   {t("removeSponsorship")}
                 </Button>
               )}
