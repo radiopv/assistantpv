@@ -15,7 +15,7 @@ interface Message {
   recipient_id: string;
   created_at: string;
   is_read: boolean;
-  is_starred: boolean;
+  is_starred: boolean; // Added missing property
   is_archived: boolean;
   sender?: {
     name: string;

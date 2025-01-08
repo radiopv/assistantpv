@@ -1,125 +1,126 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
-interface SponsorshipAssociationDialogProps {
-  sponsor: any;
+export interface SponsorshipAssociationDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  sponsor: {
+    id: string;
+    name: string;
+  };
 }
 
-export const SponsorshipAssociationDialog = ({ 
-  sponsor, 
-  isOpen, 
-  onClose 
+export const SponsorshipAssociationDialog = ({
+  isOpen,
+  onClose,
+  sponsor,
 }: SponsorshipAssociationDialogProps) => {
-  const [selectedChild, setSelectedChild] = useState<string>("");
+  const [selectedChild, setSelectedChild] = useState<any>(null);
   const [availableChildren, setAvailableChildren] = useState<any[]>([]);
-  const queryClient = useQueryClient();
   const { t } = useLanguage();
 
-  // Fetch available children when dialog opens
   const fetchAvailableChildren = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('children')
-        .select('id, name')
-        .eq('is_sponsored', false);
+    const { data, error } = await supabase
+      .from("children")
+      .select("*")
+      .eq("status", "available")
+      .eq("is_sponsored", false);
 
-      if (error) throw error;
-      setAvailableChildren(data || []);
-    } catch (error) {
-      console.error('Error fetching available children:', error);
-      toast.error(t("errorFetchingChildren"));
+    if (error) {
+      console.error("Error fetching children:", error);
+      return;
     }
+
+    setAvailableChildren(data || []);
   };
 
-  const handleAssociation = async () => {
-    try {
-      // Check if child is already sponsored
-      const { data: existingSponsorship, error: checkError } = await supabase
-        .from('sponsorships')
-        .select('id')
-        .eq('child_id', selectedChild)
-        .eq('status', 'active')
-        .single();
+  const handleAddChild = async () => {
+    if (!selectedChild) {
+      toast.error(t("selectChildFirst"));
+      return;
+    }
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        throw checkError;
-      }
+    // Check if child is already sponsored
+    const { data: existingSponsorship } = await supabase
+      .from("sponsorships")
+      .select("*")
+      .eq("child_id", selectedChild.id)
+      .eq("status", "active")
+      .single();
 
-      if (existingSponsorship) {
-        toast.error(t("childAlreadySponsored"));
-        return;
-      }
+    if (existingSponsorship) {
+      toast.error(t("childAlreadySponsored"));
+      return;
+    }
 
-      // Create new sponsorship
-      const { error } = await supabase
-        .from('sponsorships')
-        .insert({
-          sponsor_id: sponsor.id,
-          child_id: selectedChild,
-          status: 'active',
-          start_date: new Date().toISOString()
-        });
+    // Create new sponsorship
+    const { error: sponsorshipError } = await supabase
+      .from("sponsorships")
+      .insert({
+        sponsor_id: sponsor.id,
+        child_id: selectedChild.id,
+        status: "active",
+      });
 
-      if (error) throw error;
-
-      toast.success(t("sponsorshipCreated"));
-      queryClient.invalidateQueries({ queryKey: ['sponsors'] });
-      onClose();
-    } catch (error) {
-      console.error('Error creating sponsorship:', error);
+    if (sponsorshipError) {
+      console.error("Error creating sponsorship:", sponsorshipError);
       toast.error(t("errorCreatingSponsorship"));
+      return;
     }
-  };
 
-  // Fetch available children when dialog opens
-  useState(() => {
-    if (isOpen) {
-      fetchAvailableChildren();
+    // Update child status
+    const { error: childUpdateError } = await supabase
+      .from("children")
+      .update({
+        is_sponsored: true,
+        status: "sponsored",
+        sponsor_id: sponsor.id,
+      })
+      .eq("id", selectedChild.id);
+
+    if (childUpdateError) {
+      console.error("Error updating child:", childUpdateError);
+      toast.error(t("errorUpdatingChild"));
+      return;
     }
-  });
+
+    toast.success(t("sponsorshipCreated"));
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("associateChild")}</DialogTitle>
+          <DialogTitle>{t("addChildToSponsor", { sponsor: sponsor?.name })}</DialogTitle>
         </DialogHeader>
-
         <div className="space-y-4">
-          <Select
-            value={selectedChild}
-            onValueChange={setSelectedChild}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder={t("selectChild")} />
-            </SelectTrigger>
-            <SelectContent>
-              {availableChildren.map((child) => (
-                <SelectItem key={child.id} value={child.id}>
-                  {child.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
+          <div className="grid gap-4">
+            {availableChildren.map((child) => (
+              <div
+                key={child.id}
+                className={`p-4 border rounded-lg cursor-pointer ${
+                  selectedChild?.id === child.id ? "border-primary" : ""
+                }`}
+                onClick={() => setSelectedChild(child)}
+              >
+                <h3 className="font-medium">{child.name}</h3>
+                <p className="text-sm text-gray-500">
+                  {child.age} {t("yearsOld")} - {child.city}
+                </p>
+              </div>
+            ))}
+          </div>
           <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={onClose}>
-              {t("cancel")}
-            </Button>
-            <Button 
-              onClick={handleAssociation}
-              disabled={!selectedChild}
+            <button
+              className="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90"
+              onClick={handleAddChild}
             >
-              {t("associate")}
-            </Button>
+              {t("addChild")}
+            </button>
           </div>
         </div>
       </DialogContent>
