@@ -54,6 +54,9 @@ export default {
           red: "#FF2400",      // Warm Red
           gold: "#FFD700",     // Warm Gold
           offwhite: "#F5F5F5", // Light Background
+          warmBeige: "#FDE1D3", // Warm Beige
+          softYellow: "#FEF7CD", // Soft Yellow
+          softOrange: "#FEC6A1", // Soft Orange
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -108,6 +111,7 @@ export default {
         'cuba-gradient': 'linear-gradient(135deg, #0072BB 0%, #005d99 100%)',
         'sunset-gradient': 'linear-gradient(to right, #FF2400, #FFD700)',
         'beach-gradient': 'linear-gradient(to bottom, #0072BB, #F5F5F5)',
+        'warm-gradient': 'linear-gradient(to right, #FDE1D3, #FEC6A1)',
       },
     },
   },

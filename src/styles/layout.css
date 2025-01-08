@@ -26,5 +26,21 @@
     width: 100%;
     position: relative;
     overflow-x: hidden;
+    @apply bg-cuba-offwhite;
+  }
+
+  .card, 
+  .dialog-content,
+  .popover-content,
+  .dropdown-menu-content {
+    @apply bg-cuba-offwhite;
+  }
+
+  .sheet-content {
+    @apply bg-cuba-offwhite;
+  }
+
+  .sidebar {
+    @apply bg-cuba-gradient;
   }
 }
