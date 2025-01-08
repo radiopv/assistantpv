@@ -3,8 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const FeaturedTestimonials = () => {
+  const { t } = useLanguage();
+  
   const { data: testimonials, isLoading } = useQuery({
     queryKey: ['featured-testimonials'],
     queryFn: async () => {
@@ -36,7 +39,7 @@ export const FeaturedTestimonials = () => {
   }
 
   if (!testimonials?.length) {
-    return <p className="text-gray-500">Aucun témoignage pour le moment</p>;
+    return <p className="text-gray-500">{t('noTestimonials')}</p>;
   }
 
   return (
@@ -49,10 +52,10 @@ export const FeaturedTestimonials = () => {
           <footer className="mt-2 text-sm text-gray-500">
             <p>
               {testimonial.sponsors?.is_anonymous 
-                ? "Parrain anonyme" 
+                ? t('anonymousSponsor')
                 : testimonial.sponsors?.name
               }
-              {testimonial.children?.name && ` - Parrain de ${testimonial.children.name}`}
+              {testimonial.children?.name && ` - ${t('sponsorOf')} ${testimonial.children.name}`}
             </p>
             <time className="text-xs">
               {format(new Date(testimonial.created_at), 'dd/MM/yyyy')}

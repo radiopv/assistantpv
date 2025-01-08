@@ -49,7 +49,7 @@ export const frenchTranslations = {
   cityName: "Nom de la ville",
   updateCity: "Mettre à jour la ville",
   cityUpdated: "Ville mise à jour avec succès",
-  errorUpdatingCity: "Erreur lors de la mise à jour de la ville",
+  errorUpdatingCity: "Erreur lors de l'update de la ville",
   searchCity: "Rechercher une ville",
   donationsCount: "Nombre de donations",
   tableActions: "Actions", // Changed from 'actions' to 'tableActions' to avoid duplicate
@@ -160,4 +160,7 @@ export const frenchTranslations = {
   childRequestApprovedContent: "Nous sommes heureux de vous informer que votre demande d'ajout pour {name} a été approuvée.",
   childRequestRejectedSubject: "Votre demande d'ajout d'enfant a été refusée",
   childRequestRejectedContent: "Nous sommes désolés de vous informer que votre demande d'ajout pour {name} a été refusée.",
+  noTestimonials: "Aucun témoignage pour le moment",
+  anonymousSponsor: "Parrain anonyme",
+  sponsorOf: "Parrain de",
 };
