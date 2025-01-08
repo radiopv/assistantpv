@@ -6,8 +6,15 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-[600px] bg-cover bg-center" style={{ backgroundImage: 'url(/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png)' }}>
-        <div className="absolute inset-0 bg-black/30" />
+      <section className="relative h-[70vh] md:h-[80vh] overflow-hidden">
+        <div className="absolute inset-0">
+          <img 
+            src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
+            alt="Hero background"
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
         <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center items-center text-white text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Donnez de l'espoir à un enfant</h1>
           <p className="text-xl md:text-2xl mb-8 max-w-2xl">
