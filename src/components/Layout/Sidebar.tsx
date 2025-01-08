@@ -19,7 +19,7 @@ import {
   Heart,
   MapPin,
   Link,
-  ExternalLink as LinkCheck
+  ExternalLink
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
@@ -183,3 +183,4 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
 };
 
 export default Sidebar;
+
