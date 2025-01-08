@@ -1,14 +1,11 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
-import { SponsorChildrenList } from "@/components/Sponsors/SponsorChildrenList";
+import { SponsorCard } from "@/components/Sponsors/SponsorshipManagement/SponsorCard";
 
 export default function SponsorshipManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,6 +32,20 @@ export default function SponsorshipManagement() {
             )
           )
         `)
+        .order('name');
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: availableChildren } = useQuery({
+    queryKey: ["available-children"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('children')
+        .select('*')
+        .eq('is_sponsored', false)
         .order('name');
 
       if (error) throw error;
@@ -87,26 +98,13 @@ export default function SponsorshipManagement() {
     }
   };
 
-  const handleAddChild = async (sponsorId: string) => {
+  const handleAddChild = async (sponsorId: string, childId: string) => {
     try {
-      const { data: availableChildren, error: childrenError } = await supabase
-        .from('children')
-        .select('*')
-        .eq('is_sponsored', false)
-        .order('name');
-
-      if (childrenError) throw childrenError;
-
-      if (!availableChildren?.length) {
-        toast.error(t("noAvailableChildren"));
-        return;
-      }
-
       const { error: sponsorshipError } = await supabase
         .from('sponsorships')
         .insert({
           sponsor_id: sponsorId,
-          child_id: availableChildren[0].id,
+          child_id: childId,
           status: 'active'
         });
 
@@ -118,7 +116,7 @@ export default function SponsorshipManagement() {
           is_sponsored: true,
           sponsor_id: sponsorId 
         })
-        .eq('id', availableChildren[0].id);
+        .eq('id', childId);
 
       if (childError) throw childError;
 
@@ -155,7 +153,6 @@ export default function SponsorshipManagement() {
     <div className="container mx-auto py-6">
       <h1 className="text-2xl font-bold mb-6">{t("sponsorshipManagement")}</h1>
 
-      {/* Search Bar */}
       <div className="mb-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -170,58 +167,38 @@ export default function SponsorshipManagement() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Active Sponsors Column */}
         <div>
           <h2 className="text-xl font-semibold mb-4">{t("activeSponsors")}</h2>
           <div className="space-y-4">
             {activeSponsors.map((sponsor) => (
-              <Card key={sponsor.id} className="p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Checkbox
-                    checked={sponsor.is_verified}
-                    onCheckedChange={(checked) => 
-                      handleVerificationChange(sponsor.id, checked as boolean)
-                    }
-                  />
-                  <div>
-                    <h3 className="font-semibold">{sponsor.name}</h3>
-                    <p className="text-sm text-gray-500">{sponsor.email}</p>
-                  </div>
-                </div>
-                <SponsorChildrenList
-                  sponsorships={sponsor.sponsorships}
-                  availableChildren={[]} // This will be populated when needed
-                  onAddChild={(childId) => handleAddChild(childId)}
-                  onRemoveChild={(sponsorshipId) => handleRemoveChild(sponsor.id, sponsorshipId)}
-                />
-              </Card>
+              <SponsorCard
+                key={sponsor.id}
+                sponsor={sponsor}
+                onVerificationChange={handleVerificationChange}
+                onRemoveChild={handleRemoveChild}
+                onAddChild={(childId) => handleAddChild(sponsor.id, childId)}
+                availableChildren={availableChildren || []}
+              />
             ))}
           </div>
         </div>
 
-        {/* Inactive Sponsors Column */}
         <div>
           <h2 className="text-xl font-semibold mb-4">{t("inactiveSponsors")}</h2>
           <div className="space-y-4">
             {inactiveSponsors.map((sponsor) => (
-              <Card key={sponsor.id} className="p-4">
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    checked={sponsor.is_verified}
-                    onCheckedChange={(checked) => 
-                      handleVerificationChange(sponsor.id, checked as boolean)
-                    }
-                  />
-                  <div>
-                    <h3 className="font-semibold">{sponsor.name}</h3>
-                    <p className="text-sm text-gray-500">{sponsor.email}</p>
-                  </div>
-                </div>
-              </Card>
+              <SponsorCard
+                key={sponsor.id}
+                sponsor={sponsor}
+                onVerificationChange={handleVerificationChange}
+                onRemoveChild={handleRemoveChild}
+                onAddChild={(childId) => handleAddChild(sponsor.id, childId)}
+                availableChildren={availableChildren || []}
+              />
             ))}
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
