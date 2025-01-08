@@ -10,7 +10,7 @@
   }
 
   body {
-    @apply bg-cuba-sand text-cuba-text antialiased;
+    @apply bg-cuba-offwhite text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
     overscroll-behavior-y: none;
     -webkit-font-smoothing: antialiased;
@@ -26,18 +26,18 @@
     width: 100%;
     position: relative;
     overflow-x: hidden;
-    @apply bg-cuba-sand;
+    @apply bg-cuba-offwhite;
   }
 
   .card, 
   .dialog-content,
   .popover-content,
   .dropdown-menu-content {
-    @apply bg-cuba-sand;
+    @apply bg-cuba-offwhite;
   }
 
   .sheet-content {
-    @apply bg-cuba-sand;
+    @apply bg-cuba-offwhite;
   }
 
   .sidebar {

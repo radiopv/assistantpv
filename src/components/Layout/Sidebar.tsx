@@ -1,18 +1,13 @@
-import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarNav } from "./Sidebar/SidebarNav";
-import { SidebarFooter } from "./Sidebar/SidebarFooter";
-import { useAuth } from "@/components/Auth/AuthProvider";
+import { SidebarHeader } from "./Sidebar/SidebarHeader";
 
-export const Sidebar = () => {
-  const { signOut } = useAuth();
-
+const Sidebar = () => {
   return (
-    <div className="flex h-full flex-col border-r border-cuba-turquoise/20 bg-cuba-warmBeige">
+    <div className="h-full bg-white border-r flex flex-col">
       <SidebarHeader />
-      <div className="flex-1 overflow-auto py-4">
-        <SidebarNav />
-      </div>
-      <SidebarFooter onSignOut={signOut} />
+      <SidebarNav />
     </div>
   );
 };
+
+export default Sidebar;
