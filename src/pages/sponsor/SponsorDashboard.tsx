@@ -32,7 +32,10 @@ const SponsorDashboard = () => {
             birth_date,
             photo_url,
             city,
-            needs
+            needs,
+            description,
+            story,
+            comments
           )
         `)
         .eq("sponsor_id", user?.id)
@@ -85,6 +88,32 @@ const SponsorDashboard = () => {
           <div key={sponsorship.id} className="space-y-6">
             <SponsoredChildCard child={sponsorship.children} />
             
+            {/* Description and Story Section */}
+            <Card className="p-4">
+              <div className="space-y-4">
+                {sponsorship.children.description && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Description</h3>
+                    <p className="text-gray-600">{sponsorship.children.description}</p>
+                  </div>
+                )}
+                
+                {sponsorship.children.story && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Histoire</h3>
+                    <p className="text-gray-600">{sponsorship.children.story}</p>
+                  </div>
+                )}
+                
+                {sponsorship.children.comments && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Commentaires</h3>
+                    <p className="text-gray-600">{sponsorship.children.comments}</p>
+                  </div>
+                )}
+              </div>
+            </Card>
+            
             {/* Needs Section */}
             <Card className="p-4">
               <h3 className="text-lg font-semibold mb-4">Besoins de {sponsorship.children.name}</h3>
@@ -129,7 +158,7 @@ const SponsorDashboard = () => {
           <ImportantDatesCard 
             key={sponsorship.id}
             birthDate={sponsorship.children.birth_date} 
-            plannedVisits={plannedVisits?.filter(v => v.sponsorship_id === sponsorship.id) || []} 
+            plannedVisits={plannedVisits?.filter(v => v.sponsor_id === user?.id) || []} 
           />
         ))}
       </div>
