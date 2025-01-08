@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "@/pages/Home";
-import About from "@/pages/About.tsx";
-import Contact from "@/pages/Contact.tsx";
+import About from "@/pages/About";
+import Contact from "@/pages/Contact";
 import Notifications from "@/pages/Notifications";
+import ValidationPage from "@/pages/admin/Validation";
 
 export const AppRoutes = () => {
   return (
@@ -11,8 +12,7 @@ export const AppRoutes = () => {
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/notifications" element={<Notifications />} />
+      <Route path="/admin/validation" element={<ValidationPage />} />
     </Routes>
   );
 };
-
-export default AppRoutes;
