@@ -804,15 +804,7 @@ export type Database = {
           subject?: string
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "email_queue_notification_id_fkey"
-            columns: ["notification_id"]
-            isOneToOne: false
-            referencedRelation: "notifications"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       faq: {
         Row: {
@@ -1160,50 +1152,37 @@ export type Database = {
         }
         Relationships: []
       }
-      message_recipients: {
+      message_attachments: {
         Row: {
           created_at: string | null
+          file_name: string
+          file_type: string
+          file_url: string
           id: string
-          is_archived: boolean | null
-          is_read: boolean | null
-          is_starred: boolean | null
           message_id: string | null
-          recipient_id: string | null
-          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
+          file_name: string
+          file_type: string
+          file_url: string
           id?: string
-          is_archived?: boolean | null
-          is_read?: boolean | null
-          is_starred?: boolean | null
           message_id?: string | null
-          recipient_id?: string | null
-          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
+          file_name?: string
+          file_type?: string
+          file_url?: string
           id?: string
-          is_archived?: boolean | null
-          is_read?: boolean | null
-          is_starred?: boolean | null
           message_id?: string | null
-          recipient_id?: string | null
-          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "message_recipients_message_id_fkey"
+            foreignKeyName: "message_attachments_message_id_fkey"
             columns: ["message_id"]
             isOneToOne: false
             referencedRelation: "messages"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "message_recipients_recipient_id_fkey"
-            columns: ["recipient_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
         ]
@@ -1215,10 +1194,11 @@ export type Database = {
           id: string
           is_archived: boolean | null
           is_read: boolean | null
-          parent_id: string | null
+          message_type: string | null
           recipient_id: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
           sender_id: string | null
-          sender_role: string | null
           subject: string
           updated_at: string | null
         }
@@ -1228,10 +1208,11 @@ export type Database = {
           id?: string
           is_archived?: boolean | null
           is_read?: boolean | null
-          parent_id?: string | null
+          message_type?: string | null
           recipient_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
           sender_id?: string | null
-          sender_role?: string | null
           subject: string
           updated_at?: string | null
         }
@@ -1241,19 +1222,20 @@ export type Database = {
           id?: string
           is_archived?: boolean | null
           is_read?: boolean | null
-          parent_id?: string | null
+          message_type?: string | null
           recipient_id?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
           sender_id?: string | null
-          sender_role?: string | null
           subject?: string
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "messages_parent_id_fkey"
-            columns: ["parent_id"]
+            foreignKeyName: "messages_recipient_id_fkey"
+            columns: ["recipient_id"]
             isOneToOne: false
-            referencedRelation: "messages"
+            referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
           {
