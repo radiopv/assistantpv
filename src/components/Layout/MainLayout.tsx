@@ -19,7 +19,8 @@ import {
   Bell,
   User,
   LayoutDashboard,
-  Image
+  Image,
+  UserPlus
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -37,9 +38,13 @@ const MainLayout = () => {
 
   // Navigation items for assistants
   const assistantNavItems = [
-    { icon: Home, label: 'Dashboard', path: '/dashboard' },
+    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Enfants', path: '/children' },
-    { icon: Gift, label: 'Donations', path: '/donations' },
+    { icon: UserPlus, label: 'Ajouter un enfant', path: '/children/add' },
+    { icon: Image, label: 'Photos', path: '/assistant/photos' },
+    { icon: Heart, label: 'Association Parrains-Enfants', path: '/assistant/sponsorship' },
+    { icon: Gift, label: 'Donations', path: '/donations-management' },
+    { icon: UserPlus, label: 'Ajouter une donation', path: '/donations/add' },
     { icon: MessageSquare, label: 'Messages', path: '/messages' },
   ];
 
@@ -53,14 +58,7 @@ const MainLayout = () => {
     { icon: Mail, label: 'Gestion des emails', path: '/admin/emails' },
     { icon: HelpCircle, label: 'FAQ', path: '/admin/faq' },
     { icon: MapPin, label: 'Gestion des villes', path: '/admin/cities' },
-    { icon: Bell, label: 'Notifications', path: '/admin/notifications' },
-    { icon: Image, label: 'Contenu accueil', path: '/admin/home-content' },
-    { icon: LayoutDashboard, label: 'Page d\'accueil', path: '/admin/homepage' },
-  ];
-
-  // Navigation items for sponsors
-  const sponsorNavItems = [
-    { icon: User, label: 'Profil', path: '/sponsor-dashboard' }
+    { icon: Bell, label: 'Notifications', path: '/admin/notifications' }
   ];
 
   // Get the appropriate navigation items based on user role
@@ -72,7 +70,7 @@ const MainLayout = () => {
       return assistantNavItems;
     }
     if (isSponsor) {
-      return sponsorNavItems;
+      return [{ icon: User, label: 'Profil', path: '/sponsor-dashboard' }];
     }
     return [];
   };
