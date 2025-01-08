@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
-import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
 import { HeroSection } from "@/components/Home/HeroSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
@@ -98,12 +97,7 @@ const Home = () => {
 
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-4">Témoignages</h2>
-              <FeaturedTestimonials />
-            </div>
-
+          <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
             <div className="space-y-6">
               <h2 className="text-2xl font-bold mb-4">Photos</h2>
               <FeaturedAlbum />
