@@ -3,8 +3,14 @@ import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
 import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Home = () => {
+  const navigate = useNavigate();
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen">
       {/* Hero Section with Split Layout */}
@@ -24,18 +30,35 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Right Side - Testimonials and Featured Photos */}
+            {/* Right Side - Content */}
             <div className="w-full lg:w-1/2 p-6 lg:p-12 bg-white/90 backdrop-blur-sm">
-              <div className="space-y-8">
+              <div className="max-w-xl mx-auto space-y-8">
+                {/* Hero Content */}
+                <div className="text-center lg:text-left">
+                  <h1 className="text-4xl lg:text-5xl font-bold text-primary mb-4">
+                    {t('heroTitle') || "Changez une vie aujourd'hui"}
+                  </h1>
+                  <p className="text-xl text-gray-600 mb-8">
+                    {t('heroSubtitle') || "Faites une différence dans la vie d'un enfant cubain"}
+                  </p>
+                  <Button 
+                    onClick={() => navigate("/become-sponsor")}
+                    size="lg"
+                    className="bg-primary hover:bg-primary-hover text-white"
+                  >
+                    {t('becomeSponsor') || "Devenir parrain"}
+                  </Button>
+                </div>
+
                 {/* Featured Testimonials */}
                 <div className="mb-8">
-                  <h2 className="text-2xl font-bold mb-4">Témoignages des Parrains</h2>
+                  <h2 className="text-2xl font-bold mb-4">{t('testimonials') || "Témoignages"}</h2>
                   <FeaturedTestimonials />
                 </div>
 
                 {/* Featured Album */}
                 <div>
-                  <h2 className="text-2xl font-bold mb-4">Album Photo</h2>
+                  <h2 className="text-2xl font-bold mb-4">{t('featuredPhotos') || "Photos"}</h2>
                   <FeaturedAlbum />
                 </div>
               </div>

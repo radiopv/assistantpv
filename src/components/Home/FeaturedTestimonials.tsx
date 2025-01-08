@@ -39,14 +39,14 @@ export const FeaturedTestimonials = () => {
   }
 
   if (!testimonials?.length) {
-    return <p className="text-gray-500">{t('noTestimonials')}</p>;
+    return <p className="text-gray-500">{t('noTestimonials') || "Aucun témoignage pour le moment"}</p>;
   }
 
   return (
     <div className="space-y-4">
       {testimonials.map((testimonial) => (
-        <Card key={testimonial.id} className="p-4">
-          <blockquote className="text-gray-700">
+        <Card key={testimonial.id} className="p-4 hover:shadow-lg transition-shadow duration-300">
+          <blockquote className="text-gray-700 italic">
             "{testimonial.content}"
           </blockquote>
           <footer className="mt-2 text-sm text-gray-500">
