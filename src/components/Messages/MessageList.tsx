@@ -4,16 +4,7 @@ import { Card } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-
-interface Message {
-  id: string;
-  subject: string;
-  content: string;
-  is_read: boolean;
-  created_at: string;
-  sender: { name: string } | null;
-  recipient: { name: string } | null;
-}
+import type { Message } from "@/types/messages";
 
 export const MessageList = () => {
   const { data: messages, isLoading } = useQuery({

@@ -2,79 +2,14 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
-import { 
-  Menu, 
-  Home, 
-  Users, 
-  Gift, 
-  MessageSquare, 
-  Settings,
-  Languages,
-  CheckCircle2,
-  ChartBar,
-  HelpCircle,
-  Mail,
-  Heart,
-  MapPin,
-  Bell,
-  User,
-  LayoutDashboard,
-  Image,
-  UserPlus,
-  Link
-} from "lucide-react";
-import { useState } from "react";
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { MessageNotification } from "@/components/Messages/MessageNotification";
 import { Button } from "@/components/ui/button";
+import { User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const MainLayout = () => {
   const { user } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
-
-  const isAdmin = user?.role === 'admin';
-  const isAssistant = user?.role === 'assistant';
-  const isSponsor = user?.role === 'sponsor' || (isAdmin && user?.children_sponsored?.length > 0);
-
-  // Navigation items for assistants
-  const assistantNavItems = [
-    { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Users, label: 'Enfants', path: '/children' },
-    { icon: UserPlus, label: 'Ajouter un enfant', path: '/children/add' },
-    { icon: Image, label: 'Photos', path: '/assistant-photos' },
-    { icon: Heart, label: 'Gestion des parrainages', path: '/admin/sponsorship-management' },
-    { icon: Gift, label: 'Donations', path: '/donations-management' },
-    { icon: UserPlus, label: 'Ajouter une donation', path: '/donations/add' },
-  ];
-
-  // Navigation items for admins
-  const adminNavItems = [
-    { icon: Languages, label: 'Traductions', path: '/admin/translations' },
-    { icon: CheckCircle2, label: 'Validation', path: '/admin/validation' },
-    { icon: ChartBar, label: 'Statistiques', path: '/admin/statistics' },
-    { icon: Link, label: 'Association Parrains-Enfants', path: '/assistant/sponsorship' },
-    { icon: Mail, label: 'Gestion des emails', path: '/admin/emails' },
-    { icon: HelpCircle, label: 'FAQ', path: '/admin/faq' },
-    { icon: MapPin, label: 'Gestion des villes', path: '/admin/cities' },
-    { icon: Bell, label: 'Notifications', path: '/admin/notifications' }
-  ];
-
-  // Get the appropriate navigation items based on user role
-  const getNavItems = () => {
-    if (isAdmin) {
-      return [...assistantNavItems, ...adminNavItems];
-    }
-    if (isAssistant) {
-      return assistantNavItems;
-    }
-    if (isSponsor) {
-      return [{ icon: User, label: 'Profil', path: '/sponsor-dashboard' }];
-    }
-    return [];
-  };
-
-  const mobileNavItems = getNavItems();
 
   const handleSponsorDashboardClick = () => {
     if (!user) {
@@ -90,25 +25,6 @@ const MainLayout = () => {
         <Sidebar />
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
-        <nav className="flex justify-around items-center h-16 overflow-x-auto">
-          {mobileNavItems.map((item) => (
-            <RouterLink
-              key={item.path}
-              to={item.path}
-              className={`flex flex-col items-center p-2 min-w-[72px] ${
-                location.pathname === item.path
-                  ? 'text-primary'
-                  : 'text-gray-500'
-              }`}
-            >
-              <item.icon className="h-5 w-5" />
-              <span className="text-xs mt-1 text-center">{item.label}</span>
-            </RouterLink>
-          ))}
-        </nav>
-      </div>
-
       <main className="flex-1 md:ml-64 pb-16 md:pb-0">
         <div className="p-4 border-b bg-white flex justify-between items-center">
           <Button
@@ -119,7 +35,10 @@ const MainLayout = () => {
             <User className="h-4 w-4" />
             Espace parrain
           </Button>
-          <UserProfileMenu />
+          <div className="flex items-center gap-4">
+            <MessageNotification />
+            <UserProfileMenu />
+          </div>
         </div>
         <div className="p-4 md:p-8">
           <div className="container mx-auto animate-fade-in">
