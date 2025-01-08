@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AssociationSectionProps {
   selectedChild: string | null;
@@ -15,24 +16,26 @@ export function AssociationSection({
   sponsors,
   onCreateAssociation,
 }: AssociationSectionProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="mt-8 p-4 border rounded-lg bg-gray-50">
-      <h3 className="text-lg font-semibold mb-4">Créer une association</h3>
+      <h3 className="text-lg font-semibold mb-4">{t("createAssociation")}</h3>
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <p className="mb-2">Enfant sélectionné:</p>
+          <p className="mb-2">{t("selectedChild")}:</p>
           <p className="font-medium">
             {selectedChild
               ? children.find((c) => c.id === selectedChild)?.name
-              : "Aucun enfant sélectionné"}
+              : t("noChildSelected")}
           </p>
         </div>
         <div>
-          <p className="mb-2">Parrain sélectionné:</p>
+          <p className="mb-2">{t("selectedSponsor")}:</p>
           <p className="font-medium">
             {selectedSponsor
               ? sponsors.find((s) => s.id === selectedSponsor)?.name
-              : "Aucun parrain sélectionné"}
+              : t("noSponsorSelected")}
           </p>
         </div>
       </div>
@@ -41,7 +44,7 @@ export function AssociationSection({
         onClick={onCreateAssociation}
         disabled={!selectedChild || !selectedSponsor}
       >
-        Créer l'association
+        {t("createAssociationButton")}
       </Button>
     </div>
   );

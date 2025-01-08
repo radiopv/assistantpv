@@ -150,35 +150,18 @@ export const spanishTranslations = {
   submitting: "Enviando...",
   submitRequest: "Enviar solicitud",
   pleaseAcceptTerms: "Por favor acepta los términos y condiciones",
-  success: "Éxito",
-  sponsorshipRequestSubmitted: "Tu solicitud de apadrinamiento ha sido enviada",
-  error: "Error",
-  errorSubmittingRequest: "Error al enviar la solicitud",
 
-  // Album
-  sponsorAlbum: "Álbum del niño",
-  sponsorAlbumDescription: "Aquí puedes ver las fotos y videos del niño",
-  
-  // Profile updates
-  profileUpdated: "Perfil actualizado",
-  profileUpdateSuccess: "El perfil ha sido actualizado con éxito",
-  profileUpdateError: "Error al actualizar el perfil",
-  childDeleted: "Niño eliminado",
-  childDeleteSuccess: "El niño ha sido eliminado con éxito",
-  childDeleteError: "Error al eliminar el niño",
-
-  // Child request validation
-  childRequests: "Solicitudes de añadir niños",
-  childRequestApproved: "Solicitud aprobada con éxito",
-  childRequestRejected: "Solicitud rechazada",
-  errorApprovingChildRequest: "Error al aprobar la solicitud",
-  errorRejectingChildRequest: "Error al rechazar la solicitud",
-  noChildRequestsPending: "No hay solicitudes pendientes",
-  childRequestApprovedSubject: "Su solicitud para añadir un niño ha sido aprobada",
-  childRequestApprovedContent: "Nos complace informarle que su solicitud para añadir a {name} ha sido aprobada.",
-  childRequestRejectedSubject: "Su solicitud para añadir un niño ha sido rechazada",
-  childRequestRejectedContent: "Lamentamos informarle que su solicitud para añadir a {name} ha sido rechazada.",
-  noTestimonials: "No hay testimonios disponibles",
-  anonymousSponsor: "Padrino anónimo",
-  sponsorOf: "Padrino de",
+  // New translations
+  createAssociation: "Crear asociación",
+  selectedChild: "Niño seleccionado:",
+  selectedSponsor: "Padrino seleccionado:",
+  noChildSelected: "Ningún niño seleccionado",
+  noSponsorSelected: "Ningún padrino seleccionado",
+  createAssociationButton: "Crear la asociación",
+  searchChild: "Buscar un niño...",
+  searchSponsor: "Buscar un padrino...",
+  select: "Seleccionar",
+  remove: "Eliminar",
+  sponsored: "Apadrinado por",
+  notSponsored: "No apadrinado",
 };

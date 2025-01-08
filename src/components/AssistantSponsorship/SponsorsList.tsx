@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Sponsor {
   id: string;
@@ -21,17 +22,18 @@ export function SponsorsList({
   onSearchChange,
   onSelectSponsor,
 }: SponsorsListProps) {
+  const { t } = useLanguage();
   const filteredSponsors = sponsors.filter((sponsor) =>
     sponsor.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Parrains</h2>
+      <h2 className="text-xl font-semibold">{t("sponsors")}</h2>
       <div className="flex items-center space-x-2">
         <Search className="w-4 h-4 text-gray-500" />
         <Input
-          placeholder="Rechercher un parrain..."
+          placeholder={t("searchSponsor")}
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="w-full"
@@ -51,7 +53,7 @@ export function SponsorsList({
               variant="outline"
               onClick={() => onSelectSponsor(sponsor.id)}
             >
-              Sélectionner
+              {t("select")}
             </Button>
           </div>
         ))}

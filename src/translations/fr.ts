@@ -123,4 +123,10 @@ export const frenchTranslations = {
   sponsorshipRequestSubmitted: "Votre demande de parrainage a été envoyée avec succès. Nous vous contacterons bientôt.",
   errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande. Veuillez réessayer.",
   sponsorshipTerminationNote: "Note : Vous pourrez mettre fin à votre parrainage à tout moment en nous contactant.",
+  createAssociation: "Créer une association",
+  selectedChild: "Enfant sélectionné:",
+  selectedSponsor: "Parrain sélectionné:",
+  noChildSelected: "Aucun enfant sélectionné",
+  noSponsorSelected: "Aucun parrain sélectionné",
+  createAssociationButton: "Créer l'association",
 };
