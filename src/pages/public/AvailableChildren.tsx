@@ -28,11 +28,16 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      console.log("Fetching children with filters:", { selectedGender, selectedAge, selectedCity, selectedStatus });
+      console.log("Fetching children with filters:", { searchTerm, selectedGender, selectedAge, selectedCity, selectedStatus });
       
       let query = supabase
         .from("children")
         .select("*");
+
+      // Add name search filter
+      if (searchTerm) {
+        query = query.ilike('name', `%${searchTerm}%`);
+      }
 
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
