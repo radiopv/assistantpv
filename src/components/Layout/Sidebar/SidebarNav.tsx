@@ -99,6 +99,11 @@ const assistantLinks = [
 
 const adminLinks = [
   {
+    href: "/dashboard",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
+  },
+  {
     href: "/admin/sponsorship-management",
     label: "Gestion des parrainages",
     icon: UserPlus,
