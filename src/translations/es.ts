@@ -12,7 +12,7 @@ export const spanishTranslations = {
   giveHope: "Brinda esperanza a los niños que más lo necesitan",
   sponsorChild: "Apadrinar a un niño",
   childrenWaitingSponsorship: "Niños esperando apadrinamiento",
-  readMore: "Más información",
+  learnMore: "Más información",
   childAge: "años",
   seeAllChildren: "Ver todos los niños",
   howItWorks: "Cómo funciona",
@@ -121,7 +121,7 @@ export const spanishTranslations = {
   
   // Available Children Page
   availableChildren: "Enfants en attente de parrainage",
-  findChild: "Buscar un niño...",
+  searchChild: "Buscar un niño...",
   allCities: "Todas las ciudades",
   allGenders: "Sexo",
   allAges: "Todos los edades",
@@ -133,6 +133,7 @@ export const spanishTranslations = {
   errorFetchingChildren: "Erreur lors de la récupération des enfants",
   errorInvalidChild: "Enfant invalide",
   errorSponsorClick: "Erreur lors de la demande de parrainage",
+  learnMore: "En savoir plus",
 
   // BecomeSponsor translations
   becomeSponsor: "Conviértete en padrino",
@@ -154,9 +155,10 @@ export const spanishTranslations = {
   noChildSelected: "Ningún niño seleccionado",
   noSponsorSelected: "Ningún padrino seleccionado",
   createAssociationButton: "Crear la asociación",
+  searchChild: "Buscar un niño...",
   searchSponsor: "Buscar un padrino...",
   select: "Seleccionar",
   remove: "Eliminar",
-  sponsoredBy: "Apadrinado por",
+  sponsoredBy: "Apadrinado por", // Changed from duplicate 'sponsored'
   notSponsored: "No apadrinado",
 };
