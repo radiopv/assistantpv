@@ -22,6 +22,9 @@ import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import Tasks from "@/pages/Tasks";
 import PublicDonations from "@/pages/public/PublicDonations";
 import FAQ from "@/pages/public/FAQ";
+import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
+import SponsorAlbum from "@/pages/sponsor/SponsorAlbum";
+import SponsorProfile from "@/pages/sponsor/SponsorProfile";
 
 // Admin pages
 import Statistics from "@/pages/admin/Statistics";
@@ -43,6 +46,13 @@ const AppRoutes = () => {
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/donations" element={<PublicDonations />} />
         <Route path="/faq" element={<FAQ />} />
+      </Route>
+
+      {/* Sponsor Routes */}
+      <Route element={<MainLayout />}>
+        <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
+        <Route path="/sponsor-album" element={<SponsorAlbum />} />
+        <Route path="/sponsor-profile" element={<SponsorProfile />} />
       </Route>
 
       <Route element={<MainLayout />}>
