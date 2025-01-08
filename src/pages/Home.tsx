@@ -6,13 +6,10 @@ import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
 import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Navigation } from "@/components/Home/Navigation";
+import { HeroSection } from "@/components/Home/HeroSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { toast } from "sonner";
-import { User } from "lucide-react";
 
 interface HomepageSection {
   section_key: string;
@@ -25,11 +22,8 @@ interface HomepageSection {
 }
 
 const Home = () => {
-  const navigate = useNavigate();
-  const { t } = useLanguage();
   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
 
-  // Fetch homepage sections
   const { data: sections, isLoading } = useQuery({
     queryKey: ['homepage-sections'],
     queryFn: async () => {
@@ -55,7 +49,6 @@ const Home = () => {
 
       if (error) throw error;
 
-      // Update the hero section with the new image URL
       const { error: updateError } = await supabase
         .from('homepage_sections')
         .update({
@@ -103,126 +96,46 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Navigation Bar */}
-      <nav className="bg-white shadow-sm">
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex justify-between items-center">
-            <div className="flex space-x-4">
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/")}
-                className="text-primary"
-              >
-                Accueil
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/children")}
-                className="text-primary"
-              >
-                Enfants disponibles
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/donations")}
-                className="text-primary"
-              >
-                Donations
-              </Button>
-            </div>
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/sponsor-dashboard")}
-              className="flex items-center gap-2 text-primary"
-            >
-              <User className="h-4 w-4" />
-              Espace parrain
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
+      <HeroSection 
+        heroSection={heroSection} 
+        onImageClick={() => setIsImageCropOpen(true)} 
+      />
 
-      {/* Hero Section with Split Layout */}
-      <section className="relative h-[90vh] bg-cuba-gradient">
-        <div className="container mx-auto h-full">
-          <div className="flex flex-col lg:flex-row h-full">
-            {/* Left Side - Hero Image */}
-            <div className="w-full lg:w-1/2 h-[50vh] lg:h-full relative">
-              <img 
-                src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
-                alt="Hero background"
-                className="absolute inset-0 w-full h-full object-cover cursor-pointer"
-                onClick={() => setIsImageCropOpen(true)}
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20" />
-            </div>
-
-            {/* Right Side - Content */}
-            <div className="w-full lg:w-1/2 p-6 lg:p-12 bg-white/90 backdrop-blur-sm">
-              <div className="max-w-xl mx-auto space-y-8">
-                {/* Hero Content */}
-                <div className="text-center lg:text-left animate-fade-in">
-                  <h1 className="text-4xl lg:text-5xl font-bold text-primary mb-4">
-                    {heroSection?.title || t('heroTitle')}
-                  </h1>
-                  <p className="text-xl text-gray-600 mb-8">
-                    {heroSection?.subtitle || t('heroSubtitle')}
-                  </p>
-                  <Button 
-                    onClick={() => navigate("/become-sponsor")}
-                    size="lg"
-                    className="bg-primary hover:bg-primary-hover text-white transform transition-all duration-300 hover:scale-105"
-                  >
-                    {t('becomeSponsor')}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Children Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <FeaturedChildren />
         </div>
       </section>
 
-      {/* Testimonials and Album Section */}
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Featured Testimonials */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-4">{t('testimonials')}</h2>
+              <h2 className="text-2xl font-bold mb-4">Témoignages</h2>
               <FeaturedTestimonials />
             </div>
 
-            {/* Featured Album */}
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-4">{t('featuredPhotos')}</h2>
+              <h2 className="text-2xl font-bold mb-4">Photos</h2>
               <FeaturedAlbum />
             </div>
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <HowItWorks />
         </div>
       </section>
 
-      {/* Call to Action Section */}
       <section className="py-16 bg-primary/5">
         <div className="container mx-auto px-4">
           <CallToAction />
         </div>
       </section>
 
-      {/* Image Crop Dialog */}
       <ImageCropDialog
         open={isImageCropOpen}
         onClose={() => setIsImageCropOpen(false)}
