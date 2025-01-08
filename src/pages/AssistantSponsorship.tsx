@@ -26,20 +26,33 @@ export default function AssistantSponsorship() {
   const [showTransferDialog, setShowTransferDialog] = useState(false);
   const [currentSponsor, setCurrentSponsor] = useState<any>(null);
 
-  // Récupérer les enfants
+  // Fetch children with their sponsorship information
   const { data: children = [], isLoading: isLoadingChildren } = useQuery({
     queryKey: ["children"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("children")
-        .select("*, sponsor:sponsors(id, name)");
+        .select(`
+          *,
+          sponsorships (
+            sponsor:sponsors (
+              id,
+              name
+            )
+          )
+        `);
 
       if (error) throw error;
-      return data;
+
+      // Transform the data to match the expected format
+      return data.map(child => ({
+        ...child,
+        sponsor: child.sponsorships?.[0]?.sponsor || null
+      }));
     },
   });
 
-  // Récupérer les parrains
+  // Fetch sponsors
   const { data: sponsors = [], isLoading: isLoadingSponsors } = useQuery({
     queryKey: ["sponsors"],
     queryFn: async () => {
@@ -53,12 +66,12 @@ export default function AssistantSponsorship() {
     },
   });
 
-  // Filtrer les enfants selon la recherche
+  // Filter children based on search
   const filteredChildren = children.filter((child) =>
     child.name.toLowerCase().includes(searchChild.toLowerCase())
   );
 
-  // Filtrer les parrains selon la recherche
+  // Filter sponsors based on search
   const filteredSponsors = sponsors.filter((sponsor) =>
     sponsor.name.toLowerCase().includes(searchSponsor.toLowerCase())
   );
@@ -127,7 +140,7 @@ export default function AssistantSponsorship() {
 
   const handleTransfer = async () => {
     try {
-      // Mettre fin au parrainage actuel
+      // End current sponsorship
       const { error: endError } = await supabase
         .from("sponsorships")
         .update({ 
@@ -139,7 +152,7 @@ export default function AssistantSponsorship() {
 
       if (endError) throw endError;
 
-      // Créer le nouveau parrainage
+      // Create new sponsorship
       await createAssociation();
       
       setShowTransferDialog(false);
