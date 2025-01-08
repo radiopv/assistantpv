@@ -4,8 +4,13 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
 import { MessageNotification } from "@/components/Messages/MessageNotification";
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const MainLayout = () => {
   const { user } = useAuth();
@@ -21,6 +26,22 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
+      {/* Mobile Menu Button */}
+      <div className="md:hidden fixed top-4 left-4 z-50">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <Menu className="h-6 w-6" />
+              <span className="sr-only">Menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-[80%] sm:w-[350px]">
+            <Sidebar />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Sidebar */}
       <div className="hidden md:block w-64 fixed h-full">
         <Sidebar />
       </div>

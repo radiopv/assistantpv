@@ -58,17 +58,18 @@ const PublicLayout = () => {
           </Link>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="h-6 w-6" />
+                <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left">
+            <SheetContent side="left" className="w-[80%] sm:w-[350px] lg:hidden">
               <div className="flex flex-col space-y-4 mt-8">
                 {menuItems.map((item) => (
                   <Link
                     key={item.href}
                     to={item.href}
-                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+                    className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                   >
                     <item.icon className="h-5 w-5" />
                     <span>{item.label}</span>
