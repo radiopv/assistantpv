@@ -1,10 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { ChildSelector } from "@/components/AssistantPhotos/ChildSelector";
-import { Button } from "@/components/ui/button";
-import { Search } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -16,6 +12,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { ChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
+import { SponsorsList } from "@/components/AssistantSponsorship/SponsorsList";
+import { AssociationSection } from "@/components/AssistantSponsorship/AssociationSection";
 
 export default function AssistantSponsorship() {
   const { toast } = useToast();
@@ -26,7 +25,6 @@ export default function AssistantSponsorship() {
   const [showTransferDialog, setShowTransferDialog] = useState(false);
   const [currentSponsor, setCurrentSponsor] = useState<any>(null);
 
-  // Fetch children with their sponsorship information
   const { data: children = [], isLoading: isLoadingChildren } = useQuery({
     queryKey: ["children"],
     queryFn: async () => {
@@ -44,7 +42,6 @@ export default function AssistantSponsorship() {
 
       if (error) throw error;
 
-      // Transform the data to match the expected format
       return data.map(child => ({
         ...child,
         sponsor: child.sponsorships?.[0]?.sponsor || null
@@ -52,7 +49,6 @@ export default function AssistantSponsorship() {
     },
   });
 
-  // Fetch sponsors
   const { data: sponsors = [], isLoading: isLoadingSponsors } = useQuery({
     queryKey: ["sponsors"],
     queryFn: async () => {
@@ -65,16 +61,6 @@ export default function AssistantSponsorship() {
       return data;
     },
   });
-
-  // Filter children based on search
-  const filteredChildren = children.filter((child) =>
-    child.name.toLowerCase().includes(searchChild.toLowerCase())
-  );
-
-  // Filter sponsors based on search
-  const filteredSponsors = sponsors.filter((sponsor) =>
-    sponsor.name.toLowerCase().includes(searchSponsor.toLowerCase())
-  );
 
   const handleAssociation = async () => {
     if (!selectedChild || !selectedSponsor) {
@@ -215,118 +201,30 @@ export default function AssistantSponsorship() {
       <h1 className="text-2xl font-bold mb-6">Association Parrains-Enfants</h1>
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Section Enfants */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Enfants</h2>
-          <div className="flex items-center space-x-2">
-            <Search className="w-4 h-4 text-gray-500" />
-            <Input
-              placeholder="Rechercher un enfant..."
-              value={searchChild}
-              onChange={(e) => setSearchChild(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {filteredChildren.map((child) => (
-              <div
-                key={child.id}
-                className="p-4 border rounded-lg hover:bg-gray-50 flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-medium">{child.name}</p>
-                  <p className="text-sm text-gray-600">
-                    {child.sponsor
-                      ? `Parrainé par ${child.sponsor.name}`
-                      : "Non parrainé"}
-                  </p>
-                </div>
-                <div className="space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedChild(child.id)}
-                  >
-                    Sélectionner
-                  </Button>
-                  {child.sponsor && (
-                    <Button
-                      variant="destructive"
-                      onClick={() => removeAssociation(child.id)}
-                    >
-                      Retirer
-                    </Button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <ChildrenList
+          children={children}
+          searchTerm={searchChild}
+          onSearchChange={setSearchChild}
+          onSelectChild={setSelectedChild}
+          onRemoveSponsorship={removeAssociation}
+        />
 
-        {/* Section Parrains */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Parrains</h2>
-          <div className="flex items-center space-x-2">
-            <Search className="w-4 h-4 text-gray-500" />
-            <Input
-              placeholder="Rechercher un parrain..."
-              value={searchSponsor}
-              onChange={(e) => setSearchSponsor(e.target.value)}
-              className="w-full"
-            />
-          </div>
-          <div className="space-y-2 max-h-96 overflow-y-auto">
-            {filteredSponsors.map((sponsor) => (
-              <div
-                key={sponsor.id}
-                className="p-4 border rounded-lg hover:bg-gray-50 flex justify-between items-center"
-              >
-                <div>
-                  <p className="font-medium">{sponsor.name}</p>
-                  <p className="text-sm text-gray-600">{sponsor.email}</p>
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => setSelectedSponsor(sponsor.id)}
-                >
-                  Sélectionner
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
+        <SponsorsList
+          sponsors={sponsors}
+          searchTerm={searchSponsor}
+          onSearchChange={setSearchSponsor}
+          onSelectSponsor={setSelectedSponsor}
+        />
       </div>
 
-      {/* Section Association */}
-      <div className="mt-8 p-4 border rounded-lg bg-gray-50">
-        <h3 className="text-lg font-semibold mb-4">Créer une association</h3>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <p className="mb-2">Enfant sélectionné:</p>
-            <p className="font-medium">
-              {selectedChild
-                ? children.find((c) => c.id === selectedChild)?.name
-                : "Aucun enfant sélectionné"}
-            </p>
-          </div>
-          <div>
-            <p className="mb-2">Parrain sélectionné:</p>
-            <p className="font-medium">
-              {selectedSponsor
-                ? sponsors.find((s) => s.id === selectedSponsor)?.name
-                : "Aucun parrain sélectionné"}
-            </p>
-          </div>
-        </div>
-        <Button
-          className="mt-4 w-full md:w-auto"
-          onClick={handleAssociation}
-          disabled={!selectedChild || !selectedSponsor}
-        >
-          Créer l'association
-        </Button>
-      </div>
+      <AssociationSection
+        selectedChild={selectedChild}
+        selectedSponsor={selectedSponsor}
+        children={children}
+        sponsors={sponsors}
+        onCreateAssociation={handleAssociation}
+      />
 
-      {/* Dialog de transfert */}
       <AlertDialog open={showTransferDialog} onOpenChange={setShowTransferDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
