@@ -34,12 +34,13 @@ export const SponsorCard = ({
         </div>
         <div className="flex gap-2">
           <Button 
-            variant="ghost" 
-            size="icon" 
+            variant="outline" 
+            size="sm"
             onClick={() => setShowAssociationDialog(true)}
-            title="Ajouter un enfant"
+            className="flex items-center gap-2"
           >
             <UserPlus className="h-4 w-4" />
+            Ajouter un enfant
           </Button>
           <Button variant="ghost" size="icon" onClick={() => onEdit(sponsor)}>
             <Edit className="h-4 w-4" />
