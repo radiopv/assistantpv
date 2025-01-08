@@ -42,10 +42,9 @@ const Home = () => {
       const { error: updateError } = await supabase
         .from('homepage_sections')
         .update({
-          content: {
-            ...(heroSection?.content || {}),
-            imageUrl: `${process.env.SUPABASE_URL}/storage/v1/object/public/homepage-media/hero-image.jpg`
-          }
+          content: heroSection?.content ? 
+            { ...heroSection.content as Record<string, unknown>, imageUrl: `${process.env.SUPABASE_URL}/storage/v1/object/public/homepage-media/hero-image.jpg` } 
+            : { imageUrl: `${process.env.SUPABASE_URL}/storage/v1/object/public/homepage-media/hero-image.jpg` }
         })
         .eq('section_key', 'hero');
 
