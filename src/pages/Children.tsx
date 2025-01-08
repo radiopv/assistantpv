@@ -21,22 +21,55 @@ const Children = () => {
   const [selectedStatus, setSelectedStatus] = useState("all");
 
   const { data: children, isLoading } = useQuery({
-    queryKey: ['children'],
+    queryKey: ['children', searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      const { data, error } = await supabase
+      console.log("Fetching with filters:", { selectedGender, selectedAge, selectedCity, selectedStatus });
+      
+      let query = supabase
         .from('children')
-        .select('*')
-        .order('name', { ascending: true });
+        .select('*');
+
+      // Apply filters directly in the query
+      if (selectedCity !== "all") {
+        query = query.eq("city", selectedCity);
+      }
+
+      // Convert gender filter from frontend values to database values
+      if (selectedGender === "masculine") {
+        query = query.eq("gender", "M");
+      } else if (selectedGender === "feminine") {
+        query = query.eq("gender", "F");
+      }
+
+      // Apply age filter as a number
+      if (selectedAge !== "all") {
+        query = query.eq("age", parseInt(selectedAge));
+      }
+
+      // Apply status filter
+      if (selectedStatus === "available") {
+        query = query.eq("is_sponsored", false);
+      } else if (selectedStatus === "sponsored") {
+        query = query.eq("is_sponsored", true);
+      } else if (selectedStatus === "pending") {
+        query = query.eq("status", "En attente");
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         toast.error(t("errorLoadingChildren"));
         throw error;
       }
 
-      return data;
+      // Apply search filter in memory
+      return data.filter(child => 
+        child.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
   });
 
+  // Get unique cities and ages for filters
   const cities = useMemo(() => {
     if (!children) return [];
     const uniqueCities = [...new Set(children.map(child => child.city))];
@@ -48,43 +81,6 @@ const Children = () => {
     const uniqueAges = [...new Set(children.map(child => child.age))];
     return uniqueAges.filter(Boolean).sort((a, b) => a - b);
   }, [children]);
-
-  const hasUrgentNeeds = (child: any) => {
-    if (!child.needs) return false;
-    const needs = typeof child.needs === 'string' ? JSON.parse(child.needs) : child.needs;
-    return Array.isArray(needs) && needs.some((need: any) => need.is_urgent);
-  };
-
-  const filteredChildren = useMemo(() => {
-    if (!children) return [];
-    
-    return children.filter(child => {
-      const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCity = selectedCity === "all" || child.city === selectedCity;
-      const matchesGender = selectedGender === "all" || child.gender === selectedGender;
-      const matchesAge = selectedAge === "all" || child.age === parseInt(selectedAge);
-      
-      let matchesStatus = true;
-      if (selectedStatus !== "all") {
-        switch (selectedStatus) {
-          case "available":
-            matchesStatus = !child.is_sponsored;
-            break;
-          case "sponsored":
-            matchesStatus = child.is_sponsored;
-            break;
-          case "pending":
-            matchesStatus = child.status === "En attente";
-            break;
-          case "urgent":
-            matchesStatus = hasUrgentNeeds(child);
-            break;
-        }
-      }
-      
-      return matchesSearch && matchesCity && matchesGender && matchesAge && matchesStatus;
-    });
-  }, [children, searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus]);
 
   if (isLoading) {
     return (
@@ -122,7 +118,7 @@ const Children = () => {
       />
 
       <ChildrenList 
-        children={filteredChildren}
+        children={children || []}
         isLoading={isLoading}
         onViewProfile={(id) => navigate(`/children/${id}`)}
       />

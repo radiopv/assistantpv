@@ -59,7 +59,7 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      console.log("Fetching with filters:", { selectedGender, selectedAge });
+      console.log("Fetching with filters:", { selectedGender, selectedAge, selectedCity });
       
       let query = supabase
         .from("children")
@@ -74,13 +74,14 @@ export default function AvailableChildren() {
         query = query.eq("city", selectedCity);
       }
 
-      // Convert gender filter
-      if (selectedGender !== "all") {
-        const genderValue = selectedGender === "masculine" ? "M" : "F";
-        query = query.eq("gender", genderValue);
+      // Convert gender filter from frontend values to database values
+      if (selectedGender === "masculine") {
+        query = query.eq("gender", "M");
+      } else if (selectedGender === "feminine") {
+        query = query.eq("gender", "F");
       }
 
-      // Apply age filter
+      // Apply age filter as a number
       if (selectedAge !== "all") {
         query = query.eq("age", parseInt(selectedAge));
       }
@@ -92,7 +93,7 @@ export default function AvailableChildren() {
         throw error;
       }
 
-      // Apply search filter in memory
+      // Apply search filter in memory since it's more flexible
       return data.filter(child => {
         const matchesSearch = child.name.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSearch;
