@@ -45,7 +45,7 @@ export default function AvailableChildren() {
       } else if (selectedStatus === "urgent") {
         query = query
           .eq("is_sponsored", false)
-          .contains("needs", [{ is_urgent: true }]);
+          .contains('needs', [{ is_urgent: true }]);
       }
 
       if (selectedCity !== "all") {
