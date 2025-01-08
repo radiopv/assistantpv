@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Search, Globe } from "lucide-react";
+import { Globe } from "lucide-react";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SponsorCard } from "@/components/Sponsors/SponsorshipManagement/SponsorCard";
+import { SearchBar } from "@/components/Sponsors/SponsorshipManagement/SearchBar";
+import { SponsorshipList } from "@/components/Sponsors/SponsorshipManagement/SponsorshipList";
 
 export default function SponsorshipManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -174,50 +174,31 @@ export default function SponsorshipManagement() {
       </div>
 
       <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <Input
-            type="text"
-            placeholder={t("searchSponsorOrChild")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+        <SearchBar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          placeholder={t("searchSponsorOrChild")}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <h2 className="text-xl font-semibold mb-4">{t("activeSponsors")}</h2>
-          <div className="space-y-4">
-            {activeSponsors.map((sponsor) => (
-              <SponsorCard
-                key={sponsor.id}
-                sponsor={sponsor}
-                onVerificationChange={handleVerificationChange}
-                onRemoveChild={handleRemoveChild}
-                onAddChild={(childId) => handleAddChild(sponsor.id, childId)}
-                availableChildren={availableChildren || []}
-              />
-            ))}
-          </div>
-        </div>
+        <SponsorshipList
+          sponsors={activeSponsors}
+          title={t("activeSponsors")}
+          onVerificationChange={handleVerificationChange}
+          onRemoveChild={handleRemoveChild}
+          onAddChild={handleAddChild}
+          availableChildren={availableChildren || []}
+        />
 
-        <div>
-          <h2 className="text-xl font-semibold mb-4">{t("inactiveSponsors")}</h2>
-          <div className="space-y-4">
-            {inactiveSponsors.map((sponsor) => (
-              <SponsorCard
-                key={sponsor.id}
-                sponsor={sponsor}
-                onVerificationChange={handleVerificationChange}
-                onRemoveChild={handleRemoveChild}
-                onAddChild={(childId) => handleAddChild(sponsor.id, childId)}
-                availableChildren={availableChildren || []}
-              />
-            ))}
-          </div>
-        </div>
+        <SponsorshipList
+          sponsors={inactiveSponsors}
+          title={t("inactiveSponsors")}
+          onVerificationChange={handleVerificationChange}
+          onRemoveChild={handleRemoveChild}
+          onAddChild={handleAddChild}
+          availableChildren={availableChildren || []}
+        />
       </div>
     </div>
   );
