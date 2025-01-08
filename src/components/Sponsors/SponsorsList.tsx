@@ -22,7 +22,9 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
     let filtered = sponsors.filter(sponsor => {
       const searchString = `${sponsor.name} ${sponsor.email} ${sponsor.city}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
-      return sponsor.is_active === isActive && searchString.includes(searchTermLower);
+      const hasChildren = sponsor.sponsorships?.length > 0;
+      return searchString.includes(searchTermLower) && 
+             (isActive ? hasChildren : !hasChildren); // Changed this line to consider sponsors with children as active
     });
 
     return filtered.sort((a, b) => {
