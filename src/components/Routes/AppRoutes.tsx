@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { MainLayout } from "@/components/Layout/MainLayout";
-import { PublicLayout } from "@/components/Layout/PublicLayout";
+import MainLayout from "@/components/Layout/MainLayout";
+import PublicLayout from "@/components/Layout/PublicLayout";
 import Home from "@/pages/Home";
 import ChildProfile from "@/pages/ChildProfile";
 import ChildDetails from "@/pages/ChildDetails";
