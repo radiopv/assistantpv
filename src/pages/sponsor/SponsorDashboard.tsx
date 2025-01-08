@@ -13,6 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { convertJsonToNeeds } from "@/types/needs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SponsorTestimonials } from "@/components/Sponsors/Dashboard/SponsorTestimonials";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -148,6 +149,14 @@ const SponsorDashboard = () => {
                   ))}
                 </div>
               </ScrollArea>
+            </Card>
+
+            {/* Testimonials Section */}
+            <Card className="p-4">
+              <SponsorTestimonials 
+                sponsorId={user?.id || ''} 
+                childId={sponsorship.children.id} 
+              />
             </Card>
           </div>
         ))}
