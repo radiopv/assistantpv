@@ -7,25 +7,6 @@ export const frenchTranslations = {
   forgotPassword: "Mot de passe oublié ?",
   resetPassword: "Réinitialiser le mot de passe",
   
-  // Home page specific translations
-  changeLife: "Changez une vie aujourd'hui",
-  giveHope: "Donnez de l'espoir aux enfants qui en ont le plus besoin",
-  sponsorChild: "Parrainer un enfant",
-  childrenWaitingSponsorship: "Enfants en attente de parrainage",
-  learnMore: "En savoir plus",
-  childAge: "ans",
-  seeAllChildren: "Voir tous les enfants",
-  howItWorks: "Comment ça fonctionne",
-  chooseChild: "Choisissez un enfant",
-  browseProfiles: "Parcourez les profils des enfants qui ont besoin d'aide",
-  completeProfile: "Complétez votre profil",
-  fillInformation: "Remplissez vos informations pour commencer le parrainage",
-  startSponsorship: "Commencez le parrainage",
-  receiveUpdates: "Recevez des mises à jour régulières sur votre filleul",
-  readyToChange: "Prêt à changer une vie ?",
-  sponsorshipDifference: "Votre parrainage peut transformer la vie d'un enfant",
-  startNow: "Commencer maintenant",
-
   // Navigation
   dashboard: "Tableau de bord",
   children: "Enfants",
@@ -46,13 +27,15 @@ export const frenchTranslations = {
   addChild: "Ajouter un enfant",
   addDonation: "Ajouter un don",
   citiesManagement: "Gestion des villes",
+  
+  // Cities management
   cityName: "Nom de la ville",
   updateCity: "Mettre à jour la ville",
   cityUpdated: "Ville mise à jour avec succès",
   errorUpdatingCity: "Erreur lors de l'update de la ville",
   searchCity: "Rechercher une ville",
   donationsCount: "Nombre de donations",
-  tableActions: "Actions",
+  actions: "Actions",
   similarCityWarning: "Attention: Une ville similaire existe déjà",
   continueQuestion: "Voulez-vous continuer ?",
 
@@ -103,27 +86,6 @@ export const frenchTranslations = {
   comingSoon: "Fonctionnalité à venir",
   loading: "Chargement...",
   
-  // Testimonial validation
-  author: "Auteur",
-  content: "Contenu",
-  testimonialApproved: "Témoignage approuvé avec succès",
-  testimonialRejected: "Témoignage rejeté",
-  errorApprovingTestimonial: "Erreur lors de l'approbation du témoignage",
-  errorRejectingTestimonial: "Erreur lors du rejet de la demande",
-  validation: "Validation",
-
-  // Photo validation
-  noPhotosToValidate: "Aucune photo à valider",
-  photoApproved: "Photo approuvée avec succès",
-  photoRejected: "Photo rejetée",
-  errorApprovingPhoto: "Erreur lors de l'approbation de la photo",
-  errorRejectingPhoto: "Erreur lors du rejet de la photo",
-  approve: "Approuver",
-  reject: "Rejeter",
-  childName: "Nom de l'enfant",
-  uploadDate: "Date d'envoi",
-  actions: "Actions",
-
   // Available Children Page
   availableChildren: "Enfants en attente de parrainage",
   searchChild: "Rechercher un enfant",
@@ -143,4 +105,5 @@ export const frenchTranslations = {
   errorFetchingChildren: "Erreur lors de la récupération des enfants",
   errorInvalidChild: "Enfant invalide",
   errorSponsorClick: "Erreur lors de la demande de parrainage",
+  learnMore: "En savoir plus",
 };

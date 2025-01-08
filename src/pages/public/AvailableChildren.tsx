@@ -58,9 +58,7 @@ export default function AvailableChildren() {
         throw error;
       }
 
-      console.log("Données des enfants récupérées:", data);
-
-      return data;
+      return data || [];
     }
   });
 
