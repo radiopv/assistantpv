@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,19 +22,26 @@ export const SponsorshipAssociationDialog = ({
   const [availableChildren, setAvailableChildren] = useState<any[]>([]);
   const { t } = useLanguage();
 
-  const fetchAvailableChildren = async () => {
-    const { data, error } = await supabase
-      .from("children")
-      .select("*")
-      .eq("status", "available")
-      .eq("is_sponsored", false);
-
-    if (error) {
-      console.error("Error fetching children:", error);
-      return;
+  useEffect(() => {
+    if (isOpen) {
+      fetchAvailableChildren();
     }
+  }, [isOpen]);
 
-    setAvailableChildren(data || []);
+  const fetchAvailableChildren = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("children")
+        .select("*")
+        .eq("status", "available")
+        .eq("is_sponsored", false);
+
+      if (error) throw error;
+      setAvailableChildren(data || []);
+    } catch (error) {
+      console.error("Error fetching children:", error);
+      toast.error(t("errorFetchingChildren"));
+    }
   };
 
   const handleAddChild = async () => {
@@ -43,52 +50,49 @@ export const SponsorshipAssociationDialog = ({
       return;
     }
 
-    // Check if child is already sponsored
-    const { data: existingSponsorship } = await supabase
-      .from("sponsorships")
-      .select("*")
-      .eq("child_id", selectedChild.id)
-      .eq("status", "active")
-      .single();
+    try {
+      // Check if child is already sponsored
+      const { data: existingSponsorship } = await supabase
+        .from("sponsorships")
+        .select("*")
+        .eq("child_id", selectedChild.id)
+        .eq("status", "active")
+        .single();
 
-    if (existingSponsorship) {
-      toast.error(t("childAlreadySponsored"));
-      return;
-    }
+      if (existingSponsorship) {
+        toast.error(t("childAlreadySponsored"));
+        return;
+      }
 
-    // Create new sponsorship
-    const { error: sponsorshipError } = await supabase
-      .from("sponsorships")
-      .insert({
-        sponsor_id: sponsor.id,
-        child_id: selectedChild.id,
-        status: "active",
-      });
+      // Create new sponsorship
+      const { error: sponsorshipError } = await supabase
+        .from("sponsorships")
+        .insert({
+          sponsor_id: sponsor.id,
+          child_id: selectedChild.id,
+          status: "active",
+        });
 
-    if (sponsorshipError) {
-      console.error("Error creating sponsorship:", sponsorshipError);
+      if (sponsorshipError) throw sponsorshipError;
+
+      // Update child status
+      const { error: childUpdateError } = await supabase
+        .from("children")
+        .update({
+          is_sponsored: true,
+          status: "sponsored",
+          sponsor_id: sponsor.id,
+        })
+        .eq("id", selectedChild.id);
+
+      if (childUpdateError) throw childUpdateError;
+
+      toast.success(t("sponsorshipCreated"));
+      onClose();
+    } catch (error) {
+      console.error("Error creating sponsorship:", error);
       toast.error(t("errorCreatingSponsorship"));
-      return;
     }
-
-    // Update child status
-    const { error: childUpdateError } = await supabase
-      .from("children")
-      .update({
-        is_sponsored: true,
-        status: "sponsored",
-        sponsor_id: sponsor.id,
-      })
-      .eq("id", selectedChild.id);
-
-    if (childUpdateError) {
-      console.error("Error updating child:", childUpdateError);
-      toast.error(t("errorUpdatingChild"));
-      return;
-    }
-
-    toast.success(t("sponsorshipCreated"));
-    onClose();
   };
 
   return (

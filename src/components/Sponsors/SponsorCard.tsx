@@ -126,12 +126,13 @@ export const SponsorCard = ({
         </div>
       </CardContent>
 
-      <SponsorshipAssociationDialog
-        isOpen={showAssociationDialog}
-        onClose={() => setShowAssociationDialog(false)}
-        sponsors={[sponsor]}
-        child={null}
-      />
+      {showAssociationDialog && (
+        <SponsorshipAssociationDialog
+          isOpen={showAssociationDialog}
+          onClose={() => setShowAssociationDialog(false)}
+          sponsor={sponsor}
+        />
+      )}
     </Card>
   );
 };
