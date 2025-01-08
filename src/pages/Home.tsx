@@ -6,21 +6,10 @@ import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
 import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
-import { Navigation } from "@/components/Home/Navigation";
 import { HeroSection } from "@/components/Home/HeroSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-
-interface HomepageSection {
-  section_key: string;
-  content: {
-    imageUrl?: string;
-    [key: string]: any;
-  };
-  title?: string;
-  subtitle?: string;
-}
 
 const Home = () => {
   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
@@ -32,7 +21,7 @@ const Home = () => {
         .from('homepage_sections')
         .select('*');
       if (error) throw error;
-      return data as HomepageSection[];
+      return data;
     }
   });
 
@@ -97,7 +86,6 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      <Navigation />
       <HeroSection 
         heroSection={heroSection} 
         onImageClick={() => setIsImageCropOpen(true)} 
