@@ -1,11 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Calendar } from "lucide-react";
+import { Heart, MapPin, Calendar, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Need } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -34,6 +35,7 @@ const formatAge = (birthDate: string | undefined | null) => {
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   if (isLoading) {
     return (
@@ -94,11 +96,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               )}
 
               <Button 
-                className="w-full" 
-                onClick={() => onSponsorClick(child.id)}
+                className="w-full flex items-center justify-center gap-2" 
+                onClick={() => navigate(`/child/${child.id}`)}
               >
-                <Heart className="w-4 h-4 mr-2" />
-                {t("sponsor")}
+                <Info className="w-4 h-4" />
+                {t("learnMore")}
               </Button>
             </div>
           </Card>
