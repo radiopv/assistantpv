@@ -9,13 +9,14 @@ import { SearchInput } from "@/components/ui/search-input";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SponsorshipAssociationDialog } from "@/components/Sponsors/SponsorshipAssociationDialog";
+import { toast } from "sonner";
 
 const SponsorshipManagement = () => {
   const { t } = useLanguage();
   const [childSearchTerm, setChildSearchTerm] = useState("");
   const [selectedChild, setSelectedChild] = useState<any>(null);
   
-  const { data: sponsors, isLoading: sponsorsLoading } = useQuery({
+  const { data: sponsors, isLoading: sponsorsLoading, refetch: refetchSponsors } = useQuery({
     queryKey: ['sponsors'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -77,6 +78,23 @@ const SponsorshipManagement = () => {
     }
   });
 
+  const handleRemoveChild = async (sponsorshipId: string) => {
+    try {
+      const { error: sponsorshipError } = await supabase
+        .from('sponsorships')
+        .delete()
+        .eq('id', sponsorshipId);
+
+      if (sponsorshipError) throw sponsorshipError;
+
+      toast.success(t("sponsorshipRemoved"));
+      refetchSponsors();
+    } catch (error) {
+      console.error('Error removing sponsorship:', error);
+      toast.error(t("errorRemovingSponsorship"));
+    }
+  };
+
   const filteredChildren = children?.filter(child => {
     const searchString = `${child.name} ${child.city}`.toLowerCase();
     return searchString.includes(childSearchTerm.toLowerCase());
@@ -102,7 +120,11 @@ const SponsorshipManagement = () => {
 
         <TabsContent value="sponsors">
           <Card className="p-6">
-            <SponsorsList sponsors={sponsors || []} isLoading={sponsorsLoading} />
+            <SponsorsList 
+              sponsors={sponsors || []} 
+              isLoading={sponsorsLoading} 
+              onRemoveChild={handleRemoveChild}
+            />
           </Card>
         </TabsContent>
 

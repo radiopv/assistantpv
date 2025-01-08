@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SponsorshipAccordion } from "./SponsorshipAccordion";
 import { SearchInput } from "@/components/ui/search-input";
-import { Search } from "lucide-react";
+import { Search, UserPlus } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -11,14 +11,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Switch } from "@/components/ui/switch";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Edit, Eye } from "lucide-react";
 
 interface SponsorsListProps {
   sponsors: any[];
   isLoading: boolean;
+  onRemoveChild?: (sponsorshipId: string) => void;
 }
 
-export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsListProps) => {
+export const SponsorsList = ({ 
+  sponsors: initialSponsors, 
+  isLoading,
+  onRemoveChild 
+}: SponsorsListProps) => {
   const [sponsors, setSponsors] = useState(initialSponsors);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("recent");
@@ -160,18 +164,47 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
                 </div>
               </div>
 
-              <SponsorshipAccordion
-                sponsor={sponsor}
-                onUpdate={() => {
-                  setSponsors(prevSponsors =>
-                    prevSponsors.map(s =>
-                      s.id === sponsor.id
-                        ? { ...s, ...sponsor }
-                        : s
-                    )
-                  );
-                }}
-              />
+              <div className="space-y-4">
+                <h4 className="font-medium">Enfants parrainés</h4>
+                <div className="grid gap-4">
+                  {sponsor.sponsorships?.map((sponsorship: any) => (
+                    <div key={sponsorship.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-4">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={sponsorship.children?.photo_url} alt={sponsorship.children?.name} />
+                          <AvatarFallback>{sponsorship.children?.name?.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium cursor-pointer hover:text-primary" 
+                             onClick={() => onRemoveChild?.(sponsorship.id)}>
+                            {sponsorship.children?.name}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {sponsorship.children?.age} ans - {sponsorship.children?.city}
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                        onClick={() => onRemoveChild?.(sponsorship.id)}
+                      >
+                        Retirer
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={() => {/* Handle adding child */}}
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    Ajouter un enfant
+                  </Button>
+                </div>
+              </div>
             </Card>
           ))}
         </div>
@@ -223,18 +256,19 @@ export const SponsorsList = ({ sponsors: initialSponsors, isLoading }: SponsorsL
                 </div>
               </div>
 
-              <SponsorshipAccordion
-                sponsor={sponsor}
-                onUpdate={() => {
-                  setSponsors(prevSponsors =>
-                    prevSponsors.map(s =>
-                      s.id === sponsor.id
-                        ? { ...s, ...sponsor }
-                        : s
-                    )
-                  );
-                }}
-              />
+              <div className="space-y-4">
+                <h4 className="font-medium">Enfants parrainés</h4>
+                <p className="text-sm text-gray-500">Aucun enfant parrainé</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                  onClick={() => {/* Handle adding child */}}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Ajouter un enfant
+                </Button>
+              </div>
             </Card>
           ))}
         </div>
