@@ -34,7 +34,7 @@ const Home = () => {
             <div className="w-full lg:w-1/2 p-6 lg:p-12 bg-white/90 backdrop-blur-sm">
               <div className="max-w-xl mx-auto space-y-8">
                 {/* Hero Content */}
-                <div className="text-center lg:text-left">
+                <div className="text-center lg:text-left animate-fade-in">
                   <h1 className="text-4xl lg:text-5xl font-bold text-primary mb-4">
                     {t('heroTitle') || "Changez une vie aujourd'hui"}
                   </h1>
@@ -44,20 +44,20 @@ const Home = () => {
                   <Button 
                     onClick={() => navigate("/become-sponsor")}
                     size="lg"
-                    className="bg-primary hover:bg-primary-hover text-white"
+                    className="bg-primary hover:bg-primary-hover text-white transform transition-all duration-300 hover:scale-105"
                   >
                     {t('becomeSponsor') || "Devenir parrain"}
                   </Button>
                 </div>
 
                 {/* Featured Testimonials */}
-                <div className="mb-8">
+                <div className="mb-8 animate-fade-in" style={{ animationDelay: '200ms' }}>
                   <h2 className="text-2xl font-bold mb-4">{t('testimonials') || "Témoignages"}</h2>
                   <FeaturedTestimonials />
                 </div>
 
                 {/* Featured Album */}
-                <div>
+                <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
                   <h2 className="text-2xl font-bold mb-4">{t('featuredPhotos') || "Photos"}</h2>
                   <FeaturedAlbum />
                 </div>
