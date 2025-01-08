@@ -23,7 +23,7 @@ export const Navigation = () => {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => navigate("/donations")}
+              onClick={() => navigate("/public-donations")}
               className="text-primary"
             >
               Donations
