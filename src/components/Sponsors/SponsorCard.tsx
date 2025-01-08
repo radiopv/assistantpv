@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Edit, Eye, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { SponsorshipAssociationDialog } from "./SponsorshipAssociationDialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface SponsorCardProps {
   sponsor: any;
@@ -20,6 +21,21 @@ export const SponsorCard = ({
   onStatusChange 
 }: SponsorCardProps) => {
   const [showAssociationDialog, setShowAssociationDialog] = useState(false);
+
+  const handleVerificationChange = async (checked: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('sponsors')
+        .update({ is_verified: checked })
+        .eq('id', sponsor.id);
+
+      if (error) throw error;
+      
+      onStatusChange(sponsor.id, 'is_verified', checked);
+    } catch (error) {
+      console.error('Error updating sponsor verification:', error);
+    }
+  };
 
   return (
     <Card>
@@ -53,6 +69,14 @@ export const SponsorCard = ({
           <Switch
             checked={sponsor.is_active}
             onCheckedChange={(checked) => onStatusChange(sponsor.id, 'is_active', checked)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">Vérifié</span>
+          <Checkbox
+            checked={sponsor.is_verified}
+            onCheckedChange={handleVerificationChange}
           />
         </div>
 
