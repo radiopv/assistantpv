@@ -1,82 +1,69 @@
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface Child {
-  id: string;
-  name: string;
-  sponsor?: {
+interface ChildrenListProps {
+  children: Array<{
     id: string;
     name: string;
-  } | null;
-}
-
-interface ChildrenListProps {
-  children: Child[];
+    age: number;
+    birth_date: string;
+    city: string;
+    comments: string;
+    created_at: string;
+    description: string;
+    end_date: string;
+    gender: string;
+    sponsorships: Array<{ id: string; sponsor: { id: string; name: string; } }>;
+  }>;
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  onSelectChild: (childId: string) => void;
-  onRemoveSponsorship: (childId: string) => void;
+  onSelectChild: (id: string) => void;
+  onRemoveSponsorship?: () => void;
 }
 
-export function ChildrenList({
+export const ChildrenList = ({
   children,
   searchTerm,
   onSearchChange,
   onSelectChild,
-  onRemoveSponsorship,
-}: ChildrenListProps) {
+  onRemoveSponsorship
+}: ChildrenListProps) => {
   const { t } = useLanguage();
-  const filteredChildren = children.filter((child) =>
+
+  const filteredChildren = children.filter(child =>
     child.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">{t("children")}</h2>
-      <div className="flex items-center space-x-2">
-        <Search className="w-4 h-4 text-gray-500" />
-        <Input
-          placeholder={t("searchChild")}
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full"
-        />
-      </div>
-      <div className="space-y-2 max-h-96 overflow-y-auto">
-        {filteredChildren.map((child) => (
-          <div
-            key={child.id}
-            className="p-4 border rounded-lg hover:bg-gray-50 flex justify-between items-center"
-          >
-            <div>
-              <p className="font-medium">{child.name}</p>
-              <p className="text-sm text-gray-600">
-                {child.sponsor
-                  ? `${t("sponsored")} ${child.sponsor.name}`
-                  : t("notSponsored")}
-              </p>
-            </div>
-            <div className="space-x-2">
-              <Button
-                variant="outline"
-                onClick={() => onSelectChild(child.id)}
-              >
+    <div>
+      <input
+        type="text"
+        placeholder={t("searchChildren")}
+        value={searchTerm}
+        onChange={(e) => onSearchChange(e.target.value)}
+        className="mb-4 p-2 border rounded"
+      />
+      <div className="grid gap-4 md:grid-cols-2">
+        {filteredChildren.map(child => (
+          <Card key={child.id} className="p-4">
+            <h3 className="text-lg font-semibold">{child.name}</h3>
+            <p>{t("age")}: {child.age}</p>
+            <p>{t("city")}: {child.city}</p>
+            <p>{t("comments")}: {child.comments}</p>
+            <div className="flex justify-between mt-4">
+              <Button onClick={() => onSelectChild(child.id)}>
                 {t("select")}
               </Button>
-              {child.sponsor && (
-                <Button
-                  variant="destructive"
-                  onClick={() => onRemoveSponsorship(child.id)}
-                >
-                  {t("remove")}
+              {child.sponsorships.length > 0 && (
+                <Button variant="destructive" onClick={onRemoveSponsorship}>
+                  {t("removeSponsorship")}
                 </Button>
               )}
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
   );
-}
+};

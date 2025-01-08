@@ -145,7 +145,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
     {
       href: "/admin/link-checker",
       label: t("linkChecker"),
-      icon: LinkCheck,
+      icon: ExternalLink,
       show: isAdmin,
     }
   ];
@@ -183,4 +183,3 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
 };
 
 export default Sidebar;
-
