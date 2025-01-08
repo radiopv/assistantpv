@@ -11,7 +11,6 @@ import {
   FileText,
   CheckSquare,
   Globe,
-  HeartHandshake,
   CircleDollarSign,
 } from "lucide-react";
 import { SidebarSection } from "./SidebarSection";
@@ -73,11 +72,6 @@ const assistantLinks = [
     href: "/assistant-photos",
     label: "Photos",
     icon: Image,
-  },
-  {
-    href: "/assistant/sponsorship",
-    label: "Parrainages",
-    icon: HeartHandshake,
   },
   {
     href: "/admin/sponsorship-management",

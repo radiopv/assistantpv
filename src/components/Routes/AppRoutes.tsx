@@ -19,7 +19,6 @@ import AddDonation from "@/pages/AddDonation";
 import Settings from "@/pages/Settings";
 import Tasks from "@/pages/Tasks";
 import AssistantPhotos from "@/pages/AssistantPhotos";
-import AssistantSponsorship from "@/pages/AssistantSponsorship";
 import MediaManagement from "@/pages/MediaManagement";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import SponsorDashboard from "@/pages/SponsorDashboard";
@@ -61,7 +60,6 @@ export const AppRoutes = () => {
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
-        <Route path="/assistant/sponsorship" element={<AssistantSponsorship />} />
         <Route path="/media-management" element={<MediaManagement />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
         <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
