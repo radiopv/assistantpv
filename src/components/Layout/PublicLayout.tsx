@@ -6,32 +6,40 @@ import {
   LayoutDashboard, 
   Menu,
   Users,
-  Gift
+  Gift,
+  HelpCircle
 } from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const PublicLayout = () => {
   const { session, user } = useAuth();
+  const { t } = useLanguage();
 
   const menuItems = [
     {
       href: "/",
-      label: "Accueil",
+      label: t("home"),
       icon: LayoutDashboard,
     },
     {
       href: "/available-children",
-      label: "Enfants disponibles",
+      label: t("childrenWaitingSponsorship"),
       icon: Users,
     },
     {
       href: "/donations",
-      label: "Dons",
+      label: t("donations"),
       icon: Gift,
+    },
+    {
+      href: "/faq",
+      label: t("faq"),
+      icon: HelpCircle,
     }
   ];
 
@@ -68,13 +76,13 @@ const PublicLayout = () => {
                     <Link to="/dashboard">
                       <Button className="w-full">
                         <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Administration
+                        {t("dashboard")}
                       </Button>
                     </Link>
                   ) : null
                 ) : (
                   <Link to="/login">
-                    <Button className="w-full">Administration</Button>
+                    <Button className="w-full">{t("login")}</Button>
                   </Link>
                 )}
               </div>
@@ -110,13 +118,13 @@ const PublicLayout = () => {
                   <Link to="/dashboard">
                     <Button>
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Administration
+                      {t("dashboard")}
                     </Button>
                   </Link>
                 ) : null
               ) : (
                 <Link to="/login">
-                  <Button>Administration</Button>
+                  <Button>{t("login")}</Button>
                 </Link>
               )}
             </div>

@@ -21,13 +21,14 @@ import CitiesManagement from "@/pages/admin/CitiesManagement";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import Tasks from "@/pages/Tasks";
 import PublicDonations from "@/pages/public/PublicDonations";
+import FAQ from "@/pages/public/FAQ";
 
 // Admin pages
 import Statistics from "@/pages/admin/Statistics";
 import Validation from "@/pages/admin/Validation";
 import Translations from "@/pages/admin/Translations";
 import Emails from "@/pages/admin/Emails";
-import FAQ from "@/pages/admin/FAQ";
+import AdminFAQ from "@/pages/admin/FAQ";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 
 const AppRoutes = () => {
@@ -40,6 +41,7 @@ const AppRoutes = () => {
         <Route path="/become-sponsor/:childId" element={<BecomeSponsor />} />
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/donations" element={<PublicDonations />} />
+        <Route path="/faq" element={<FAQ />} />
       </Route>
 
       <Route element={<MainLayout />}>
