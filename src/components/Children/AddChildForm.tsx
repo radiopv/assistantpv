@@ -8,9 +8,11 @@ import { FormActions } from "./AddChildForm/FormActions";
 import { useChildForm } from "./AddChildForm/useChildForm";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { translations } from "./FormFields/translations";
+import { useNavigate } from "react-router-dom";
 
 export const AddChildForm = () => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
   const t = translations[language as keyof typeof translations];
   
   const {
@@ -60,6 +62,7 @@ export const AddChildForm = () => {
       <FormActions
         loading={loading}
         translations={t}
+        onCancel={() => navigate('/children')}
       />
     </form>
   );
