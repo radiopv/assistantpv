@@ -1,170 +1,199 @@
-import { useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { cn } from "@/lib/utils";
 import { 
-  LayoutDashboard, 
+  Home, 
   Users, 
   Gift, 
-  Settings,
-  Baby,
+  Settings, 
+  CheckSquare, 
+  Camera,
+  MessageSquare,
   UserPlus,
-  ChartBar,
-  HelpCircle,
-  Languages,
-  Image,
-  CheckCircle2,
-  Mail,
-  Heart,
-  MapPin,
-  Link,
-  ExternalLink
+  FileText,
+  Map,
+  Bell,
+  Link as LinkIcon,
+  Globe,
+  BarChart2
 } from "lucide-react";
-import { SidebarHeader } from "./Sidebar/SidebarHeader";
-import { SidebarSection } from "./Sidebar/SidebarSection";
-import { SidebarFooter } from "./Sidebar/SidebarFooter";
-import { useLanguage } from "@/contexts/LanguageContext";
 
-interface SidebarProps {
-  isMobile?: boolean;
-  onClose?: () => void;
-}
-
-const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
-  const { signOut, user } = useAuth();
-  const { t } = useLanguage();
+const Sidebar = () => {
   const location = useLocation();
+  const { isAssistant } = useAuth();
 
-  const isAdmin = user?.role === 'admin';
-
-  const assistantLinks = [
-    {
-      href: "/dashboard",
-      label: t("dashboard"),
-      icon: LayoutDashboard,
-      show: user?.permissions?.dashboard || isAdmin,
-    },
-    {
-      href: "/children",
-      label: t("children"),
-      icon: Baby,
-      show: user?.permissions?.children || isAdmin,
-      subItems: [
-        {
-          href: "/children/add",
-          label: t("addChild"),
-          icon: UserPlus,
-          show: user?.permissions?.edit_children || isAdmin,
-        },
-        {
-          href: "/assistant-photos",
-          label: t("addChildPhotos"),
-          icon: Image,
-          show: true,
-        }
-      ]
-    },
-    {
-      href: "/admin/sponsorship-management",
-      label: t("sponsorshipManagement"),
-      icon: Heart,
-      show: true,
-    },
-    {
-      href: "/donations",
-      label: t("donations"),
-      icon: Gift,
-      show: user?.permissions?.donations || isAdmin,
-      subItems: [
-        {
-          href: "/donations/add",
-          label: t("addDonation"),
-          icon: UserPlus,
-          show: user?.permissions?.donations || isAdmin,
-        }
-      ]
-    }
-  ];
-
-  const adminLinks = [
-    {
-      href: "/admin/translations",
-      label: t("translationManager"),
-      icon: Languages,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/validation",
-      label: t("validation"),
-      icon: CheckCircle2,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/statistics",
-      label: t("statistics"),
-      icon: ChartBar,
-      show: isAdmin,
-    },
-    {
-      href: "/assistant/sponsorship",
-      label: t("associationParrainEnfants"),
-      icon: Link,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/emails",
-      label: t("emailManager"),
-      icon: Mail,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/faq",
-      label: t("faq"),
-      icon: HelpCircle,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/cities",
-      label: t("citiesManagement"),
-      icon: MapPin,
-      show: isAdmin,
-    },
-    {
-      href: "/admin/link-checker",
-      label: t("linkChecker"),
-      icon: ExternalLink,
-      show: isAdmin,
-    }
-  ];
+  const isActive = (path: string) => {
+    return location.pathname === path;
+  };
 
   return (
-    <div className={cn(
-      "flex h-full flex-col border-r bg-white",
-      isMobile && "relative"
-    )}>
-      <SidebarHeader isMobile={isMobile} onClose={onClose} />
-      
-      <ScrollArea className="flex-1">
-        <div className="space-y-4 py-4">
-          <SidebarSection
-            title="Assistant"
-            links={assistantLinks}
-            currentPath={location.pathname}
-            onClose={onClose}
-          />
-          
-          {isAdmin && (
-            <SidebarSection
-              title="Administration"
-              links={adminLinks}
-              currentPath={location.pathname}
-              onClose={onClose}
-            />
-          )}
-        </div>
-      </ScrollArea>
+    <div className="h-full bg-white border-r flex flex-col">
+      <div className="p-6">
+        <Link to="/" className="flex items-center gap-2">
+          <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+          <span className="font-semibold text-xl">Passion Varadero</span>
+        </Link>
+      </div>
 
-      <SidebarFooter onSignOut={signOut} onClose={onClose} />
+      <nav className="flex-1 px-4 space-y-2">
+        <Link
+          to="/dashboard"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+            isActive("/dashboard") && "bg-gray-50 text-primary"
+          )}
+        >
+          <Home className="w-5 h-5" />
+          <span>Tableau de bord</span>
+        </Link>
+
+        <Link
+          to="/children"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+            isActive("/children") && "bg-gray-50 text-primary"
+          )}
+        >
+          <Users className="w-5 h-5" />
+          <span>Enfants</span>
+        </Link>
+
+        <Link
+          to="/donations"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+            isActive("/donations") && "bg-gray-50 text-primary"
+          )}
+        >
+          <Gift className="w-5 h-5" />
+          <span>Dons</span>
+        </Link>
+
+        <Link
+          to="/messages"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+            isActive("/messages") && "bg-gray-50 text-primary"
+          )}
+        >
+          <MessageSquare className="w-5 h-5" />
+          <span>Messages</span>
+        </Link>
+
+        <Link
+          to="/tasks"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+            isActive("/tasks") && "bg-gray-50 text-primary"
+          )}
+        >
+          <CheckSquare className="w-5 h-5" />
+          <span>Tâches</span>
+        </Link>
+
+        {isAssistant && (
+          <>
+            <Link
+              to="/assistant-photos"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/assistant-photos") && "bg-gray-50 text-primary"
+              )}
+            >
+              <Camera className="w-5 h-5" />
+              <span>Photos</span>
+            </Link>
+
+            <Link
+              to="/assistant/sponsorship"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/assistant/sponsorship") && "bg-gray-50 text-primary"
+              )}
+            >
+              <UserPlus className="w-5 h-5" />
+              <span>Parrainages</span>
+            </Link>
+
+            <Link
+              to="/admin/translations"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/admin/translations") && "bg-gray-50 text-primary"
+              )}
+            >
+              <Globe className="w-5 h-5" />
+              <span>Traductions</span>
+            </Link>
+
+            <Link
+              to="/admin/faq"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/admin/faq") && "bg-gray-50 text-primary"
+              )}
+            >
+              <FileText className="w-5 h-5" />
+              <span>FAQ</span>
+            </Link>
+
+            <Link
+              to="/admin/cities"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/admin/cities") && "bg-gray-50 text-primary"
+              )}
+            >
+              <Map className="w-5 h-5" />
+              <span>Villes</span>
+            </Link>
+
+            <Link
+              to="/admin/notifications"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/admin/notifications") && "bg-gray-50 text-primary"
+              )}
+            >
+              <Bell className="w-5 h-5" />
+              <span>Notifications</span>
+            </Link>
+
+            <Link
+              to="/admin/link-checker"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/admin/link-checker") && "bg-gray-50 text-primary"
+              )}
+            >
+              <LinkIcon className="w-5 h-5" />
+              <span>Liens</span>
+            </Link>
+
+            <Link
+              to="/admin/statistics"
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+                isActive("/admin/statistics") && "bg-gray-50 text-primary"
+              )}
+            >
+              <BarChart2 className="w-5 h-5" />
+              <span>Statistiques</span>
+            </Link>
+          </>
+        )}
+
+        <Link
+          to="/settings"
+          className={cn(
+            "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
+            isActive("/settings") && "bg-gray-50 text-primary"
+          )}
+        >
+          <Settings className="w-5 h-5" />
+          <span>Paramètres</span>
+        </Link>
+      </nav>
     </div>
   );
 };

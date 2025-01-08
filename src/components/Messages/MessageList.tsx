@@ -20,7 +20,13 @@ export const MessageList = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as Message[];
+      
+      // Transform the data to match the Message type
+      return (data as any[]).map(message => ({
+        ...message,
+        sender: message.sender || { name: 'Système' },
+        recipient: message.recipient || { name: 'Système' }
+      })) as Message[];
     }
   });
 

@@ -34,6 +34,7 @@ import AdminFAQ from "@/pages/admin/FAQ";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
 import Notifications from "@/pages/admin/Notifications";
 import LinkChecker from "@/pages/admin/LinkChecker";
+import Messages from "@/pages/Messages";
 
 export const AppRoutes = () => {
   return (
@@ -58,6 +59,7 @@ export const AppRoutes = () => {
         <Route path="/donations/add" element={<AddDonation />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/tasks" element={<Tasks />} />
+        <Route path="/messages" element={<Messages />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/assistant/sponsorship" element={<AssistantSponsorship />} />
         <Route path="/media-management" element={<MediaManagement />} />
