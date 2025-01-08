@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "./UserProfileMenu";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { 
   Menu, 
   Home, 
@@ -35,7 +36,6 @@ const MainLayout = () => {
   const isAssistant = user?.role === 'assistant';
   const isSponsor = user?.role === 'sponsor' || (isAdmin && user?.children_sponsored?.length > 0);
 
-  // Navigation items for assistants
   const assistantNavItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Enfants', path: '/children' },
@@ -77,8 +77,6 @@ const MainLayout = () => {
     return [];
   };
 
-  const mobileNavItems = getNavItems();
-
   const handleSponsorDashboardClick = () => {
     if (!user) {
       navigate('/login');
@@ -93,25 +91,6 @@ const MainLayout = () => {
         <Sidebar />
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
-        <nav className="flex justify-around items-center h-16 overflow-x-auto">
-          {mobileNavItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex flex-col items-center p-2 min-w-[72px] ${
-                location.pathname === item.path
-                  ? 'text-primary'
-                  : 'text-gray-500'
-              }`}
-            >
-              <item.icon className="h-5 w-5" />
-              <span className="text-xs mt-1 text-center">{item.label}</span>
-            </Link>
-          ))}
-        </nav>
-      </div>
-
       <main className="flex-1 md:ml-64 pb-16 md:pb-0">
         <div className="p-4 border-b bg-white flex justify-between items-center">
           <Button
@@ -122,7 +101,10 @@ const MainLayout = () => {
             <User className="h-4 w-4" />
             Espace parrain
           </Button>
-          <UserProfileMenu />
+          <div className="flex items-center gap-2">
+            <LanguageSelector />
+            <UserProfileMenu />
+          </div>
         </div>
         <div className="p-4 md:p-8">
           <div className="container mx-auto animate-fade-in">
