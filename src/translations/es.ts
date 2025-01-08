@@ -7,25 +7,6 @@ export const spanishTranslations = {
   forgotPassword: "¿Olvidaste tu contraseña?",
   resetPassword: "Restablecer contraseña",
   
-  // Home page specific translations
-  changeLife: "Cambia una vida hoy",
-  giveHope: "Brinda esperanza a los niños que más lo necesitan",
-  sponsorChild: "Apadrinar a un niño",
-  childrenWaitingSponsorship: "Niños esperando apadrinamiento",
-  learnMore: "Más información",
-  childAge: "años",
-  seeAllChildren: "Ver todos los niños",
-  howItWorks: "Cómo funciona",
-  chooseChild: "Elige un niño",
-  browseProfiles: "Explora los perfiles de niños que necesitan ayuda",
-  completeProfile: "Completa tu perfil",
-  fillInformation: "Completa tu información para comenzar el apadrinamiento",
-  startSponsorship: "Comienza el apadrinamiento",
-  receiveUpdates: "Recibe actualizaciones regulares sobre tu ahijado",
-  readyToChange: "¿Listo para cambiar una vida?",
-  sponsorshipDifference: "Tu apadrinamiento puede transformar la vida de un niño",
-  startNow: "Comenzar ahora",
-
   // Navigation
   dashboard: "Panel",
   children: "Niños",
@@ -84,11 +65,8 @@ export const spanishTranslations = {
   status: "Estado",
   age: "Edad",
   childInfo: "Información del niño",
-  manageDonations: "Gestionar donaciones",
-  gridView: "Vista de cuadrícula",
-  tableView: "Vista de tabla",
-
-  // Sponsor related
+  
+  // Sponsorship related
   isSponsored: "Apadrinado",
   available: "Disponible",
   editOrRemoveSponsor: "Editar o eliminar padrino",
@@ -96,62 +74,20 @@ export const spanishTranslations = {
   sponsor: "Padrino",
   pending: "Pendiente",
   urgent: "Urgente",
-
-  // Translation related
-  enterTranslation: "Ingrese la traducción",
-  translationRequired: "Se requiere una traducción",
-  translationApproved: "Traducción aprobada",
-  originalText: "Texto original",
-
-  // Messages
-  from: "De",
-  selectMessageToRead: "Seleccione un mensaje para leer",
-
-  // Validation page
-  validationPage: "Página de validación",
-  sponsorshipRequests: "Solicitudes de apadrinamiento",
-  photoValidation: "Validación de fotos",
-  testimonialValidation: "Validación de testimonios",
-  sponsorshipRequestApproved: "Solicitud de apadrinamiento aprobada",
-  sponsorshipRequestRejected: "Solicitud de apadrinamiento rechazada",
-  errorApprovingRequest: "Error al aprobar la solicitud",
-  errorRejectingRequest: "Error al rechazar la solicitud",
-  comingSoon: "Próximamente",
-  loading: "Cargando...",
   
-  // Testimonial validation
-  author: "Autor",
-  content: "Contenido",
-  testimonialApproved: "Testimonio aprobado con éxito",
-  testimonialRejected: "Testimonio rechazado",
-  errorApprovingTestimonial: "Error al aprobar el testimonio",
-  errorRejectingTestimonial: "Error al rechazar el testimonio",
-  validation: "Validación",
-
-  // Photo validation
-  noPhotosToValidate: "No hay fotos para validar",
-  photoApproved: "Foto aprobada con éxito",
-  photoRejected: "Foto rechazada",
-  errorApprovingPhoto: "Error al aprobar la foto",
-  errorRejectingPhoto: "Error al rechazar la foto",
-  reject: "Rechazar",
-  childName: "Nombre del niño",
-  uploadDate: "Fecha de envío",
-
-  // Sponsorship
-  becomeSponsor: "Conviértete en padrino",
-  sponsorshipDescription: "Completa el formulario para comenzar el proceso de apadrinamiento",
-  fullName: "Nombre completo",
-  motivation: "Motivación",
-  facebookUrl: "URL de Facebook",
-  longTermSponsorship: "Deseo un apadrinamiento a largo plazo",
-  acceptTerms: "Acepto los términos y condiciones",
-  sponsorshipTerminationNote: "Puedes terminar el apadrinamiento en cualquier momento",
-  submitting: "Enviando...",
-  submitRequest: "Enviar solicitud",
-  pleaseAcceptTerms: "Por favor acepta los términos y condiciones",
-
-  // New translations
+  // Error messages
+  errorTitle: "Error",
+  errorSelectBoth: "Por favor seleccione un niño y un padrino",
+  errorAssociation: "Ocurrió un error durante la asociación",
+  errorTransfer: "Ocurrió un error durante la transferencia",
+  errorRemoval: "Ocurrió un error durante la eliminación del apadrinamiento",
+  
+  // Success messages
+  successTitle: "Éxito",
+  successAssociation: "La asociación se ha creado con éxito",
+  successRemoval: "El apadrinamiento se ha eliminado con éxito",
+  
+  // Association section
   createAssociation: "Crear asociación",
   selectedChild: "Niño seleccionado:",
   selectedSponsor: "Padrino seleccionado:",
@@ -164,43 +100,24 @@ export const spanishTranslations = {
   remove: "Eliminar",
   sponsoredBy: "Apadrinado por",
   notSponsored: "No apadrinado",
-
-  // Children page specific translations
-  childrenList: "Lista de niños",
-  addChild: "Agregar niño",
-  searchChild: "Buscar niño...",
-  city: "Ciudad",
-  allCities: "Todas las ciudades",
-  allGenders: "Todos los géneros",
-  masculine: "Masculino",
-  feminine: "Femenino",
-  age: "Edad",
-  allAges: "Todas las edades",
-  status: "Estado",
-  allStatus: "Todos los estados",
-  available: "Disponible",
-  sponsored: "Apadrinado",
-  pending: "Pendiente",
-  urgent: "Urgente",
-  gridView: "Vista de cuadrícula",
-  tableView: "Vista de tabla",
-  loading: "Cargando...",
-  errorLoadingChildren: "Error al cargar los niños",
-  noChildren: "No hay niños disponibles",
-
-  // Filter related translations
-  filter: "Filtrar",
-  clearFilters: "Limpiar filtros",
-  applyFilters: "Aplicar filtros",
   
-  // Child card translations
-  learnMore: "Más información",
-  edit: "Editar",
-  save: "Guardar",
-  cancel: "Cancelar",
-  description: "Descripción",
-  story: "Historia",
-  comments: "Comentarios",
-  needs: "Necesidades",
-  ageNotAvailable: "Edad no disponible",
+  // Transfer dialog
+  transferTitle: "Confirmar transferencia",
+  transferDescription: "Este niño ya está apadrinado por {sponsor}. ¿Desea transferir este niño a otro padrino?",
+  confirmTransfer: "Confirmar transferencia",
+  
+  // Language
+  toggleLanguage: "Cambiar idioma",
+  
+  // Validation
+  validationPage: "Página de validación",
+  sponsorshipRequests: "Solicitudes de apadrinamiento",
+  photoValidation: "Validación de fotos",
+  testimonialValidation: "Validación de testimonios",
+  sponsorshipRequestApproved: "Solicitud de apadrinamiento aprobada",
+  sponsorshipRequestRejected: "Solicitud de apadrinamiento rechazada",
+  errorApprovingRequest: "Error al aprobar la solicitud",
+  errorRejectingRequest: "Error al rechazar la solicitud",
+  comingSoon: "Próximamente",
+  loading: "Cargando..."
 };
