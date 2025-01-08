@@ -19,7 +19,7 @@ import {
   Heart,
   MapPin,
   Link,
-  LinkCheck
+  ExternalLink as LinkCheck
 } from "lucide-react";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
 import { SidebarSection } from "./Sidebar/SidebarSection";
