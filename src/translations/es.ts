@@ -89,7 +89,7 @@ export const spanishTranslations = {
   tableView: "Vista de tabla",
 
   // Sponsor related
-  sponsored: "Apadrinado",
+  isSponsored: "Apadrinado",
   available: "Disponible",
   editOrRemoveSponsor: "Editar o eliminar padrino",
   addSponsor: "Agregar padrino",
@@ -162,6 +162,6 @@ export const spanishTranslations = {
   searchSponsor: "Buscar un padrino...",
   select: "Seleccionar",
   remove: "Eliminar",
-  sponsored: "Apadrinado por",
+  sponsoredBy: "Apadrinado por",
   notSponsored: "No apadrinado",
 };
