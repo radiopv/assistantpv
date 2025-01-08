@@ -16,6 +16,9 @@ interface ImageUploadProps {
   isLoading: boolean;
 }
 
+const VALID_POSITIONS = ['hero', 'banner', 'background'] as const;
+type ValidPosition = typeof VALID_POSITIONS[number];
+
 export const ImageUpload = ({ heroImage, isLoading }: ImageUploadProps) => {
   const { toast } = useToast();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -46,11 +49,13 @@ export const ImageUpload = ({ heroImage, isLoading }: ImageUploadProps) => {
         .from('home-images')
         .getPublicUrl(filename);
 
+      const position: ValidPosition = 'hero';
+      
       const { error: dbError } = await supabase
         .from('home_images')
         .upsert({
           url: publicUrl,
-          position: 'hero',
+          position,
           updated_at: new Date().toISOString()
         }, {
           onConflict: 'position'
