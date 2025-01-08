@@ -133,7 +133,7 @@ export const spanishTranslations = {
   errorFetchingChildren: "Erreur lors de la récupération des enfants",
   errorInvalidChild: "Enfant invalide",
   errorSponsorClick: "Erreur lors de la demande de parrainage",
-  learnMore: "En savoir plus",
+  readMore: "En savoir plus",
 
   // BecomeSponsor translations
   becomeSponsor: "Conviértete en padrino",
@@ -155,10 +155,10 @@ export const spanishTranslations = {
   noChildSelected: "Ningún niño seleccionado",
   noSponsorSelected: "Ningún padrino seleccionado",
   createAssociationButton: "Crear la asociación",
-  searchChild: "Buscar un niño...",
+  findChild: "Buscar un niño...",
   searchSponsor: "Buscar un padrino...",
   select: "Seleccionar",
   remove: "Eliminar",
-  sponsoredBy: "Apadrinado por", // Changed from duplicate 'sponsored'
+  sponsoredBy: "Apadrinado por",
   notSponsored: "No apadrinado",
 };
