@@ -32,8 +32,10 @@ const MainLayout = () => {
   const navigate = useNavigate();
 
   const isAdmin = user?.role === 'admin';
+  const isAssistant = user?.role === 'assistant';
   const isSponsor = user?.role === 'sponsor' || (isAdmin && user?.children_sponsored?.length > 0);
 
+  // Navigation items for assistants
   const assistantNavItems = [
     { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Enfants', path: '/children' },
@@ -41,6 +43,7 @@ const MainLayout = () => {
     { icon: MessageSquare, label: 'Messages', path: '/messages' },
   ];
 
+  // Navigation items for admins
   const adminNavItems = [
     { icon: Settings, label: 'Permissions', path: '/admin/permissions' },
     { icon: Languages, label: 'Traductions', path: '/admin/translations' },
@@ -55,15 +58,26 @@ const MainLayout = () => {
     { icon: LayoutDashboard, label: 'Page d\'accueil', path: '/admin/homepage' },
   ];
 
+  // Navigation items for sponsors
   const sponsorNavItems = [
     { icon: User, label: 'Profil', path: '/sponsor-dashboard' }
   ];
 
-  const mobileNavItems = [
-    ...assistantNavItems,
-    ...(isAdmin ? adminNavItems : []),
-    ...(isSponsor ? sponsorNavItems : [])
-  ];
+  // Get the appropriate navigation items based on user role
+  const getNavItems = () => {
+    if (isAdmin) {
+      return [...assistantNavItems, ...adminNavItems];
+    }
+    if (isAssistant) {
+      return assistantNavItems;
+    }
+    if (isSponsor) {
+      return sponsorNavItems;
+    }
+    return [];
+  };
+
+  const mobileNavItems = getNavItems();
 
   const handleSponsorDashboardClick = () => {
     if (!user) {
