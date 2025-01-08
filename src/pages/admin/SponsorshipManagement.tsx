@@ -36,7 +36,16 @@ export default function SponsorshipManagement() {
         .order('name');
 
       if (error) throw error;
-      return data;
+
+      // Ensure unique children per sponsor and only active sponsorships
+      return data.map(sponsor => ({
+        ...sponsor,
+        sponsorships: sponsor.sponsorships
+          ?.filter(s => s.status === 'active' && s.children)
+          .filter((s, index, self) => 
+            index === self.findIndex(t => t.children?.id === s.children?.id)
+          )
+      }));
     },
   });
 
