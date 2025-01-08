@@ -1,6 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { FeaturedTestimonials } from "./FeaturedTestimonials";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 interface HeroSectionProps {
   heroSection?: {
@@ -44,6 +52,28 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                 >
                   {t('becomeSponsor')}
                 </Button>
+
+                {/* Testimonials Carousel */}
+                <div className="mt-8 bg-white/80 rounded-lg p-6 shadow-lg">
+                  <h3 className="text-xl font-semibold text-primary mb-4">
+                    {t('testimonials')}
+                  </h3>
+                  <Carousel
+                    opts={{
+                      align: "start",
+                      loop: true,
+                    }}
+                    className="w-full"
+                  >
+                    <CarouselContent>
+                      <CarouselItem className="md:basis-full">
+                        <FeaturedTestimonials />
+                      </CarouselItem>
+                    </CarouselContent>
+                    <CarouselPrevious className="hidden md:flex" />
+                    <CarouselNext className="hidden md:flex" />
+                  </Carousel>
+                </div>
               </div>
             </div>
           </div>
