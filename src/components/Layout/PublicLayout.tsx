@@ -5,7 +5,8 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { 
   LayoutDashboard, 
   Menu,
-  Users
+  Users,
+  Gift
 } from "lucide-react";
 import {
   Sheet,
@@ -26,6 +27,11 @@ const PublicLayout = () => {
       href: "/available-children",
       label: "Enfants disponibles",
       icon: Users,
+    },
+    {
+      href: "/donations",
+      label: "Dons",
+      icon: Gift,
     }
   ];
 
