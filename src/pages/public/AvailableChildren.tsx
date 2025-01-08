@@ -28,15 +28,20 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      console.log("Fetching children with filters:", { selectedGender, selectedAge, selectedCity });
+      console.log("Fetching children with filters:", { selectedGender, selectedAge, selectedCity, selectedStatus });
       
       let query = supabase
         .from("children")
         .select("*");
 
-      // Appliquer les filtres de base
+      // Base filters
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
+      } else if (selectedStatus === "urgent") {
+        // For urgent status, ensure children are not sponsored and have urgent needs
+        query = query
+          .eq("is_sponsored", false)
+          .contains("needs", [{ is_urgent: true }]);
       }
 
       if (selectedCity !== "all") {
@@ -55,7 +60,6 @@ export default function AvailableChildren() {
         throw error;
       }
 
-      // Log des données récupérées pour le débogage
       console.log("Fetched children data:", data);
 
       return data;
@@ -108,20 +112,6 @@ export default function AvailableChildren() {
     } as CategorizedChildren);
   }, [children]);
 
-  const handleSponsorClick = async (childId: string) => {
-    try {
-      if (!childId) {
-        toast.error(t("errorInvalidChild"));
-        return;
-      }
-
-      navigate(`/become-sponsor/${childId}`);
-    } catch (error) {
-      console.error("Error handling sponsor click:", error);
-      toast.error(t("errorSponsorClick"));
-    }
-  };
-
   const filteredChildren = useMemo(() => {
     if (selectedAge === "all") {
       return children;
@@ -136,6 +126,20 @@ export default function AvailableChildren() {
     
     return ageRanges[selectedAge as keyof typeof ageRanges] || [];
   }, [children, selectedAge, categorizedChildren]);
+
+  const handleSponsorClick = async (childId: string) => {
+    try {
+      if (!childId) {
+        toast.error(t("errorInvalidChild"));
+        return;
+      }
+
+      navigate(`/become-sponsor/${childId}`);
+    } catch (error) {
+      console.error("Error handling sponsor click:", error);
+      toast.error(t("errorSponsorClick"));
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
