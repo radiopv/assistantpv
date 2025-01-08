@@ -1,78 +1,127 @@
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Plus, X } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { toast } from "sonner";
 
 interface SponsorChildrenListProps {
   sponsorships: any[];
   availableChildren: any[];
   onAddChild: (childId: string) => void;
-  onRemoveChild: (childId: string) => void;
+  onRemoveChild: (sponsorshipId: string) => void;
 }
 
 export const SponsorChildrenList = ({
   sponsorships,
   availableChildren,
   onAddChild,
-  onRemoveChild,
+  onRemoveChild
 }: SponsorChildrenListProps) => {
-  const { t } = useLanguage();
-  const [isOpen, setIsOpen] = useState(false);
+  const sponsoredChildrenIds = new Set(
+    sponsorships
+      ?.filter(s => s.children)
+      .map(s => s.children.id)
+  );
 
-  const activeSponsorship = sponsorships?.filter(s => s.status === 'active') || [];
+  const filteredAvailableChildren = availableChildren
+    .filter(child => !sponsoredChildrenIds.has(child.id))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const sortedSponsorships = [...(sponsorships || [])]
+    .filter(s => s.children)
+    .sort((a, b) => a.children.name.localeCompare(b.children.name));
+
+  const handleRemoveChild = async (sponsorshipId: string) => {
+    try {
+      onRemoveChild(sponsorshipId);
+      toast.success("L'enfant a été retiré avec succès");
+    } catch (error) {
+      console.error("Error removing child:", error);
+      toast.error("Erreur lors du retrait de l'enfant");
+    }
+  };
+
+  const handleAddChild = async (childId: string) => {
+    try {
+      onAddChild(childId);
+      toast.success("L'enfant a été ajouté avec succès");
+    } catch (error) {
+      console.error("Error adding child:", error);
+      toast.error("Erreur lors de l'ajout de l'enfant");
+    }
+  };
 
   return (
-    <div className="space-y-2">
-      {activeSponsorship.map((sponsorship: any) => (
-        <div
-          key={sponsorship.id}
-          className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
-        >
-          <span className="text-sm truncate flex-1">{sponsorship.children?.name}</span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onRemoveChild(sponsorship.children?.id)}
-            className="h-8 w-8 p-0 ml-2"
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+    <div className="space-y-4">
+      {/* Liste des enfants parrainés */}
+      {sortedSponsorships.map((sponsorship: any) => (
+        <Card key={sponsorship.id} className="relative">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage 
+                    src={sponsorship.children.photo_url} 
+                    alt={sponsorship.children.name} 
+                  />
+                  <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <h4 className="font-semibold">{sponsorship.children.name}</h4>
+                  <p className="text-sm text-gray-500">{sponsorship.children.city}</p>
+                  {sponsorship.children.age && (
+                    <p className="text-sm text-gray-500">{sponsorship.children.age} ans</p>
+                  )}
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleRemoveChild(sponsorship.id)}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       ))}
 
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <CollapsibleTrigger asChild>
-          <Button variant="outline" size="sm" className="w-full">
-            <Plus className="h-4 w-4 mr-2" />
-            {t("addChild")}
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="mt-2">
-          <div className="space-y-2 max-h-48 overflow-y-auto rounded-lg border bg-white p-2">
-            {availableChildren.map((child) => (
-              <div
-                key={child.id}
-                className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
+      {/* Section pour ajouter un enfant */}
+      <div className="mt-6">
+        <h4 className="text-sm font-semibold mb-3">Ajouter un enfant</h4>
+        <ScrollArea className="h-[300px]">
+          <div className="grid gap-3">
+            {filteredAvailableChildren.map((child: any) => (
+              <Card 
+                key={child.id} 
+                className="cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={() => handleAddChild(child.id)}
               >
-                <span className="text-sm truncate flex-1">{child.name}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onAddChild(child.id)}
-                  className="h-8 w-8 p-0 ml-2"
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={child.photo_url} alt={child.name} />
+                        <AvatarFallback>{child.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{child.name}</p>
+                        <p className="text-sm text-gray-500">{child.city}</p>
+                        {child.age && (
+                          <p className="text-sm text-gray-500">{child.age} ans</p>
+                        )}
+                      </div>
+                    </div>
+                    <Plus className="h-4 w-4 text-gray-400" />
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        </CollapsibleContent>
-      </Collapsible>
+        </ScrollArea>
+      </div>
     </div>
   );
 };
