@@ -1,182 +1,172 @@
-import { Link, useLocation } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { 
-  LayoutDashboard, 
+import { useLocation } from "react-router-dom";
+import {
+  LayoutDashboard,
   Users,
-  Gift,
   Settings,
-  CheckSquare,
-  Camera,
-  MessageSquare,
+  Gift,
+  Home,
   UserPlus,
+  Image,
+  MessageSquare,
   FileText,
-  Map,
-  Bell,
-  Link as LinkIcon,
+  CheckSquare,
   Globe,
-  BarChart2
+  HeartHandshake,
+  CircleDollarSign,
 } from "lucide-react";
+import { SidebarSection } from "./SidebarSection";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
-interface NavItemProps {
-  href: string;
-  icon: React.ElementType;
-  label: string;
-  isActive: boolean;
-}
+const publicLinks = [
+  {
+    href: "/",
+    label: "Accueil",
+    icon: Home,
+  },
+  {
+    href: "/available-children",
+    label: "Enfants disponibles",
+    icon: Users,
+  },
+  {
+    href: "/public-donations",
+    label: "Dons",
+    icon: Gift,
+  },
+  {
+    href: "/faq",
+    label: "FAQ",
+    icon: FileText,
+  },
+];
 
-const NavItem = ({ href, icon: Icon, label, isActive }: NavItemProps) => (
-  <Link
-    to={href}
-    className={cn(
-      "flex items-center gap-3 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors",
-      isActive && "bg-gray-50 text-primary"
-    )}
-  >
-    <Icon className="w-5 h-5" />
-    <span className="text-sm font-medium">{label}</span>
-  </Link>
-);
+const sponsorLinks = [
+  {
+    href: "/sponsor-dashboard",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
+  },
+  {
+    href: "/messages",
+    label: "Messages",
+    icon: MessageSquare,
+  },
+];
 
-export const SidebarNav = () => {
-  const { user } = useAuth();
-  const isAssistant = user?.role === 'assistant';
-  const isAdmin = user?.role === 'admin';
+const assistantLinks = [
+  {
+    href: "/dashboard",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
+  },
+  {
+    href: "/children",
+    label: "Enfants",
+    icon: Users,
+  },
+  {
+    href: "/donations",
+    label: "Dons",
+    icon: Gift,
+  },
+  {
+    href: "/assistant-photos",
+    label: "Photos",
+    icon: Image,
+  },
+  {
+    href: "/assistant/sponsorship",
+    label: "Parrainages",
+    icon: HeartHandshake,
+  },
+  {
+    href: "/admin/sponsorship-management",
+    label: "Gestion des parrainages",
+    icon: UserPlus,
+    show: true,
+  },
+];
 
-  const commonMenuItems = [
-    {
-      href: "/dashboard",
-      label: "Tableau de bord",
-      icon: LayoutDashboard,
-    },
-    {
-      href: "/children",
-      label: "Enfants",
-      icon: Users,
-    },
-    {
-      href: "/donations",
-      label: "Dons",
-      icon: Gift,
-    },
-    {
-      href: "/messages",
-      label: "Messages",
-      icon: MessageSquare,
-    },
-    {
-      href: "/tasks",
-      label: "Tâches",
-      icon: CheckSquare,
-    },
-  ];
+const adminLinks = [
+  {
+    href: "/admin/sponsorship-management",
+    label: "Gestion des parrainages",
+    icon: UserPlus,
+  },
+  {
+    href: "/admin/translations",
+    label: "Traductions",
+    icon: Globe,
+  },
+  {
+    href: "/admin/validation",
+    label: "Validation",
+    icon: CheckSquare,
+  },
+  {
+    href: "/admin/statistics",
+    label: "Statistiques",
+    icon: CircleDollarSign,
+  },
+];
 
-  const assistantMenuItems = [
-    {
-      href: "/assistant-photos",
-      label: "Photos",
-      icon: Camera,
-    },
-    {
-      href: "/assistant/sponsorship",
-      label: "Parrainages",
-      icon: UserPlus,
-    },
-    {
-      href: "/admin/sponsorship-management",
-      label: "Gestion des parrainages",
-      icon: UserPlus,
-    },
-  ];
+const settingsLinks = [
+  {
+    href: "/settings",
+    label: "Paramètres",
+    icon: Settings,
+  },
+];
 
-  const adminMenuItems = [
-    {
-      href: "/admin/translations",
-      label: "Traductions",
-      icon: Globe,
-    },
-    {
-      href: "/admin/faq",
-      label: "FAQ",
-      icon: FileText,
-    },
-    {
-      href: "/admin/cities",
-      label: "Villes",
-      icon: Map,
-    },
-    {
-      href: "/admin/notifications",
-      label: "Notifications",
-      icon: Bell,
-    },
-    {
-      href: "/admin/link-checker",
-      label: "Liens",
-      icon: LinkIcon,
-    },
-    {
-      href: "/admin/statistics",
-      label: "Statistiques",
-      icon: BarChart2,
-    },
-  ];
-
+export const SidebarNav = ({ onClose }: { onClose?: () => void }) => {
+  const { user, isAssistant } = useAuth();
   const location = useLocation();
-  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="flex-1 space-y-1 px-2">
-      <div className="space-y-1">
-        {commonMenuItems.map((item) => (
-          <NavItem
-            key={item.href}
-            href={item.href}
-            icon={item.icon}
-            label={item.label}
-            isActive={isActive(item.href)}
+    <div className="flex flex-col gap-4">
+      <SidebarSection
+        title="Navigation"
+        links={publicLinks}
+        currentPath={location.pathname}
+        onClose={onClose}
+      />
+
+      {user && (
+        <>
+          {!isAssistant && (
+            <SidebarSection
+              title="Espace parrain"
+              links={sponsorLinks}
+              currentPath={location.pathname}
+              onClose={onClose}
+            />
+          )}
+
+          {isAssistant && (
+            <>
+              <SidebarSection
+                title="Espace assistant"
+                links={assistantLinks}
+                currentPath={location.pathname}
+                onClose={onClose}
+              />
+              <SidebarSection
+                title="Administration"
+                links={adminLinks}
+                currentPath={location.pathname}
+                onClose={onClose}
+              />
+            </>
+          )}
+
+          <SidebarSection
+            title="Paramètres"
+            links={settingsLinks}
+            currentPath={location.pathname}
+            onClose={onClose}
           />
-        ))}
-      </div>
-
-      {isAssistant && (
-        <div className="mt-8 space-y-1">
-          <h3 className="px-3 text-sm font-medium text-gray-500">Assistant</h3>
-          {assistantMenuItems.map((item) => (
-            <NavItem
-              key={item.href}
-              href={item.href}
-              icon={item.icon}
-              label={item.label}
-              isActive={isActive(item.href)}
-            />
-          ))}
-        </div>
+        </>
       )}
-
-      {isAdmin && (
-        <div className="mt-8 space-y-1">
-          <h3 className="px-3 text-sm font-medium text-gray-500">Admin</h3>
-          {adminMenuItems.map((item) => (
-            <NavItem
-              key={item.href}
-              href={item.href}
-              icon={item.icon}
-              label={item.label}
-              isActive={isActive(item.href)}
-            />
-          ))}
-        </div>
-      )}
-
-      <div className="mt-8">
-        <NavItem
-          href="/settings"
-          icon={Settings}
-          label="Paramètres"
-          isActive={isActive("/settings")}
-        />
-      </div>
-    </nav>
+    </div>
   );
 };
