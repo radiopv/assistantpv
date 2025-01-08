@@ -60,18 +60,16 @@ export const NotificationBar = () => {
   });
 
   const handleNotificationsClick = () => {
-    navigate('/notifications');
-    toast.info("Redirection vers les notifications");
+    // Temporarily show a toast until the notifications page is implemented
+    toast.info("Cette fonctionnalité sera bientôt disponible");
   };
 
   const handleMessagesClick = () => {
     navigate('/messages');
-    toast.info("Redirection vers les messages");
   };
 
   const handleTasksClick = () => {
     navigate('/tasks');
-    toast.info("Redirection vers les tâches");
   };
 
   return (
