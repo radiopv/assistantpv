@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { convertJsonToNeeds } from "@/types/needs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -6,14 +7,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ProfilePhotoSection } from "./ProfilePhoto/ProfilePhotoSection";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { NeedCheckboxes } from "./Needs/NeedCheckboxes";
 import { notifyActiveSponsor } from "@/utils/sponsor-notifications";
 import { useNavigate } from "react-router-dom";
-import { PhotoSection } from "./CardComponents/PhotoSection";
-import { CardHeader } from "./CardComponents/CardHeader";
-import { CardActions } from "./CardComponents/CardActions";
+import { Info } from "lucide-react";
 
 interface ChildCardProps {
   child: any;
@@ -54,6 +54,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
   };
 
   const handleNeedsChange = (needs: any[]) => {
+    console.log("Updating needs:", needs);
     setEditedChild(prev => ({
       ...prev,
       needs: needs
@@ -84,6 +85,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
 
       if (error) throw error;
 
+      // Notify sponsor about changes
       await notifyActiveSponsor(
         child.id,
         "Mise à jour des informations",
@@ -113,7 +115,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
   };
 
   const handleLearnMore = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent card click event
     navigate(`/child/${child.id}`);
   };
 
@@ -122,19 +124,43 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
       className="group overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer"
       onClick={handleCardClick}
     >
-      <PhotoSection
-        child={editedChild}
-        editing={isEditing}
-        onPhotoUpdate={handlePhotoUpdate}
-      />
-
-      <CardHeader
-        name={editedChild.name}
-        isSponsored={child.is_sponsored}
-        editing={isEditing}
-        onNameChange={(value) => handleInputChange('name', value)}
-        translations={t}
-      />
+      <div className="relative">
+        {isEditing ? (
+          <ProfilePhotoSection
+            child={editedChild}
+            editing={true}
+            onPhotoUpdate={handlePhotoUpdate}
+          />
+        ) : (
+          <img
+            src={child.photo_url || "/placeholder.svg"}
+            alt={child.name}
+            className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        )}
+        <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/50 to-transparent">
+          <div className="flex justify-between items-start">
+            {isEditing ? (
+              <Input
+                value={editedChild.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className="text-white bg-transparent border-white/30"
+              />
+            ) : (
+              <h3 className="font-semibold text-lg text-white">{child.name}</h3>
+            )}
+            <span
+              className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                !child.is_sponsored
+                  ? "bg-green-100 text-green-800"
+                  : "bg-blue-100 text-blue-800"
+              }`}
+            >
+              {child.is_sponsored ? t("sponsored") : t("available")}
+            </span>
+          </div>
+        </div>
+      </div>
 
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
@@ -248,15 +274,42 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
             </div>
           )}
         </div>
-
-        <CardActions
-          editing={isEditing}
-          onEdit={() => setIsEditing(true)}
-          onSave={handleSave}
-          onCancel={() => setIsEditing(false)}
-          onLearnMore={handleLearnMore}
-          translations={t}
-        />
+        
+        <div className="flex flex-col items-center gap-2">
+          {isEditing ? (
+            <>
+              <Button 
+                className="w-full sm:w-3/4 bg-green-600 hover:bg-green-700 text-white"
+                onClick={handleSave}
+              >
+                {t("save")}
+              </Button>
+              <Button 
+                className="w-full sm:w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-900"
+                onClick={() => setIsEditing(false)}
+              >
+                {t("cancel")}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
+                variant="outline"
+                onClick={() => setIsEditing(true)}
+              >
+                {t("edit")}
+              </Button>
+              <Button
+                className="w-full sm:w-3/4 flex items-center gap-2 bg-primary hover:bg-primary/90 text-white"
+                onClick={handleLearnMore}
+              >
+                <Info className="h-4 w-4" />
+                {t("learnMore")}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </Card>
   );
