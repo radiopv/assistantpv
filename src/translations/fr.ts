@@ -163,4 +163,7 @@ export const frenchTranslations = {
   noTestimonials: "Aucun témoignage pour le moment",
   anonymousSponsor: "Parrain anonyme",
   sponsorOf: "Parrain de",
+  allGenders: "Sexe",
+  masculine: "Masculin",
+  feminine: "Féminin",
 };

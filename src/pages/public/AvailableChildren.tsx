@@ -67,9 +67,9 @@ export default function AvailableChildren() {
 
       // Convert gender filter from frontend values to database values
       if (selectedGender === "masculine") {
-        query = query.eq("gender", "M");
+        query = query.eq("gender", "male");
       } else if (selectedGender === "feminine") {
-        query = query.eq("gender", "F");
+        query = query.eq("gender", "female");
       }
 
       // Apply base filters
