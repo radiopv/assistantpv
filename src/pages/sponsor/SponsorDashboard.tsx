@@ -11,8 +11,7 @@ import { DashboardActions } from "@/components/Sponsors/Dashboard/DashboardActio
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { convertJsonToNeeds } from "@/types/needs";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { SponsoredChildNeeds } from "@/components/Sponsors/Dashboard/SponsoredChildNeeds";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -115,40 +114,10 @@ const SponsorDashboard = () => {
             </Card>
             
             {/* Needs Section */}
-            <Card className="p-4">
-              <h3 className="text-lg font-semibold mb-4">Besoins de {sponsorship.children.name}</h3>
-              <ScrollArea className="h-[200px] w-full">
-                <div className="grid grid-cols-1 gap-3">
-                  {convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
-                    <div
-                      key={`${need.category}-${index}`}
-                      className={`p-3 rounded-lg ${
-                        need.is_urgent
-                          ? "bg-red-50 border border-red-200"
-                          : "bg-gray-50 border border-gray-200"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Badge
-                            variant={need.is_urgent ? "destructive" : "secondary"}
-                            className="mb-2"
-                          >
-                            {need.category}
-                            {need.is_urgent && " (!)"} 
-                          </Badge>
-                          {need.description && (
-                            <p className="text-sm text-gray-600 mt-1">
-                              {need.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-            </Card>
+            <SponsoredChildNeeds 
+              needs={convertJsonToNeeds(sponsorship.children.needs)}
+              childName={sponsorship.children.name}
+            />
           </div>
         ))}
       </div>
