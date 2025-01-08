@@ -1,22 +1,18 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
 import { MessageHeader } from "./MessageHeader";
 import { MessageContent } from "./MessageContent";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import type { Message } from "@/types/messages";
 
 interface MessageListProps {
+  messages: Message[];
   onSelectMessage: (message: Message | null) => void;
-  searchTerm?: string;
+  onMessageUpdate: () => void;
 }
 
-export const MessageList = ({ onSelectMessage, searchTerm = "" }: MessageListProps) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const { user } = useAuth();
-
+export const MessageList = ({ messages, onSelectMessage, onMessageUpdate }: MessageListProps) => {
   const handleDeleteMessage = async (messageId: string) => {
     try {
       const { error } = await supabase
@@ -29,7 +25,7 @@ export const MessageList = ({ onSelectMessage, searchTerm = "" }: MessageListPro
         return;
       }
 
-      setMessages((prev) => prev.filter((msg) => msg.id !== messageId));
+      onMessageUpdate();
       toast.success("Message supprimé avec succès");
       onSelectMessage(null);
     } catch (error) {
@@ -46,12 +42,7 @@ export const MessageList = ({ onSelectMessage, searchTerm = "" }: MessageListPro
         .eq("id", messageId);
 
       if (error) throw error;
-
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === messageId ? { ...msg, is_starred: !isStarred } : msg
-        )
-      );
+      onMessageUpdate();
     } catch (error) {
       console.error("Error starring message:", error);
       toast.error("Erreur lors du marquage du message");
@@ -66,12 +57,7 @@ export const MessageList = ({ onSelectMessage, searchTerm = "" }: MessageListPro
         .eq("id", messageId);
 
       if (error) throw error;
-
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === messageId ? { ...msg, is_archived: !isArchived } : msg
-        )
-      );
+      onMessageUpdate();
     } catch (error) {
       console.error("Error archiving message:", error);
       toast.error("Erreur lors de l'archivage du message");
@@ -86,91 +72,11 @@ export const MessageList = ({ onSelectMessage, searchTerm = "" }: MessageListPro
         .eq("id", messageId);
 
       if (error) throw error;
-
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.id === messageId ? { ...msg, is_read: true } : msg
-        )
-      );
+      onMessageUpdate();
     } catch (error) {
       console.error("Error marking message as read:", error);
     }
   };
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      let query = supabase
-        .from("messages")
-        .select(`
-          *,
-          sender:sender_id(name, role)
-        `);
-
-      if (user?.role === "sponsor") {
-        query = query.or(`recipient_id.eq.${user?.id},sender_id.eq.${user?.id}`);
-      } else if (user?.name === "Vitia") {
-        query = query.or(`recipient_id.eq.${user?.id},sender_id.eq.${user?.id}`);
-      }
-
-      if (searchTerm) {
-        query = query.or(`subject.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`);
-      }
-
-      query = query.order("created_at", { ascending: false });
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Error fetching messages:", error);
-        return;
-      }
-
-      const transformedMessages = (data as any[])?.map(msg => ({
-        ...msg,
-        sender: msg.sender ? {
-          name: msg.sender.name || "Unknown",
-          role: msg.sender.role || "unknown"
-        } : {
-          name: "Unknown",
-          role: "unknown"
-        }
-      }));
-
-      setMessages(transformedMessages);
-    };
-
-    fetchMessages();
-
-    const subscription = supabase
-      .channel("messages_channel")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "messages",
-          filter: `recipient_id=eq.${user?.id}`,
-        },
-        (payload) => {
-          if (payload.eventType === "INSERT") {
-            const newMessage = {
-              ...(payload.new as Message),
-              sender: {
-                name: "Loading...",
-                role: "unknown"
-              }
-            };
-            setMessages((prev) => [newMessage, ...prev]);
-            fetchMessages();
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [user?.id, user?.role, user?.name, searchTerm]);
 
   return (
     <Card className="h-[600px] w-full">
