@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, Globe } from "lucide-react";
 import { useState, useMemo } from "react";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { toast } from "sonner";
@@ -13,7 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const Children = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
@@ -62,7 +62,6 @@ const Children = () => {
         throw error;
       }
 
-      // Apply search filter in memory
       return data.filter(child => 
         child.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -95,12 +94,22 @@ const Children = () => {
     <div className="container mx-auto p-4 space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-2xl font-bold">{t("childrenList")}</h1>
-        <Button 
-          onClick={() => navigate('/children/add')}
-          className="w-full sm:w-auto min-h-[44px]"
-        >
-          {t("addChild")}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setLanguage(language === 'fr' ? 'es' : 'fr')}
+            className="min-h-[44px] min-w-[44px]"
+          >
+            <Globe className="h-4 w-4" />
+          </Button>
+          <Button 
+            onClick={() => navigate('/children/add')}
+            className="w-full sm:w-auto min-h-[44px]"
+          >
+            {t("addChild")}
+          </Button>
+        </div>
       </div>
 
       <ChildrenFilters
