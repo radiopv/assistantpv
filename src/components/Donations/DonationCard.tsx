@@ -4,6 +4,7 @@ import { DonationCardHeader } from "./DonationCardHeader";
 import { DonationCardMedia } from "./DonationCardMedia";
 import { useDonationMedia } from "./hooks/useDonationMedia";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { RefetchOptions } from "@tanstack/react-query";
 
 interface DonationCardProps {
   donation: {
@@ -15,9 +16,11 @@ interface DonationCardProps {
     status: string;
     comments: string | null;
   };
+  onDelete?: (options?: RefetchOptions) => Promise<unknown>;
+  canDelete?: boolean;
 }
 
-export const DonationCard = ({ donation }: DonationCardProps) => {
+export const DonationCard = ({ donation, onDelete, canDelete }: DonationCardProps) => {
   const { language } = useLanguage();
   const { photos, videos } = useDonationMedia(donation.id);
 
