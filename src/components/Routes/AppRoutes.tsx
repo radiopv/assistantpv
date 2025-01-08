@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import MainLayout from "@/components/Layout/MainLayout";
+import { MainLayout } from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
 
 // Public pages
@@ -48,7 +48,7 @@ export const AppRoutes = () => {
       </Route>
 
       {/* Protected routes */}
-      <Route element={<MainLayout />}>
+      <Route element={<MainLayout><Routes /></MainLayout>}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />

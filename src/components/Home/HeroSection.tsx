@@ -34,7 +34,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                 <h1 className="text-4xl lg:text-5xl font-bold text-primary mb-4">
                   {heroSection?.title || t('heroTitle')}
                 </h1>
-                <p className="text-xl text-gray-800 mb-8">
+                <p className="text-xl text-gray-600 mb-8">
                   {heroSection?.subtitle || t('heroSubtitle')}
                 </p>
                 <Button 

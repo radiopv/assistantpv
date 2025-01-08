@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
 import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
@@ -9,7 +10,6 @@ import { HeroSection } from "@/components/Home/HeroSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 
 const Home = () => {
   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
@@ -96,12 +96,12 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">Témoignages</h2>
+              <h2 className="text-2xl font-bold mb-4">Témoignages</h2>
               <FeaturedTestimonials />
             </div>
 
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">Photos</h2>
+              <h2 className="text-2xl font-bold mb-4">Photos</h2>
               <FeaturedAlbum />
             </div>
           </div>
