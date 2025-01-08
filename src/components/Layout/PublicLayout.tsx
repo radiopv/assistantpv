@@ -7,7 +7,8 @@ import {
   Menu,
   Users,
   Gift,
-  HelpCircle
+  HelpCircle,
+  User
 } from "lucide-react";
 import {
   Sheet,
@@ -44,6 +45,7 @@ const PublicLayout = () => {
   ];
 
   const isAdminOrAssistant = user?.role === 'admin' || user?.role === 'assistant';
+  const isSponsor = user?.role === 'sponsor';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -72,14 +74,23 @@ const PublicLayout = () => {
                   </Link>
                 ))}
                 {session ? (
-                  isAdminOrAssistant ? (
-                    <Link to="/dashboard">
-                      <Button className="w-full">
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        {t("dashboard")}
-                      </Button>
-                    </Link>
-                  ) : null
+                  <>
+                    {isAdminOrAssistant ? (
+                      <Link to="/dashboard">
+                        <Button className="w-full">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
+                          {t("dashboard")}
+                        </Button>
+                      </Link>
+                    ) : isSponsor ? (
+                      <Link to="/sponsor-dashboard">
+                        <Button className="w-full">
+                          <User className="mr-2 h-4 w-4" />
+                          {t("profile")}
+                        </Button>
+                      </Link>
+                    ) : null}
+                  </>
                 ) : (
                   <Link to="/login">
                     <Button className="w-full">{t("login")}</Button>
@@ -114,14 +125,23 @@ const PublicLayout = () => {
             </div>
             <div>
               {session ? (
-                isAdminOrAssistant ? (
-                  <Link to="/dashboard">
-                    <Button>
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      {t("dashboard")}
-                    </Button>
-                  </Link>
-                ) : null
+                <>
+                  {isAdminOrAssistant ? (
+                    <Link to="/dashboard">
+                      <Button>
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        {t("dashboard")}
+                      </Button>
+                    </Link>
+                  ) : isSponsor ? (
+                    <Link to="/sponsor-dashboard">
+                      <Button>
+                        <User className="mr-2 h-4 w-4" />
+                        {t("profile")}
+                      </Button>
+                    </Link>
+                  ) : null}
+                </>
               ) : (
                 <Link to="/login">
                   <Button>{t("login")}</Button>
