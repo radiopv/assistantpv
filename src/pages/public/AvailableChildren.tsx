@@ -40,7 +40,8 @@ export default function AvailableChildren() {
       const { data, error } = await supabase
         .from("children")
         .select("age")
-        .not("age", "is", null);
+        .not("age", "is", null)
+        .order('age');
       
       if (error) throw error;
       return [...new Set(data.map(item => item.age))].sort((a, b) => a - b);
@@ -54,28 +55,38 @@ export default function AvailableChildren() {
         .from("children")
         .select("*");
 
+      // Status filter
       if (selectedStatus !== "all") {
         query = query.eq("status", selectedStatus);
       }
 
+      // Name search
       if (searchTerm) {
         query = query.ilike("name", `%${searchTerm}%`);
       }
 
+      // City filter
       if (selectedCity !== "all") {
         query = query.eq("city", selectedCity);
       }
 
+      // Gender filter - Make sure to match the exact values in the database
       if (selectedGender !== "all") {
         query = query.eq("gender", selectedGender);
       }
 
+      // Age filter - Convert to number since age is stored as integer
       if (selectedAge !== "all") {
         query = query.eq("age", parseInt(selectedAge));
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      
+      if (error) {
+        console.error("Error fetching children:", error);
+        throw error;
+      }
+      
       return data;
     }
   });
