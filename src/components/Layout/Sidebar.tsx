@@ -6,7 +6,6 @@ import {
   LayoutDashboard, 
   Users, 
   Gift, 
-  MessageSquare,
   Settings,
   Baby,
   UserPlus,
@@ -58,7 +57,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
           show: user?.permissions?.edit_children || isAdmin,
         },
         {
-          href: "/assistant/photos",
+          href: "/assistant-photos",
           label: t("addChildPhotos"),
           icon: Image,
           show: true,
@@ -84,13 +83,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
           show: user?.permissions?.donations || isAdmin,
         }
       ]
-    },
-    {
-      href: "/messages",
-      label: t("messages"),
-      icon: MessageSquare,
-      show: true,
-    },
+    }
   ];
 
   const adminLinks = [

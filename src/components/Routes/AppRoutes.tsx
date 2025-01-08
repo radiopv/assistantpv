@@ -26,6 +26,14 @@ import SponsorDashboard from "@/pages/SponsorDashboard";
 import PublicDonations from "@/pages/public/PublicDonations";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
+import Translations from "@/pages/admin/Translations";
+import Validation from "@/pages/admin/Validation";
+import Statistics from "@/pages/admin/Statistics";
+import Emails from "@/pages/admin/Emails";
+import AdminFAQ from "@/pages/admin/FAQ";
+import CitiesManagement from "@/pages/admin/CitiesManagement";
+import Notifications from "@/pages/admin/Notifications";
+import LinkChecker from "@/pages/admin/LinkChecker";
 
 export const AppRoutes = () => {
   return (
@@ -59,6 +67,14 @@ export const AppRoutes = () => {
 
         {/* Admin routes */}
         <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
+        <Route path="/admin/translations" element={<Translations />} />
+        <Route path="/admin/validation" element={<Validation />} />
+        <Route path="/admin/statistics" element={<Statistics />} />
+        <Route path="/admin/emails" element={<Emails />} />
+        <Route path="/admin/faq" element={<AdminFAQ />} />
+        <Route path="/admin/cities" element={<CitiesManagement />} />
+        <Route path="/admin/notifications" element={<Notifications />} />
+        <Route path="/admin/link-checker" element={<LinkChecker />} />
       </Route>
 
       {/* Catch all redirect to home */}

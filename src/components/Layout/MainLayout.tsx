@@ -42,16 +42,14 @@ const MainLayout = () => {
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: Users, label: 'Enfants', path: '/children' },
     { icon: UserPlus, label: 'Ajouter un enfant', path: '/children/add' },
-    { icon: Image, label: 'Photos', path: '/assistant/photos' },
+    { icon: Image, label: 'Photos', path: '/assistant-photos' },
     { icon: Heart, label: 'Gestion des parrainages', path: '/admin/sponsorship-management' },
     { icon: Gift, label: 'Donations', path: '/donations-management' },
     { icon: UserPlus, label: 'Ajouter une donation', path: '/donations/add' },
-    { icon: MessageSquare, label: 'Messages', path: '/messages' },
   ];
 
   // Navigation items for admins
   const adminNavItems = [
-    { icon: Settings, label: 'Permissions', path: '/admin/permissions' },
     { icon: Languages, label: 'Traductions', path: '/admin/translations' },
     { icon: CheckCircle2, label: 'Validation', path: '/admin/validation' },
     { icon: ChartBar, label: 'Statistiques', path: '/admin/statistics' },
