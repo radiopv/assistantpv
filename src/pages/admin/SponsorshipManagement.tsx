@@ -58,7 +58,6 @@ export default function SponsorshipManagement() {
 
   const handleRemoveChild = async (sponsorId: string, childId: string) => {
     try {
-      // Update sponsorship status
       const { error: sponsorshipError } = await supabase
         .from('sponsorships')
         .update({ status: 'ended' })
@@ -67,7 +66,6 @@ export default function SponsorshipManagement() {
 
       if (sponsorshipError) throw sponsorshipError;
 
-      // Update child status
       const { error: childError } = await supabase
         .from('children')
         .update({ 
@@ -111,7 +109,7 @@ export default function SponsorshipManagement() {
             {activeSponsors.map((sponsor) => (
               <Card key={sponsor.id} className="p-4">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
                     <Checkbox
                       checked={sponsor.is_verified}
                       onCheckedChange={(checked) => 
@@ -126,13 +124,13 @@ export default function SponsorshipManagement() {
                   <Button
                     variant="outline"
                     size="sm"
+                    className="h-8 px-2"
                     onClick={() => {
                       setSelectedSponsor(sponsor);
                       setIsDialogOpen(true);
                     }}
                   >
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    {t("addChild")}
+                    <UserPlus className="h-4 w-4" />
                   </Button>
                 </div>
 
@@ -144,13 +142,14 @@ export default function SponsorshipManagement() {
                         key={sponsorship.id}
                         className="flex items-center justify-between p-2 bg-gray-50 rounded"
                       >
-                        <span>{sponsorship.child?.name}</span>
+                        <span className="text-sm">{sponsorship.child?.name}</span>
                         <Button
                           variant="ghost"
                           size="sm"
+                          className="h-7 w-7 p-0"
                           onClick={() => handleRemoveChild(sponsor.id, sponsorship.child_id)}
                         >
-                          <UserMinus className="w-4 h-4 text-red-500" />
+                          <UserMinus className="h-4 w-4 text-red-500" />
                         </Button>
                       </div>
                     ))}
@@ -167,7 +166,7 @@ export default function SponsorshipManagement() {
             {inactiveSponsors.map((sponsor) => (
               <Card key={sponsor.id} className="p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
                     <Checkbox
                       checked={sponsor.is_verified}
                       onCheckedChange={(checked) => 
@@ -182,13 +181,13 @@ export default function SponsorshipManagement() {
                   <Button
                     variant="outline"
                     size="sm"
+                    className="h-8 px-2"
                     onClick={() => {
                       setSelectedSponsor(sponsor);
                       setIsDialogOpen(true);
                     }}
                   >
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    {t("addChild")}
+                    <UserPlus className="h-4 w-4" />
                   </Button>
                 </div>
               </Card>
