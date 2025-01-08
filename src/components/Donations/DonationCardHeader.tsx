@@ -23,18 +23,10 @@ interface DonationCardHeaderProps {
     donation_date: string;
     status: string;
   };
-  isAdmin?: boolean;
-  canDelete?: boolean;
-  onEdit: () => void;
-  onDelete?: () => void;
 }
 
 export const DonationCardHeader = ({
   donation,
-  isAdmin,
-  canDelete,
-  onEdit,
-  onDelete,
 }: DonationCardHeaderProps) => {
   const { language } = useLanguage();
 
@@ -62,45 +54,6 @@ export const DonationCardHeader = ({
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
       <DonationHeader donation={donation} />
-      <div className="flex flex-col gap-2 w-full sm:w-auto">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onEdit}
-          className="w-full"
-        >
-          <Edit className="w-4 h-4 mr-2" />
-          {t.edit}
-        </Button>
-        {(isAdmin || canDelete) && onDelete && (
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="w-full"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                {t.delete}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{t.areYouSure}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t.deleteWarning}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                <AlertDialogCancel className="w-full sm:w-auto">{t.cancel}</AlertDialogCancel>
-                <AlertDialogAction onClick={onDelete} className="w-full sm:w-auto">
-                  {t.confirm}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        )}
-      </div>
     </div>
   );
 };
