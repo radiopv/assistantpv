@@ -9,6 +9,7 @@ import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
 import { Navigation } from "@/components/Home/Navigation";
 import { HeroSection } from "@/components/Home/HeroSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 interface HomepageSection {
