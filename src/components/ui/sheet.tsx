@@ -1,38 +1,63 @@
-import * as React from "react"
-import * as SheetPrimitive from "@vaul/vaul"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+interface SheetProps {
+  children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
 
-const Sheet = SheetPrimitive.Root
+const Sheet = React.forwardRef<HTMLDivElement, SheetProps>(
+  ({ children, open, onOpenChange, ...props }, ref) => {
+    return (
+      <div ref={ref} data-state={open ? "open" : "closed"} {...props}>
+        {children}
+      </div>
+    );
+  }
+);
+Sheet.displayName = "Sheet";
 
-const SheetTrigger = SheetPrimitive.Trigger
+const SheetTrigger = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    ref={ref}
+    className={cn("inline-flex items-center justify-center", className)}
+    {...props}
+  />
+));
+SheetTrigger.displayName = "SheetTrigger";
 
-const SheetClose = SheetPrimitive.Close
+const SheetClose = SheetTrigger;
 
-const SheetPortal = SheetPrimitive.Portal
+const SheetPortal = ({ children }: { children: React.ReactNode }) => {
+  return <>{children}</>;
+};
 
 const SheetOverlay = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <SheetPrimitive.Overlay
+  <div
+    ref={ref}
     className={cn(
       "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
-    ref={ref}
   />
-))
-SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
+));
+SheetOverlay.displayName = "SheetOverlay";
 
 const SheetContent = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => (
   <SheetPortal>
     <SheetOverlay />
-    <SheetPrimitive.Content
+    <div
       ref={ref}
       className={cn(
         "fixed z-50 gap-4 bg-cuba-warmBeige p-6 shadow-lg transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
@@ -42,10 +67,10 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-    </SheetPrimitive.Content>
+    </div>
   </SheetPortal>
-))
-SheetContent.displayName = SheetPrimitive.Content.displayName
+));
+SheetContent.displayName = "SheetContent";
 
 const SheetHeader = ({
   className,
@@ -58,8 +83,8 @@ const SheetHeader = ({
     )}
     {...props}
   />
-)
-SheetHeader.displayName = "SheetHeader"
+);
+SheetHeader.displayName = "SheetHeader";
 
 const SheetFooter = ({
   className,
@@ -72,32 +97,32 @@ const SheetFooter = ({
     )}
     {...props}
   />
-)
-SheetFooter.displayName = "SheetFooter"
+);
+SheetFooter.displayName = "SheetFooter";
 
 const SheetTitle = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <SheetPrimitive.Title
+  <h2
     ref={ref}
     className={cn("text-lg font-semibold text-foreground", className)}
     {...props}
   />
-))
-SheetTitle.displayName = SheetPrimitive.Title.displayName
+));
+SheetTitle.displayName = "SheetTitle";
 
 const SheetDescription = React.forwardRef<
-  React.ElementRef<typeof SheetPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <SheetPrimitive.Description
+  <p
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
-))
-SheetDescription.displayName = SheetPrimitive.Description.displayName
+));
+SheetDescription.displayName = "SheetDescription";
 
 export {
   Sheet,
@@ -110,4 +135,4 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
-}
+};

@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import MainLayout from "@/components/Layout/MainLayout";
+import { MainLayout } from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
 
 // Public pages
