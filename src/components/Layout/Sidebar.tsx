@@ -64,7 +64,7 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
         },
         {
           href: "/assistant/sponsorship",
-          label: "Association Parrains-Enfants",
+          label: t("associationParrainEnfants"),
           icon: Link,
           show: true,
         }
