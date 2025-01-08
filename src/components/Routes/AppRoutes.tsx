@@ -26,16 +26,6 @@ import PublicDonations from "@/pages/public/PublicDonations";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 
-// Admin pages
-import Validation from "@/pages/admin/Validation";
-import Statistics from "@/pages/admin/Statistics";
-import Translations from "@/pages/admin/Translations";
-import Emails from "@/pages/admin/Emails";
-import HomeContentManagement from "@/pages/admin/HomeContentManagement";
-import CitiesManagement from "@/pages/admin/CitiesManagement";
-import Notifications from "@/pages/admin/Notifications";
-import LinkChecker from "@/pages/admin/LinkChecker";
-
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -82,15 +72,6 @@ export const AppRoutes = () => {
 
         {/* Admin routes */}
         <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
-        <Route path="/admin/validation" element={<Validation />} />
-        <Route path="/admin/statistics" element={<Statistics />} />
-        <Route path="/admin/translations" element={<Translations />} />
-        <Route path="/admin/emails" element={<Emails />} />
-        <Route path="/admin/faq" element={<FAQ />} />
-        <Route path="/admin/home-content" element={<HomeContentManagement />} />
-        <Route path="/admin/cities" element={<CitiesManagement />} />
-        <Route path="/admin/notifications" element={<Notifications />} />
-        <Route path="/admin/link-checker" element={<LinkChecker />} />
       </Route>
 
       {/* Catch all redirect to home */}
@@ -98,3 +79,5 @@ export const AppRoutes = () => {
     </Routes>
   );
 };
+
+export default AppRoutes;
