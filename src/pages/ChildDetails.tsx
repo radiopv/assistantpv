@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { convertJsonToNeeds } from "@/types/needs";
 import {
   User,
   Calendar,
@@ -68,6 +69,8 @@ const ChildDetails = () => {
   const age = child?.birth_date 
     ? differenceInYears(new Date(), parseISO(child.birth_date))
     : null;
+
+  const needs = child?.needs ? convertJsonToNeeds(child.needs) : [];
 
   return (
     <div className="container mx-auto p-4 space-y-6 animate-fade-in">
@@ -140,11 +143,11 @@ const ChildDetails = () => {
             </Card>
           )}
 
-          {child?.needs && child.needs.length > 0 && (
+          {needs.length > 0 && (
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">{t("needs")}</h2>
               <div className="grid gap-2">
-                {child.needs.map((need: any, index: number) => (
+                {needs.map((need, index) => (
                   <div
                     key={index}
                     className={`p-3 rounded-lg flex items-center gap-2 ${
