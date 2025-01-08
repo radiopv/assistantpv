@@ -1,42 +1,74 @@
-import { useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
-  Settings,
   Gift,
-  Home,
-  UserPlus,
-  Image,
+  Settings,
   MessageSquare,
-  FileText,
   CheckSquare,
+  UserPlus,
+  Mail,
   Globe,
-  CircleDollarSign,
-  User,
+  FileText,
+  Home,
+  Image,
+  AlertTriangle,
+  Link as LinkIcon,
+  Languages,
+  Bell,
 } from "lucide-react";
-import { SidebarSection } from "./SidebarSection";
-import { useAuth } from "@/components/Auth/AuthProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const publicLinks = [
+interface SidebarLinkProps {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  end?: boolean;
+}
+
+const SidebarLink = ({ href, label, icon: Icon, end }: SidebarLinkProps) => (
+  <NavLink
+    to={href}
+    end={end}
+    className={({ isActive }) =>
+      cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
+        "hover:bg-cuba-warmBeige",
+        isActive && "bg-cuba-warmBeige text-primary font-medium"
+      )
+    }
+  >
+    <Icon className="h-4 w-4" />
+    <span>{label}</span>
+  </NavLink>
+);
+
+const sponsorLinks = [
   {
-    href: "/",
-    label: "Accueil",
-    icon: Home,
+    href: "/dashboard",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
   },
   {
-    href: "/available-children",
-    label: "Enfants disponibles",
+    href: "/children",
+    label: "Enfants",
     icon: Users,
   },
   {
-    href: "/public-donations",
+    href: "/donations",
     label: "Dons",
     icon: Gift,
   },
   {
-    href: "/sponsor-dashboard",
-    label: "Espace parrain",
-    icon: User,
+    href: "/assistant-photos",
+    label: "Photos",
+    icon: Image,
+  },
+  {
+    href: "/assistant-sponsorship",
+    label: "Parrainages",
+    icon: UserPlus,
   },
   {
     href: "/messages",
@@ -47,24 +79,6 @@ const publicLinks = [
     href: "/tasks",
     label: "Tâches",
     icon: CheckSquare,
-  },
-  {
-    href: "/faq",
-    label: "FAQ",
-    icon: FileText,
-  },
-];
-
-const sponsorLinks = [
-  {
-    href: "/sponsor-dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/messages",
-    label: "Messages",
-    icon: MessageSquare,
   },
 ];
 
@@ -90,10 +104,19 @@ const assistantLinks = [
     icon: Image,
   },
   {
-    href: "/admin/sponsorship-management",
-    label: "Gestion des parrainages",
+    href: "/assistant-sponsorship",
+    label: "Parrainages",
     icon: UserPlus,
-    show: true,
+  },
+  {
+    href: "/messages",
+    label: "Messages",
+    icon: MessageSquare,
+  },
+  {
+    href: "/tasks",
+    label: "Tâches",
+    icon: CheckSquare,
   },
 ];
 
@@ -109,23 +132,40 @@ const adminLinks = [
     icon: UserPlus,
   },
   {
+    href: "/admin/emails",
+    label: "Emails",
+    icon: Mail,
+  },
+  {
     href: "/admin/translations",
     label: "Traductions",
-    icon: Globe,
+    icon: Languages,
+  },
+  {
+    href: "/admin/notifications",
+    label: "Notifications",
+    icon: Bell,
+  },
+  {
+    href: "/admin/faq",
+    label: "FAQ",
+    icon: FileText,
+  },
+  {
+    href: "/admin/home-content-management",
+    label: "Contenu accueil",
+    icon: Home,
+  },
+  {
+    href: "/admin/link-checker",
+    label: "Vérificateur de liens",
+    icon: LinkIcon,
   },
   {
     href: "/admin/validation",
     label: "Validation",
-    icon: CheckSquare,
+    icon: AlertTriangle,
   },
-  {
-    href: "/admin/statistics",
-    label: "Statistiques",
-    icon: CircleDollarSign,
-  },
-];
-
-const settingsLinks = [
   {
     href: "/settings",
     label: "Paramètres",
@@ -133,55 +173,20 @@ const settingsLinks = [
   },
 ];
 
-export const SidebarNav = ({ onClose }: { onClose?: () => void }) => {
-  const { user, isAssistant } = useAuth();
-  const location = useLocation();
+export const SidebarNav = () => {
+  const { t } = useLanguage();
 
   return (
-    <div className="flex flex-col gap-4">
-      <SidebarSection
-        title="Navigation"
-        links={publicLinks}
-        currentPath={location.pathname}
-        onClose={onClose}
-      />
-
-      {user && (
-        <>
-          {!isAssistant && (
-            <SidebarSection
-              title="Espace parrain"
-              links={sponsorLinks}
-              currentPath={location.pathname}
-              onClose={onClose}
-            />
-          )}
-
-          {isAssistant && (
-            <>
-              <SidebarSection
-                title="Espace assistant"
-                links={assistantLinks}
-                currentPath={location.pathname}
-                onClose={onClose}
-              />
-              <SidebarSection
-                title="Administration"
-                links={adminLinks}
-                currentPath={location.pathname}
-                onClose={onClose}
-              />
-            </>
-          )}
-
-          <SidebarSection
-            title="Paramètres"
-            links={settingsLinks}
-            currentPath={location.pathname}
-            onClose={onClose}
-          />
-        </>
-      )}
-    </div>
+    <nav className="space-y-2 px-4">
+      {sponsorLinks.map((link) => (
+        <SidebarLink key={link.href} {...link} />
+      ))}
+      {assistantLinks.map((link) => (
+        <SidebarLink key={link.href} {...link} />
+      ))}
+      {adminLinks.map((link) => (
+        <SidebarLink key={link.href} {...link} />
+      ))}
+    </nav>
   );
 };

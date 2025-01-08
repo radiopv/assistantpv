@@ -1,13 +1,15 @@
-import { SidebarNav } from "./Sidebar/SidebarNav";
 import { SidebarHeader } from "./Sidebar/SidebarHeader";
+import { SidebarNav } from "./Sidebar/SidebarNav";
+import { SidebarFooter } from "./Sidebar/SidebarFooter";
 
-const Sidebar = () => {
+export const Sidebar = () => {
   return (
-    <div className="h-full bg-white border-r flex flex-col">
+    <div className="flex h-full flex-col border-r border-cuba-turquoise/20 bg-cuba-warmBeige">
       <SidebarHeader />
-      <SidebarNav />
+      <div className="flex-1 overflow-auto py-4">
+        <SidebarNav />
+      </div>
+      <SidebarFooter />
     </div>
   );
 };
-
-export default Sidebar;
