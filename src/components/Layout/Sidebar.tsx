@@ -62,14 +62,14 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
           label: t("addChildPhotos"),
           icon: Image,
           show: true,
-        },
-        {
-          href: "/assistant/sponsorship",
-          label: t("associationParrainEnfants"),
-          icon: Link,
-          show: true,
         }
       ]
+    },
+    {
+      href: "/admin/sponsorship-management",
+      label: t("sponsorshipManagement"),
+      icon: Heart,
+      show: true,
     },
     {
       href: "/donations-management",
@@ -113,9 +113,9 @@ const Sidebar = ({ isMobile, onClose }: SidebarProps) => {
       show: isAdmin,
     },
     {
-      href: "/admin/sponsorship-management",
-      label: t("sponsorshipManagement"),
-      icon: Heart,
+      href: "/assistant/sponsorship",
+      label: t("associationParrainEnfants"),
+      icon: Link,
       show: isAdmin,
     },
     {
