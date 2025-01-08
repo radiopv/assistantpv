@@ -17,7 +17,9 @@ import {
   Heart,
   MapPin,
   Bell,
-  User
+  User,
+  LayoutDashboard,
+  Image
 } from "lucide-react";
 import { useState } from "react";
 import { LanguageSelector } from "@/components/LanguageSelector";
@@ -50,6 +52,8 @@ const MainLayout = () => {
     { icon: HelpCircle, label: t('faq'), path: '/admin/faq' },
     { icon: MapPin, label: t('citiesManagement'), path: '/admin/cities' },
     { icon: Bell, label: t('notifications'), path: '/admin/notifications' },
+    { icon: Image, label: t('homeContent'), path: '/admin/home-content' },
+    { icon: LayoutDashboard, label: t('homepage'), path: '/admin/homepage' },
   ];
 
   const sponsorNavItems = isSponsor ? [
