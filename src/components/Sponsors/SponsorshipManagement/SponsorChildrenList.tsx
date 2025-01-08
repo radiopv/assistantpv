@@ -31,14 +31,14 @@ export const SponsorChildrenList = ({
       {activeSponsorship.map((sponsorship: any) => (
         <div
           key={sponsorship.id}
-          className="flex items-center justify-between bg-gray-50 p-2 rounded-lg"
+          className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
         >
-          <span>{sponsorship.children?.name}</span>
+          <span className="text-sm truncate flex-1">{sponsorship.children?.name}</span>
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={() => onRemoveChild(sponsorship.children?.id)}
-            className="h-8 w-8"
+            className="h-8 w-8 p-0 ml-2"
           >
             <X className="h-4 w-4" />
           </Button>
@@ -53,18 +53,18 @@ export const SponsorChildrenList = ({
           </Button>
         </CollapsibleTrigger>
         <CollapsibleContent className="mt-2">
-          <div className="space-y-2 max-h-48 overflow-y-auto">
+          <div className="space-y-2 max-h-48 overflow-y-auto rounded-lg border bg-white p-2">
             {availableChildren.map((child) => (
               <div
                 key={child.id}
-                className="flex items-center justify-between bg-gray-50 p-2 rounded-lg"
+                className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-md"
               >
-                <span>{child.name}</span>
+                <span className="text-sm truncate flex-1">{child.name}</span>
                 <Button
                   variant="ghost"
-                  size="icon"
+                  size="sm"
                   onClick={() => onAddChild(child.id)}
-                  className="h-8 w-8"
+                  className="h-8 w-8 p-0 ml-2"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>

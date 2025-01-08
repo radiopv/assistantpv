@@ -44,7 +44,7 @@ export const SponsorCard = ({
   };
 
   return (
-    <Card key={sponsor.id} className="p-4">
+    <Card key={sponsor.id} className="p-4 w-full">
       <div className="flex items-center gap-2 mb-4">
         <Checkbox
           checked={sponsor.is_verified}
@@ -52,9 +52,9 @@ export const SponsorCard = ({
             onVerificationChange(sponsor.id, checked as boolean)
           }
         />
-        <div>
-          <h3 className="font-semibold">{sponsor.name}</h3>
-          <p className="text-sm text-gray-500">{sponsor.email}</p>
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold truncate">{sponsor.name}</h3>
+          <p className="text-sm text-gray-500 truncate">{sponsor.email}</p>
         </div>
       </div>
       <SponsorChildrenList

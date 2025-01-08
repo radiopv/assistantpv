@@ -138,7 +138,7 @@ export default function SponsorshipManagement() {
   });
 
   if (isLoading) {
-    return <div>{t("loading")}</div>;
+    return <div className="p-4">{t("loading")}</div>;
   }
 
   const activeSponsors = filteredSponsors?.filter(sponsor => 
@@ -150,7 +150,7 @@ export default function SponsorshipManagement() {
   ).sort((a, b) => a.name.localeCompare(b.name)) || [];
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">{t("sponsorshipManagement")}</h1>
 
       <div className="mb-6">
@@ -166,7 +166,7 @@ export default function SponsorshipManagement() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <h2 className="text-xl font-semibold mb-4">{t("activeSponsors")}</h2>
           <div className="space-y-4">
