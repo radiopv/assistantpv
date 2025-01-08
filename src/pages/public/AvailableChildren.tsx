@@ -28,7 +28,7 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      console.log("Recherche d'enfants avec les filtres:", { selectedGender, selectedAge, selectedCity, selectedStatus });
+      console.log("Fetching children with filters:", { selectedGender, selectedAge, selectedCity, selectedStatus });
       
       let query = supabase
         .from("children")
@@ -53,7 +53,7 @@ export default function AvailableChildren() {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Erreur lors de la récupération des enfants:", error);
+        console.error("Error fetching children:", error);
         toast.error(t("errorFetchingChildren"));
         throw error;
       }
@@ -131,7 +131,7 @@ export default function AvailableChildren() {
 
       navigate(`/become-sponsor/${childId}`);
     } catch (error) {
-      console.error("Erreur lors du clic sur le bouton de parrainage:", error);
+      console.error("Error clicking sponsor button:", error);
       toast.error(t("errorSponsorClick"));
     }
   };
