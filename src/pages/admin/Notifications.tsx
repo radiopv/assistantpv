@@ -34,7 +34,7 @@ const Notifications = () => {
         .from('notifications')
         .select(`
           *,
-          sender:sender_id(name)
+          sponsor:sponsors(name)
         `)
         .order('created_at', { ascending: false });
 
@@ -45,7 +45,7 @@ const Notifications = () => {
 
       return data.map(notification => ({
         ...notification,
-        sender_name: notification.sender?.name || 'Système'
+        sender_name: notification.sponsor?.name || 'Système'
       }));
     }
   });
