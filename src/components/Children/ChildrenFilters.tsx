@@ -16,7 +16,7 @@ interface ChildrenFiltersProps {
   onAgeChange: (value: string) => void;
   onStatusChange: (value: string) => void;
   cities: string[];
-  ages: number[];
+  ages: string[]; // Changed from number[] to string[]
 }
 
 export const ChildrenFilters = ({
@@ -79,9 +79,9 @@ export const ChildrenFilters = ({
           </SelectTrigger>
           <SelectContent className="bg-white max-h-[300px]">
             <SelectItem value="all">{t("allAges")}</SelectItem>
-            {ages.map((age) => (
-              <SelectItem key={age} value={age.toString()}>
-                {age} {t("years")}
+            {ages.map((ageRange) => (
+              <SelectItem key={ageRange} value={ageRange}>
+                {ageRange} {t("years")}
               </SelectItem>
             ))}
           </SelectContent>
