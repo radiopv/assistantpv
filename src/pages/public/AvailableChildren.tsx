@@ -28,17 +28,15 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      console.log("Fetching children with filters:", { selectedGender, selectedAge, selectedCity, selectedStatus });
+      console.log("Recherche d'enfants avec les filtres:", { selectedGender, selectedAge, selectedCity, selectedStatus });
       
       let query = supabase
         .from("children")
         .select("*");
 
-      // Base filters
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
       } else if (selectedStatus === "urgent") {
-        // For urgent status, ensure children are not sponsored and have urgent needs
         query = query
           .eq("is_sponsored", false)
           .contains("needs", [{ is_urgent: true }]);
@@ -55,12 +53,12 @@ export default function AvailableChildren() {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching children:", error);
+        console.error("Erreur lors de la récupération des enfants:", error);
         toast.error(t("errorFetchingChildren"));
         throw error;
       }
 
-      console.log("Fetched children data:", data);
+      console.log("Données des enfants récupérées:", data);
 
       return data;
     }
@@ -85,7 +83,6 @@ export default function AvailableChildren() {
       const birthDate = parseISO(child.birth_date);
       const ageInYears = differenceInYears(new Date(), birthDate);
       
-      // Log du calcul d'âge pour le débogage
       console.log(`Calcul de l'âge pour ${child.name}:`, ageInYears);
 
       if (ageInYears <= 2) {
@@ -136,7 +133,7 @@ export default function AvailableChildren() {
 
       navigate(`/become-sponsor/${childId}`);
     } catch (error) {
-      console.error("Error handling sponsor click:", error);
+      console.error("Erreur lors du clic sur le bouton de parrainage:", error);
       toast.error(t("errorSponsorClick"));
     }
   };
