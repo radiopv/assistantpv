@@ -90,7 +90,11 @@ const Home = () => {
         onImageClick={() => setIsImageCropOpen(true)} 
       />
 
-      <FeaturedChildren />
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <FeaturedChildren />
+        </div>
+      </section>
 
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">

@@ -1,35 +1,35 @@
 @layer components {
   .cuba-card {
-    @apply rounded-lg shadow-cuba hover:shadow-cuba-md transition-shadow duration-200 p-6 bg-cuba-sand;
-    background-image: linear-gradient(to bottom right, rgba(244, 227, 193, 0.9), rgba(244, 227, 193, 0.95));
+    @apply rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6;
+    background-image: linear-gradient(to bottom right, rgba(245,245,245,0.9), rgba(245,245,245,0.95));
     backdrop-filter: blur(10px);
   }
 
   .cuba-button {
     @apply px-4 py-3 rounded-md font-medium transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-cuba-coral focus:ring-offset-2
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
            active:scale-95 disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .cuba-button-primary {
-    @apply cuba-button bg-cuba-coral text-white hover:bg-cuba-orange;
+    @apply cuba-button bg-primary text-white hover:bg-primary-hover;
   }
 
   .cuba-button-secondary {
-    @apply cuba-button bg-cuba-yellow text-cuba-text hover:bg-opacity-90;
+    @apply cuba-button bg-secondary text-white hover:bg-secondary-hover;
   }
 
   .cuba-input {
-    @apply w-full px-4 py-3 rounded-md border border-cuba-mint/20
-           focus:outline-none focus:ring-2 focus:ring-cuba-coral focus:border-transparent
-           placeholder:text-gray-400 bg-cuba-sand;
+    @apply w-full px-4 py-3 rounded-md border border-gray-200
+           focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
+           placeholder:text-gray-400 bg-cuba-offwhite;
   }
 
   .cuba-title {
-    @apply font-display text-fluid-3xl font-bold text-cuba-coral;
+    @apply font-title text-fluid-3xl font-bold;
   }
 
   .cuba-subtitle {
-    @apply font-display text-fluid-xl text-cuba-orange;
+    @apply font-title text-fluid-xl;
   }
 }

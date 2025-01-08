@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,25 +6,25 @@
 
 @layer base {
   :root {
-    --background: 37 43% 95%;
+    --background: 0 0% 96.1%;
     --foreground: 222.2 84% 4.9%;
-    --card: 37 43% 95%;
+    --card: 60 33% 98%;
     --card-foreground: 222.2 84% 4.9%;
-    --popover: 37 43% 95%;
+    --popover: 60 33% 98%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 5 100% 69%;
+    --primary: 201 100% 36.5%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 45 100% 70%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 100% 50%;
+    --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 190 100% 42%;
+    --accent: 51 100% 50%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 5 100% 69%;
+    --ring: 201 100% 36.5%;
     --radius: 0.75rem;
   }
 
@@ -34,28 +34,6 @@
   }
 
   body {
-    @apply bg-cuba-sand text-cuba-text antialiased;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-display text-cuba-coral;
-  }
-}
-
-@layer components {
-  .btn-primary {
-    @apply bg-cuba-coral text-white hover:bg-cuba-orange transition-colors duration-300;
-  }
-
-  .btn-secondary {
-    @apply bg-cuba-yellow text-cuba-text hover:bg-opacity-90 transition-colors duration-300;
-  }
-
-  .card {
-    @apply bg-cuba-sand shadow-cuba hover:shadow-cuba-md transition-shadow duration-300;
-  }
-
-  .link {
-    @apply text-cuba-turquoise hover:text-opacity-80 transition-colors duration-300;
+    @apply bg-cuba-offwhite text-foreground antialiased;
   }
 }
