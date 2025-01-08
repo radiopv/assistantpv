@@ -79,7 +79,8 @@ const Children = () => {
   const ages = useMemo(() => {
     if (!children) return [];
     const uniqueAges = [...new Set(children.map(child => child.age))];
-    return uniqueAges.filter(Boolean).sort((a, b) => a - b);
+    // Convert numbers to strings before returning
+    return uniqueAges.filter(Boolean).sort((a, b) => a - b).map(age => age.toString());
   }, [children]);
 
   if (isLoading) {
