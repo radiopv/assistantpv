@@ -50,17 +50,25 @@ export const AppRoutes = () => {
 
       {/* Protected routes with MainLayout */}
       <Route element={<MainLayout />}>
+        {/* Dashboard */}
         <Route path="/dashboard" element={<Dashboard />} />
+        
+        {/* Children Management */}
         <Route path="/children" element={<Children />} />
-        {/* Move the add route before the :id route to prevent conflicts */}
         <Route path="/children/add" element={<AddChild />} />
         <Route path="/children/:id" element={<ChildProfile />} />
+        
+        {/* Tasks and Messages */}
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/settings" element={<Settings />} />
+        
+        {/* Donations Management */}
         <Route path="/donations-management" element={<Donations />} />
-        <Route path="/add-donation" element={<AddDonation />} />
-        <Route path="/assistant-photos" element={<AssistantPhotos />} />
+        <Route path="/donations/add" element={<AddDonation />} />
+        
+        {/* Assistant Features */}
+        <Route path="/assistant/photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
         <Route path="/new-testimonial" element={<NewTestimonial />} />
         
@@ -70,7 +78,7 @@ export const AppRoutes = () => {
         <Route path="/sponsor-album" element={<SponsorAlbum />} />
 
         {/* Admin routes */}
-        <Route path="/admin/sponsorship" element={<SponsorshipManagement />} />
+        <Route path="/admin/sponsorships" element={<SponsorshipManagement />} />
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/statistics" element={<Statistics />} />
         <Route path="/admin/translations" element={<Translations />} />
