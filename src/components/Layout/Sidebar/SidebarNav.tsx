@@ -12,6 +12,7 @@ import {
   CheckSquare,
   Globe,
   CircleDollarSign,
+  User,
 } from "lucide-react";
 import { SidebarSection } from "./SidebarSection";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -31,6 +32,11 @@ const publicLinks = [
     href: "/public-donations",
     label: "Dons",
     icon: Gift,
+  },
+  {
+    href: "/sponsor-dashboard",
+    label: "Espace parrain",
+    icon: User,
   },
   {
     href: "/faq",
