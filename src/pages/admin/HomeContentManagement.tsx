@@ -15,14 +15,14 @@ const HomeContentManagement = () => {
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const { data: heroImage } = useQuery({
+  const { data: heroImage, isError } = useQuery({
     queryKey: ['home-hero-image'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('home_images')
         .select('*')
         .eq('position', 'hero')
-        .single();
+        .maybeSingle();  // Changed from .single() to .maybeSingle()
 
       if (error) throw error;
       return data;
