@@ -49,7 +49,7 @@ const SponsorshipManagement = () => {
   });
 
   const { data: children, isLoading: childrenLoading } = useQuery({
-    queryKey: ['unsponsored-children'],
+    queryKey: ['all-children'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('children')
@@ -67,7 +67,6 @@ const SponsorshipManagement = () => {
             )
           )
         `)
-        .eq('is_sponsored', false)  // Only fetch unsponsored children
         .order('name');
 
       if (error) {
@@ -98,7 +97,7 @@ const SponsorshipManagement = () => {
       <Tabs defaultValue="sponsors" className="w-full">
         <TabsList className="w-full">
           <TabsTrigger value="sponsors">{t("sponsors")}</TabsTrigger>
-          <TabsTrigger value="children">{t("availableChildren")}</TabsTrigger>
+          <TabsTrigger value="children">TOUS LES ENFANTS</TabsTrigger>
         </TabsList>
 
         <TabsContent value="sponsors">
@@ -140,6 +139,11 @@ const SponsorshipManagement = () => {
                         <p className="text-sm text-gray-500">
                           {child.age} {t("years")} - {child.city}
                         </p>
+                        {child.sponsorships?.[0]?.sponsors && (
+                          <p className="text-sm text-blue-600">
+                            Parrainé par: {child.sponsorships[0].sponsors.name}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <Button
