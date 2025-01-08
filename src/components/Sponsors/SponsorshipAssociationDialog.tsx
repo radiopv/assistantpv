@@ -1,65 +1,41 @@
-import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface SponsorshipAssociationDialogProps {
+  sponsorId: string;
   isOpen: boolean;
   onClose: () => void;
-  childId: string;
-  sponsorId: string;
-  onAssociate: () => void;
 }
 
 export const SponsorshipAssociationDialog = ({
-  isOpen,
-  onClose,
-  childId,
   sponsorId,
-  onAssociate
+  isOpen,
+  onClose
 }: SponsorshipAssociationDialogProps) => {
-  const { t } = useLanguage();
-  const [isLoading, setIsLoading] = useState(false);
+  const [childId, setChildId] = useState("");
 
-  const handleAssociate = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      setIsLoading(true);
-
-      // Create sponsorship
-      const { error: sponsorshipError } = await supabase
+      const { error } = await supabase
         .from('sponsorships')
-        .insert([
-          {
-            child_id: childId,
-            sponsor_id: sponsorId,
-            status: 'active'
-          }
-        ]);
+        .insert({
+          sponsor_id: sponsorId,
+          child_id: childId
+        });
 
-      if (sponsorshipError) {
-        throw sponsorshipError;
-      }
+      if (error) throw error;
 
-      // Update child status
-      const { error: childError } = await supabase
-        .from('children')
-        .update({ is_sponsored: true })
-        .eq('id', childId);
-
-      if (childError) {
-        throw childError;
-      }
-
-      toast.success(t("sponsorshipCreated"));
-      onAssociate();
+      toast.success("Enfant associé avec succès");
+      setChildId("");
       onClose();
     } catch (error) {
-      console.error('Error creating sponsorship:', error);
-      toast.error(t("errorCreatingSponsorship"));
-    } finally {
-      setIsLoading(false);
+      console.error('Error associating child:', error);
+      toast.error("Erreur lors de l'association de l'enfant");
     }
   };
 
@@ -67,22 +43,18 @@ export const SponsorshipAssociationDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("confirmAssociation")}</DialogTitle>
+          <DialogTitle>Associer un enfant</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <p>{t("confirmAssociationText")}</p>
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={onClose} disabled={isLoading}>
-              {t("cancel")}
-            </Button>
-            <Button onClick={handleAssociate} disabled={isLoading}>
-              {t("confirm")}
-            </Button>
-          </div>
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Input
+            placeholder="ID de l'enfant"
+            value={childId}
+            onChange={(e) => setChildId(e.target.value)}
+            required
+          />
+          <Button type="submit">Associer</Button>
+        </form>
       </DialogContent>
     </Dialog>
   );
 };
-
-export default SponsorshipAssociationDialog;

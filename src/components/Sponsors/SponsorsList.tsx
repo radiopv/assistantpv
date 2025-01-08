@@ -1,17 +1,10 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { SearchInput } from "@/components/ui/search-input";
-import { Search, UserPlus } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Checkbox } from "@/components/ui/checkbox";
-import { supabase } from "@/integrations/supabase/client";
-import { Switch } from "@/components/ui/switch";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { SponsorFilters } from "./SponsorFilters";
+import { SponsorListItem } from "./SponsorListItem";
 import { SponsorshipAssociationDialog } from "./SponsorshipAssociationDialog";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -29,7 +22,6 @@ export const SponsorsList = ({
   const [sortOrder, setSortOrder] = useState("recent");
   const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { t } = useLanguage();
 
   const handleVerificationChange = async (sponsorId: string, checked: boolean) => {
     try {
@@ -49,6 +41,7 @@ export const SponsorsList = ({
       );
     } catch (error) {
       console.error('Error updating sponsor verification:', error);
+      toast.error("Erreur lors de la mise à jour de la vérification");
     }
   };
 
@@ -70,6 +63,7 @@ export const SponsorsList = ({
       );
     } catch (error) {
       console.error('Error updating sponsor status:', error);
+      toast.error("Erreur lors de la mise à jour du statut");
     }
   };
 
@@ -107,110 +101,27 @@ export const SponsorsList = ({
   return (
     <Tabs defaultValue="active" className="w-full">
       <TabsList className="grid w-full grid-cols-2 mb-6">
-        <TabsTrigger value="active">{t("activeSponsors")}</TabsTrigger>
-        <TabsTrigger value="inactive">{t("inactiveSponsors")}</TabsTrigger>
+        <TabsTrigger value="active">Parrains actifs</TabsTrigger>
+        <TabsTrigger value="inactive">Parrains inactifs</TabsTrigger>
       </TabsList>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
-        <div className="flex-1">
-          <SearchInput
-            placeholder={t("searchByNameEmail")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            icon={Search}
-          />
-        </div>
-        <Select value={sortOrder} onValueChange={setSortOrder}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder={t("sortBy")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="recent">{t("mostRecent")}</SelectItem>
-            <SelectItem value="name">{t("name")}</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+      <SponsorFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        sortOrder={sortOrder}
+        onSortChange={setSortOrder}
+      />
 
       <TabsContent value="active">
         <div className="space-y-6">
           {filterAndSortSponsors(sponsors, true).map((sponsor) => (
-            <Card key={sponsor.id} className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={sponsor.photo_url} alt={sponsor.name} />
-                    <AvatarFallback>{sponsor.name?.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{sponsor.name}</h3>
-                    <p className="text-sm text-gray-500">{sponsor.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Vérifié</span>
-                    <Checkbox
-                      checked={sponsor.is_verified}
-                      onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked as boolean)}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Statut</span>
-                    <Switch
-                      checked={sponsor.is_active}
-                      onCheckedChange={(checked) => handleStatusChange(sponsor.id, 'is_active', checked)}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="font-medium">Enfants parrainés</h4>
-                <div className="grid gap-4">
-                  {Array.from(new Set(sponsor.sponsorships?.map((s: any) => s.child_id))).map((childId: string) => {
-                    const sponsorship = sponsor.sponsorships?.find((s: any) => s.child_id === childId);
-                    const child = sponsorship?.children;
-                    
-                    return child ? (
-                      <div key={sponsorship.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                        <div className="flex items-center gap-4">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={child.photo_url} alt={child.name} />
-                            <AvatarFallback>{child.name?.charAt(0)}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="font-medium cursor-pointer hover:text-primary" 
-                               onClick={() => onRemoveChild?.(sponsorship.id)}>
-                              {child.name}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {child.age} ans
-                            </p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => onRemoveChild?.(sponsorship.id)}
-                        >
-                          Retirer
-                        </Button>
-                      </div>
-                    ) : null;
-                  })}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-2"
-                    onClick={() => handleAddChildClick(sponsor)}
-                  >
-                    <UserPlus className="h-4 w-4" />
-                    Ajouter un enfant
-                  </Button>
-                </div>
-              </div>
-            </Card>
+            <SponsorListItem
+              key={sponsor.id}
+              sponsor={sponsor}
+              onAddChild={handleAddChildClick}
+              onStatusChange={handleStatusChange}
+              onVerificationChange={handleVerificationChange}
+            />
           ))}
         </div>
       </TabsContent>
@@ -218,57 +129,20 @@ export const SponsorsList = ({
       <TabsContent value="inactive">
         <div className="space-y-6">
           {filterAndSortSponsors(sponsors, false).map((sponsor) => (
-            <Card key={sponsor.id} className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={sponsor.photo_url} alt={sponsor.name} />
-                    <AvatarFallback>{sponsor.name?.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{sponsor.name}</h3>
-                    <p className="text-sm text-gray-500">{sponsor.email}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Vérifié</span>
-                    <Checkbox
-                      checked={sponsor.is_verified}
-                      onCheckedChange={(checked) => handleVerificationChange(sponsor.id, checked as boolean)}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Statut</span>
-                    <Switch
-                      checked={sponsor.is_active}
-                      onCheckedChange={(checked) => handleStatusChange(sponsor.id, 'is_active', checked)}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <h4 className="font-medium">Enfants parrainés</h4>
-                <p className="text-sm text-gray-500">Aucun enfant parrainé</p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                  onClick={() => handleAddChildClick(sponsor)}
-                >
-                  <UserPlus className="h-4 w-4" />
-                  Ajouter un enfant
-                </Button>
-              </div>
-            </Card>
+            <SponsorListItem
+              key={sponsor.id}
+              sponsor={sponsor}
+              onAddChild={handleAddChildClick}
+              onStatusChange={handleStatusChange}
+              onVerificationChange={handleVerificationChange}
+            />
           ))}
         </div>
       </TabsContent>
 
       {selectedSponsor && (
         <SponsorshipAssociationDialog
-          sponsor={selectedSponsor}
+          sponsorId={selectedSponsor.id}
           isOpen={isDialogOpen}
           onClose={handleDialogClose}
         />

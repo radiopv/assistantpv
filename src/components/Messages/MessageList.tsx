@@ -5,6 +5,16 @@ import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 
+interface Message {
+  id: string;
+  subject: string;
+  content: string;
+  is_read: boolean;
+  created_at: string;
+  sender: { name: string } | null;
+  recipient: { name: string } | null;
+}
+
 export const MessageList = () => {
   const { data: messages, isLoading } = useQuery({
     queryKey: ['messages'],
@@ -19,7 +29,7 @@ export const MessageList = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as Message[];
     }
   });
 
