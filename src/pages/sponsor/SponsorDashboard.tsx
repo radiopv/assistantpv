@@ -2,18 +2,16 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
-import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
-import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/SponsoredChildCard";
-import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
-import { DashboardActions } from "@/components/Sponsors/Dashboard/DashboardActions";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { convertJsonToNeeds } from "@/types/needs";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/SponsoredChildCard";
+import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
 import { SponsorTestimonials } from "@/components/Sponsors/Dashboard/SponsorTestimonials";
+import { DashboardTabs } from "@/components/Sponsors/Dashboard/DashboardTabs";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -84,6 +82,17 @@ const SponsorDashboard = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
+      {/* Tabs Section First */}
+      {sponsorships.map((sponsorship) => (
+        <DashboardTabs
+          key={sponsorship.id}
+          childId={sponsorship.children.id}
+          sponsorId={user?.id || ''}
+          plannedVisits={plannedVisits || []}
+        />
+      ))}
+
+      {/* Child Information and Dates */}
       <div className="grid md:grid-cols-2 gap-6">
         {sponsorships.map((sponsorship) => (
           <div key={sponsorship.id} className="space-y-6">
@@ -162,6 +171,7 @@ const SponsorDashboard = () => {
         ))}
       </div>
 
+      {/* Important Dates */}
       <div className="grid md:grid-cols-2 gap-6">
         {sponsorships.map((sponsorship) => (
           <ImportantDatesCard 
@@ -171,50 +181,6 @@ const SponsorDashboard = () => {
           />
         ))}
       </div>
-
-      <Tabs defaultValue="actions" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="actions">Actions</TabsTrigger>
-          <TabsTrigger value="gallery">Album Photos</TabsTrigger>
-          <TabsTrigger value="visits">Visites Prévues</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="actions" className="space-y-4">
-          <DashboardActions />
-        </TabsContent>
-
-        <TabsContent value="gallery" className="space-y-4">
-          <div className="grid gap-6">
-            {sponsorships.map((sponsorship) => (
-              <Card key={sponsorship.id} className="p-6">
-                <h3 className="text-lg font-semibold mb-4">Album de {sponsorship.children.name}</h3>
-                <AlbumMediaGrid childId={sponsorship.children.id} />
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="visits" className="space-y-4">
-          <Card className="p-6">
-            {plannedVisits && plannedVisits.length > 0 ? (
-              <div className="space-y-4">
-                {plannedVisits.map((visit) => (
-                  <div key={visit.id} className="p-4 border rounded-lg">
-                    <p className="font-medium">
-                      {new Date(visit.start_date).toLocaleDateString()}
-                    </p>
-                    {visit.notes && (
-                      <p className="text-gray-600 mt-2">{visit.notes}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-600">Aucune visite prévue</p>
-            )}
-          </Card>
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };
