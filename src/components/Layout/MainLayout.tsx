@@ -22,14 +22,11 @@ import {
   Image
 } from "lucide-react";
 import { useState } from "react";
-import { LanguageSelector } from "@/components/LanguageSelector";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const MainLayout = () => {
   const { user } = useAuth();
-  const { t } = useLanguage();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,28 +35,28 @@ const MainLayout = () => {
   const isSponsor = user?.role === 'sponsor' || (isAdmin && user?.children_sponsored?.length > 0);
 
   const assistantNavItems = [
-    { icon: Home, label: t('dashboard'), path: '/dashboard' },
-    { icon: Users, label: t('children'), path: '/children' },
-    { icon: Gift, label: t('donations'), path: '/donations' },
-    { icon: MessageSquare, label: t('messages'), path: '/messages' },
+    { icon: Home, label: 'Dashboard', path: '/dashboard' },
+    { icon: Users, label: 'Enfants', path: '/children' },
+    { icon: Gift, label: 'Donations', path: '/donations' },
+    { icon: MessageSquare, label: 'Messages', path: '/messages' },
   ];
 
   const adminNavItems = [
-    { icon: Settings, label: t('permissions'), path: '/admin/permissions' },
-    { icon: Languages, label: t('translationManager'), path: '/admin/translations' },
-    { icon: CheckCircle2, label: t('validation'), path: '/admin/validation' },
-    { icon: ChartBar, label: t('statistics'), path: '/admin/statistics' },
-    { icon: Heart, label: t('sponsorshipManagement'), path: '/admin/sponsorships' },
-    { icon: Mail, label: t('emailManager'), path: '/admin/emails' },
-    { icon: HelpCircle, label: t('faq'), path: '/admin/faq' },
-    { icon: MapPin, label: t('citiesManagement'), path: '/admin/cities' },
-    { icon: Bell, label: t('notifications'), path: '/admin/notifications' },
-    { icon: Image, label: t('homeContent'), path: '/admin/home-content' },
-    { icon: LayoutDashboard, label: t('homepage'), path: '/admin/homepage' },
+    { icon: Settings, label: 'Permissions', path: '/admin/permissions' },
+    { icon: Languages, label: 'Traductions', path: '/admin/translations' },
+    { icon: CheckCircle2, label: 'Validation', path: '/admin/validation' },
+    { icon: ChartBar, label: 'Statistiques', path: '/admin/statistics' },
+    { icon: Heart, label: 'Gestion des parrainages', path: '/admin/sponsorships' },
+    { icon: Mail, label: 'Gestion des emails', path: '/admin/emails' },
+    { icon: HelpCircle, label: 'FAQ', path: '/admin/faq' },
+    { icon: MapPin, label: 'Gestion des villes', path: '/admin/cities' },
+    { icon: Bell, label: 'Notifications', path: '/admin/notifications' },
+    { icon: Image, label: 'Contenu accueil', path: '/admin/home-content' },
+    { icon: LayoutDashboard, label: 'Page d\'accueil', path: '/admin/homepage' },
   ];
 
   const sponsorNavItems = [
-    { icon: User, label: t('profile'), path: '/sponsor-dashboard' }
+    { icon: User, label: 'Profil', path: '/sponsor-dashboard' }
   ];
 
   const mobileNavItems = [
@@ -103,17 +100,14 @@ const MainLayout = () => {
 
       <main className="flex-1 md:ml-64 pb-16 md:pb-0">
         <div className="p-4 border-b bg-white flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <LanguageSelector />
-            <Button
-              variant="ghost"
-              onClick={handleSponsorDashboardClick}
-              className="flex items-center gap-2"
-            >
-              <User className="h-4 w-4" />
-              {t('profile')}
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            onClick={handleSponsorDashboardClick}
+            className="flex items-center gap-2"
+          >
+            <User className="h-4 w-4" />
+            Espace parrain
+          </Button>
           <UserProfileMenu />
         </div>
         <div className="p-4 md:p-8">
