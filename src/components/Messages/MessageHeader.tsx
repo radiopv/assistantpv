@@ -35,7 +35,9 @@ export const MessageHeader = ({
           {sender?.role}
         </Badge>
         {isStarred && (
-          <Badge variant="warning">Important</Badge>
+          <Badge variant="secondary" className="bg-yellow-500 hover:bg-yellow-600 text-white">
+            Important
+          </Badge>
         )}
         {isArchived && (
           <Badge variant="secondary">Archivé</Badge>
