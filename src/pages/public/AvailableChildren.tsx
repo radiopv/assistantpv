@@ -8,6 +8,14 @@ import { AvailableChildrenGrid } from "@/components/Children/AvailableChildrenGr
 import { useState, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+interface CategorizedChildren {
+  infants: any[];
+  toddlers: any[];
+  children: any[];
+  teens: any[];
+  unknown: any[];
+}
+
 export default function AvailableChildren() {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -55,9 +63,15 @@ export default function AvailableChildren() {
   });
 
   const categorizedChildren = useMemo(() => {
-    if (!children) return {};
+    if (!children) return {
+      infants: [],
+      toddlers: [],
+      children: [],
+      teens: [],
+      unknown: []
+    } as CategorizedChildren;
 
-    return children.reduce((acc, child) => {
+    return children.reduce((acc: CategorizedChildren, child) => {
       if (!child.birth_date) {
         acc.unknown = acc.unknown || [];
         acc.unknown.push(child);
@@ -86,7 +100,13 @@ export default function AvailableChildren() {
       }
 
       return acc;
-    }, {});
+    }, {
+      infants: [],
+      toddlers: [],
+      children: [],
+      teens: [],
+      unknown: []
+    } as CategorizedChildren);
   }, [children]);
 
   const handleSponsorClick = async (childId: string) => {
@@ -141,11 +161,16 @@ export default function AvailableChildren() {
           />
         </TabsContent>
 
-        {["infants", "toddlers", "children", "teens"].map((category) => (
+        {Object.entries({
+          infants: categorizedChildren.infants,
+          toddlers: categorizedChildren.toddlers,
+          children: categorizedChildren.children,
+          teens: categorizedChildren.teens
+        }).map(([category, categoryChildren]) => (
           <TabsContent key={category} value={category}>
-            {categorizedChildren[category]?.length > 0 ? (
+            {categoryChildren?.length > 0 ? (
               <AvailableChildrenGrid 
-                children={categorizedChildren[category]}
+                children={categoryChildren}
                 isLoading={isLoading}
                 onSponsorClick={handleSponsorClick}
               />
@@ -160,39 +185,3 @@ export default function AvailableChildren() {
     </div>
   );
 }
-
-const translations = {
-  fr: {
-    availableChildren: "Enfants disponibles pour le parrainage",
-    allAges: "Tous les âges",
-    infants: "Nourrissons (0-2 ans)",
-    toddlers: "Jeunes enfants (3-5 ans)",
-    children: "Enfants (6-12 ans)",
-    teens: "Adolescents (13+ ans)",
-    noCategoryChildren: "Aucun enfant dans cette catégorie",
-    sponsor: "Parrainer cet enfant",
-    age: "ans",
-    needs: "Besoins",
-    noChildren: "Aucun enfant disponible pour le moment",
-    error: "Une erreur est survenue lors du chargement des enfants",
-    sponsorSuccess: "Votre demande de parrainage a été envoyée",
-    sponsorError: "Une erreur est survenue lors de la demande de parrainage",
-    errorInvalidChild: "Enfant invalide",
-    errorSponsorClick: "Erreur lors de la demande de parrainage",
-    errorFetchingChildren: "Erreur lors du chargement des enfants",
-    sexe: "Sexe"
-  },
-  es: {
-    title: "Niños disponibles para apadrinamiento",
-    sponsor: "Apadrinar a este niño",
-    age: "años",
-    needs: "Necesidades",
-    noChildren: "No hay niños disponibles en este momento",
-    error: "Ocurrió un error al cargar los niños",
-    sponsorSuccess: "Su solicitud de apadrinamiento ha sido enviada",
-    sponsorError: "Ocurrió un error al enviar la solicitud de apadrinamiento",
-    errorInvalidChild: "Niño inválido",
-    errorSponsorClick: "Error al solicitar el apadrinamiento",
-    errorFetchingChildren: "Error al cargar los niños"
-  }
-};
