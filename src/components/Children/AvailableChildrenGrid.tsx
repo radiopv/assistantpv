@@ -5,12 +5,32 @@ import { Badge } from "@/components/ui/badge";
 import { Need } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
+import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 
 interface AvailableChildrenGridProps {
   children: any[];
   isLoading: boolean;
   onSponsorClick: (childId: string) => void;
 }
+
+const formatAge = (birthDate: string | undefined | null) => {
+  const { t } = useLanguage();
+  
+  if (!birthDate) {
+    return t("ageNotAvailable");
+  }
+
+  const today = new Date();
+  const birth = parseISO(birthDate);
+  const years = differenceInYears(today, birth);
+  
+  if (years === 0) {
+    const months = differenceInMonths(today, birth);
+    return `${months} ${t("months")}`;
+  }
+  
+  return `${years} ${t("years")}`;
+};
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const { t } = useLanguage();
@@ -48,7 +68,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 <h3 className="text-xl font-semibold">{child.name}</h3>
                 <div className="flex items-center text-gray-600">
                   <Calendar className="w-4 h-4 mr-1" />
-                  <span>{child.age} {t("age")}</span>
+                  <span>{formatAge(child.birth_date)}</span>
                 </div>
               </div>
 
