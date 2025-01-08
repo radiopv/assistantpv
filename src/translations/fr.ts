@@ -46,4 +46,7 @@ export const frenchTranslations = {
   anonymousSponsor: "Parrain anonyme",
   noTestimonials: "Aucun témoignage pour le moment",
   childrenWaitingForSponsorship: "Enfants en attente de parrainage",
+  heroTitle: "Changez une vie aujourd'hui",
+  heroSubtitle: "Votre soutien peut faire une réelle différence dans la vie d'un enfant cubain",
+  becomeSponsor: "Devenir parrain",
 };
