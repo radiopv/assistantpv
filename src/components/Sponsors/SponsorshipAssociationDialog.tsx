@@ -26,8 +26,25 @@ export const SponsorshipAssociationDialog = ({
 
   const handleAssociation = async () => {
     try {
-      // Create sponsorship
-      const { error: sponsorshipError } = await supabase
+      // Check if child is already sponsored
+      const { data: existingSponsorship, error: checkError } = await supabase
+        .from('sponsorships')
+        .select('id')
+        .eq('child_id', child.id)
+        .eq('status', 'active')
+        .single();
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        throw checkError;
+      }
+
+      if (existingSponsorship) {
+        toast.error(t("childAlreadySponsored"));
+        return;
+      }
+
+      // Create new sponsorship
+      const { error } = await supabase
         .from('sponsorships')
         .insert({
           sponsor_id: selectedSponsor,
@@ -36,10 +53,10 @@ export const SponsorshipAssociationDialog = ({
           start_date: new Date().toISOString()
         });
 
-      if (sponsorshipError) throw sponsorshipError;
+      if (error) throw error;
 
       // Update child status
-      const { error: childError } = await supabase
+      const { error: updateError } = await supabase
         .from('children')
         .update({ 
           is_sponsored: true,
@@ -48,7 +65,7 @@ export const SponsorshipAssociationDialog = ({
         })
         .eq('id', child.id);
 
-      if (childError) throw childError;
+      if (updateError) throw updateError;
 
       toast.success(t("sponsorshipCreated"));
       queryClient.invalidateQueries({ queryKey: ['children'] });
@@ -56,7 +73,7 @@ export const SponsorshipAssociationDialog = ({
       onClose();
     } catch (error) {
       console.error('Error creating sponsorship:', error);
-      toast.error(t("sponsorshipError"));
+      toast.error(t("errorCreatingSponsorship"));
     }
   };
 
