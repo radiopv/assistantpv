@@ -35,7 +35,8 @@ const SponsorDashboard = () => {
             gender
           )
         `)
-        .eq("sponsor_id", user.id);
+        .eq("sponsor_id", user.id)
+        .eq("status", "active");
 
       if (error) {
         console.error("Error fetching sponsorships:", error);
@@ -48,28 +49,6 @@ const SponsorDashboard = () => {
       }
 
       console.log("Fetched sponsorships:", data); // Pour le débogage
-      return data;
-    },
-    enabled: !!user?.id
-  });
-
-  const { data: plannedVisits, isLoading: visitsLoading } = useQuery({
-    queryKey: ["planned-visits", user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-
-      const { data, error } = await supabase
-        .from("planned_visits")
-        .select("*")
-        .eq("sponsor_id", user.id)
-        .gte("start_date", new Date().toISOString())
-        .order("start_date", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching planned visits:", error);
-        return null;
-      }
-
       return data;
     },
     enabled: !!user?.id
