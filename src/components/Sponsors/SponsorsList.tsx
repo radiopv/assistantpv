@@ -39,6 +39,7 @@ export const SponsorsList = ({
             : s
         )
       );
+      toast.success("Statut de vérification mis à jour");
     } catch (error) {
       console.error('Error updating sponsor verification:', error);
       toast.error("Erreur lors de la mise à jour de la vérification");
@@ -61,6 +62,7 @@ export const SponsorsList = ({
             : s
         )
       );
+      toast.success("Statut mis à jour avec succès");
     } catch (error) {
       console.error('Error updating sponsor status:', error);
       toast.error("Erreur lors de la mise à jour du statut");
@@ -81,9 +83,21 @@ export const SponsorsList = ({
     let filtered = sponsors.filter(sponsor => {
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
-      const hasChildren = sponsor.sponsorships?.length > 0;
+      
+      // Filter unique active sponsorships
+      const uniqueActiveSponsorships = sponsor.sponsorships?.filter((s: any) => 
+        s.status === 'active' && s.children
+      ).reduce((acc: any[], current: any) => {
+        const exists = acc.find((s: any) => s.child_id === current.child_id);
+        if (!exists) {
+          acc.push(current);
+        }
+        return acc;
+      }, []);
+
+      const hasActiveChildren = uniqueActiveSponsorships?.length > 0;
       return searchString.includes(searchTermLower) && 
-             (isActive ? hasChildren : !hasChildren);
+             (isActive ? hasActiveChildren : !hasActiveChildren);
     });
 
     return filtered.sort((a, b) => {
@@ -117,7 +131,18 @@ export const SponsorsList = ({
           {filterAndSortSponsors(sponsors, true).map((sponsor) => (
             <SponsorListItem
               key={sponsor.id}
-              sponsor={sponsor}
+              sponsor={{
+                ...sponsor,
+                sponsorships: sponsor.sponsorships?.filter((s: any) => 
+                  s.status === 'active' && s.children
+                ).reduce((acc: any[], current: any) => {
+                  const exists = acc.find((s: any) => s.child_id === current.child_id);
+                  if (!exists) {
+                    acc.push(current);
+                  }
+                  return acc;
+                }, [])
+              }}
               onAddChild={handleAddChildClick}
               onStatusChange={handleStatusChange}
               onVerificationChange={handleVerificationChange}
