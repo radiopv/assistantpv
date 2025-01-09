@@ -84,20 +84,21 @@ export const SponsorsList = ({
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       
-      // Filter unique active sponsorships
-      const uniqueActiveSponsorships = sponsor.sponsorships?.filter((s: any) => 
+      // Filter approved and active sponsorships only
+      const approvedActiveSponsorships = sponsor.sponsorships?.filter((s: any) => 
         s.status === 'active' && s.children
       ).reduce((acc: any[], current: any) => {
-        const exists = acc.find((s: any) => s.child_id === current.child_id);
+        // Check if we already have this child in the accumulator
+        const exists = acc.find((s: any) => s.children.id === current.children.id);
         if (!exists) {
           acc.push(current);
         }
         return acc;
       }, []);
 
-      const hasActiveChildren = uniqueActiveSponsorships?.length > 0;
+      const hasApprovedChildren = approvedActiveSponsorships?.length > 0;
       return searchString.includes(searchTermLower) && 
-             (isActive ? hasActiveChildren : !hasActiveChildren);
+             (isActive ? hasApprovedChildren : !hasApprovedChildren);
     });
 
     return filtered.sort((a, b) => {
@@ -133,10 +134,11 @@ export const SponsorsList = ({
               key={sponsor.id}
               sponsor={{
                 ...sponsor,
+                // Only include approved and active sponsorships, removing duplicates
                 sponsorships: sponsor.sponsorships?.filter((s: any) => 
                   s.status === 'active' && s.children
                 ).reduce((acc: any[], current: any) => {
-                  const exists = acc.find((s: any) => s.child_id === current.child_id);
+                  const exists = acc.find((s: any) => s.children.id === current.children.id);
                   if (!exists) {
                     acc.push(current);
                   }
