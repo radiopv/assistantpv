@@ -30,7 +30,9 @@ const SponsorDashboard = () => {
             needs,
             description,
             story,
-            comments
+            comments,
+            age,
+            gender
           )
         `)
         .eq("sponsor_id", user.id)
