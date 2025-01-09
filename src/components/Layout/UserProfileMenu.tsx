@@ -89,8 +89,19 @@ export const UserProfileMenu = () => {
     return null;
   }
 
+  const isSponsor = user.role === 'sponsor';
+
   return (
     <div className="flex items-center gap-4">
+      {isSponsor && (
+        <Button
+          variant="ghost"
+          className="text-primary"
+          onClick={() => navigate("/sponsor-dashboard")}
+        >
+          Espace parrain
+        </Button>
+      )}
       <Button 
         variant="ghost" 
         size="icon" 
