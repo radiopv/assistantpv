@@ -28,16 +28,13 @@ export const useSponsorshipData = () => {
         `)
         .order('name');
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching sponsors:", error);
+        throw error;
+      }
 
-      return data.map(sponsor => ({
-        ...sponsor,
-        sponsorships: sponsor.sponsorships
-          ?.filter(s => s.status === 'active' && s.children)
-          .filter((s, index, self) => 
-            index === self.findIndex(t => t.children?.id === s.children?.id)
-          )
-      }));
+      // Ne pas filtrer les parrainages ici, laissons le composant gérer ça
+      return data;
     },
   });
 
@@ -50,7 +47,10 @@ export const useSponsorshipData = () => {
         .eq('is_sponsored', false)
         .order('name');
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching available children:", error);
+        throw error;
+      }
       return data;
     },
   });

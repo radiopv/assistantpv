@@ -35,8 +35,7 @@ const SponsorDashboard = () => {
             gender
           )
         `)
-        .eq("sponsor_id", user.id)
-        .eq("status", "active");
+        .eq("sponsor_id", user.id);
 
       if (error) {
         console.error("Error fetching sponsorships:", error);
@@ -48,6 +47,7 @@ const SponsorDashboard = () => {
         return null;
       }
 
+      console.log("Fetched sponsorships:", data); // Pour le débogage
       return data;
     },
     enabled: !!user?.id
@@ -88,7 +88,7 @@ const SponsorDashboard = () => {
     );
   }
 
-  if (sponsorshipsLoading || visitsLoading) {
+  if (sponsorshipsLoading) {
     return <div className="container mx-auto p-4">Chargement...</div>;
   }
 
@@ -111,17 +111,17 @@ const SponsorDashboard = () => {
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
       <DashboardTabs 
-        sponsorships={sponsorships || []}
-        userId={user?.id || ''}
-        plannedVisits={plannedVisits || []}
+        sponsorships={sponsorships}
+        userId={user.id}
+        plannedVisits={[]}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {sponsorships?.map((sponsorship) => (
+        {sponsorships.map((sponsorship) => (
           <SponsoredChildSection
             key={sponsorship.id}
             sponsorship={sponsorship}
-            userId={user?.id || ''}
+            userId={user.id}
           />
         ))}
       </div>
