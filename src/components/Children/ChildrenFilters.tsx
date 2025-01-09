@@ -16,7 +16,7 @@ interface ChildrenFiltersProps {
   onAgeChange: (value: string) => void;
   onStatusChange: (value: string) => void;
   cities: string[];
-  ages: string[];
+  ages: string[]; // Changed from number[] to string[]
 }
 
 export const ChildrenFilters = ({
