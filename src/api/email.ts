@@ -1,3 +1,5 @@
+import { supabase } from "@/integrations/supabase/client";
+
 export interface EmailRequest {
   to: string[];
   subject: string;
@@ -6,16 +8,14 @@ export interface EmailRequest {
 }
 
 export const sendEmail = async (request: EmailRequest) => {
-  // Implementation for sending email
-  const response = await fetch('/api/send-email', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(request),
+  const { data, error } = await supabase.functions.invoke('send-email', {
+    body: request
   });
 
-  if (!response.ok) {
+  if (error) {
+    console.error('Error sending email:', error);
     throw new Error('Failed to send email');
   }
+
+  return data;
 };
