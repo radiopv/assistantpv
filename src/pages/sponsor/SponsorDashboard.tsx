@@ -43,10 +43,9 @@ const SponsorDashboard = () => {
           title: "Erreur",
           description: "Impossible de charger vos parrainages"
         });
-        throw error;
+        return null;
       }
 
-      console.log("Fetched sponsorships:", data); // Debug log
       return data;
     },
     enabled: !!user?.id
@@ -66,7 +65,7 @@ const SponsorDashboard = () => {
 
       if (error) {
         console.error("Error fetching planned visits:", error);
-        throw error;
+        return null;
       }
 
       return data;
@@ -110,13 +109,13 @@ const SponsorDashboard = () => {
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
       <DashboardTabs 
-        sponsorships={sponsorships}
+        sponsorships={sponsorships || []}
         userId={user?.id || ''}
         plannedVisits={plannedVisits || []}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {sponsorships.map((sponsorship) => (
+        {sponsorships?.map((sponsorship) => (
           <SponsoredChildSection
             key={sponsorship.id}
             sponsorship={sponsorship}
