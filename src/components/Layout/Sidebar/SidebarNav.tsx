@@ -17,7 +17,12 @@ import {
 import { SidebarSection } from "./SidebarSection";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
-const publicLinks = [
+const sponsorLinks = [
+  {
+    href: "/sponsor-dashboard",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
+  },
   {
     href: "/",
     label: "Accueil",
@@ -34,11 +39,6 @@ const publicLinks = [
     icon: Gift,
   },
   {
-    href: "/sponsor-dashboard",
-    label: "Espace parrain",
-    icon: User,
-  },
-  {
     href: "/messages",
     label: "Messages",
     icon: MessageSquare,
@@ -52,19 +52,6 @@ const publicLinks = [
     href: "/faq",
     label: "FAQ",
     icon: FileText,
-  },
-];
-
-const sponsorLinks = [
-  {
-    href: "/sponsor-dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/messages",
-    label: "Messages",
-    icon: MessageSquare,
   },
 ];
 
@@ -144,13 +131,6 @@ export const SidebarNav = ({ onClose }: { onClose?: () => void }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <SidebarSection
-        title="Navigation"
-        links={publicLinks}
-        currentPath={location.pathname}
-        onClose={onClose}
-      />
-
       {user && (
         <>
           {!isAssistant && (
