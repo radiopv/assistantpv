@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { DashboardTabs } from "@/components/Sponsors/Dashboard/DashboardTabs";
 import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
 import { toast } from "sonner";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
-import { AvailableChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
+import { ChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -114,7 +114,7 @@ const SponsorDashboard = () => {
         <div className="space-y-6">
           <Alert>
             <InfoIcon className="h-4 w-4" />
-            <AlertTitle>Bienvenue dans votre espace parrain !</AlertTitle>
+            <div className="font-semibold">Bienvenue dans votre espace parrain !</div>
             <AlertDescription>
               Pour commencer votre parcours de parrainage, nous vous invitons à :
               <ol className="list-decimal ml-4 mt-2 space-y-2">
@@ -127,7 +127,7 @@ const SponsorDashboard = () => {
 
           <Card className="p-6">
             <h2 className="text-xl font-semibold mb-4">Enfants disponibles pour le parrainage</h2>
-            <AvailableChildrenList
+            <ChildrenList
               children={availableChildren}
               searchTerm=""
               onSearchChange={() => {}}
