@@ -36,6 +36,7 @@ import Notifications from "@/pages/admin/Notifications";
 import LinkChecker from "@/pages/admin/LinkChecker";
 import Messages from "@/pages/Messages";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
+import SponsorAlbum from "@/pages/sponsor/SponsorAlbum";
 
 export const AppRoutes = () => {
   return (
@@ -58,6 +59,7 @@ export const AppRoutes = () => {
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
         <Route path="/children/:id" element={<ChildProfile />} />
+        <Route path="/sponsor-album" element={<SponsorAlbum />} />
         <Route path="/donations" element={<Donations />} />
         <Route path="/donations/add" element={<AddDonation />} />
         <Route path="/settings" element={<Settings />} />

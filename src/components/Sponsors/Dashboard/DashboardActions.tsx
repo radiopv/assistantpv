@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Heart, Image, MessageSquare } from "lucide-react";
+import { Image, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const DashboardActions = () => {
@@ -22,21 +22,7 @@ export const DashboardActions = () => {
       </Button>
 
       <Button
-        onClick={() => navigate("/testimonials/new")}
-        variant="outline"
-        className="h-auto p-4 flex items-center gap-3"
-      >
-        <Heart className="w-5 h-5" />
-        <div className="text-left">
-          <p className="font-semibold">Ajouter un témoignage</p>
-          <p className="text-sm text-gray-600">
-            Partagez votre expérience
-          </p>
-        </div>
-      </Button>
-
-      <Button
-        onClick={() => navigate("/children/album")}
+        onClick={() => navigate("/sponsor-album")}
         variant="outline"
         className="h-auto p-4 flex items-center gap-3"
       >
