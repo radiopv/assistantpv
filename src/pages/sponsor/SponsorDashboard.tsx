@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DashboardTabs } from "@/components/Sponsors/Dashboard/DashboardTabs";
 import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
+import { toast } from "@/components/ui/use-toast";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -35,10 +36,20 @@ const SponsorDashboard = () => {
         .eq("sponsor_id", user.id)
         .eq("status", "active");
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching sponsorships:", error);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger vos parrainages"
+        });
+        throw error;
+      }
+
+      console.log("Fetched sponsorships:", data); // Debug log
       return data;
     },
-    enabled: !!user?.id // Only run query when we have a user ID
+    enabled: !!user?.id
   });
 
   const { data: plannedVisits, isLoading: visitsLoading } = useQuery({
@@ -53,10 +64,14 @@ const SponsorDashboard = () => {
         .gte("start_date", new Date().toISOString())
         .order("start_date", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching planned visits:", error);
+        throw error;
+      }
+
       return data;
     },
-    enabled: !!user?.id // Only run query when we have a user ID
+    enabled: !!user?.id
   });
 
   if (!user) {
@@ -94,14 +109,12 @@ const SponsorDashboard = () => {
     <div className="container mx-auto p-4 space-y-6">
       <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
 
-      {/* Common Actions and Tabs */}
       <DashboardTabs 
         sponsorships={sponsorships}
         userId={user?.id || ''}
         plannedVisits={plannedVisits || []}
       />
 
-      {/* Sponsored Children Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {sponsorships.map((sponsorship) => (
           <SponsoredChildSection
