@@ -11,9 +11,11 @@ const SponsorDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const { data: sponsorships, isLoading } = useQuery({
+  const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery({
     queryKey: ["sponsorships", user?.id],
     queryFn: async () => {
+      if (!user?.id) return null;
+      
       const { data, error } = await supabase
         .from("sponsorships")
         .select(`
@@ -30,30 +32,47 @@ const SponsorDashboard = () => {
             comments
           )
         `)
-        .eq("sponsor_id", user?.id)
+        .eq("sponsor_id", user.id)
         .eq("status", "active");
 
       if (error) throw error;
       return data;
     },
+    enabled: !!user?.id // Only run query when we have a user ID
   });
 
-  const { data: plannedVisits } = useQuery({
+  const { data: plannedVisits, isLoading: visitsLoading } = useQuery({
     queryKey: ["planned-visits", user?.id],
     queryFn: async () => {
+      if (!user?.id) return null;
+
       const { data, error } = await supabase
         .from("planned_visits")
         .select("*")
-        .eq("sponsor_id", user?.id)
+        .eq("sponsor_id", user.id)
         .gte("start_date", new Date().toISOString())
         .order("start_date", { ascending: true });
 
       if (error) throw error;
       return data;
     },
+    enabled: !!user?.id // Only run query when we have a user ID
   });
 
-  if (isLoading) {
+  if (!user) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="p-6">
+          <p className="text-center">Veuillez vous connecter pour accéder à votre tableau de bord.</p>
+          <Button onClick={() => navigate("/login")} className="mt-4 mx-auto block">
+            Se connecter
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (sponsorshipsLoading || visitsLoading) {
     return <div className="container mx-auto p-4">Chargement...</div>;
   }
 
