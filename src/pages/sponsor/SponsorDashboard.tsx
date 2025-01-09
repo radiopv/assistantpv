@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
 import { ChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
+import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -108,7 +109,10 @@ const SponsorDashboard = () => {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Mon Espace Parrain</h1>
+        <UserProfileMenu />
+      </div>
 
       {isNewSponsor && (
         <div className="space-y-6">
