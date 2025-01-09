@@ -51,17 +51,27 @@ export const ImageUpload = ({ heroImage, isLoading }: ImageUploadProps) => {
 
       const position: ValidPosition = 'hero';
       
-      const { error: dbError } = await supabase
+      // First try to update existing record
+      const { error: updateError } = await supabase
         .from('home_images')
-        .upsert({
+        .update({ 
           url: publicUrl,
-          position,
           updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'position'
-        });
+        })
+        .eq('position', position);
 
-      if (dbError) throw dbError;
+      // If no record exists to update, insert a new one
+      if (updateError) {
+        const { error: insertError } = await supabase
+          .from('home_images')
+          .insert({
+            url: publicUrl,
+            position,
+            updated_at: new Date().toISOString()
+          });
+
+        if (insertError) throw insertError;
+      }
 
       toast({
         title: "Image mise à jour",
