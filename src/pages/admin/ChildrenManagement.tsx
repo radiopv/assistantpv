@@ -6,20 +6,20 @@ import { ChildrenTable } from "@/components/Children/ChildrenTable";
 import { ChildrenList } from "@/components/Children/ChildrenList";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 export default function ChildrenManagement() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [view, setView] = useState<"grid" | "table">("grid");
-  const [filters, setFilters] = useState({
-    ageRange: [0, 18],
-    gender: "",
-    city: "",
-    hasNeeds: false,
-    hasUrgentNeeds: false
-  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCity, setSelectedCity] = useState("all");
+  const [selectedGender, setSelectedGender] = useState("all");
+  const [selectedAge, setSelectedAge] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
   const { data: children, isLoading } = useQuery({
-    queryKey: ["admin-children", filters],
+    queryKey: ["admin-children", selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("children")
@@ -30,6 +30,14 @@ export default function ChildrenManagement() {
     }
   });
 
+  const handleViewProfile = (id: string) => {
+    navigate(`/child/${id}`);
+  };
+
+  const handleSponsorClick = (child: any) => {
+    // Implement sponsor click logic
+  };
+
   if (isLoading) {
     return <div className="container mx-auto p-4">Chargement...</div>;
   }
@@ -39,9 +47,18 @@ export default function ChildrenManagement() {
       <h1 className="text-2xl font-bold mb-6">{t("childrenManagement")}</h1>
 
       <ChildrenFilters
-        filters={filters}
-        onChange={setFilters}
-        className="mb-6"
+        searchTerm={searchTerm}
+        selectedCity={selectedCity}
+        selectedGender={selectedGender}
+        selectedAge={selectedAge}
+        selectedStatus={selectedStatus}
+        onSearchChange={setSearchTerm}
+        onCityChange={setSelectedCity}
+        onGenderChange={setSelectedGender}
+        onAgeChange={setSelectedAge}
+        onStatusChange={setSelectedStatus}
+        cities={[]}
+        ages={[]}
       />
 
       <Tabs value={view} onValueChange={(v) => setView(v as "grid" | "table")}>
@@ -51,11 +68,19 @@ export default function ChildrenManagement() {
         </TabsList>
 
         <TabsContent value="grid">
-          <ChildrenList children={children} />
+          <ChildrenList 
+            children={children || []} 
+            isLoading={isLoading}
+            onViewProfile={handleViewProfile}
+          />
         </TabsContent>
 
         <TabsContent value="table">
-          <ChildrenTable children={children} />
+          <ChildrenTable 
+            children={children || []} 
+            onViewProfile={handleViewProfile}
+            onSponsorClick={handleSponsorClick}
+          />
         </TabsContent>
       </Tabs>
     </div>
