@@ -8,13 +8,13 @@ import Login from "@/pages/auth/Login";
 import FAQ from "@/pages/public/FAQ";
 import AvailableChildren from "@/pages/public/AvailableChildren";
 import BecomeSponsor from "@/pages/BecomeSponsor";
+import ChildDetails from "@/pages/ChildDetails";
 
 // Protected pages
 import Dashboard from "@/pages/Dashboard";
 import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
 import ChildProfile from "@/pages/ChildProfile";
-import ChildDetails from "@/pages/ChildDetails";
 import Donations from "@/pages/Donations";
 import AddDonation from "@/pages/AddDonation";
 import Settings from "@/pages/Settings";
@@ -46,6 +46,7 @@ export const AppRoutes = () => {
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/public-donations" element={<PublicDonations />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
+        <Route path="/child-details/:id" element={<ChildDetails />} />
       </Route>
 
       {/* Protected routes */}
@@ -54,7 +55,6 @@ export const AppRoutes = () => {
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
         <Route path="/children/:id" element={<ChildProfile />} />
-        <Route path="/child/:id" element={<ChildDetails />} />
         <Route path="/donations" element={<Donations />} />
         <Route path="/donations/add" element={<AddDonation />} />
         <Route path="/settings" element={<Settings />} />

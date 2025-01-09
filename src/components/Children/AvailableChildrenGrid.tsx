@@ -147,7 +147,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
               <Button 
                 className="w-full flex items-center justify-center gap-2" 
-                onClick={() => navigate(`/child/${child.id}`)}
+                onClick={() => navigate(`/child-details/${child.id}`)}
               >
                 <Info className="w-4 h-4" />
                 {t("learnMore")}
