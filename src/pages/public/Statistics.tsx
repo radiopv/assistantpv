@@ -1,36 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, LineChart, ResponsiveContainer } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
+import { SponsorshipConversionStats, UserEngagementStats, TopCityStats } from "@/types/statistics";
 
 const Statistics = () => {
-  const { data: sponsorshipStats } = useQuery({
+  const { data: sponsorshipStats } = useQuery<SponsorshipConversionStats>({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .rpc('get_sponsorship_conversion_stats');
+      const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
       if (error) throw error;
-      return data;
+      return data as SponsorshipConversionStats;
     }
   });
 
-  const { data: engagementStats } = useQuery({
+  const { data: engagementStats } = useQuery<UserEngagementStats>({
     queryKey: ['engagement-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .rpc('get_user_engagement_stats');
+      const { data, error } = await supabase.rpc('get_user_engagement_stats');
       if (error) throw error;
-      return data;
+      return data as UserEngagementStats;
     }
   });
 
-  const { data: cityStats } = useQuery({
+  const { data: cityStats } = useQuery<TopCityStats[]>({
     queryKey: ['city-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .rpc('get_top_sponsorship_cities');
+      const { data, error } = await supabase.rpc('get_top_sponsorship_cities');
       if (error) throw error;
-      return data;
+      return data as TopCityStats[];
     }
   });
 
@@ -96,7 +93,7 @@ const Statistics = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {cityStats?.map((city: { city: string; active_sponsorships: number }) => (
+              {cityStats?.map((city) => (
                 <div key={city.city}>
                   <p className="text-sm text-muted-foreground">{city.city}</p>
                   <p className="text-2xl font-bold">{city.active_sponsorships}</p>
