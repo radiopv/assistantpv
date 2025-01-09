@@ -34,6 +34,7 @@ import CitiesManagement from "@/pages/admin/CitiesManagement";
 import Notifications from "@/pages/admin/Notifications";
 import LinkChecker from "@/pages/admin/LinkChecker";
 import Messages from "@/pages/Messages";
+import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 
 export const AppRoutes = () => {
   return (
@@ -75,6 +76,7 @@ export const AppRoutes = () => {
         <Route path="/admin/cities" element={<CitiesManagement />} />
         <Route path="/admin/notifications" element={<Notifications />} />
         <Route path="/admin/link-checker" element={<LinkChecker />} />
+        <Route path="/admin/home-content" element={<HomeContentManagement />} />
       </Route>
 
       {/* Catch all redirect to home */}
