@@ -1,19 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
-import Login from "@/pages/Login";
-import Register from "@/pages/Register";
-import ForgotPassword from "@/pages/ForgotPassword";
-import ResetPassword from "@/pages/ResetPassword";
+import Login from "@/pages/auth/Login";
 import Profile from "@/pages/Profile";
 import Children from "@/pages/Children";
 import ChildProfile from "@/pages/ChildProfile";
-import Sponsorships from "@/pages/Sponsorships";
-import SponsorshipRequests from "@/pages/SponsorshipRequests";
 import Donations from "@/pages/Donations";
-import DonationDetails from "@/pages/DonationDetails";
 import Messages from "@/pages/Messages";
-import Notifications from "@/pages/Notifications";
 import Settings from "@/pages/Settings";
 import NotFound from "@/pages/NotFound";
 import AvailableChildren from "@/pages/public/AvailableChildren";
@@ -25,19 +18,11 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      
       <Route path="/profile" element={<Profile />} />
       <Route path="/children" element={<Children />} />
       <Route path="/child/:id" element={<ChildProfile />} />
-      <Route path="/sponsorships" element={<Sponsorships />} />
-      <Route path="/sponsorship-requests" element={<SponsorshipRequests />} />
       <Route path="/donations" element={<Donations />} />
-      <Route path="/donation/:id" element={<DonationDetails />} />
       <Route path="/messages" element={<Messages />} />
-      <Route path="/notifications" element={<Notifications />} />
       <Route path="/settings" element={<Settings />} />
       
       {/* Public routes */}
