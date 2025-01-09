@@ -123,6 +123,11 @@ const adminLinks = [
     label: "Statistiques",
     icon: CircleDollarSign,
   },
+  {
+    href: "/admin/home-content",
+    label: "Page d'accueil",
+    icon: Home,
+  },
 ];
 
 const settingsLinks = [
