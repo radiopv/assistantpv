@@ -7,6 +7,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { detectFace } from "@/utils/faceDetection";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -36,6 +38,21 @@ const formatAge = (birthDate: string | undefined | null) => {
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const processedImages = useRef<Set<string>>(new Set());
+
+  const handleImageLoad = async (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
+    const imgElement = event.target as HTMLImageElement;
+    
+    if (processedImages.current.has(photoUrl)) return;
+    
+    try {
+      const objectPosition = await detectFace(imgElement);
+      imgElement.style.objectPosition = objectPosition;
+      processedImages.current.add(photoUrl);
+    } catch (error) {
+      console.error('Error processing image:', error);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -70,8 +87,9 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               <img
                 src={child.photo_url || "/placeholder.svg"}
                 alt={child.name}
-                className="w-full h-full object-cover"
-                style={{ objectPosition: "center 20%" }} // Adjust to focus on face area
+                className="w-full h-full object-cover transition-transform duration-300"
+                onLoad={(e) => handleImageLoad(e, child.photo_url)}
+                crossOrigin="anonymous"
               />
             </div>
             <div className="p-4 space-y-4">
