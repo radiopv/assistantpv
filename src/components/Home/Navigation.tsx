@@ -1,15 +1,34 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart } from "lucide-react";
+import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
+import { toast } from "@/components/ui/use-toast";
 
 export const Navigation = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
 
   const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor';
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast({
+        title: "Déconnexion réussie",
+        description: "À bientôt !",
+      });
+      navigate("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+      toast({
+        title: "Erreur lors de la déconnexion",
+        description: "Veuillez réessayer",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <nav className="bg-white shadow-sm">
@@ -49,14 +68,6 @@ export const Navigation = () => {
               <HelpCircle className="h-4 w-4 mr-2" />
               FAQ
             </Button>
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/sponsor-dashboard")}
-              className="text-primary"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Sponsors
-            </Button>
 
             {/* Assistant/Admin Menu Items */}
             {isAssistant && (
@@ -73,25 +84,46 @@ export const Navigation = () => {
 
           {/* Right side menu items */}
           <div className="flex items-center gap-4">
-            {isSponsor && (
+            {user ? (
+              <>
+                {isSponsor && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate("/sponsor-dashboard")}
+                    className="text-primary"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Espace parrain
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/messages")}
+                  className="text-primary"
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  Messages
+                </Button>
+                <UserProfileMenu />
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="text-primary"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Déconnexion
+                </Button>
+              </>
+            ) : (
               <Button
                 variant="ghost"
-                onClick={() => navigate("/sponsor-dashboard")}
+                onClick={() => navigate("/login")}
                 className="text-primary"
               >
-                <User className="h-4 w-4 mr-2" />
-                Espace parrain
+                <LogIn className="h-4 w-4 mr-2" />
+                Connexion
               </Button>
             )}
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/messages")}
-              className="text-primary"
-            >
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Messages
-            </Button>
-            <UserProfileMenu />
           </div>
         </div>
       </div>
