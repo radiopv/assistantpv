@@ -4,6 +4,7 @@ import { DashboardActions } from "./DashboardActions";
 import { PhotoAlbumSection } from "./PhotoAlbumSection";
 import { VisitsSection } from "./VisitsSection";
 import { ImportantDatesCard } from "./ImportantDatesCard";
+import { StatisticsSection } from "./StatisticsSection";
 
 interface DashboardTabsProps {
   sponsorships: any[];
@@ -14,10 +15,11 @@ interface DashboardTabsProps {
 export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: DashboardTabsProps) => {
   return (
     <Tabs defaultValue="actions" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
+      <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="actions">Actions</TabsTrigger>
         <TabsTrigger value="gallery">Album Photos</TabsTrigger>
         <TabsTrigger value="visits">Visites Prévues</TabsTrigger>
+        <TabsTrigger value="statistics">Statistiques</TabsTrigger>
       </TabsList>
 
       <TabsContent value="actions">
@@ -47,6 +49,10 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
             />
           ))}
         </Card>
+      </TabsContent>
+
+      <TabsContent value="statistics">
+        <StatisticsSection />
       </TabsContent>
     </Tabs>
   );
