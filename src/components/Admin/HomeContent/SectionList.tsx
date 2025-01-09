@@ -52,20 +52,27 @@ export const SectionList = ({ sections }: SectionListProps) => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Update order_index for all affected items
+    // Update all affected sections with new order_index values
     const updates = items.map((item, index) => ({
       id: item.id,
-      order_index: index
+      updates: { order_index: index }
     }));
 
     try {
-      await Promise.all(
-        updates.map(({ id, order_index }) =>
-          updateSection.mutateAsync({ id, updates: { order_index } })
-        )
-      );
+      // Execute all updates in sequence
+      for (const update of updates) {
+        await updateSection.mutateAsync(update);
+      }
+
+      toast("Ordre mis à jour", {
+        description: "L'ordre des sections a été mis à jour avec succès"
+      });
     } catch (error) {
       console.error('Error reordering sections:', error);
+      toast("Erreur", {
+        description: "Une erreur est survenue lors de la réorganisation des sections",
+        style: { backgroundColor: 'red', color: 'white' }
+      });
     }
   };
 
