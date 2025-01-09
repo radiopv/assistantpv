@@ -18,14 +18,14 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <LanguageProvider>
+      <LanguageProvider>
+        <BrowserRouter>
           <AuthProvider>
             <AppRoutes />
             <Toaster />
           </AuthProvider>
-        </LanguageProvider>
-      </BrowserRouter>
+        </BrowserRouter>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
