@@ -3,32 +3,23 @@ import * as faceapi from 'face-api.js';
 let modelsLoaded = false;
 let loadingPromise: Promise<void> | null = null;
 
+const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+
 export async function loadFaceDetectionModels() {
   if (modelsLoaded) return;
   
   // If already loading, return the existing promise
   if (loadingPromise) return loadingPromise;
   
-  console.log('Starting to load face detection models...');
-  
-  // Check if models directory exists
-  try {
-    const response = await fetch('/models/tiny_face_detector_model-weights_manifest.json');
-    if (!response.ok) {
-      throw new Error('Models directory not found. Please ensure models are in /public/models/');
-    }
-  } catch (error) {
-    console.error('Error checking models directory:', error);
-    throw new Error('Face detection models not found in /public/models/. Please ensure all required models are present.');
-  }
+  console.log('Starting to load face detection models from CDN...');
   
   loadingPromise = Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
-    faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-    faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+    faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
   ]).then(() => {
     modelsLoaded = true;
-    console.log('Face detection models loaded successfully');
+    console.log('Face detection models loaded successfully from CDN');
   }).catch((error) => {
     console.error('Detailed error loading face detection models:', error);
     modelsLoaded = false;
@@ -42,7 +33,7 @@ export async function loadFaceDetectionModels() {
 export async function detectFace(imgElement: HTMLImageElement): Promise<string> {
   try {
     if (!modelsLoaded) {
-      console.log('Models not loaded, attempting to load...');
+      console.log('Models not loaded, attempting to load from CDN...');
       await loadFaceDetectionModels();
     }
 
