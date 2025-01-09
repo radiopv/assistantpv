@@ -26,7 +26,10 @@ export const useSponsorshipActions = (refetch: () => void) => {
       // First update the sponsorship status
       const { error: sponsorshipError } = await supabase
         .from('sponsorships')
-        .update({ status: 'ended' })
+        .update({ 
+          status: 'ended',
+          end_date: new Date().toISOString()
+        })
         .eq('sponsor_id', sponsorId)
         .eq('child_id', childId);
 
@@ -44,11 +47,23 @@ export const useSponsorshipActions = (refetch: () => void) => {
 
       if (childError) throw childError;
 
-      toast.success(t("childRemoved"));
+      // Create notification
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .insert({
+          recipient_id: sponsorId,
+          type: 'sponsorship_ended',
+          title: 'Fin de parrainage',
+          content: 'Le parrainage a été terminé.',
+          created_at: new Date().toISOString()
+        });
+
+      if (notificationError) throw notificationError;
+
       refetch();
     } catch (error) {
       console.error('Error removing child:', error);
-      toast.error(t("errorRemovingChild"));
+      throw error;
     }
   };
 
@@ -60,7 +75,8 @@ export const useSponsorshipActions = (refetch: () => void) => {
         .insert({
           sponsor_id: sponsorId,
           child_id: childId,
-          status: 'active'
+          status: 'active',
+          start_date: new Date().toISOString()
         });
 
       if (sponsorshipError) throw sponsorshipError;
@@ -70,7 +86,8 @@ export const useSponsorshipActions = (refetch: () => void) => {
         .from('children')
         .update({ 
           is_sponsored: true,
-          sponsor_id: sponsorId 
+          sponsor_id: sponsorId,
+          status: 'sponsored'
         })
         .eq('id', childId);
 

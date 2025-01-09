@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface SponsorCardProps {
   sponsor: any;
@@ -21,6 +22,20 @@ export const SponsorCard = ({
   availableChildren
 }: SponsorCardProps) => {
   const [showAvailableChildren, setShowAvailableChildren] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const handleRemoveChild = async (sponsorId: string, childId: string) => {
+    try {
+      setIsRemoving(true);
+      await onRemoveChild(sponsorId, childId);
+      toast.success("Enfant retiré avec succès");
+    } catch (error) {
+      console.error("Error removing child:", error);
+      toast.error("Erreur lors de la suppression de l'enfant");
+    } finally {
+      setIsRemoving(false);
+    }
+  };
 
   return (
     <Card className="p-4">
@@ -61,7 +76,8 @@ export const SponsorCard = ({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => onRemoveChild(sponsor.id, sponsorship.children.id)}
+              onClick={() => handleRemoveChild(sponsor.id, sponsorship.children.id)}
+              disabled={isRemoving}
               className="text-red-500 hover:text-red-600 hover:bg-red-50"
             >
               <X className="h-4 w-4" />
@@ -81,7 +97,7 @@ export const SponsorCard = ({
         {showAvailableChildren ? "Masquer les enfants disponibles" : "Ajouter un enfant"}
       </Button>
 
-      {/* Liste des enfants disponibles (visible uniquement si showAvailableChildren est true) */}
+      {/* Liste des enfants disponibles */}
       {showAvailableChildren && (
         <div className="mt-4 space-y-2 max-h-60 overflow-y-auto">
           {availableChildren.map((child) => (
