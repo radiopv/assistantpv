@@ -17,38 +17,65 @@ export const Navigation = () => {
   return (
     <nav className="bg-white shadow-sm">
       <div className="container mx-auto px-4 py-3">
-        <div className="flex flex-col gap-4">
-          {/* Public Navigation - Always visible */}
-          <div className="flex justify-between items-center">
-            <div className="flex space-x-4">
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/available-children")}
-                className="text-primary"
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Enfants disponibles
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/public-donations")}
-                className="text-primary"
-              >
-                <Gift className="h-4 w-4 mr-2" />
-                Donations
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/faq")}
-                className="text-primary"
-              >
-                <FileText className="h-4 w-4 mr-2" />
-                FAQ
-              </Button>
-            </div>
+        <div className="flex justify-between items-center">
+          <div className="flex space-x-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/available-children")}
+              className="text-primary"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Enfants disponibles
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/public-donations")}
+              className="text-primary"
+            >
+              <Gift className="h-4 w-4 mr-2" />
+              Donations
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/faq")}
+              className="text-primary"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              FAQ
+            </Button>
+            {isAssistant && (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/dashboard")}
+                  className="text-primary"
+                >
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Tableau de bord
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/children")}
+                  className="text-primary"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Enfants
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/assistant-photos")}
+                  className="text-primary"
+                >
+                  <Image className="h-4 w-4 mr-2" />
+                  Photos
+                </Button>
+              </>
+            )}
+          </div>
 
+          <div className="flex items-center gap-4">
             {isSponsor ? (
-              <div className="flex items-center gap-4">
+              <>
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/messages")}
@@ -65,7 +92,7 @@ export const Navigation = () => {
                   <User className="h-4 w-4" />
                   Espace parrain
                 </Button>
-              </div>
+              </>
             ) : !isAssistant && (
               <Button
                 variant="default"
@@ -77,36 +104,6 @@ export const Navigation = () => {
               </Button>
             )}
           </div>
-
-          {/* Admin/Assistant Navigation */}
-          {isAssistant && (
-            <div className="flex space-x-4 pt-2 border-t">
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/dashboard")}
-                className="text-primary"
-              >
-                <LayoutDashboard className="h-4 w-4 mr-2" />
-                Tableau de bord
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/children")}
-                className="text-primary"
-              >
-                <Users className="h-4 w-4 mr-2" />
-                Enfants
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/assistant-photos")}
-                className="text-primary"
-              >
-                <Image className="h-4 w-4 mr-2" />
-                Photos
-              </Button>
-            </div>
-          )}
         </div>
       </div>
     </nav>
