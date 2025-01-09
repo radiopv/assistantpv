@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 
 export const Navigation = () => {
   const navigate = useNavigate();
@@ -48,6 +49,14 @@ export const Navigation = () => {
               <HelpCircle className="h-4 w-4 mr-2" />
               FAQ
             </Button>
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/sponsors")}
+              className="text-primary"
+            >
+              <Users className="h-4 w-4 mr-2" />
+              Sponsors
+            </Button>
 
             {/* Assistant/Admin Menu Items */}
             {isAssistant && (
@@ -64,35 +73,25 @@ export const Navigation = () => {
 
           {/* Right side menu items */}
           <div className="flex items-center gap-4">
-            {isSponsor ? (
-              <>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/messages")}
-                  className="text-primary"
-                >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Messages
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/sponsor-dashboard")}
-                  className="flex items-center gap-2 text-primary"
-                >
-                  <User className="h-4 w-4" />
-                  Espace parrain
-                </Button>
-              </>
-            ) : !isAssistant && (
+            {isSponsor && (
               <Button
-                variant="default"
-                onClick={() => navigate("/login")}
-                className="flex items-center gap-2"
+                variant="ghost"
+                onClick={() => navigate("/sponsor-dashboard")}
+                className="text-primary"
               >
-                <User className="h-4 w-4" />
-                Se connecter
+                <User className="h-4 w-4 mr-2" />
+                Espace parrain
               </Button>
             )}
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/messages")}
+              className="text-primary"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Messages
+            </Button>
+            <UserProfileMenu />
           </div>
         </div>
       </div>
