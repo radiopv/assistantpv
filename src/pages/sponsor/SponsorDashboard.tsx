@@ -17,24 +17,11 @@ const SponsorDashboard = () => {
     queryFn: async () => {
       if (!user?.id) return null;
       
-      // Utilisons la même structure de requête que celle qui fonctionne pour les témoignages
       const { data, error } = await supabase
         .from("sponsorships")
         .select(`
           *,
-          children (
-            id,
-            name,
-            birth_date,
-            photo_url,
-            city,
-            needs,
-            description,
-            story,
-            comments,
-            age,
-            gender
-          )
+          children (*)
         `)
         .eq("sponsor_id", user.id)
         .eq("status", "active");
