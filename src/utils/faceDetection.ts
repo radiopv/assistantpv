@@ -1,27 +1,33 @@
 import * as faceapi from 'face-api.js';
 
 let modelsLoaded = false;
+let loadingPromise: Promise<void> | null = null;
 
 export async function loadFaceDetectionModels() {
   if (modelsLoaded) return;
   
-  try {
-    await Promise.all([
-      faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
-      faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-    ]);
+  // If already loading, return the existing promise
+  if (loadingPromise) return loadingPromise;
+  
+  loadingPromise = Promise.all([
+    faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
+    faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
+  ]).then(() => {
     modelsLoaded = true;
     console.log('Face detection models loaded successfully');
-  } catch (error) {
+  }).catch((error) => {
     console.error('Error loading face detection models:', error);
-  }
+    // Reset loading state so we can try again
+    loadingPromise = null;
+    throw error;
+  });
+
+  return loadingPromise;
 }
 
 export async function detectFace(imgElement: HTMLImageElement): Promise<string> {
   try {
-    if (!modelsLoaded) {
-      await loadFaceDetectionModels();
-    }
+    await loadFaceDetectionModels();
 
     const detection = await faceapi.detectSingleFace(imgElement);
     

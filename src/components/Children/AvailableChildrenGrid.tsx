@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
-import { detectFace } from "@/utils/faceDetection";
+import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -39,6 +39,13 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   const { t } = useLanguage();
   const navigate = useNavigate();
   const processedImages = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    // Load models when component mounts
+    loadFaceDetectionModels().catch(error => {
+      console.error('Failed to load face detection models:', error);
+    });
+  }, []);
 
   const handleImageLoad = async (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
     const imgElement = event.target as HTMLImageElement;
