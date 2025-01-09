@@ -42,6 +42,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedChild, setEditedChild] = useState(child);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleInputChange = (field: string, value: string) => {
     setEditedChild(prev => ({
@@ -130,6 +131,10 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
         isSponsored={child.is_sponsored}
         editing={isEditing}
         onNameChange={(value) => handleInputChange('name', value)}
+        translations={{
+          sponsored: t('sponsored'),
+          available: t('available')
+        }}
       />
 
       <div className="p-4 space-y-4">

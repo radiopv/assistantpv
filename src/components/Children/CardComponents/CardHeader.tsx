@@ -5,7 +5,10 @@ interface CardHeaderProps {
   isSponsored: boolean;
   editing: boolean;
   onNameChange: (value: string) => void;
-  translations: any;
+  translations: {
+    sponsored: string;
+    available: string;
+  };
 }
 
 export const CardHeader = ({ name, isSponsored, editing, onNameChange, translations }: CardHeaderProps) => {
