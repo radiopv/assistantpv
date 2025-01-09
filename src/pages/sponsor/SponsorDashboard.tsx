@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DashboardTabs } from "@/components/Sponsors/Dashboard/DashboardTabs";
 import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -38,18 +38,13 @@ const SponsorDashboard = () => {
 
       if (error) {
         console.error("Error fetching sponsorships:", error);
-        toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger vos parrainages"
-        });
-        throw error;
+        toast.error("Impossible de charger vos parrainages");
+        return null;
       }
 
-      console.log("Fetched sponsorships:", data); // Debug log
       return data;
     },
-    enabled: !!user?.id
+    enabled: !!user?.id // Only run query when we have a user ID
   });
 
   const { data: plannedVisits, isLoading: visitsLoading } = useQuery({
@@ -66,12 +61,13 @@ const SponsorDashboard = () => {
 
       if (error) {
         console.error("Error fetching planned visits:", error);
-        throw error;
+        toast.error("Impossible de charger vos visites prévues");
+        return null;
       }
 
       return data;
     },
-    enabled: !!user?.id
+    enabled: !!user?.id // Only run query when we have a user ID
   });
 
   if (!user) {
@@ -111,7 +107,7 @@ const SponsorDashboard = () => {
 
       <DashboardTabs 
         sponsorships={sponsorships}
-        userId={user?.id || ''}
+        userId={user.id}
         plannedVisits={plannedVisits || []}
       />
 
@@ -120,7 +116,7 @@ const SponsorDashboard = () => {
           <SponsoredChildSection
             key={sponsorship.id}
             sponsorship={sponsorship}
-            userId={user?.id || ''}
+            userId={user.id}
           />
         ))}
       </div>
