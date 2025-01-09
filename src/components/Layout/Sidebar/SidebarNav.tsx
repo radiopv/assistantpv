@@ -7,7 +7,7 @@ import {
   Settings,
   CheckSquare,
   Camera,
-  Photo,
+  Image,
   MessageSquare,
   UserCheck,
   Globe,
@@ -115,7 +115,7 @@ export const SidebarNav = () => {
     {
       href: "/media-management",
       label: t("sidebar.mediaManagement"),
-      icon: Photo,
+      icon: Image,
     },
     {
       href: "/messages",
