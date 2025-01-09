@@ -84,20 +84,26 @@ export const SponsorsList = ({
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       
-      // Ne garder que les parrainages actifs et approuvés, en supprimant les doublons
-      const activeSponshorships = sponsor.sponsorships?.reduce((acc: any[], current: any) => {
-        // Vérifier si le parrainage est actif et a un enfant associé
-        if (current.status === 'active' && current.children) {
-          // Vérifier si nous avons déjà cet enfant dans l'accumulateur
-          const exists = acc.find((s: any) => s.children.id === current.children.id);
-          if (!exists) {
-            acc.push(current);
-          }
-        }
-        return acc;
-      }, []) || [];
+      // Filtrer uniquement les parrainages actifs avec des enfants valides
+      const validSponshorships = sponsor.sponsorships?.filter((s: any) => {
+        return s.status === 'active' && s.children && s.children.id;
+      }) || [];
 
-      const hasActiveSponshorships = activeSponshorships.length > 0;
+      // Supprimer les doublons en utilisant un Set pour les IDs des enfants
+      const uniqueChildIds = new Set();
+      const uniqueSponshorships = validSponshorships.filter((s: any) => {
+        const childId = s.children.id;
+        if (!uniqueChildIds.has(childId)) {
+          uniqueChildIds.add(childId);
+          return true;
+        }
+        return false;
+      });
+
+      // Mettre à jour les parrainages du sponsor
+      sponsor.sponsorships = uniqueSponshorships;
+
+      const hasActiveSponshorships = uniqueSponshorships.length > 0;
       return searchString.includes(searchTermLower) && 
              (isActive ? hasActiveSponshorships : !hasActiveSponshorships);
     });
@@ -133,19 +139,7 @@ export const SponsorsList = ({
           {filterAndSortSponsors(sponsors, true).map((sponsor) => (
             <SponsorListItem
               key={sponsor.id}
-              sponsor={{
-                ...sponsor,
-                // Ne garder que les parrainages actifs et approuvés, en supprimant les doublons
-                sponsorships: sponsor.sponsorships?.reduce((acc: any[], current: any) => {
-                  if (current.status === 'active' && current.children) {
-                    const exists = acc.find((s: any) => s.children.id === current.children.id);
-                    if (!exists) {
-                      acc.push(current);
-                    }
-                  }
-                  return acc;
-                }, [])
-              }}
+              sponsor={sponsor}
               onAddChild={handleAddChildClick}
               onStatusChange={handleStatusChange}
               onVerificationChange={handleVerificationChange}
