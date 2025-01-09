@@ -18,7 +18,8 @@ const Home = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('homepage_sections')
-        .select('*');
+        .select('*')
+        .order('order_index');
       if (error) throw error;
       return data;
     }
