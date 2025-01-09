@@ -22,10 +22,8 @@ interface ChildCardProps {
 }
 
 const formatAge = (birthDate: string | undefined | null) => {
-  const { t } = useLanguage();
-  
   if (!birthDate) {
-    return t("ageNotAvailable");
+    return "Âge non disponible";
   }
 
   const today = new Date();
@@ -34,14 +32,13 @@ const formatAge = (birthDate: string | undefined | null) => {
   
   if (years === 0) {
     const months = differenceInMonths(today, birth);
-    return `${months} ${t("months")}`;
+    return `${months} mois`;
   }
   
-  return `${years} ${t("years")}`;
+  return `${years} ans`;
 };
 
 export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
-  const { t } = useLanguage();
   const [isEditing, setIsEditing] = useState(false);
   const [editedChild, setEditedChild] = useState(child);
   const navigate = useNavigate();
@@ -91,8 +88,8 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
       );
 
       toast({
-        title: t("childUpdated"),
-        description: t("childUpdateSuccess"),
+        title: "Mise à jour réussie",
+        description: "Les informations ont été mises à jour avec succès.",
       });
       
       setIsEditing(false);
@@ -100,8 +97,8 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
       console.error('Error updating child:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("childUpdateError"),
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la mise à jour.",
       });
     }
   };
@@ -133,17 +130,16 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
         isSponsored={child.is_sponsored}
         editing={isEditing}
         onNameChange={(value) => handleInputChange('name', value)}
-        translations={t}
       />
 
       <div className="p-4 space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
           <div>
-            <p className="text-gray-400">{t("age")}</p>
+            <p className="text-gray-400">Âge</p>
             <p className="font-medium">{formatAge(child.birth_date)}</p>
           </div>
           <div>
-            <p className="text-gray-400">{t("city")}</p>
+            <p className="text-gray-400">Ville</p>
             {isEditing ? (
               <Input
                 value={editedChild.city}
@@ -156,7 +152,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
           </div>
           {child.is_sponsored && child.sponsor_name && (
             <div className="col-span-2">
-              <p className="text-gray-400">{t("sponsor")}</p>
+              <p className="text-gray-400">Parrain/Marraine</p>
               <p className="font-medium text-blue-600">{child.sponsor_name}</p>
             </div>
           )}
@@ -166,7 +162,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
           {isEditing ? (
             <>
               <div>
-                <p className="text-sm text-gray-500 mb-1">{t("description")}</p>
+                <p className="text-sm text-gray-500 mb-1">Description</p>
                 <Textarea
                   value={editedChild.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
@@ -174,7 +170,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
                 />
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1">{t("story")}</p>
+                <p className="text-sm text-gray-500 mb-1">Histoire</p>
                 <Textarea
                   value={editedChild.story}
                   onChange={(e) => handleInputChange('story', e.target.value)}
@@ -182,7 +178,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
                 />
               </div>
               <div>
-                <p className="text-sm text-gray-500 mb-1">{t("comments")}</p>
+                <p className="text-sm text-gray-500 mb-1">Commentaires</p>
                 <Textarea
                   value={editedChild.comments}
                   onChange={(e) => handleInputChange('comments', e.target.value)}
@@ -194,7 +190,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
             <>
               {child.description && (
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">{t("description")}</p>
+                  <p className="text-sm text-gray-500 mb-1">Description</p>
                   <ScrollArea className="h-20">
                     <p className="text-sm text-gray-600">{child.description}</p>
                   </ScrollArea>
@@ -202,7 +198,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
               )}
               {child.story && (
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">{t("story")}</p>
+                  <p className="text-sm text-gray-500 mb-1">Histoire</p>
                   <ScrollArea className="h-20">
                     <p className="text-sm text-gray-600">{child.story}</p>
                   </ScrollArea>
@@ -210,7 +206,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
               )}
               {child.comments && (
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">{t("comments")}</p>
+                  <p className="text-sm text-gray-500 mb-1">Commentaires</p>
                   <ScrollArea className="h-20">
                     <p className="text-sm text-gray-600">{child.comments}</p>
                   </ScrollArea>
@@ -221,7 +217,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
         </div>
 
         <div>
-          <p className="text-sm text-gray-500 mb-1">{t("needs")}</p>
+          <p className="text-sm text-gray-500 mb-1">Besoins</p>
           {isEditing ? (
             <NeedCheckboxes
               needs={convertJsonToNeeds(editedChild.needs)}
@@ -255,7 +251,6 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
           onSave={handleSave}
           onCancel={() => setIsEditing(false)}
           onLearnMore={handleLearnMore}
-          translations={t}
         />
       </div>
     </Card>

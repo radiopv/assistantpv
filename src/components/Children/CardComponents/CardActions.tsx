@@ -7,16 +7,14 @@ interface CardActionsProps {
   onSave: () => void;
   onCancel: () => void;
   onLearnMore: (e: React.MouseEvent) => void;
-  translations: any;
 }
 
 export const CardActions = ({ 
   editing, 
   onEdit, 
   onSave, 
-  onCancel, 
-  onLearnMore,
-  translations 
+  onCancel,
+  onLearnMore
 }: CardActionsProps) => {
   return (
     <div className="flex flex-col items-center gap-2">
@@ -26,13 +24,13 @@ export const CardActions = ({
             className="w-full sm:w-3/4 bg-green-600 hover:bg-green-700 text-white"
             onClick={onSave}
           >
-            {translations.save}
+            Enregistrer
           </Button>
           <Button 
             className="w-full sm:w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-900"
             onClick={onCancel}
           >
-            {translations.cancel}
+            Annuler
           </Button>
         </>
       ) : (
@@ -42,14 +40,14 @@ export const CardActions = ({
             variant="outline"
             onClick={onEdit}
           >
-            {translations.edit}
+            Modifier
           </Button>
           <Button
             className="w-full sm:w-3/4 flex items-center gap-2 bg-primary hover:bg-primary/90 text-white"
             onClick={onLearnMore}
           >
             <Info className="h-4 w-4" />
-            {translations.learnMore}
+            En savoir plus
           </Button>
         </>
       )}
