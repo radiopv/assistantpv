@@ -5,6 +5,7 @@ import { differenceInYears, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -74,7 +75,6 @@ const ChildDetails = () => {
   };
 
   if (error) {
-    toast.error(t("errorLoadingChildDetails"));
     return (
       <div className="container mx-auto p-4">
         <Button onClick={() => navigate(-1)} variant="ghost" className="mb-4">
