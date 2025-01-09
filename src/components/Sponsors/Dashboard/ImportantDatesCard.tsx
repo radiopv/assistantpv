@@ -4,15 +4,18 @@ import { format, isValid, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface ImportantDatesCardProps {
-  birthDate: string;
   plannedVisits: Array<{
     id: string;
     start_date: string;
     end_date: string;
   }>;
+  birthDates: Array<{
+    childName: string;
+    birthDate: string;
+  }>;
 }
 
-export const ImportantDatesCard = ({ birthDate, plannedVisits }: ImportantDatesCardProps) => {
+export const ImportantDatesCard = ({ birthDates, plannedVisits }: ImportantDatesCardProps) => {
   const formatDate = (dateString: string) => {
     try {
       const date = parseISO(dateString);
@@ -36,10 +39,12 @@ export const ImportantDatesCard = ({ birthDate, plannedVisits }: ImportantDatesC
         </div>
         
         <div className="space-y-2">
-          <p className="flex items-center gap-2">
-            <Gift className="w-4 h-4 text-primary" />
-            Anniversaire : {formatDate(birthDate)}
-          </p>
+          {birthDates.map((child, index) => (
+            <p key={`${child.childName}-${index}`} className="flex items-center gap-2">
+              <Gift className="w-4 h-4 text-primary" />
+              Anniversaire de {child.childName} : {formatDate(child.birthDate)}
+            </p>
+          ))}
           
           {plannedVisits?.map((visit) => (
             <p key={visit.id} className="flex items-center gap-2">

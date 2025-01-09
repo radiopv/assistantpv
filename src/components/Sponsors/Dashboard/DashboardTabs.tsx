@@ -13,6 +13,11 @@ interface DashboardTabsProps {
 }
 
 export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: DashboardTabsProps) => {
+  const birthDates = sponsorships.map(s => ({
+    childName: s.children.name,
+    birthDate: s.children.birth_date
+  }));
+
   return (
     <Tabs defaultValue="actions" className="w-full">
       <TabsList className="grid w-full grid-cols-4">
@@ -41,13 +46,10 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
 
       <TabsContent value="visits">
         <Card className="p-6">
-          {sponsorships.map((sponsorship) => (
-            <ImportantDatesCard
-              key={sponsorship.id}
-              birthDate={sponsorship.children.birth_date}
-              plannedVisits={plannedVisits?.filter(v => v.sponsor_id === userId)}
-            />
-          ))}
+          <ImportantDatesCard
+            plannedVisits={plannedVisits?.filter(v => v.sponsor_id === userId)}
+            birthDates={birthDates}
+          />
         </Card>
       </TabsContent>
 
