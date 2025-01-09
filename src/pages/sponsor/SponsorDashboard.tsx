@@ -17,6 +17,7 @@ const SponsorDashboard = () => {
     queryFn: async () => {
       if (!user?.id) return null;
       
+      // Utilisons la même structure de requête que celle qui fonctionne pour les témoignages
       const { data, error } = await supabase
         .from("sponsorships")
         .select(`
@@ -48,7 +49,7 @@ const SponsorDashboard = () => {
         return null;
       }
 
-      console.log("Fetched sponsorships:", data); // Pour le débogage
+      console.log("Fetched sponsorships:", data);
       return data;
     },
     enabled: !!user?.id
