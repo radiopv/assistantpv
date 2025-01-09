@@ -22,7 +22,7 @@ export const frenchTranslations = {
   donationsSubtitle: "Découvrez toutes les actions menées par nos assistants à Cuba",
   noDonationsFound: "Aucun don trouvé",
   loading: "Chargement...",
-  error: "Une erreur est survenue",
+  errorMessage: "Une erreur est survenue lors de l'envoi de votre demande",
   searchDonation: "Rechercher un don",
   city: "Ville",
   allCities: "Toutes les villes",
@@ -50,7 +50,6 @@ export const frenchTranslations = {
   becomeSponsor: "Devenir parrain",
   sponsorshipDescription: "Aidez à changer la vie d'un enfant en devenant parrain",
   fullName: "Nom complet",
-  city: "Ville",
   phone: "Téléphone",
   email: "Email",
   facebookUrl: "Lien Facebook (optionnel)",
@@ -62,6 +61,5 @@ export const frenchTranslations = {
   submitRequest: "Envoyer ma demande",
   success: "Succès",
   sponsorshipRequestSubmitted: "Votre demande de parrainage a été envoyée avec succès",
-  error: "Erreur",
-  errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande",
+  error: "Erreur"
 };
