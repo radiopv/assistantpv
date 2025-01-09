@@ -9,6 +9,7 @@ import FAQ from "@/pages/public/FAQ";
 import AvailableChildren from "@/pages/public/AvailableChildren";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import ChildDetails from "@/pages/ChildDetails";
+import Statistics from "@/pages/public/Statistics";
 
 // Protected pages
 import Dashboard from "@/pages/Dashboard";
@@ -27,7 +28,7 @@ import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 import Translations from "@/pages/admin/Translations";
 import Validation from "@/pages/admin/Validation";
-import Statistics from "@/pages/admin/Statistics";
+import AdminStatistics from "@/pages/admin/Statistics";
 import Emails from "@/pages/admin/Emails";
 import AdminFAQ from "@/pages/admin/FAQ";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
@@ -46,6 +47,7 @@ export const AppRoutes = () => {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/public-donations" element={<PublicDonations />} />
+        <Route path="/statistics" element={<Statistics />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
         <Route path="/child-details/:id" element={<ChildDetails />} />
       </Route>
@@ -70,7 +72,7 @@ export const AppRoutes = () => {
         <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
         <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/validation" element={<Validation />} />
-        <Route path="/admin/statistics" element={<Statistics />} />
+        <Route path="/admin/statistics" element={<AdminStatistics />} />
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<AdminFAQ />} />
         <Route path="/admin/cities" element={<CitiesManagement />} />
