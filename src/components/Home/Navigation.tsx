@@ -1,11 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare } from "lucide-react";
+import { User, Gift, Users, MessageSquare, LayoutDashboard, Image } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const Navigation = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
 
   const handleSponsorClick = () => {
     navigate("/sponsor-dashboard");
@@ -18,22 +20,53 @@ export const Navigation = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <div className="flex space-x-4">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/available-children")}
-              className="text-primary"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Enfants disponibles
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/public-donations")}
-              className="text-primary"
-            >
-              <Gift className="h-4 w-4 mr-2" />
-              Donations
-            </Button>
+            {isAssistant ? (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/dashboard")}
+                  className="text-primary"
+                >
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  Tableau de bord
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/children")}
+                  className="text-primary"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Enfants
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/assistant-photos")}
+                  className="text-primary"
+                >
+                  <Image className="h-4 w-4 mr-2" />
+                  Photos
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/available-children")}
+                  className="text-primary"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  Enfants disponibles
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/public-donations")}
+                  className="text-primary"
+                >
+                  <Gift className="h-4 w-4 mr-2" />
+                  Donations
+                </Button>
+              </>
+            )}
           </div>
 
           {isSponsor ? (
@@ -55,7 +88,7 @@ export const Navigation = () => {
                 Espace parrain
               </Button>
             </div>
-          ) : (
+          ) : !isAssistant && (
             <Button
               variant="default"
               onClick={() => navigate("/login")}
