@@ -46,7 +46,7 @@ export const spanishTranslations = {
   anonymousSponsor: "Padrino anónimo",
   noTestimonials: "No hay testimonios disponibles",
 
-  // Añadido de traducciones para la página BecomeSponsor
+  // Traducciones para la página BecomeSponsor
   becomeSponsor: "Devenir parrain",
   sponsorshipDescription: "Aidez à changer la vie d'un enfant en devenant parrain",
   fullName: "Nom complet",
@@ -61,7 +61,6 @@ export const spanishTranslations = {
   submitRequest: "Envoyer ma demande",
   success: "Succès",
   sponsorshipRequestSubmitted: "Votre demande de parrainage a été envoyée avec succès",
-  error: "Erreur",
 
   // Traducciones para la página de niños disponibles
   availableChildren: "Niños disponibles para el apadrinamiento",
@@ -92,5 +91,5 @@ export const spanishTranslations = {
   actions: "Acciones",
   sponsorThisChild: "Apadrinar a este niño",
   sponsorshipRequestSent: "Su solicitud de apadrinamiento ha sido enviada con éxito",
-  errorRequestingSponsorship: "Se produjo un error al enviar su solicitud de apadrinamiento",
+  errorRequestingSponsorship: "Se produjo un error al enviar su solicitud de apadrinamiento"
 };
