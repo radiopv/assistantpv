@@ -11,10 +11,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
 import { ChildrenList } from "@/components/AssistantSponsorship/ChildrenList";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery({
     queryKey: ["sponsorships", user?.id],
@@ -43,6 +45,35 @@ const SponsorDashboard = () => {
       if (error) {
         console.error("Error fetching sponsorships:", error);
         toast.error("Impossible de charger vos parrainages");
+        return null;
+      }
+
+      return data;
+    },
+    enabled: !!user?.id
+  });
+
+  const { data: pendingRequests, isLoading: requestsLoading } = useQuery({
+    queryKey: ["sponsorship-requests", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+
+      const { data, error } = await supabase
+        .from("sponsorship_requests")
+        .select(`
+          *,
+          children (
+            name,
+            photo_url,
+            age,
+            city
+          )
+        `)
+        .eq("email", user.email)
+        .eq("status", "pending");
+
+      if (error) {
+        console.error("Error fetching requests:", error);
         return null;
       }
 
@@ -101,11 +132,12 @@ const SponsorDashboard = () => {
     );
   }
 
-  if (sponsorshipsLoading || visitsLoading) {
+  if (sponsorshipsLoading || visitsLoading || requestsLoading) {
     return <div className="container mx-auto p-4">Chargement...</div>;
   }
 
   const isNewSponsor = !sponsorships?.length;
+  const hasPendingRequests = pendingRequests && pendingRequests.length > 0;
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -114,7 +146,29 @@ const SponsorDashboard = () => {
         <UserProfileMenu />
       </div>
 
-      {isNewSponsor && (
+      {hasPendingRequests && (
+        <Alert>
+          <InfoIcon className="h-4 w-4" />
+          <AlertDescription className="space-y-4">
+            <div className="font-semibold">Votre demande de parrainage est en cours d'examen</div>
+            <p>
+              Nous avons bien reçu votre demande de parrainage et elle est actuellement en cours d'examen par notre équipe.
+              Vous recevrez une notification dès qu'elle sera approuvée.
+            </p>
+            <div className="mt-4">
+              <h3 className="font-semibold mb-2">Informations importantes sur le parrainage :</h3>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>Le parrainage est un engagement à long terme pour soutenir un enfant dans son développement</li>
+                <li>Vous recevrez régulièrement des nouvelles et des photos de l'enfant que vous parrainez</li>
+                <li>Vous pouvez communiquer avec l'enfant via notre plateforme</li>
+                <li>Votre soutien aide à fournir une éducation, des soins de santé et un meilleur avenir à l'enfant</li>
+              </ul>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {isNewSponsor && !hasPendingRequests && (
         <div className="space-y-6">
           <Alert>
             <InfoIcon className="h-4 w-4" />
