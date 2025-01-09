@@ -66,8 +66,6 @@ export const frenchTranslations = {
   // Traductions pour la page des enfants disponibles
   availableChildren: "Enfants disponibles pour le parrainage",
   searchChild: "Rechercher un enfant",
-  city: "Ville",
-  allCities: "Toutes les villes",
   allGenders: "Tous les genres",
   masculine: "Garçon",
   feminine: "Fille",
@@ -79,7 +77,6 @@ export const frenchTranslations = {
   sponsored: "Parrainé",
   pending: "En attente",
   urgent: "Urgent",
-  years: "ans",
   months: "mois",
   ageNotAvailable: "Âge non disponible",
   noChildren: "Aucun enfant disponible",
@@ -90,4 +87,7 @@ export const frenchTranslations = {
   errorSponsorClick: "Erreur lors de la demande de parrainage",
   noUrgentChildren: "Aucun enfant avec des besoins urgents",
   noCategoryChildren: "Aucun enfant dans cette catégorie",
+  gridView: "Vue en grille",
+  tableView: "Vue en tableau",
+  actions: "Actions"
 };
