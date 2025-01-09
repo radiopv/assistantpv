@@ -34,31 +34,28 @@ export const DonationsList = ({ donations, viewMode }: DonationsListProps) => {
   }
 
   return (
-    <motion.div 
-      className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "space-y-6"}
-      initial="hidden"
-      animate="visible"
-      variants={{
-        visible: {
-          transition: {
-            staggerChildren: 0.1
-          }
-        }
-      }}
+    <div 
+      className={cn(
+        "w-full",
+        viewMode === "grid" 
+          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" 
+          : "space-y-8"
+      )}
     >
       <AnimatePresence>
         {donations.map((donation) => (
           <motion.div
             key={donation.id}
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 }
-            }}
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
           >
             <DonationCard donation={donation} />
           </motion.div>
         ))}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };

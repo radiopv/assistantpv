@@ -5,6 +5,7 @@ import { DonationCardMedia } from "./DonationCardMedia";
 import { useDonationMedia } from "./hooks/useDonationMedia";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { RefetchOptions } from "@tanstack/react-query";
+import { motion } from "framer-motion";
 
 interface DonationCardProps {
   donation: {
@@ -36,29 +37,39 @@ export const DonationCard = ({ donation, onDelete, canDelete }: DonationCardProp
   const t = translations[language as keyof typeof translations];
 
   return (
-    <Card className="p-4 w-full max-w-full overflow-hidden">
-      <div className="space-y-4 w-full">
-        <DonationCardHeader
-          donation={donation}
-        />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className="overflow-hidden bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 border-cuba-turquoise/20">
+        <div className="p-6 space-y-6">
+          <DonationCardHeader donation={donation} />
 
-        <DonationDetails donation={donation} />
-        
-        {donation.comments && (
-          <div className="w-full break-words">
-            <p className="text-gray-500">{t.comments}</p>
-            <p className="text-sm">{donation.comments}</p>
+          <div className="border-t border-cuba-turquoise/10 pt-4">
+            <DonationDetails donation={donation} />
           </div>
-        )}
+          
+          {donation.comments && (
+            <div className="border-t border-cuba-turquoise/10 pt-4">
+              <h4 className="text-sm font-medium text-gray-500 mb-2">{t.comments}</h4>
+              <p className="text-sm text-gray-700 leading-relaxed">{donation.comments}</p>
+            </div>
+          )}
 
-        <DonationCardMedia
-          donationId={donation.id}
-          photos={photos}
-          videos={videos}
-          onPhotosUpdate={() => {}}
-          onVideosUpdate={() => {}}
-        />
-      </div>
-    </Card>
+          {(photos.length > 0 || videos.length > 0) && (
+            <div className="border-t border-cuba-turquoise/10 pt-4">
+              <DonationCardMedia
+                donationId={donation.id}
+                photos={photos}
+                videos={videos}
+                onPhotosUpdate={() => {}}
+                onVideosUpdate={() => {}}
+              />
+            </div>
+          )}
+        </div>
+      </Card>
+    </motion.div>
   );
 };

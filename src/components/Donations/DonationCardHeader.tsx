@@ -1,59 +1,61 @@
-import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
-import { DonationHeader } from "./DonationHeader";
+import { format } from "date-fns";
+import { fr, es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { User } from "lucide-react";
 
 interface DonationCardHeaderProps {
   donation: {
-    id: string;
     assistant_name: string;
-    city: string;
-    people_helped: number;
     donation_date: string;
     status: string;
   };
 }
 
-export const DonationCardHeader = ({
-  donation,
-}: DonationCardHeaderProps) => {
+export const DonationCardHeader = ({ donation }: DonationCardHeaderProps) => {
   const { language } = useLanguage();
 
   const translations = {
     fr: {
-      edit: "Modifier",
-      delete: "Supprimer",
-      areYouSure: "Êtes-vous sûr ?",
-      deleteWarning: "Cette action est irréversible. Le don et toutes les données associées seront définitivement supprimés.",
-      cancel: "Annuler",
-      confirm: "Confirmer"
+      donationBy: "Don par",
+      completed: "Complété",
+      inProgress: "En cours"
     },
     es: {
-      edit: "Editar",
-      delete: "Eliminar",
-      areYouSure: "¿Está seguro?",
-      deleteWarning: "Esta acción es irreversible. La donación y todos los datos asociados se eliminarán permanentemente.",
-      cancel: "Cancelar",
-      confirm: "Confirmar"
+      donationBy: "Donación por",
+      completed: "Completado",
+      inProgress: "En progreso"
     }
   };
 
   const t = translations[language as keyof typeof translations];
+  const locale = language === 'es' ? es : fr;
 
   return (
-    <div className="flex flex-col sm:flex-row justify-between items-start gap-4 w-full">
-      <DonationHeader donation={donation} />
+    <div className="flex justify-between items-start">
+      <div className="flex items-center space-x-3">
+        <div className="h-10 w-10 rounded-full bg-cuba-turquoise/10 flex items-center justify-center">
+          <User className="h-5 w-5 text-cuba-turquoise" />
+        </div>
+        <div>
+          <h3 className="font-medium text-gray-900">
+            {t.donationBy} <span className="text-cuba-turquoise">{donation.assistant_name}</span>
+          </h3>
+          <p className="text-sm text-gray-500">
+            {format(new Date(donation.donation_date), 'dd MMMM yyyy', { locale })}
+          </p>
+        </div>
+      </div>
+      <span
+        className={cn(
+          "px-3 py-1 rounded-full text-xs font-medium",
+          donation.status === "completed"
+            ? "bg-green-100 text-green-800"
+            : "bg-yellow-100 text-yellow-800"
+        )}
+      >
+        {donation.status === "completed" ? t.completed : t.inProgress}
+      </span>
     </div>
   );
 };
