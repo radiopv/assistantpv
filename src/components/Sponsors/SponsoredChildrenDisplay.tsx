@@ -15,42 +15,41 @@ export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisp
     navigate(`/children/${childId}/album`);
   };
 
-  // Filtrer les doublons en utilisant un Set pour garder une trace des IDs uniques
-  const uniqueSponsorships = sponsorships?.filter((sponsorship, index, self) => 
-    sponsorship.children && 
-    index === self.findIndex(s => s.children?.id === sponsorship.children?.id)
+  // Filtrer uniquement les parrainages actifs avec des enfants valides
+  const activeSponshorships = sponsorships?.filter(
+    (sponsorship) => 
+      sponsorship.status === 'active' && 
+      sponsorship.children
   );
 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Enfants parrainés</h3>
       <div className="grid gap-4">
-        {uniqueSponsorships?.map((sponsorship: any) => (
-          sponsorship.children && (
-            <Card key={sponsorship.id} className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={sponsorship.children.photo_url} alt={sponsorship.children.name} />
-                    <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-medium">{sponsorship.children.name}</p>
-                    <p className="text-xs text-gray-500">{sponsorship.children.city}</p>
-                  </div>
+        {activeSponshorships?.map((sponsorship: any) => (
+          <Card key={sponsorship.id} className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={sponsorship.children.photo_url} alt={sponsorship.children.name} />
+                  <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">{sponsorship.children.name}</p>
+                  <p className="text-xs text-gray-500">{sponsorship.children.city}</p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => viewAlbum(sponsorship.children.id)}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
               </div>
-            </Card>
-          )
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => viewAlbum(sponsorship.children.id)}
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+            </div>
+          </Card>
         ))}
-        {(!uniqueSponsorships || uniqueSponsorships.length === 0) && (
+        {(!activeSponshorships || activeSponshorships.length === 0) && (
           <p className="text-sm text-gray-500">Aucun enfant parrainé</p>
         )}
       </div>
