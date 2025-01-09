@@ -11,7 +11,7 @@ export const StatisticsSection = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
       if (error) throw error;
-      return data as SponsorshipConversionStats;
+      return data as unknown as SponsorshipConversionStats;
     }
   });
 
@@ -20,7 +20,7 @@ export const StatisticsSection = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');
       if (error) throw error;
-      return data as UserEngagementStats;
+      return data as unknown as UserEngagementStats;
     }
   });
 
