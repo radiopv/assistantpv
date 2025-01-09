@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { DonationCard } from "@/components/Donations/DonationCard";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 interface DonationsListProps {
   donations: any[];
