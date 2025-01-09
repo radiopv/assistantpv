@@ -24,22 +24,22 @@ const PublicLayout = () => {
   const menuItems = [
     {
       href: "/",
-      label: t("home"),
+      label: "Accueil",
       icon: LayoutDashboard,
     },
     {
       href: "/available-children",
-      label: t("childrenWaitingSponsorship"),
+      label: "Enfants disponibles",
       icon: Users,
     },
     {
       href: "/public-donations",
-      label: t("donations"),
+      label: "Dons",
       icon: Gift,
     },
     {
       href: "/faq",
-      label: t("faq"),
+      label: "FAQ",
       icon: HelpCircle,
     }
   ];
@@ -96,7 +96,7 @@ const PublicLayout = () => {
                   </div>
                 ) : (
                   <Link to="/login">
-                    <Button className="w-full">{t("login")}</Button>
+                    <Button className="w-full">Connexion</Button>
                   </Link>
                 )}
               </div>
@@ -148,7 +148,7 @@ const PublicLayout = () => {
                 </>
               ) : (
                 <Link to="/login">
-                  <Button>{t("login")}</Button>
+                  <Button>Connexion</Button>
                 </Link>
               )}
             </div>
