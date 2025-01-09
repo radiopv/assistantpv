@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import Login from "@/pages/auth/Login";
 import FAQ from "@/pages/public/FAQ";
 import AvailableChildren from "@/pages/public/AvailableChildren";
+import BecomeSponsor from "@/pages/BecomeSponsor";
 
 // Protected pages
 import Dashboard from "@/pages/Dashboard";
@@ -20,7 +21,6 @@ import Settings from "@/pages/Settings";
 import Tasks from "@/pages/Tasks";
 import AssistantPhotos from "@/pages/AssistantPhotos";
 import MediaManagement from "@/pages/MediaManagement";
-import BecomeSponsor from "@/pages/BecomeSponsor";
 import SponsorDashboard from "@/pages/SponsorDashboard";
 import PublicDonations from "@/pages/public/PublicDonations";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
@@ -45,6 +45,7 @@ export const AppRoutes = () => {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/available-children" element={<AvailableChildren />} />
         <Route path="/public-donations" element={<PublicDonations />} />
+        <Route path="/become-sponsor" element={<BecomeSponsor />} />
       </Route>
 
       {/* Protected routes */}
@@ -61,7 +62,6 @@ export const AppRoutes = () => {
         <Route path="/messages" element={<Messages />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
-        <Route path="/become-sponsor" element={<BecomeSponsor />} />
         <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
