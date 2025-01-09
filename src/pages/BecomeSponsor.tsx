@@ -1,13 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PersonalInfoFields } from "@/components/Sponsor/SponsorshipForm/PersonalInfoFields";
+import { SponsorshipTypeSelection } from "@/components/Sponsor/SponsorshipForm/SponsorshipTypeSelection";
 
 interface FormData {
   full_name: string;
@@ -97,98 +95,16 @@ const BecomeSponsor = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="full_name">{t("fullName")} *</Label>
-              <Input
-                id="full_name"
-                name="full_name"
-                required
-                value={formData.full_name}
-                onChange={handleChange}
-              />
-            </div>
+          <PersonalInfoFields 
+            formData={formData}
+            handleChange={handleChange}
+          />
 
-            <div className="space-y-2">
-              <Label htmlFor="city">{t("city")} *</Label>
-              <Input
-                id="city"
-                name="city"
-                required
-                value={formData.city}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">{t("email")} *</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone">{t("phone")}</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="facebook_url">{t("facebookUrl")}</Label>
-              <Input
-                id="facebook_url"
-                name="facebook_url"
-                type="url"
-                value={formData.facebook_url}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="motivation">{t("motivation")}</Label>
-              <Textarea
-                id="motivation"
-                name="motivation"
-                value={formData.motivation}
-                onChange={handleChange}
-                rows={4}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="is_long_term"
-                checked={formData.is_long_term}
-                onCheckedChange={() => handleCheckboxChange('is_long_term')}
-              />
-              <Label htmlFor="is_long_term">{t("longTermSponsorship")}</Label>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="is_one_time"
-                checked={formData.is_one_time}
-                onCheckedChange={() => handleCheckboxChange('is_one_time')}
-              />
-              <Label htmlFor="is_one_time">{t("oneTimeSponsorship")}</Label>
-            </div>
-
-            <p className="text-sm text-gray-500">
-              {t("sponsorshipTerminationNote")}
-            </p>
-          </div>
+          <SponsorshipTypeSelection
+            isLongTerm={formData.is_long_term}
+            isOneTime={formData.is_one_time}
+            onCheckboxChange={handleCheckboxChange}
+          />
 
           <Button
             type="submit"
