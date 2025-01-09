@@ -20,8 +20,25 @@ const SponsorDashboard = () => {
       const { data, error } = await supabase
         .from("sponsorships")
         .select(`
-          *,
-          children (*)
+          id,
+          sponsor_id,
+          child_id,
+          status,
+          start_date,
+          end_date,
+          children (
+            id,
+            name,
+            birth_date,
+            photo_url,
+            city,
+            needs,
+            description,
+            story,
+            comments,
+            age,
+            gender
+          )
         `)
         .eq("sponsor_id", user.id)
         .eq("status", "active");
