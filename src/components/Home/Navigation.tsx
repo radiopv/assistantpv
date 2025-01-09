@@ -51,7 +51,7 @@ export const Navigation = () => {
             </Button>
             <Button
               variant="ghost"
-              onClick={() => navigate("/sponsors")}
+              onClick={() => navigate("/sponsor-dashboard")}
               className="text-primary"
             >
               <Users className="h-4 w-4 mr-2" />
