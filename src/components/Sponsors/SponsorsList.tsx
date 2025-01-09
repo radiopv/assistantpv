@@ -85,13 +85,14 @@ export const SponsorsList = ({
       const searchTermLower = searchTerm.toLowerCase();
       
       // Ne garder que les parrainages actifs et approuvés, en supprimant les doublons
-      const activeSponshorships = sponsor.sponsorships?.filter((s: any) => 
-        s.status === 'active' && s.children
-      ).reduce((acc: any[], current: any) => {
-        // Vérifier si nous avons déjà cet enfant dans l'accumulateur
-        const exists = acc.find((s: any) => s.children.id === current.children.id);
-        if (!exists && current.children) {
-          acc.push(current);
+      const activeSponshorships = sponsor.sponsorships?.reduce((acc: any[], current: any) => {
+        // Vérifier si le parrainage est actif et a un enfant associé
+        if (current.status === 'active' && current.children) {
+          // Vérifier si nous avons déjà cet enfant dans l'accumulateur
+          const exists = acc.find((s: any) => s.children.id === current.children.id);
+          if (!exists) {
+            acc.push(current);
+          }
         }
         return acc;
       }, []) || [];
@@ -135,12 +136,12 @@ export const SponsorsList = ({
               sponsor={{
                 ...sponsor,
                 // Ne garder que les parrainages actifs et approuvés, en supprimant les doublons
-                sponsorships: sponsor.sponsorships?.filter((s: any) => 
-                  s.status === 'active' && s.children
-                ).reduce((acc: any[], current: any) => {
-                  const exists = acc.find((s: any) => s.children.id === current.children.id);
-                  if (!exists && current.children) {
-                    acc.push(current);
+                sponsorships: sponsor.sponsorships?.reduce((acc: any[], current: any) => {
+                  if (current.status === 'active' && current.children) {
+                    const exists = acc.find((s: any) => s.children.id === current.children.id);
+                    if (!exists) {
+                      acc.push(current);
+                    }
                   }
                   return acc;
                 }, [])
