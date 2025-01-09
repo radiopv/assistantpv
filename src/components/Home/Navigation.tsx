@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, LayoutDashboard, Image, HelpCircle } from "lucide-react";
+import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const Navigation = () => {
@@ -43,32 +43,14 @@ export const Navigation = () => {
 
             {/* Assistant/Admin Menu Items */}
             {isAssistant && (
-              <>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/dashboard")}
-                  className="text-primary"
-                >
-                  <LayoutDashboard className="h-4 w-4 mr-2" />
-                  Tableau de bord
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/children")}
-                  className="text-primary"
-                >
-                  <Users className="h-4 w-4 mr-2" />
-                  Enfants
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/assistant-photos")}
-                  className="text-primary"
-                >
-                  <Image className="h-4 w-4 mr-2" />
-                  Photos
-                </Button>
-              </>
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/dashboard")}
+                className="text-primary"
+              >
+                <LayoutDashboard className="h-4 w-4 mr-2" />
+                Tableau de bord
+              </Button>
             )}
           </div>
 
