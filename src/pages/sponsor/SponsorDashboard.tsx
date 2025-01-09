@@ -17,6 +17,8 @@ const SponsorDashboard = () => {
     queryFn: async () => {
       if (!user?.id) return null;
       
+      console.log("Fetching sponsorships for user:", user.id);
+      
       const { data, error } = await supabase
         .from("sponsorships")
         .select(`
