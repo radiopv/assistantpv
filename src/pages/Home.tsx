@@ -95,6 +95,12 @@ const Home = () => {
         </div>
       </section>
 
+      <section className="py-16 bg-primary/5">
+        <div className="container mx-auto px-4">
+          <CallToAction />
+        </div>
+      </section>
+
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <FeaturedChildren />
@@ -109,12 +115,6 @@ const Home = () => {
               <FeaturedAlbum />
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-primary/5">
-        <div className="container mx-auto px-4">
-          <CallToAction />
         </div>
       </section>
 
