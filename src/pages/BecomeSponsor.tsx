@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PersonalInfoFields } from "@/components/Sponsor/SponsorshipForm/PersonalInfoFields";
 import { SponsorshipTypeSelection } from "@/components/Sponsor/SponsorshipForm/SponsorshipTypeSelection";
+import { PasswordFields } from "@/components/Sponsor/SponsorshipForm/PasswordFields";
+import bcrypt from 'bcryptjs';
 
 interface FormData {
   full_name: string;
@@ -16,6 +18,8 @@ interface FormData {
   facebook_url: string;
   is_long_term: boolean;
   is_one_time: boolean;
+  password: string;
+  confirmPassword: string;
 }
 
 const BecomeSponsor = () => {
@@ -31,7 +35,9 @@ const BecomeSponsor = () => {
     motivation: "",
     facebook_url: "",
     is_long_term: true,
-    is_one_time: false
+    is_one_time: false,
+    password: "",
+    confirmPassword: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -58,12 +64,31 @@ const BecomeSponsor = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: t("error"),
+        description: t("passwordsDoNotMatch"),
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
     try {
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(formData.password, salt);
+
+      // Create sponsorship request with hashed password
       const { error } = await supabase
         .from('sponsorship_requests')
         .insert({
           ...formData,
-          status: 'pending'
+          password_hash: hashedPassword,
+          status: 'pending',
+          is_account_created: false,
+          is_account_approved: false
         });
 
       if (error) throw error;
@@ -98,6 +123,12 @@ const BecomeSponsor = () => {
           <PersonalInfoFields 
             formData={formData}
             handleChange={handleChange}
+          />
+
+          <PasswordFields
+            password={formData.password}
+            confirmPassword={formData.confirmPassword}
+            onChange={handleChange}
           />
 
           <SponsorshipTypeSelection
