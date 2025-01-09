@@ -84,21 +84,21 @@ export const SponsorsList = ({
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       
-      // Filter approved and active sponsorships only
-      const approvedActiveSponsorships = sponsor.sponsorships?.filter((s: any) => 
+      // Ne garder que les parrainages actifs et approuvés, en supprimant les doublons
+      const activeSponshorships = sponsor.sponsorships?.filter((s: any) => 
         s.status === 'active' && s.children
       ).reduce((acc: any[], current: any) => {
-        // Check if we already have this child in the accumulator
+        // Vérifier si nous avons déjà cet enfant dans l'accumulateur
         const exists = acc.find((s: any) => s.children.id === current.children.id);
-        if (!exists) {
+        if (!exists && current.children) {
           acc.push(current);
         }
         return acc;
-      }, []);
+      }, []) || [];
 
-      const hasApprovedChildren = approvedActiveSponsorships?.length > 0;
+      const hasActiveSponshorships = activeSponshorships.length > 0;
       return searchString.includes(searchTermLower) && 
-             (isActive ? hasApprovedChildren : !hasApprovedChildren);
+             (isActive ? hasActiveSponshorships : !hasActiveSponshorships);
     });
 
     return filtered.sort((a, b) => {
@@ -134,12 +134,12 @@ export const SponsorsList = ({
               key={sponsor.id}
               sponsor={{
                 ...sponsor,
-                // Only include approved and active sponsorships, removing duplicates
+                // Ne garder que les parrainages actifs et approuvés, en supprimant les doublons
                 sponsorships: sponsor.sponsorships?.filter((s: any) => 
                   s.status === 'active' && s.children
                 ).reduce((acc: any[], current: any) => {
                   const exists = acc.find((s: any) => s.children.id === current.children.id);
-                  if (!exists) {
+                  if (!exists && current.children) {
                     acc.push(current);
                   }
                   return acc;
