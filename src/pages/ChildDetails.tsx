@@ -5,9 +5,7 @@ import { differenceInYears, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import {
@@ -49,19 +47,29 @@ const ChildDetails = () => {
 
     try {
       const { error } = await supabase
-        .from('child_assignment_requests')
+        .from('sponsorship_requests')
         .insert({
           child_id: id,
-          sponsor_id: user.id,
-          status: 'pending'
+          full_name: user.name,
+          email: user.email,
+          city: user.city,
+          status: 'pending',
+          sponsor_id: user.id
         });
 
       if (error) throw error;
 
-      toast.success(t("sponsorshipRequestSent"));
+      toast({
+        title: t("sponsorshipRequestSent"),
+        description: t("sponsorshipRequestPending"),
+      });
     } catch (error) {
       console.error('Error requesting sponsorship:', error);
-      toast.error(t("errorRequestingSponsorship"));
+      toast({
+        variant: "destructive",
+        title: t("error"),
+        description: t("errorRequestingSponsorship"),
+      });
     }
   };
 
