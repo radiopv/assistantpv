@@ -43,8 +43,10 @@ export default function AvailableChildren() {
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
       } else if (selectedStatus === "urgent") {
+        // For urgent needs, we need to check the needs array for items with is_urgent: true
         query = query
           .eq("is_sponsored", false)
+          .not('needs', 'eq', '[]')
           .contains('needs', [{ is_urgent: true }]);
       }
 
