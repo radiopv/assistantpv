@@ -8,6 +8,7 @@ import { useState } from "react";
 import { DonationStats } from "@/components/Donations/DonationStats";
 import { DonationFilters } from "@/components/Donations/DonationFilters";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 const PublicDonations = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,17 +20,21 @@ const PublicDonations = () => {
   const translations = {
     fr: {
       donationsTitle: "Nos actions sur le terrain",
-      donationsSubtitle: "Découvrez toutes les actions menées par nos assistants à Cuba",
+      donationsSubtitle: "Découvrez l'impact de nos actions à Cuba grâce à nos assistants dévoués",
       noDonationsFound: "Aucun don trouvé",
       loading: "Chargement...",
-      error: "Une erreur est survenue"
+      error: "Une erreur est survenue",
+      impactTitle: "Notre Impact",
+      impactSubtitle: "Ensemble, nous faisons la différence"
     },
     es: {
       donationsTitle: "Nuestras acciones en el terreno",
-      donationsSubtitle: "Descubra todas las acciones llevadas a cabo por nuestros asistentes en Cuba",
+      donationsSubtitle: "Descubra el impacto de nuestras acciones en Cuba gracias a nuestros asistentes dedicados",
       noDonationsFound: "No se encontraron donaciones",
       loading: "Cargando...",
-      error: "Ha ocurrido un error"
+      error: "Ha ocurrido un error",
+      impactTitle: "Nuestro Impacto",
+      impactSubtitle: "Juntos hacemos la diferencia"
     }
   };
 
@@ -109,61 +114,109 @@ const PublicDonations = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-6">
-        <div>
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-96 mt-2" />
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        <div className="animate-pulse">
+          <Skeleton className="h-12 w-2/3 mb-4" />
+          <Skeleton className="h-6 w-1/2" />
         </div>
-        <Card className="p-6">
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-24 w-full" />
-            ))}
-          </div>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-6">
+              <Skeleton className="h-32 w-full" />
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">{t.donationsTitle}</h1>
-        <p className="text-gray-600 mt-2">{t.donationsSubtitle}</p>
+    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-white">
+      <div className="container mx-auto px-4 py-12 space-y-12">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center space-y-4"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-title">
+            {t.donationsTitle}
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            {t.donationsSubtitle}
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Card className="bg-cuba-gradient text-white p-8 rounded-xl shadow-lg">
+            <h2 className="text-2xl font-bold mb-4">{t.impactTitle}</h2>
+            <p className="mb-6 text-white/90">{t.impactSubtitle}</p>
+            {donations && <DonationStats donations={donations} />}
+          </Card>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="bg-white rounded-xl shadow-lg p-8"
+        >
+          <div className="space-y-6">
+            <DonationFilters
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              cityFilter={cityFilter}
+              onCityFilterChange={setCityFilter}
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              cities={cities}
+            />
+
+            {sortedDonations && sortedDonations.length > 0 ? (
+              <motion.div 
+                className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-6" : "space-y-6"}
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  visible: {
+                    transition: {
+                      staggerChildren: 0.1
+                    }
+                  }
+                }}
+              >
+                {sortedDonations.map((donation) => (
+                  <motion.div
+                    key={donation.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0 }
+                    }}
+                  >
+                    <DonationCard 
+                      donation={donation}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center text-gray-600 py-12"
+              >
+                {t.noDonationsFound}
+              </motion.p>
+            )}
+          </div>
+        </motion.div>
       </div>
-
-      {donations && <DonationStats donations={donations} />}
-
-      <Card className="p-6">
-        <div className="space-y-4">
-          <DonationFilters
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            cityFilter={cityFilter}
-            onCityFilterChange={setCityFilter}
-            sortBy={sortBy}
-            onSortChange={setSortBy}
-            viewMode={viewMode}
-            onViewModeChange={setViewMode}
-            cities={cities}
-          />
-
-          {sortedDonations && sortedDonations.length > 0 ? (
-            <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "space-y-4"}>
-              {sortedDonations.map((donation) => (
-                <DonationCard 
-                  key={donation.id} 
-                  donation={donation}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-600">
-              {t.noDonationsFound}
-            </p>
-          )}
-        </div>
-      </Card>
     </div>
   );
 };
