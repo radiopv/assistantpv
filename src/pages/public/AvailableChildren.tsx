@@ -43,11 +43,11 @@ export default function AvailableChildren() {
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
       } else if (selectedStatus === "urgent") {
-        // For urgent needs, we need to check the needs array for items with is_urgent: true
+        // For urgent needs, we need to check if any need in the array has is_urgent: true
         query = query
           .eq("is_sponsored", false)
-          .not('needs', 'eq', '[]')
-          .contains('needs', [{ is_urgent: true }]);
+          .not("needs", "eq", "[]")
+          .contains("needs", [{ is_urgent: true }]);
       }
 
       if (selectedCity !== "all") {
@@ -166,15 +166,15 @@ export default function AvailableChildren() {
         ages={["0-2", "3-5", "6-12", "13+"]}
       />
 
-      {!isLoading && filteredChildren && (
+      {!isLoading && children && (
         <AvailableChildrenGrid 
-          children={filteredChildren}
+          children={children}
           isLoading={isLoading}
           onSponsorClick={handleSponsorClick}
         />
       )}
 
-      {!filteredChildren?.length && (
+      {!children?.length && (
         <div className="text-center py-8 text-gray-500">
           {selectedStatus === "urgent" ? t("noUrgentChildren") : t("noCategoryChildren")}
         </div>
