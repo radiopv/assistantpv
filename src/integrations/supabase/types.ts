@@ -1796,9 +1796,12 @@ export type Database = {
           facebook_url: string | null
           full_name: string
           id: string
+          is_account_approved: boolean | null
+          is_account_created: boolean | null
           is_long_term: boolean | null
           is_one_time: boolean | null
           motivation: string | null
+          password_hash: string | null
           phone: string | null
           sponsor_id: string | null
           status: string | null
@@ -1813,9 +1816,12 @@ export type Database = {
           facebook_url?: string | null
           full_name: string
           id?: string
+          is_account_approved?: boolean | null
+          is_account_created?: boolean | null
           is_long_term?: boolean | null
           is_one_time?: boolean | null
           motivation?: string | null
+          password_hash?: string | null
           phone?: string | null
           sponsor_id?: string | null
           status?: string | null
@@ -1830,9 +1836,12 @@ export type Database = {
           facebook_url?: string | null
           full_name?: string
           id?: string
+          is_account_approved?: boolean | null
+          is_account_created?: boolean | null
           is_long_term?: boolean | null
           is_one_time?: boolean | null
           motivation?: string | null
+          password_hash?: string | null
           phone?: string | null
           sponsor_id?: string | null
           status?: string | null
