@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Heart, Image, MessageSquare, Plane } from "lucide-react";
+import { Heart, Image, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const DashboardActions = () => {
@@ -36,7 +36,7 @@ export const DashboardActions = () => {
       </Button>
 
       <Button
-        onClick={() => navigate("/album")}
+        onClick={() => navigate("/children/album")}
         variant="outline"
         className="h-auto p-4 flex items-center gap-3"
       >
@@ -45,20 +45,6 @@ export const DashboardActions = () => {
           <p className="font-semibold">Album photos</p>
           <p className="text-sm text-gray-600">
             Gérez les photos de votre filleul(e)
-          </p>
-        </div>
-      </Button>
-
-      <Button
-        onClick={() => navigate("/planned-visits/new")}
-        variant="outline"
-        className="h-auto p-4 flex items-center gap-3"
-      >
-        <Plane className="w-5 h-5" />
-        <div className="text-left">
-          <p className="font-semibold">Planifier une visite</p>
-          <p className="text-sm text-gray-600">
-            Organisez votre prochaine visite
           </p>
         </div>
       </Button>
