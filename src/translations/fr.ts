@@ -89,5 +89,8 @@ export const frenchTranslations = {
   noCategoryChildren: "Aucun enfant dans cette catégorie",
   gridView: "Vue en grille",
   tableView: "Vue en tableau",
-  actions: "Actions"
+  actions: "Actions",
+  sponsorThisChild: "Parrainer cet enfant",
+  sponsorshipRequestSent: "Votre demande de parrainage a été envoyée avec succès",
+  errorRequestingSponsorship: "Une erreur est survenue lors de l'envoi de votre demande de parrainage",
 };

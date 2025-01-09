@@ -9,6 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { convertJsonToNeeds } from "@/types/needs";
+import { useAuth } from "@/components/Auth/AuthProvider";
 import {
   User,
   Calendar,
@@ -23,6 +24,7 @@ const ChildDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user } = useAuth();
 
   const { data: child, isLoading, error } = useQuery({
     queryKey: ["child", id],
@@ -37,6 +39,31 @@ const ChildDetails = () => {
       return data;
     }
   });
+
+  const handleSponsorshipRequest = async () => {
+    if (!user) {
+      // Redirect to become-sponsor form for unauthenticated users
+      navigate(`/become-sponsor?child=${id}`);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('child_assignment_requests')
+        .insert({
+          child_id: id,
+          sponsor_id: user.id,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      toast.success(t("sponsorshipRequestSent"));
+    } catch (error) {
+      console.error('Error requesting sponsorship:', error);
+      toast.error(t("errorRequestingSponsorship"));
+    }
+  };
 
   if (error) {
     toast.error(t("errorLoadingChildDetails"));
@@ -94,6 +121,17 @@ const ChildDetails = () => {
               </div>
             )}
           </div>
+          
+          {!child?.is_sponsored && (
+            <Button 
+              onClick={handleSponsorshipRequest}
+              className="w-full flex items-center justify-center gap-2"
+              size="lg"
+            >
+              <Heart className="w-5 h-5" />
+              {t("sponsorThisChild")}
+            </Button>
+          )}
         </div>
 
         <div className="space-y-6">
