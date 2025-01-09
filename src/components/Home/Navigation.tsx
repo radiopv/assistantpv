@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, LayoutDashboard, Image } from "lucide-react";
+import { User, Gift, Users, MessageSquare, LayoutDashboard, Image, FileText } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const Navigation = () => {
@@ -64,6 +64,14 @@ export const Navigation = () => {
                 >
                   <Gift className="h-4 w-4 mr-2" />
                   Donations
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/faq")}
+                  className="text-primary"
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  FAQ
                 </Button>
               </>
             )}
