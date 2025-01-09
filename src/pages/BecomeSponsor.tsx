@@ -80,8 +80,8 @@ const BecomeSponsor = () => {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(formData.password, salt);
 
-      // Prepare data for insertion by removing confirmPassword
-      const { confirmPassword, ...requestData } = formData;
+      // Prepare data for insertion by removing password fields
+      const { password, confirmPassword, ...requestData } = formData;
 
       // Create sponsorship request with hashed password
       const { error } = await supabase
