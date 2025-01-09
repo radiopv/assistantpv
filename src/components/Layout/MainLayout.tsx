@@ -58,13 +58,6 @@ const MainLayout = () => {
           </div>
         </main>
       </div>
-
-      {/* Bottom Navigation for Mobile */}
-      {showSidebar && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t z-50">
-          <Navigation />
-        </div>
-      )}
     </div>
   );
 };
