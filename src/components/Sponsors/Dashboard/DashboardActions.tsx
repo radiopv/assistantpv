@@ -6,7 +6,7 @@ export const DashboardActions = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <Button
         onClick={() => navigate("/messages")}
         variant="outline"
@@ -14,37 +14,37 @@ export const DashboardActions = () => {
       >
         <MessageSquare className="w-5 h-5" />
         <div className="text-left">
-          <p className="font-semibold">Message à l'assistant</p>
+          <p className="font-semibold">Messages</p>
           <p className="text-sm text-gray-600">
-            Communiquez avec votre assistant
+            Communiquez avec les assistants
           </p>
         </div>
       </Button>
 
       <Button
-        onClick={() => navigate("/testimonials/new")}
+        onClick={() => navigate("/favorites")}
         variant="outline"
         className="h-auto p-4 flex items-center gap-3"
       >
         <Heart className="w-5 h-5" />
         <div className="text-left">
-          <p className="font-semibold">Ajouter un témoignage</p>
+          <p className="font-semibold">Favoris</p>
           <p className="text-sm text-gray-600">
-            Partagez votre expérience
+            Gérez vos enfants favoris
           </p>
         </div>
       </Button>
 
       <Button
-        onClick={() => navigate("/children/album")}
+        onClick={() => navigate("/photo-album")}
         variant="outline"
         className="h-auto p-4 flex items-center gap-3"
       >
         <Image className="w-5 h-5" />
         <div className="text-left">
-          <p className="font-semibold">Album photos</p>
+          <p className="font-semibold">Album photo</p>
           <p className="text-sm text-gray-600">
-            Gérez les photos de votre filleul(e)
+            Consultez les photos
           </p>
         </div>
       </Button>
