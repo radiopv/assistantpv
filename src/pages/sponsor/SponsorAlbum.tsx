@@ -1,21 +1,12 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ImagePlus, Loader2, Star, Trash2 } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-
-interface AlbumMediaUploadProps {
-  childId: string;
-  onUploadComplete?: () => void;
-}
+import { useToast } from "@/components/ui/use-toast";
+import { PhotoGrid } from "@/components/Sponsors/Dashboard/PhotoAlbum/PhotoGrid";
+import { UploadSection } from "@/components/Sponsors/Dashboard/PhotoAlbum/UploadSection";
+import { PhotoViewerDialog } from "@/components/Sponsors/Dashboard/PhotoAlbum/PhotoViewerDialog";
 
 const SponsorAlbum = () => {
   const { user } = useAuth();
@@ -56,7 +47,6 @@ const SponsorAlbum = () => {
 
   const t = translations[language as keyof typeof translations];
 
-  // Fetch sponsored children
   const { data: sponsoredChildren } = useQuery({
     queryKey: ["sponsored-children", user?.id],
     queryFn: async () => {
@@ -242,110 +232,27 @@ const SponsorAlbum = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Album Photo</h1>
-        <div className="flex gap-4 items-center">
-          <Select value={selectedChildId} onValueChange={setSelectedChildId}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder={t.selectChild} />
-            </SelectTrigger>
-            <SelectContent>
-              {sponsoredChildren?.map((sponsorship) => (
-                <SelectItem key={sponsorship.children.id} value={sponsorship.children.id}>
-                  {sponsorship.children.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div>
-            <input
-              type="file"
-              id="photo-upload"
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileSelect}
-              disabled={uploading}
-            />
-            <Button
-              onClick={() => document.getElementById('photo-upload')?.click()}
-              disabled={uploading}
-            >
-              {uploading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <ImagePlus className="w-4 h-4 mr-2" />
-              )}
-              {t.addPhoto}
-            </Button>
-          </div>
-        </div>
+        <UploadSection
+          children={sponsoredChildren || []}
+          selectedChildId={selectedChildId}
+          onChildSelect={setSelectedChildId}
+          onFileSelect={handleFileSelect}
+          uploading={uploading}
+          translations={t}
+        />
       </div>
 
-      {!photos?.length ? (
-        <p>Aucune photo disponible pour le moment.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {photos.map((photo) => (
-            <Card 
-              key={photo.id} 
-              className="overflow-hidden cursor-pointer relative group"
-            >
-              <img 
-                src={photo.url} 
-                alt={photo.title || "Photo"} 
-                className="w-full h-48 object-cover"
-                onClick={() => setSelectedImage(photo.url)}
-              />
-              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleToggleFavorite(photo.id, photo.is_featured);
-                  }}
-                >
-                  <Star className={`w-4 h-4 ${photo.is_featured ? "fill-yellow-400" : ""}`} />
-                </Button>
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeletePhoto(photo.id);
-                  }}
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-              <div className="p-4">
-                <h3 className="font-medium">{photo.title || `Photo de ${photo.children?.name}`}</h3>
-                <div className="mt-2 text-sm text-gray-600">
-                  <p>
-                    Ajoutée par: {photo.sponsors?.role === 'assistant' ? 'Assistant' : 'Parrain'}
-                  </p>
-                  <p>
-                    {format(new Date(photo.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
-                  </p>
-                </div>
-                {photo.description && (
-                  <p className="mt-2 text-sm text-gray-600">{photo.description}</p>
-                )}
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+      <PhotoGrid
+        photos={photos || []}
+        onPhotoClick={(url) => setSelectedImage(url)}
+        onToggleFavorite={handleToggleFavorite}
+        onDelete={handleDeletePhoto}
+      />
 
-      <Dialog open={!!selectedImage} onOpenChange={() => setSelectedImage(null)}>
-        <DialogContent className="max-w-4xl">
-          {selectedImage && (
-            <img 
-              src={selectedImage} 
-              alt="Photo en plein écran" 
-              className="w-full h-auto"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <PhotoViewerDialog
+        imageUrl={selectedImage}
+        onClose={() => setSelectedImage(null)}
+      />
     </div>
   );
 };
