@@ -52,7 +52,7 @@ const SponsorAlbum = () => {
           children (
             name
           ),
-          sponsors (
+          sponsors:sponsor_id (
             name,
             role
           )
