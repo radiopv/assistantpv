@@ -146,39 +146,50 @@ export default function AvailableChildren() {
   };
 
   return (
-    <div className="container mx-auto p-4 space-y-6">
-      <h1 className="text-3xl font-bold text-center mb-8">
-        {t("availableChildren")}
-      </h1>
-
-      <ChildrenFilters
-        searchTerm={searchTerm}
-        selectedCity={selectedCity}
-        selectedGender={selectedGender}
-        selectedAge={selectedAge}
-        selectedStatus={selectedStatus}
-        onSearchChange={setSearchTerm}
-        onCityChange={setSelectedCity}
-        onGenderChange={setSelectedGender}
-        onAgeChange={setSelectedAge}
-        onStatusChange={setSelectedStatus}
-        cities={[]}
-        ages={["0-2", "3-5", "6-12", "13+"]}
-      />
-
-      {!isLoading && children && (
-        <AvailableChildrenGrid 
-          children={children}
-          isLoading={isLoading}
-          onSponsorClick={handleSponsorClick}
-        />
-      )}
-
-      {!children?.length && (
-        <div className="text-center py-8 text-gray-500">
-          {selectedStatus === "urgent" ? t("noUrgentChildren") : t("noCategoryChildren")}
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
+      <div className="container mx-auto p-4 space-y-6">
+        <div className="bg-cuba-gradient text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
+          <h1 className="text-3xl font-bold font-title mb-4">
+            {t("availableChildren")}
+          </h1>
+          <p className="text-white/90 max-w-2xl mx-auto">
+            {t("availableChildrenDescription")}
+          </p>
         </div>
-      )}
+
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-cuba-turquoise/20">
+          <ChildrenFilters
+            searchTerm={searchTerm}
+            selectedCity={selectedCity}
+            selectedGender={selectedGender}
+            selectedAge={selectedAge}
+            selectedStatus={selectedStatus}
+            onSearchChange={setSearchTerm}
+            onCityChange={setSelectedCity}
+            onGenderChange={setSelectedGender}
+            onAgeChange={setSelectedAge}
+            onStatusChange={setSelectedStatus}
+            cities={[]}
+            ages={["0-2", "3-5", "6-12", "13+"]}
+          />
+        </div>
+
+        {!isLoading && children && (
+          <div className="animate-fade-in">
+            <AvailableChildrenGrid 
+              children={children}
+              isLoading={isLoading}
+              onSponsorClick={handleSponsorClick}
+            />
+          </div>
+        )}
+
+        {!children?.length && (
+          <div className="text-center py-8 text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-cuba-turquoise/20">
+            {selectedStatus === "urgent" ? t("noUrgentChildren") : t("noCategoryChildren")}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
