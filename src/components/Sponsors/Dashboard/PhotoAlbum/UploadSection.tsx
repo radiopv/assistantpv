@@ -3,7 +3,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ImagePlus, Loader2 } from "lucide-react";
 
 interface UploadSectionProps {
-  children: { id: string; children: { name: string } }[];
+  children: Array<{
+    id: string;
+    child_id: string;
+    children: {
+      id: string;
+      name: string;
+    };
+  }>;
   selectedChildId: string;
   onChildSelect: (childId: string) => void;
   onFileSelect: (event: React.ChangeEvent<HTMLInputElement>) => void;

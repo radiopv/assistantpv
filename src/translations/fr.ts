@@ -41,10 +41,12 @@ export const frenchTranslations = {
   completed: "Complété",
   inProgress: "En cours",
   retry: "Réessayer",
-  testimonials: "Témoignages",
+  
+  // Traductions pour la page des témoignages
+  testimonialTitle: "Témoignages",
+  noTestimonials: "Aucun témoignage pour le moment",
   sponsorOf: "parrain de",
   anonymousSponsor: "Parrain anonyme",
-  noTestimonials: "Aucun témoignage pour le moment",
   
   // Ajout des traductions pour la page BecomeSponsor
   becomeSponsor: "Devenir parrain",
