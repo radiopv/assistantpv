@@ -41,8 +41,9 @@ export const DonationCard = ({ donation, onDelete, canDelete }: DonationCardProp
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
+      className="group"
     >
-      <Card className="overflow-hidden bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 border-cuba-turquoise/20">
+      <Card className="overflow-hidden bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 border-cuba-turquoise/20 group-hover:border-cuba-turquoise/40">
         <div className="p-6 space-y-6">
           <DonationCardHeader donation={donation} />
 

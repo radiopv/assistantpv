@@ -86,14 +86,14 @@ const PublicDonations = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-white">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
       <div className="container mx-auto px-4 py-12 space-y-12">
         <AnimatePresence>
           <DonationsHeader />
           
           {donations && <ImpactSection donations={donations} />}
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-cuba-turquoise/20">
             <div className="space-y-6">
               <DonationFilters
                 searchTerm={searchTerm}
