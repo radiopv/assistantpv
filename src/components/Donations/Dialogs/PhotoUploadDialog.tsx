@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { PhotoUploadDialog as MediaPhotoUploadDialog } from "../Media/PhotoUploadDialog";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PhotoUploadDialogProps {
   open: boolean;
