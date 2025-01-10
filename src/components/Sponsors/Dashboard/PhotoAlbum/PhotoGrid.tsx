@@ -6,14 +6,16 @@ interface PhotoGridProps {
   onToggleFeature?: (id: string, currentStatus: boolean) => void;
   onDelete?: (id: string) => void;
   onPhotoDelete?: (id: string) => void;
+  onToggleFavorite?: (id: string, currentStatus: boolean) => void;
 }
 
 export const PhotoGrid = ({ 
   photos, 
-  onPhotoClick, 
-  onToggleFeature, 
+  onPhotoClick = () => {}, 
+  onToggleFeature,
   onDelete,
-  onPhotoDelete 
+  onPhotoDelete,
+  onToggleFavorite 
 }: PhotoGridProps) => {
   if (!photos?.length) {
     return <p>Aucune photo disponible pour le moment.</p>;
@@ -24,6 +26,11 @@ export const PhotoGrid = ({
     if (onPhotoDelete) onPhotoDelete(id);
   };
 
+  const handleToggleFeature = (id: string, currentStatus: boolean) => {
+    if (onToggleFeature) onToggleFeature(id, currentStatus);
+    if (onToggleFavorite) onToggleFavorite(id, currentStatus);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {photos.map((photo) => (
@@ -31,7 +38,7 @@ export const PhotoGrid = ({
           key={photo.id}
           photo={photo}
           onPhotoClick={onPhotoClick}
-          onToggleFeature={onToggleFeature}
+          onToggleFeature={handleToggleFeature}
           onDelete={handleDelete}
         />
       ))}

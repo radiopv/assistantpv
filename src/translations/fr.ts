@@ -44,6 +44,7 @@ export const frenchTranslations = {
   
   // Traductions pour la page des témoignages
   testimonialTitle: "Témoignages",
+  testimonialDescription: "Ce que disent nos parrains",
   noTestimonials: "Aucun témoignage pour le moment",
   sponsorOf: "parrain de",
   anonymousSponsor: "Parrain anonyme",

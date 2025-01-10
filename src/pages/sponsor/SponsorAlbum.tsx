@@ -53,6 +53,7 @@ const SponsorAlbum = () => {
       const { data, error } = await supabase
         .from("sponsorships")
         .select(`
+          id,
           child_id,
           children (
             id,

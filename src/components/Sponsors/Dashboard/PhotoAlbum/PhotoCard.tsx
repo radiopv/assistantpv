@@ -16,11 +16,11 @@ interface PhotoCardProps {
     sponsors?: { role: string };
   };
   onPhotoClick: (url: string) => void;
-  onToggleFavorite: (id: string, currentStatus: boolean) => void;
+  onToggleFeature: (id: string, currentStatus: boolean) => void;
   onDelete: (id: string) => void;
 }
 
-export const PhotoCard = ({ photo, onPhotoClick, onToggleFavorite, onDelete }: PhotoCardProps) => {
+export const PhotoCard = ({ photo, onPhotoClick, onToggleFeature, onDelete }: PhotoCardProps) => {
   return (
     <Card className="overflow-hidden cursor-pointer relative group">
       <img 
@@ -35,7 +35,7 @@ export const PhotoCard = ({ photo, onPhotoClick, onToggleFavorite, onDelete }: P
           size="icon"
           onClick={(e) => {
             e.stopPropagation();
-            onToggleFavorite(photo.id, photo.is_featured);
+            onToggleFeature(photo.id, photo.is_featured);
           }}
         >
           <Star className={`w-4 h-4 ${photo.is_featured ? "fill-yellow-400" : ""}`} />
