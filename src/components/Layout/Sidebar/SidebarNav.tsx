@@ -12,10 +12,96 @@ import {
   CheckSquare,
   Globe,
   CircleDollarSign,
-  User,
+  Bell,
+  Link,
+  Mail,
+  Building2,
 } from "lucide-react";
 import { SidebarSection } from "./SidebarSection";
 import { useAuth } from "@/components/Auth/AuthProvider";
+
+const adminLinks = [
+  {
+    href: "/dashboard",
+    label: "Tableau de bord",
+    icon: LayoutDashboard,
+  },
+  {
+    href: "/children",
+    label: "Enfants",
+    icon: Users,
+  },
+  {
+    href: "/donations",
+    label: "Dons",
+    icon: Gift,
+  },
+  {
+    href: "/assistant-photos",
+    label: "Photos",
+    icon: Image,
+  },
+  {
+    href: "/admin/sponsorship-management",
+    label: "Gestion des parrainages",
+    icon: UserPlus,
+  },
+  {
+    href: "/admin/translations",
+    label: "Traductions",
+    icon: Globe,
+  },
+  {
+    href: "/admin/validation",
+    label: "Validation",
+    icon: CheckSquare,
+  },
+  {
+    href: "/admin/statistics",
+    label: "Statistiques",
+    icon: CircleDollarSign,
+  },
+  {
+    href: "/admin/home-content",
+    label: "Page d'accueil",
+    icon: Home,
+  },
+  {
+    href: "/admin/emails",
+    label: "Emails",
+    icon: Mail,
+  },
+  {
+    href: "/admin/faq",
+    label: "FAQ",
+    icon: FileText,
+  },
+  {
+    href: "/admin/cities",
+    label: "Villes",
+    icon: Building2,
+  },
+  {
+    href: "/admin/notifications",
+    label: "Notifications",
+    icon: Bell,
+  },
+  {
+    href: "/admin/link-checker",
+    label: "Vérification des liens",
+    icon: Link,
+  },
+  {
+    href: "/messages",
+    label: "Messages",
+    icon: MessageSquare,
+  },
+  {
+    href: "/settings",
+    label: "Paramètres",
+    icon: Settings,
+  },
+];
 
 const sponsorLinks = [
   {
@@ -53,71 +139,6 @@ const sponsorLinks = [
     label: "FAQ",
     icon: FileText,
   },
-];
-
-const assistantLinks = [
-  {
-    href: "/dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/children",
-    label: "Enfants",
-    icon: Users,
-  },
-  {
-    href: "/donations",
-    label: "Dons",
-    icon: Gift,
-  },
-  {
-    href: "/assistant-photos",
-    label: "Photos",
-    icon: Image,
-  },
-  {
-    href: "/admin/sponsorship-management",
-    label: "Gestion des parrainages",
-    icon: UserPlus,
-    show: true,
-  },
-];
-
-const adminLinks = [
-  {
-    href: "/dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/admin/sponsorship-management",
-    label: "Gestion des parrainages",
-    icon: UserPlus,
-  },
-  {
-    href: "/admin/translations",
-    label: "Traductions",
-    icon: Globe,
-  },
-  {
-    href: "/admin/validation",
-    label: "Validation",
-    icon: CheckSquare,
-  },
-  {
-    href: "/admin/statistics",
-    label: "Statistiques",
-    icon: CircleDollarSign,
-  },
-  {
-    href: "/admin/home-content",
-    label: "Page d'accueil",
-    icon: Home,
-  },
-];
-
-const settingsLinks = [
   {
     href: "/settings",
     label: "Paramètres",
@@ -143,28 +164,13 @@ export const SidebarNav = ({ onClose }: { onClose?: () => void }) => {
           )}
 
           {isAssistant && (
-            <>
-              <SidebarSection
-                title="Espace assistant"
-                links={assistantLinks}
-                currentPath={location.pathname}
-                onClose={onClose}
-              />
-              <SidebarSection
-                title="Administration"
-                links={adminLinks}
-                currentPath={location.pathname}
-                onClose={onClose}
-              />
-            </>
+            <SidebarSection
+              title="Administration"
+              links={adminLinks}
+              currentPath={location.pathname}
+              onClose={onClose}
+            />
           )}
-
-          <SidebarSection
-            title="Paramètres"
-            links={settingsLinks}
-            currentPath={location.pathname}
-            onClose={onClose}
-          />
         </>
       )}
     </div>
