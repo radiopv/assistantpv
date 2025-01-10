@@ -56,7 +56,7 @@ export const DonationCard = ({
       await deleteDonation(donation.id);
       toast({
         title: t.deleteSuccess,
-        variant: "success"
+        variant: "default" // Changed from "success" to "default"
       });
       onDelete?.();
     } catch (error) {
@@ -69,12 +69,10 @@ export const DonationCard = ({
   };
 
   const handlePhotosUpdate = () => {
-    // Trigger refetch of photos
     onDelete?.();
   };
 
   const handleVideosUpdate = () => {
-    // Trigger refetch of videos
     onDelete?.();
   };
 
