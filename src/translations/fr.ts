@@ -1,4 +1,4 @@
-export const fr = {
+export const frenchTranslations = {
   linkChecker: "Vérificateur de liens",
   checkNow: "Vérifier maintenant",
   sourcePage: "Page source",
