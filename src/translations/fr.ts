@@ -122,10 +122,24 @@ export const frenchTranslations = {
   callToAction: "Changez une vie aujourd'hui",
   callToActionDescription: "Votre soutien peut faire une réelle différence dans la vie d'un enfant",
   sponsorChild: "Parrainer un enfant",
-  
-  // Additional translations
-  faqTitle: "Questions Fréquentes",
-  faqDescription: "Trouvez les réponses à vos questions sur le parrainage",
-  sponsorDashboardTitle: "Mon Espace Parrain",
-  sponsorDashboardDescription: "Gérez vos parrainages et suivez vos filleuls"
+
+  // Traductions pour la page de statistiques
+  statisticsTitle: "Statistiques",
+  statisticsDescription: "Vue d'ensemble des statistiques de la plateforme",
+  sponsorshipStats: "Statistiques des Parrainages",
+  conversionRate: "Taux de Conversion",
+  avgDuration: "Durée Moyenne",
+  activeSponsors: "Parrains Actifs",
+  engagement: "Engagement",
+  activityRate: "Taux d'Activité",
+  assistants: "Assistants",
+  impact: "Impact",
+  sponsoredChildren: "Enfants Parrainés",
+  totalSponsors: "Total des Parrains",
+  successRate: "Taux de Réussite",
+  monthlyDonationsTrend: "Tendance des Dons Mensuels",
+  donations: "Dons",
+  peopleHelped: "Personnes Aidées",
+  urgentNeedsByCity: "Besoins Urgents par Ville",
+  cityDistribution: "Distribution par Ville",
 };

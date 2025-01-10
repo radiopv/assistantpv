@@ -25,7 +25,6 @@ const COLORS = ['#0072BB', '#40C057', '#FA5252', '#7950F2', '#FD7E14'];
 const Statistics = () => {
   const { t } = useLanguage();
 
-  // Existing stats queries
   const { data: sponsorshipStats } = useQuery({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
@@ -92,9 +91,7 @@ const Statistics = () => {
           </p>
         </div>
         
-        {/* Main Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Sponsorship Statistics */}
           <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 hover:border-cuba-turquoise/40 transition-colors">
             <CardHeader>
               <CardTitle className="font-title">{t("sponsorshipStats")}</CardTitle>
@@ -117,7 +114,6 @@ const Statistics = () => {
             </CardContent>
           </Card>
 
-          {/* User Engagement */}
           <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 hover:border-cuba-turquoise/40 transition-colors">
             <CardHeader>
               <CardTitle className="font-title">{t("engagement")}</CardTitle>
@@ -143,7 +139,6 @@ const Statistics = () => {
             </CardContent>
           </Card>
 
-          {/* Impact Statistics */}
           <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 hover:border-cuba-turquoise/40 transition-colors">
             <CardHeader>
               <CardTitle className="font-title">{t("impact")}</CardTitle>
@@ -171,9 +166,7 @@ const Statistics = () => {
           </Card>
         </div>
 
-        {/* Charts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Monthly Donations Trend */}
           <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20">
             <CardHeader>
               <CardTitle className="font-title">{t("monthlyDonationsTrend")}</CardTitle>
@@ -195,7 +188,6 @@ const Statistics = () => {
             </CardContent>
           </Card>
 
-          {/* Urgent Needs by City */}
           <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20">
             <CardHeader>
               <CardTitle className="font-title">{t("urgentNeedsByCity")}</CardTitle>
@@ -226,7 +218,6 @@ const Statistics = () => {
           </Card>
         </div>
 
-        {/* City Distribution Chart */}
         <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 mt-8">
           <CardHeader>
             <CardTitle className="font-title">{t("cityDistribution")}</CardTitle>
