@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut } from "lucide-react";
+import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut, Home } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
@@ -35,6 +35,16 @@ export const Navigation = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           <div className="flex space-x-4">
+            {/* Home Link - Always visible */}
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/")}
+              className="text-primary"
+            >
+              <Home className="h-4 w-4 mr-2" />
+              Accueil
+            </Button>
+
             {/* Public Menu Items - Always visible */}
             <Button
               variant="ghost"
