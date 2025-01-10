@@ -40,7 +40,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
           >
             <div className="flex items-center gap-8 mb-8">
               <img 
-                src="/lovable-uploads/6ca4aca3-1116-4924-a084-ae21ae90bc33.png"
+                src="/lovable-uploads/12731338-4f41-46ca-ad4a-79242dd36658.png"
                 alt="Enfant cubain avec un ours en peluche"
                 className="w-48 h-48 object-cover rounded-lg shadow-xl"
               />
