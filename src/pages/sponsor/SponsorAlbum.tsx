@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,27 +9,48 @@ import { useToast } from "@/components/ui/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useLanguage } from "@/contexts/LanguageContext";
+
+interface AlbumMediaUploadProps {
+  childId: string;
+  onUploadComplete?: () => void;
+}
 
 const SponsorAlbum = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      addPhoto: "Ajouter une photo",
+      uploading: "Upload en cours...",
+      upload: "Upload",
+      success: "Photo ajoutée avec succès",
+      error: "Une erreur est survenue lors de l'upload",
+    },
+    es: {
+      addPhoto: "Agregar una foto",
+      uploading: "Subiendo...",
+      upload: "Subir",
+      success: "Foto agregada con éxito",
+      error: "Ocurrió un error durante la subida",
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const { data: photos, isLoading, refetch } = useQuery({
     queryKey: ["sponsor-photos", user?.id],
     queryFn: async () => {
       // First get all active sponsorships for the sponsor
-      const { data: sponsorships, error: sponsorshipsError } = await supabase
+      const { data: sponsorships } = await supabase
         .from("sponsorships")
         .select("child_id")
         .eq("sponsor_id", user?.id)
         .eq("status", "active");
-
-      if (sponsorshipsError) {
-        console.error("Error fetching sponsorships:", sponsorshipsError);
-        throw sponsorshipsError;
-      }
 
       if (!sponsorships?.length) {
         return [];
@@ -50,7 +71,7 @@ const SponsorAlbum = () => {
           children (
             name
           ),
-          sponsor:sponsor_id (
+          sponsors!album_media_new_sponsor_id_fkey (
             name,
             role,
             is_anonymous
@@ -83,6 +104,7 @@ const SponsorAlbum = () => {
         .select("child_id")
         .eq("sponsor_id", user?.id)
         .eq("status", "active")
+        .limit(1)
         .single();
 
       if (!sponsorship) {
@@ -188,7 +210,7 @@ const SponsorAlbum = () => {
                 <h3 className="font-medium">{photo.title || `Photo de ${photo.children?.name}`}</h3>
                 <div className="mt-2 text-sm text-gray-600">
                   <p>
-                    Ajoutée par: {photo.sponsor?.role === 'assistant' ? 'Assistant' : 'Parrain'}
+                    Ajoutée par: {photo.sponsors?.role === 'assistant' ? 'Assistant' : 'Parrain'}
                   </p>
                   <p>
                     {format(new Date(photo.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
