@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -128,7 +128,11 @@ const SponsorAlbum = () => {
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       if (!selectedChildId) {
-        toast.error(t.selectChild);
+        toast({
+          variant: "destructive",
+          title: t.error,
+          description: t.selectChild
+        });
         return;
       }
 
@@ -163,11 +167,18 @@ const SponsorAlbum = () => {
 
       if (dbError) throw dbError;
 
-      toast.success(t.success);
+      toast({
+        title: t.success,
+        description: t.success
+      });
       refetch();
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast.error(t.error);
+      toast({
+        variant: "destructive",
+        title: t.error,
+        description: t.error
+      });
     } finally {
       setUploading(false);
     }
@@ -184,11 +195,18 @@ const SponsorAlbum = () => {
 
       if (error) throw error;
 
-      toast.success(t.deleteSuccess);
+      toast({
+        title: t.deleteSuccess,
+        description: t.deleteSuccess
+      });
       refetch();
     } catch (error) {
       console.error('Error deleting photo:', error);
-      toast.error(t.deleteError);
+      toast({
+        variant: "destructive",
+        title: t.deleteError,
+        description: t.deleteError
+      });
     }
   };
 
@@ -201,11 +219,18 @@ const SponsorAlbum = () => {
 
       if (error) throw error;
 
-      toast.success(t.toggleFavoriteSuccess);
+      toast({
+        title: t.toggleFavoriteSuccess,
+        description: t.toggleFavoriteSuccess
+      });
       refetch();
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      toast.error(t.toggleFavoriteError);
+      toast({
+        variant: "destructive",
+        title: t.toggleFavoriteError,
+        description: t.toggleFavoriteError
+      });
     }
   };
 
