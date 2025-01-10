@@ -51,7 +51,7 @@ const SponsorAlbum = () => {
           children (
             name
           ),
-          sponsors:sponsor_id (
+          sponsor:sponsor_id (
             name,
             role,
             is_anonymous
@@ -189,7 +189,7 @@ const SponsorAlbum = () => {
                 <h3 className="font-medium">{photo.title || `Photo de ${photo.children?.name}`}</h3>
                 <div className="mt-2 text-sm text-gray-600">
                   <p>
-                    Ajoutée par: {photo.sponsors?.role === 'assistant' ? 'Assistant' : 'Parrain'}
+                    Ajoutée par: {photo.sponsor?.role === 'assistant' ? 'Assistant' : 'Parrain'}
                   </p>
                   <p>
                     {format(new Date(photo.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}

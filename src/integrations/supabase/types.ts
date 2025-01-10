@@ -126,13 +126,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "album_media_new_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "album_media_new_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -213,24 +206,6 @@ export type Database = {
         }
         Relationships: []
       }
-      badges: {
-        Row: {
-          created_at: string | null
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
       birthday_reminders: {
         Row: {
           child_id: string
@@ -265,13 +240,6 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "birthday_reminders_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
             referencedColumns: ["id"]
           },
           {
@@ -320,121 +288,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "child_assignment_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "child_assignment_requests_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      child_needs: {
-        Row: {
-          category_id: string
-          child_id: string
-          created_at: string
-          description: string
-          id: string
-          is_urgent: boolean
-          updated_at: string
-        }
-        Insert: {
-          category_id: string
-          child_id: string
-          created_at?: string
-          description: string
-          id?: string
-          is_urgent?: boolean
-          updated_at?: string
-        }
-        Update: {
-          category_id?: string
-          child_id?: string
-          created_at?: string
-          description?: string
-          id?: string
-          is_urgent?: boolean
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_category"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "aid_categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_child"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_child"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      child_requests: {
-        Row: {
-          additional_info: string | null
-          child_id: string | null
-          created_at: string | null
-          id: string
-          reason: string
-          sponsor_id: string | null
-          status: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          additional_info?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          id?: string
-          reason: string
-          sponsor_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          additional_info?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          id?: string
-          reason?: string
-          sponsor_id?: string | null
-          status?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "child_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "child_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "child_requests_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
@@ -512,50 +366,7 @@ export type Database = {
           story?: string | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "children_location_id_fkey"
-            columns: ["location_id"]
-            isOneToOne: false
-            referencedRelation: "locations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      dashboard_preferences: {
-        Row: {
-          created_at: string | null
-          id: string
-          layout: Json | null
-          sponsor_id: string | null
-          updated_at: string | null
-          widgets: Json | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          layout?: Json | null
-          sponsor_id?: string | null
-          updated_at?: string | null
-          widgets?: Json | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          layout?: Json | null
-          sponsor_id?: string | null
-          updated_at?: string | null
-          widgets?: Json | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "dashboard_preferences_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       donation_items: {
         Row: {
@@ -839,49 +650,6 @@ export type Database = {
         }
         Relationships: []
       }
-      favorite_children: {
-        Row: {
-          child_id: string | null
-          created_at: string | null
-          id: string
-          sponsor_id: string | null
-        }
-        Insert: {
-          child_id?: string | null
-          created_at?: string | null
-          id?: string
-          sponsor_id?: string | null
-        }
-        Update: {
-          child_id?: string | null
-          created_at?: string | null
-          id?: string
-          sponsor_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "favorite_children_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "favorite_children_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "favorite_children_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       home_images: {
         Row: {
           created_at: string | null
@@ -1044,39 +812,6 @@ export type Database = {
           status_code?: number | null
           updated_at?: string | null
           url?: string
-        }
-        Relationships: []
-      }
-      locations: {
-        Row: {
-          child_count: number | null
-          city_name: string
-          created_at: string | null
-          id: number
-          latitude: number
-          longitude: number
-          sponsored_count: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          child_count?: number | null
-          city_name: string
-          created_at?: string | null
-          id?: number
-          latitude: number
-          longitude: number
-          sponsored_count?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          child_count?: number | null
-          city_name?: string
-          created_at?: string | null
-          id?: number
-          latitude?: number
-          longitude?: number
-          sponsored_count?: number | null
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1376,70 +1111,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "planned_visits_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      private_gallery: {
-        Row: {
-          child_id: string | null
-          created_at: string | null
-          description: string | null
-          id: string
-          is_featured: boolean | null
-          is_private: boolean | null
-          sponsor_id: string | null
-          title: string | null
-          type: string | null
-          updated_at: string | null
-          url: string
-        }
-        Insert: {
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          is_featured?: boolean | null
-          is_private?: boolean | null
-          sponsor_id?: string | null
-          title?: string | null
-          type?: string | null
-          updated_at?: string | null
-          url: string
-        }
-        Update: {
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          is_featured?: boolean | null
-          is_private?: boolean | null
-          sponsor_id?: string | null
-          title?: string | null
-          type?: string | null
-          updated_at?: string | null
-          url?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "private_gallery_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "private_gallery_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "private_gallery_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
@@ -1772,13 +1443,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "sponsors_to_children_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "sponsors_to_children_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -1856,13 +1520,6 @@ export type Database = {
             referencedRelation: "children"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "sponsorship_requests_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
         ]
       }
       sponsorships: {
@@ -1911,13 +1568,6 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorships_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
             referencedColumns: ["id"]
           },
           {
@@ -2009,13 +1659,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "temoignage_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "temoignage_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -2066,78 +1709,8 @@ export type Database = {
         }
         Relationships: []
       }
-      user_achievements: {
-        Row: {
-          achievement_data: Json | null
-          achievement_type: string
-          created_at: string | null
-          id: string
-          points: number | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          achievement_data?: Json | null
-          achievement_type: string
-          created_at?: string | null
-          id?: string
-          points?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          achievement_data?: Json | null
-          achievement_type?: string
-          created_at?: string | null
-          id?: string
-          points?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_achievements_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Views: {
-      children_with_needs: {
-        Row: {
-          age: number | null
-          birth_date: string | null
-          city: string | null
-          comments: string | null
-          created_at: string | null
-          description: string | null
-          end_date: string | null
-          gender: string | null
-          id: string | null
-          is_sponsored: boolean | null
-          location_id: number | null
-          name: string | null
-          needs: Json | null
-          photo_url: string | null
-          sponsor_name: string | null
-          start_date: string | null
-          status: string | null
-          story: string | null
-          updated_at: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "children_location_id_fkey"
-            columns: ["location_id"]
-            isOneToOne: false
-            referencedRelation: "locations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       donation_items_with_categories: {
         Row: {
           category_id: string | null
@@ -2226,13 +1799,6 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "album_media_new_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children_with_needs"
             referencedColumns: ["id"]
           },
           {
