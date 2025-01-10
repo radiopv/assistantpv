@@ -9,8 +9,13 @@ import { HeroSection } from "@/components/Home/HeroSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Heart, Users, Gift, Star } from "lucide-react";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
 
   const { data: sections, isLoading } = useQuery({
@@ -84,21 +89,106 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-cuba-offwhite">
       <HeroSection 
         heroSection={heroSection} 
         onImageClick={() => setIsImageCropOpen(true)} 
       />
 
-      <section className="py-16 bg-gray-50">
+      {/* Section À propos */}
+      <motion.section 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="py-16 bg-cuba-warmBeige"
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center gap-12">
+            <div className="lg:w-1/2">
+              <h2 className="text-4xl font-title font-bold text-cuba-turquoise mb-6">
+                Notre Mission
+              </h2>
+              <p className="text-lg text-gray-700 mb-8">
+                Nous créons des liens durables entre des parrains généreux et des enfants cubains, 
+                apportant espoir et soutien à ceux qui en ont le plus besoin.
+              </p>
+              <Button 
+                onClick={() => navigate("/about")}
+                variant="outline" 
+                className="bg-white hover:bg-cuba-softYellow transition-colors"
+              >
+                En savoir plus
+              </Button>
+            </div>
+            <div className="lg:w-1/2">
+              <img 
+                src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png" 
+                alt="Mission illustration" 
+                className="rounded-lg shadow-xl"
+              />
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Section Points forts */}
+      <motion.section 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="py-16 bg-white"
+      >
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-title font-bold text-center text-cuba-turquoise mb-12">
+            Comment nous aidons
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: <Heart className="w-12 h-12 text-cuba-red" />,
+                title: "Parrainage",
+                description: "Créez un lien spécial avec un enfant cubain"
+              },
+              {
+                icon: <Gift className="w-12 h-12 text-cuba-gold" />,
+                title: "Dons",
+                description: "Apportez une aide concrète et immédiate"
+              },
+              {
+                icon: <Users className="w-12 h-12 text-cuba-turquoise" />,
+                title: "Communauté",
+                description: "Rejoignez une communauté solidaire"
+              },
+              {
+                icon: <Star className="w-12 h-12 text-cuba-emerald" />,
+                title: "Impact",
+                description: "Changez des vies durablement"
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-4">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      <section className="py-16 bg-cuba-softYellow">
         <div className="container mx-auto px-4">
           <HowItWorks />
-        </div>
-      </section>
-
-      <section className="py-16 bg-primary/5">
-        <div className="container mx-auto px-4">
-          <CallToAction />
         </div>
       </section>
 
@@ -108,11 +198,19 @@ const Home = () => {
         </div>
       </section>
 
+      <section className="py-16 bg-cuba-warmBeige">
+        <div className="container mx-auto px-4">
+          <CallToAction />
+        </div>
+      </section>
+
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold mb-4">Photos</h2>
+              <h2 className="text-3xl font-title font-bold text-cuba-turquoise mb-4">
+                Moments Partagés
+              </h2>
               <FeaturedAlbum />
             </div>
           </div>
