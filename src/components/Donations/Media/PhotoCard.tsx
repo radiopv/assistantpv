@@ -1,55 +1,59 @@
-import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
+import { Star, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Trash2, Star } from "lucide-react";
 
 interface PhotoCardProps {
-  photo: {
-    id: string;
-    url: string;
-    title?: string;
-    is_featured?: boolean;
-  };
+  photo: any;
   onPhotoClick?: (url: string) => void;
   onDelete?: (id: string) => void;
   onToggleFavorite?: (id: string, currentStatus: boolean) => void;
+  isReadOnly?: boolean;
 }
 
 export const PhotoCard = ({ 
   photo, 
   onPhotoClick = () => {}, 
   onDelete,
-  onToggleFavorite 
+  onToggleFavorite,
+  isReadOnly = false
 }: PhotoCardProps) => {
   return (
-    <Card className="relative group overflow-hidden">
+    <div className="relative group">
       <img
         src={photo.url}
-        alt={photo.title || "Photo"}
-        className="w-full h-48 object-cover cursor-pointer"
+        alt={photo.title || `Photo ${photo.id}`}
+        className="h-48 w-full object-cover rounded-md cursor-pointer"
         onClick={() => onPhotoClick(photo.url)}
       />
-      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-        {onDelete && (
-          <Button
-            variant="destructive"
-            size="icon"
-            onClick={() => onDelete(photo.id)}
-            className="h-8 w-8"
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        )}
-        {onToggleFavorite && (
-          <Button
-            variant={photo.is_featured ? "default" : "secondary"}
-            size="icon"
-            onClick={() => onToggleFavorite(photo.id, !!photo.is_featured)}
-            className="h-8 w-8"
-          >
-            <Star className="h-4 w-4" fill={photo.is_featured ? "currentColor" : "none"} />
-          </Button>
-        )}
-      </div>
-    </Card>
+      
+      {!isReadOnly && (
+        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          {onToggleFavorite && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-8 w-8 bg-white/80 hover:bg-white",
+                photo.is_featured && "text-yellow-500"
+              )}
+              onClick={() => onToggleFavorite(photo.id, !photo.is_featured)}
+            >
+              <Star className="h-4 w-4" />
+            </Button>
+          )}
+          
+          {onDelete && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 bg-white/80 hover:bg-white text-red-500 hover:text-red-600"
+              onClick={() => onDelete(photo.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      )}
+    </div>
   );
 };

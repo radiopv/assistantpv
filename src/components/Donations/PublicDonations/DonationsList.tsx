@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils";
 interface DonationsListProps {
   donations: any[];
   viewMode: "grid" | "list";
+  isPublicView?: boolean;
 }
 
-export const DonationsList = ({ donations, viewMode }: DonationsListProps) => {
+export const DonationsList = ({ donations, viewMode, isPublicView = false }: DonationsListProps) => {
   const { language } = useLanguage();
 
   const translations = {
@@ -53,7 +54,10 @@ export const DonationsList = ({ donations, viewMode }: DonationsListProps) => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            <DonationCard donation={donation} />
+            <DonationCard 
+              donation={donation} 
+              isPublicView={isPublicView}
+            />
           </motion.div>
         ))}
       </AnimatePresence>

@@ -110,6 +110,7 @@ const PublicDonations = () => {
               <DonationsList 
                 donations={sortedDonations} 
                 viewMode={viewMode}
+                isPublicView={true}
               />
             </div>
           </div>

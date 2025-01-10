@@ -8,6 +8,7 @@ interface DonationCardMediaProps {
   videos: any[];
   onPhotosUpdate: () => void;
   onVideosUpdate: () => void;
+  isPublicView?: boolean;
 }
 
 export const DonationCardMedia = ({
@@ -16,6 +17,7 @@ export const DonationCardMedia = ({
   videos,
   onPhotosUpdate,
   onVideosUpdate,
+  isPublicView = false,
 }: DonationCardMediaProps) => {
   const { photos: donationPhotos } = useDonationMedia(donationId);
 
@@ -23,8 +25,8 @@ export const DonationCardMedia = ({
     <div className="space-y-4">
       <PhotoGrid 
         photos={donationPhotos || []} 
-        onPhotoDelete={() => onPhotosUpdate()}
-        onToggleFavorite={(id, status) => {
+        onPhotoDelete={isPublicView ? undefined : () => onPhotosUpdate()}
+        onToggleFavorite={isPublicView ? undefined : (id, status) => {
           // Handle favorite toggle
           onPhotosUpdate();
         }}

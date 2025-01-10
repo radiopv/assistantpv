@@ -1,148 +1,139 @@
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trash2, Edit, Camera } from "lucide-react";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { ImagePlus, Edit, Trash } from "lucide-react";
+import { useState } from "react";
 import { DonationCardHeader } from "./DonationCardHeader";
+import { DonationDetails } from "./DonationDetails";
 import { DonationCardMedia } from "./DonationCardMedia";
-import { DonationDialog } from "./DonationDialog";
-import { PhotoUploadDialog } from "./Media/PhotoUploadDialog";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { PhotoUploadDialog } from "./Dialogs/PhotoUploadDialog";
+import { EditDonationDialog } from "./Dialogs/EditDonationDialog";
+import { DeleteDonationDialog } from "./Dialogs/DeleteDonationDialog";
+import { useDeleteDonation } from "./hooks/useDeleteDonation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface DonationCardProps {
   donation: any;
+  isPublicView?: boolean;
   onDelete?: () => void;
   canDelete?: boolean;
 }
 
-export const DonationCard = ({ donation, onDelete, canDelete = false }: DonationCardProps) => {
+export const DonationCard = ({ 
+  donation, 
+  isPublicView = false,
+  onDelete,
+  canDelete = false 
+}: DonationCardProps) => {
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
-  const [showPhotoDialog, setShowPhotoDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { language } = useLanguage();
   const { toast } = useToast();
+  const { deleteDonation, isDeleting } = useDeleteDonation();
+
+  const translations = {
+    fr: {
+      addPhotos: "Ajouter des photos",
+      edit: "Modifier",
+      delete: "Supprimer",
+      deleteSuccess: "Don supprimé avec succès",
+      deleteError: "Erreur lors de la suppression du don"
+    },
+    es: {
+      addPhotos: "Agregar fotos",
+      edit: "Modificar",
+      delete: "Eliminar",
+      deleteSuccess: "Donación eliminada con éxito",
+      deleteError: "Error al eliminar la donación"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const handleDelete = async () => {
     try {
-      const { error } = await supabase
-        .from('donations')
-        .delete()
-        .eq('id', donation.id);
-
-      if (error) throw error;
-
+      await deleteDonation(donation.id);
       toast({
-        title: "Don supprimé",
-        description: "Le don a été supprimé avec succès.",
+        title: t.deleteSuccess,
+        variant: "success"
       });
-
       onDelete?.();
     } catch (error) {
-      console.error('Error deleting donation:', error);
       toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la suppression du don.",
+        title: t.deleteError,
+        variant: "destructive"
       });
     }
+    setShowDeleteDialog(false);
   };
 
   const handlePhotosUpdate = () => {
-    setShowPhotoDialog(false);
-    onDelete?.(); // Refresh the list
+    // Trigger refetch of photos
+    onDelete?.();
   };
 
-  const handleSave = async (updatedDonation: any) => {
-    try {
-      const { error } = await supabase
-        .from('donations')
-        .update(updatedDonation)
-        .eq('id', donation.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Don mis à jour",
-        description: "Le don a été mis à jour avec succès.",
-      });
-
-      setShowEditDialog(false);
-      onDelete?.(); // Refresh the list
-    } catch (error) {
-      console.error('Error updating donation:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour du don.",
-      });
-    }
+  const handleVideosUpdate = () => {
+    // Trigger refetch of videos
+    onDelete?.();
   };
 
   return (
     <Card className="overflow-hidden">
-      <DonationCardHeader donation={donation} />
-      
-      <div className="p-4 space-y-4">
+      <div className="p-6 space-y-6">
+        <DonationCardHeader donation={donation} />
+        <DonationDetails donation={donation} />
         <DonationCardMedia 
           donationId={donation.id}
           photos={donation.photos || []}
-          videos={[]}
+          videos={donation.videos || []}
           onPhotosUpdate={handlePhotosUpdate}
-          onVideosUpdate={() => {}}
+          onVideosUpdate={handleVideosUpdate}
+          isPublicView={isPublicView}
         />
-
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-500">
-            {format(new Date(donation.donation_date), "d MMMM yyyy", { locale: fr })}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowPhotoDialog(true)}
-            >
-              <Camera className="w-4 h-4 mr-2" />
-              Photos
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowEditDialog(true)}
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Modifier
-            </Button>
-            {canDelete && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleDelete}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Supprimer
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {donation.comments && (
-          <p className="text-sm text-gray-600">{donation.comments}</p>
-        )}
       </div>
+      
+      {!isPublicView && (
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end space-x-4">
+          <Button variant="outline" onClick={() => setShowPhotoUpload(true)}>
+            <ImagePlus className="w-4 h-4 mr-2" />
+            {t.addPhotos}
+          </Button>
+          <Button variant="outline" onClick={() => setShowEditDialog(true)}>
+            <Edit className="w-4 h-4 mr-2" />
+            {t.edit}
+          </Button>
+          {canDelete && (
+            <Button variant="outline" className="text-red-600 hover:text-red-700" onClick={() => setShowDeleteDialog(true)}>
+              <Trash className="w-4 h-4 mr-2" />
+              {t.delete}
+            </Button>
+          )}
+        </div>
+      )}
 
-      <DonationDialog
+      <PhotoUploadDialog
+        open={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        donationId={donation.id}
+        onSuccess={handlePhotosUpdate}
+      />
+
+      <EditDonationDialog
         open={showEditDialog}
         onClose={() => setShowEditDialog(false)}
         donation={donation}
-        onDonationUpdate={onDelete}
-        onSave={handleSave}
+        onSuccess={() => {
+          setShowEditDialog(false);
+          onDelete?.();
+        }}
       />
 
-      <PhotoUploadDialog
-        open={showPhotoDialog}
-        onClose={() => setShowPhotoDialog(false)}
-        donationId={donation.id}
-        onUploadComplete={handlePhotosUpdate}
+      <DeleteDonationDialog
+        open={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
       />
     </Card>
   );

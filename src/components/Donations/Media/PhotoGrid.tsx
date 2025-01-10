@@ -26,6 +26,7 @@ export const PhotoGrid = ({
           onPhotoClick={onPhotoClick}
           onDelete={onPhotoDelete}
           onToggleFavorite={onToggleFavorite}
+          isReadOnly={!onPhotoDelete && !onToggleFavorite}
         />
       ))}
     </div>
