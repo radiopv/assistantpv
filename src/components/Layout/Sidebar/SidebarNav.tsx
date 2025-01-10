@@ -1,6 +1,5 @@
 import { useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
   Users,
   Settings,
   Gift,
@@ -21,11 +20,6 @@ import { SidebarSection } from "./SidebarSection";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 const adminLinks = [
-  {
-    href: "/dashboard",
-    label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
   {
     href: "/children",
     label: "Enfants",
@@ -107,11 +101,6 @@ const sponsorLinks = [
   {
     href: "/sponsor-dashboard",
     label: "Tableau de bord",
-    icon: LayoutDashboard,
-  },
-  {
-    href: "/",
-    label: "Accueil",
     icon: Home,
   },
   {
