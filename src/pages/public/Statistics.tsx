@@ -10,13 +10,23 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  Legend
 } from "recharts";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const COLORS = ['#0072BB', '#40C057', '#FA5252', '#7950F2', '#FD7E14'];
+
 const Statistics = () => {
   const { t } = useLanguage();
-  const { data: sponsorshipStats } = useQuery<SponsorshipConversionStats>({
+
+  // Existing stats queries
+  const { data: sponsorshipStats } = useQuery({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
@@ -25,7 +35,7 @@ const Statistics = () => {
     }
   });
 
-  const { data: engagementStats } = useQuery<UserEngagementStats>({
+  const { data: engagementStats } = useQuery({
     queryKey: ['engagement-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');
@@ -34,7 +44,7 @@ const Statistics = () => {
     }
   });
 
-  const { data: cityStats } = useQuery<TopCityStats[]>({
+  const { data: cityStats } = useQuery({
     queryKey: ['city-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_top_sponsorship_cities');
@@ -43,7 +53,25 @@ const Statistics = () => {
     }
   });
 
-  // Calculate success rate, ensuring it doesn't exceed 100%
+  // New stats queries
+  const { data: monthlyDonations } = useQuery({
+    queryKey: ['monthly-donations'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_monthly_donation_trends', { months_back: 6 });
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const { data: urgentNeeds } = useQuery({
+    queryKey: ['urgent-needs'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_urgent_needs_by_city');
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const calculateSuccessRate = () => {
     if (!sponsorshipStats?.active_sponsorships || !engagementStats) return 0;
     const totalSponsors = (engagementStats.active_sponsors || 0) + (engagementStats.inactive_sponsors || 0);
@@ -64,6 +92,7 @@ const Statistics = () => {
           </p>
         </div>
         
+        {/* Main Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Sponsorship Statistics */}
           <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 hover:border-cuba-turquoise/40 transition-colors">
@@ -137,6 +166,61 @@ const Statistics = () => {
                     {calculateSuccessRate()}%
                   </p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Monthly Donations Trend */}
+          <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20">
+            <CardHeader>
+              <CardTitle className="font-title">{t("monthlyDonationsTrend")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={monthlyDonations}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="donations" stroke="#0072BB" name={t("donations")} />
+                    <Line type="monotone" dataKey="people_helped" stroke="#40C057" name={t("peopleHelped")} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Urgent Needs by City */}
+          <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20">
+            <CardHeader>
+              <CardTitle className="font-title">{t("urgentNeedsByCity")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={urgentNeeds}
+                      dataKey="urgent_needs_count"
+                      nameKey="city"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label
+                    >
+                      {urgentNeeds?.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
