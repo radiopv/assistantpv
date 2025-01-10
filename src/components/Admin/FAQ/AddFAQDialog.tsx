@@ -32,27 +32,34 @@ export const AddFAQDialog = ({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-cuba-turquoise hover:bg-cuba-turquoise/80">
           <Plus className="mr-2 h-4 w-4" />
           Ajouter une question
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-white/95 backdrop-blur-md">
         <DialogHeader>
-          <DialogTitle>Ajouter une nouvelle question</DialogTitle>
+          <DialogTitle className="font-title text-2xl">Ajouter une nouvelle question</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 mt-4">
           <Input
             placeholder="Question"
             value={newQuestion}
             onChange={(e) => setNewQuestion(e.target.value)}
+            className="bg-cuba-offwhite/50"
           />
           <Textarea
             placeholder="Réponse"
             value={newAnswer}
             onChange={(e) => setNewAnswer(e.target.value)}
+            className="bg-cuba-offwhite/50"
           />
-          <Button onClick={onAdd}>Ajouter</Button>
+          <Button 
+            onClick={onAdd}
+            className="w-full bg-cuba-turquoise hover:bg-cuba-turquoise/80"
+          >
+            Ajouter
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

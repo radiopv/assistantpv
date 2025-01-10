@@ -91,7 +91,6 @@ export const frenchTranslations = {
   noCategoryChildren: "Aucun enfant dans cette catégorie",
   gridView: "Vue en grille",
   tableView: "Vue en tableau",
-  actions: "Actions",
   sponsorThisChild: "Parrainer cet enfant",
   sponsorshipRequestSent: "Votre demande de parrainage a été envoyée avec succès",
   errorRequestingSponsorship: "Une erreur est survenue lors de l'envoi de votre demande de parrainage",
@@ -122,5 +121,11 @@ export const frenchTranslations = {
   featuredPhotos: "Photos à la une",
   callToAction: "Changez une vie aujourd'hui",
   callToActionDescription: "Votre soutien peut faire une réelle différence dans la vie d'un enfant",
-  sponsorChild: "Parrainer un enfant"
+  sponsorChild: "Parrainer un enfant",
+  
+  // Additional translations
+  faqTitle: "Questions Fréquentes",
+  faqDescription: "Trouvez les réponses à vos questions sur le parrainage",
+  sponsorDashboardTitle: "Mon Espace Parrain",
+  sponsorDashboardDescription: "Gérez vos parrainages et suivez vos filleuls"
 };
