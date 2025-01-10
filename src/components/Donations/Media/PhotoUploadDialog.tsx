@@ -9,6 +9,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface PhotoUploadDialogProps {
   donationId: string;
   onUploadComplete: () => void;
+  open?: boolean;
+  onClose?: () => void;
 }
 
 export const PhotoUploadDialog = ({ donationId, onUploadComplete }: PhotoUploadDialogProps) => {

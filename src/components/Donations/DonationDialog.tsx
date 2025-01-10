@@ -20,6 +20,7 @@ interface DonationDialogProps {
     status: string;
   };
   onSave: (donation: any) => void;
+  onDonationUpdate?: () => void;
 }
 
 export const DonationDialog = ({ open, onClose, donation, onSave }: DonationDialogProps) => {
