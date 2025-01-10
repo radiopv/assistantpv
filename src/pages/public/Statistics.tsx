@@ -41,6 +41,15 @@ const Statistics = () => {
     }
   });
 
+  // Calculate success rate, ensuring it doesn't exceed 100%
+  const calculateSuccessRate = () => {
+    if (!sponsorshipStats?.active_sponsorships || !engagementStats) return 0;
+    const totalSponsors = (engagementStats.active_sponsors || 0) + (engagementStats.inactive_sponsors || 0);
+    if (totalSponsors === 0) return 0;
+    const rate = Math.min((sponsorshipStats.active_sponsorships / totalSponsors) * 100, 100);
+    return Math.round(rate);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8 text-center">Statistiques de Passion Varadero</h1>
@@ -119,8 +128,7 @@ const Statistics = () => {
               <div>
                 <p className="text-sm text-muted-foreground">Taux de réussite</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {Math.round((sponsorshipStats?.active_sponsorships || 0) / 
-                    ((engagementStats?.active_sponsors || 0) + (engagementStats?.inactive_sponsors || 0)) * 100)}%
+                  {calculateSuccessRate()}%
                 </p>
               </div>
             </div>
