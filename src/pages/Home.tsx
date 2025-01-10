@@ -90,46 +90,13 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-cuba-offwhite">
-      <HeroSection 
-        heroSection={heroSection} 
-        onImageClick={() => setIsImageCropOpen(true)} 
-      />
+      <CallToAction />
 
-      {/* Section À propos */}
-      <motion.section 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="py-16 bg-cuba-warmBeige"
-      >
+      <section className="py-16 bg-cuba-softYellow">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
-            <div className="lg:w-1/2">
-              <h2 className="text-4xl font-title font-bold text-cuba-turquoise mb-6">
-                Notre Mission
-              </h2>
-              <p className="text-lg text-gray-700 mb-8">
-                Nous créons des liens durables entre des parrains généreux et des enfants cubains, 
-                apportant espoir et soutien à ceux qui en ont le plus besoin.
-              </p>
-              <Button 
-                onClick={() => navigate("/about")}
-                variant="outline" 
-                className="bg-white hover:bg-cuba-softYellow transition-colors"
-              >
-                En savoir plus
-              </Button>
-            </div>
-            <div className="lg:w-1/2">
-              <img 
-                src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png" 
-                alt="Mission illustration" 
-                className="rounded-lg shadow-xl"
-              />
-            </div>
-          </div>
+          <HowItWorks />
         </div>
-      </motion.section>
+      </section>
 
       {/* Section Points forts */}
       <motion.section 
@@ -186,11 +153,10 @@ const Home = () => {
         </div>
       </motion.section>
 
-      <section className="py-16 bg-cuba-softYellow">
-        <div className="container mx-auto px-4">
-          <HowItWorks />
-        </div>
-      </section>
+      <HeroSection 
+        heroSection={heroSection} 
+        onImageClick={() => setIsImageCropOpen(true)} 
+      />
 
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
@@ -199,12 +165,6 @@ const Home = () => {
       </section>
 
       <section className="py-16 bg-cuba-warmBeige">
-        <div className="container mx-auto px-4">
-          <CallToAction />
-        </div>
-      </section>
-
-      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
             <div className="space-y-6">
