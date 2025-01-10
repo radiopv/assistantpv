@@ -1,13 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut, Home } from "lucide-react";
+import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut, Home, Menu } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
 
 export const Navigation = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const [isOpen, setIsOpen] = useState(false);
 
   const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor';
@@ -30,73 +33,167 @@ export const Navigation = () => {
     }
   };
 
+  const MenuItems = () => (
+    <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0">
+      <Button
+        variant="ghost"
+        onClick={() => {
+          navigate("/");
+          setIsOpen(false);
+        }}
+        className="justify-start md:justify-center text-primary w-full md:w-auto"
+      >
+        <Home className="h-4 w-4 mr-2" />
+        Accueil
+      </Button>
+
+      <Button
+        variant="ghost"
+        onClick={() => {
+          navigate("/available-children");
+          setIsOpen(false);
+        }}
+        className="justify-start md:justify-center text-primary w-full md:w-auto"
+      >
+        <Users className="h-4 w-4 mr-2" />
+        Enfants disponibles
+      </Button>
+
+      <Button
+        variant="ghost"
+        onClick={() => {
+          navigate("/public-donations");
+          setIsOpen(false);
+        }}
+        className="justify-start md:justify-center text-primary w-full md:w-auto"
+      >
+        <Gift className="h-4 w-4 mr-2" />
+        Donations
+      </Button>
+
+      <Button
+        variant="ghost"
+        onClick={() => {
+          navigate("/statistics");
+          setIsOpen(false);
+        }}
+        className="justify-start md:justify-center text-primary w-full md:w-auto"
+      >
+        <BarChart className="h-4 w-4 mr-2" />
+        Statistiques
+      </Button>
+
+      <Button
+        variant="ghost"
+        onClick={() => {
+          navigate("/faq");
+          setIsOpen(false);
+        }}
+        className="justify-start md:justify-center text-primary w-full md:w-auto"
+      >
+        <HelpCircle className="h-4 w-4 mr-2" />
+        FAQ
+      </Button>
+
+      {isAssistant && (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/dashboard");
+            setIsOpen(false);
+          }}
+          className="justify-start md:justify-center text-primary w-full md:w-auto"
+        >
+          <LayoutDashboard className="h-4 w-4 mr-2" />
+          Tableau de bord
+        </Button>
+      )}
+    </div>
+  );
+
   return (
-    <nav className="bg-white shadow-sm">
+    <nav className="bg-white shadow-sm sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          <div className="flex space-x-4">
-            {/* Home Link - Always visible */}
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/")}
-              className="text-primary"
-            >
-              <Home className="h-4 w-4 mr-2" />
-              Accueil
-            </Button>
-
-            {/* Public Menu Items - Always visible */}
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/available-children")}
-              className="text-primary"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              Enfants disponibles
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/public-donations")}
-              className="text-primary"
-            >
-              <Gift className="h-4 w-4 mr-2" />
-              Donations
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/statistics")}
-              className="text-primary"
-            >
-              <BarChart className="h-4 w-4 mr-2" />
-              Statistiques
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/faq")}
-              className="text-primary"
-            >
-              <HelpCircle className="h-4 w-4 mr-2" />
-              FAQ
-            </Button>
-
-            {/* Assistant/Admin Menu Items */}
-            {isAssistant && (
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/dashboard")}
-                className="text-primary"
-              >
-                <LayoutDashboard className="h-4 w-4 mr-2" />
-                Tableau de bord
-              </Button>
-            )}
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
+                <div className="flex flex-col h-full">
+                  <div className="flex-1 py-6 space-y-4">
+                    <MenuItems />
+                  </div>
+                  <div className="border-t py-4 space-y-4">
+                    {user ? (
+                      <>
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            navigate("/sponsor-dashboard");
+                            setIsOpen(false);
+                          }}
+                          className="justify-start text-primary w-full"
+                        >
+                          <User className="h-4 w-4 mr-2" />
+                          Espace parrain
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            navigate("/messages");
+                            setIsOpen(false);
+                          }}
+                          className="justify-start text-primary w-full"
+                        >
+                          <MessageSquare className="h-4 w-4 mr-2" />
+                          Messages
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                          }}
+                          className="justify-start text-primary w-full"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Déconnexion
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          navigate("/login");
+                          setIsOpen(false);
+                        }}
+                        className="justify-start text-primary w-full"
+                      >
+                        <LogIn className="h-4 w-4 mr-2" />
+                        Connexion
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
 
-          {/* Right side menu items */}
-          <div className="flex items-center gap-4">
+          {/* Desktop Menu */}
+          <div className="hidden md:flex flex-1 space-x-4">
+            <MenuItems />
+          </div>
+
+          {/* Right side menu items - Desktop */}
+          <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                {/* Show Sponsor Dashboard link for all connected users */}
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/sponsor-dashboard")}
