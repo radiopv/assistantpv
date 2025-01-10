@@ -37,7 +37,7 @@ const SponsorAlbum = () => {
 
       const childIds = sponsorships.map(s => s.child_id);
 
-      // Then get all photos for these children with sponsor info
+      // Then get all photos for these children
       const { data: albumPhotos, error: photosError } = await supabase
         .from("album_media")
         .select(`
@@ -51,7 +51,7 @@ const SponsorAlbum = () => {
           children (
             name
           ),
-          sponsor:sponsor_id (
+          sponsor:sponsors (
             name,
             role,
             is_anonymous
