@@ -10,7 +10,6 @@ import {
   FileText,
   CheckSquare,
   Globe,
-  CircleDollarSign,
   Bell,
   Link,
   Mail,
@@ -49,11 +48,6 @@ const adminLinks = [
     href: "/admin/validation",
     label: "Validation",
     icon: CheckSquare,
-  },
-  {
-    href: "/admin/statistics",
-    label: "Statistiques",
-    icon: CircleDollarSign,
   },
   {
     href: "/admin/home-content",

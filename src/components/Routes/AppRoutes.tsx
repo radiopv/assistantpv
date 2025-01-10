@@ -28,7 +28,6 @@ import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 import Translations from "@/pages/admin/Translations";
 import Validation from "@/pages/admin/Validation";
-import AdminStatistics from "@/pages/admin/Statistics";
 import Emails from "@/pages/admin/Emails";
 import AdminFAQ from "@/pages/admin/FAQ";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
@@ -74,7 +73,6 @@ export const AppRoutes = () => {
         <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
         <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/validation" element={<Validation />} />
-        <Route path="/admin/statistics" element={<AdminStatistics />} />
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<AdminFAQ />} />
         <Route path="/admin/cities" element={<CitiesManagement />} />
