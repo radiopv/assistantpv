@@ -49,7 +49,7 @@ export const frenchTranslations = {
   sponsorOf: "parrain de",
   anonymousSponsor: "Parrain anonyme",
   
-  // Ajout des traductions pour la page BecomeSponsor
+  // Traductions pour la page BecomeSponsor
   becomeSponsor: "Devenir parrain",
   sponsorshipDescription: "Aidez à changer la vie d'un enfant en devenant parrain",
   fullName: "Nom complet",
@@ -63,7 +63,6 @@ export const frenchTranslations = {
   submitting: "Envoi en cours...",
   submitRequest: "Envoyer ma demande",
   success: "Succès",
-  sponsorshipRequestSubmitted: "Votre demande de parrainage a été envoyée avec succès",
   error: "Erreur",
 
   // Traductions pour la page des enfants disponibles
@@ -100,14 +99,9 @@ export const frenchTranslations = {
   // Traductions pour la page d'accueil
   heroTitle: "Changez une vie, parrainez un enfant cubain",
   heroSubtitle: "Votre soutien peut faire une réelle différence dans la vie d'un enfant à Cuba",
-  testimonials: "Témoignages",
-  noTestimonials: "Aucun témoignage pour le moment",
-  sponsorOf: "parrain de",
-  anonymousSponsor: "Parrain anonyme",
   childrenWaitingForSponsorship: "Enfants en attente de parrainage",
   ourMission: "Notre Mission",
   missionDescription: "Nous créons des liens durables entre des parrains généreux et des enfants cubains, apportant espoir et soutien à ceux qui en ont le plus besoin.",
-  learnMore: "En savoir plus",
   howWeHelp: "Comment nous aidons",
   sponsorship: "Parrainage",
   sponsorshipDescription: "Créez un lien spécial avec un enfant cubain",
