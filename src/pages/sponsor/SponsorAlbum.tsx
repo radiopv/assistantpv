@@ -4,12 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ImagePlus, Loader2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { ImagePlus, Loader2, Star, Trash2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
 
 interface AlbumMediaUploadProps {
   childId: string;
@@ -21,6 +22,7 @@ const SponsorAlbum = () => {
   const { toast } = useToast();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [selectedChildId, setSelectedChildId] = useState<string>("");
   const { language } = useLanguage();
 
   const translations = {
@@ -30,6 +32,12 @@ const SponsorAlbum = () => {
       upload: "Upload",
       success: "Photo ajoutée avec succès",
       error: "Une erreur est survenue lors de l'upload",
+      selectChild: "Sélectionner un enfant",
+      deleteConfirm: "Êtes-vous sûr de vouloir supprimer cette photo ?",
+      deleteSuccess: "Photo supprimée avec succès",
+      deleteError: "Erreur lors de la suppression",
+      toggleFavoriteSuccess: "Statut favori mis à jour",
+      toggleFavoriteError: "Erreur lors de la mise à jour du statut favori"
     },
     es: {
       addPhoto: "Agregar una foto",
@@ -37,15 +45,41 @@ const SponsorAlbum = () => {
       upload: "Subir",
       success: "Foto agregada con éxito",
       error: "Ocurrió un error durante la subida",
+      selectChild: "Seleccionar un niño",
+      deleteConfirm: "¿Está seguro de que desea eliminar esta foto?",
+      deleteSuccess: "Foto eliminada con éxito",
+      deleteError: "Error al eliminar la foto",
+      toggleFavoriteSuccess: "Estado favorito actualizado",
+      toggleFavoriteError: "Error al actualizar el estado favorito"
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
+  // Fetch sponsored children
+  const { data: sponsoredChildren } = useQuery({
+    queryKey: ["sponsored-children", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sponsorships")
+        .select(`
+          child_id,
+          children (
+            id,
+            name
+          )
+        `)
+        .eq("sponsor_id", user?.id)
+        .eq("status", "active");
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const { data: photos, isLoading, refetch } = useQuery({
     queryKey: ["sponsor-photos", user?.id],
     queryFn: async () => {
-      // First get all active sponsorships for the sponsor
       const { data: sponsorships } = await supabase
         .from("sponsorships")
         .select("child_id")
@@ -58,7 +92,6 @@ const SponsorAlbum = () => {
 
       const childIds = sponsorships.map(s => s.child_id);
 
-      // Then get all photos for these children
       const { data: albumPhotos, error: photosError } = await supabase
         .from("album_media")
         .select(`
@@ -68,6 +101,7 @@ const SponsorAlbum = () => {
           description,
           created_at,
           child_id,
+          is_featured,
           children (
             name
           ),
@@ -93,32 +127,19 @@ const SponsorAlbum = () => {
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
+      if (!selectedChildId) {
+        toast.error(t.selectChild);
+        return;
+      }
+
       const file = event.target.files?.[0];
       if (!file) return;
 
       setUploading(true);
 
-      // Get the child ID from the first active sponsorship
-      const { data: sponsorship } = await supabase
-        .from("sponsorships")
-        .select("child_id")
-        .eq("sponsor_id", user?.id)
-        .eq("status", "active")
-        .limit(1)
-        .single();
-
-      if (!sponsorship) {
-        toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Aucun parrainage actif trouvé"
-        });
-        return;
-      }
-
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${sponsorship.child_id}/${fileName}`;
+      const filePath = `${selectedChildId}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('album-media')
@@ -133,7 +154,7 @@ const SponsorAlbum = () => {
       const { error: dbError } = await supabase
         .from('album_media')
         .insert({
-          child_id: sponsorship.child_id,
+          child_id: selectedChildId,
           sponsor_id: user?.id,
           url: publicUrl,
           type: 'image',
@@ -142,21 +163,49 @@ const SponsorAlbum = () => {
 
       if (dbError) throw dbError;
 
-      toast({
-        title: "Succès",
-        description: "Photo ajoutée avec succès"
-      });
-
+      toast.success(t.success);
       refetch();
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'upload"
-      });
+      toast.error(t.error);
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDeletePhoto = async (photoId: string) => {
+    if (!confirm(t.deleteConfirm)) return;
+
+    try {
+      const { error } = await supabase
+        .from('album_media')
+        .delete()
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      toast.success(t.deleteSuccess);
+      refetch();
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+      toast.error(t.deleteError);
+    }
+  };
+
+  const handleToggleFavorite = async (photoId: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('album_media')
+        .update({ is_featured: !currentStatus })
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      toast.success(t.toggleFavoriteSuccess);
+      refetch();
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      toast.error(t.toggleFavoriteError);
     }
   };
 
@@ -168,26 +217,40 @@ const SponsorAlbum = () => {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Album Photo</h1>
-        <div>
-          <input
-            type="file"
-            id="photo-upload"
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileSelect}
-            disabled={uploading}
-          />
-          <Button
-            onClick={() => document.getElementById('photo-upload')?.click()}
-            disabled={uploading}
-          >
-            {uploading ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <ImagePlus className="w-4 h-4 mr-2" />
-            )}
-            Ajouter une photo
-          </Button>
+        <div className="flex gap-4 items-center">
+          <Select value={selectedChildId} onValueChange={setSelectedChildId}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder={t.selectChild} />
+            </SelectTrigger>
+            <SelectContent>
+              {sponsoredChildren?.map((sponsorship) => (
+                <SelectItem key={sponsorship.children.id} value={sponsorship.children.id}>
+                  {sponsorship.children.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div>
+            <input
+              type="file"
+              id="photo-upload"
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileSelect}
+              disabled={uploading}
+            />
+            <Button
+              onClick={() => document.getElementById('photo-upload')?.click()}
+              disabled={uploading}
+            >
+              {uploading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <ImagePlus className="w-4 h-4 mr-2" />
+              )}
+              {t.addPhoto}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -198,14 +261,36 @@ const SponsorAlbum = () => {
           {photos.map((photo) => (
             <Card 
               key={photo.id} 
-              className="overflow-hidden cursor-pointer"
-              onClick={() => setSelectedImage(photo.url)}
+              className="overflow-hidden cursor-pointer relative group"
             >
               <img 
                 src={photo.url} 
                 alt={photo.title || "Photo"} 
                 className="w-full h-48 object-cover"
+                onClick={() => setSelectedImage(photo.url)}
               />
+              <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleFavorite(photo.id, photo.is_featured);
+                  }}
+                >
+                  <Star className={`w-4 h-4 ${photo.is_featured ? "fill-yellow-400" : ""}`} />
+                </Button>
+                <Button
+                  variant="destructive"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeletePhoto(photo.id);
+                  }}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
               <div className="p-4">
                 <h3 className="font-medium">{photo.title || `Photo de ${photo.children?.name}`}</h3>
                 <div className="mt-2 text-sm text-gray-600">
