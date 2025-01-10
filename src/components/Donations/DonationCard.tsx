@@ -52,6 +52,32 @@ export const DonationCard = ({ donation, onDelete, canDelete = false }: Donation
     onDelete?.(); // Refresh the list
   };
 
+  const handleSave = async (updatedDonation: any) => {
+    try {
+      const { error } = await supabase
+        .from('donations')
+        .update(updatedDonation)
+        .eq('id', donation.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Don mis à jour",
+        description: "Le don a été mis à jour avec succès.",
+      });
+
+      setShowEditDialog(false);
+      onDelete?.(); // Refresh the list
+    } catch (error) {
+      console.error('Error updating donation:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la mise à jour du don.",
+      });
+    }
+  };
+
   return (
     <Card className="overflow-hidden">
       <DonationCardHeader donation={donation} />
@@ -109,6 +135,7 @@ export const DonationCard = ({ donation, onDelete, canDelete = false }: Donation
         onClose={() => setShowEditDialog(false)}
         donation={donation}
         onDonationUpdate={onDelete}
+        onSave={handleSave}
       />
 
       <PhotoUploadDialog
