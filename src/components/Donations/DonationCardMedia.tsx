@@ -12,10 +12,19 @@ interface DonationCardMediaProps {
 export const DonationCardMedia = ({
   photos,
   videos,
+  onPhotosUpdate,
+  onVideosUpdate,
 }: DonationCardMediaProps) => {
   return (
     <div className="space-y-4">
-      <PhotoGrid photos={photos} />
+      <PhotoGrid 
+        photos={photos} 
+        onPhotoDelete={() => onPhotosUpdate()}
+        onToggleFavorite={(id, status) => {
+          // Handle favorite toggle
+          onPhotosUpdate();
+        }}
+      />
       <VideoGrid videos={videos} />
     </div>
   );

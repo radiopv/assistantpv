@@ -1,20 +1,32 @@
+import { PhotoCard } from "./PhotoCard";
+
 interface PhotoGridProps {
   photos: any[];
+  onPhotoClick?: (url: string) => void;
+  onPhotoDelete?: (id: string) => void;
+  onToggleFavorite?: (id: string, currentStatus: boolean) => void;
 }
 
-export const PhotoGrid = ({ photos }: PhotoGridProps) => {
-  if (!photos || photos.length === 0) return null;
-  
+export const PhotoGrid = ({ 
+  photos, 
+  onPhotoClick = () => {}, 
+  onPhotoDelete,
+  onToggleFavorite
+}: PhotoGridProps) => {
+  if (!photos?.length) {
+    return <p className="text-gray-500 text-sm">Aucune photo disponible</p>;
+  }
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {photos.map((photo) => (
-        <div key={photo.id} className="relative group aspect-square">
-          <img
-            src={photo.url}
-            alt="Donation"
-            className="w-full h-full object-cover rounded-lg"
-          />
-        </div>
+        <PhotoCard
+          key={photo.id}
+          photo={photo}
+          onPhotoClick={onPhotoClick}
+          onDelete={onPhotoDelete}
+          onToggleFavorite={onToggleFavorite}
+        />
       ))}
     </div>
   );

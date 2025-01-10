@@ -1,76 +1,122 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { DonationDetails } from "./DonationDetails";
+import { Button } from "@/components/ui/button";
+import { Trash2, Edit, Camera } from "lucide-react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { DonationCardHeader } from "./DonationCardHeader";
 import { DonationCardMedia } from "./DonationCardMedia";
-import { useDonationMedia } from "./hooks/useDonationMedia";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { RefetchOptions } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { DonationDialog } from "./DonationDialog";
+import { PhotoUploadDialog } from "./Media/PhotoUploadDialog";
 
 interface DonationCardProps {
-  donation: {
-    id: string;
-    assistant_name: string;
-    city: string;
-    people_helped: number;
-    donation_date: string;
-    status: string;
-    comments: string | null;
-  };
-  onDelete?: (options?: RefetchOptions) => Promise<unknown>;
+  donation: any;
+  onDelete?: () => void;
   canDelete?: boolean;
 }
 
-export const DonationCard = ({ donation, onDelete, canDelete }: DonationCardProps) => {
-  const { language } = useLanguage();
-  const { photos, videos } = useDonationMedia(donation.id);
+export const DonationCard = ({ donation, onDelete, canDelete = false }: DonationCardProps) => {
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showPhotoDialog, setShowPhotoDialog] = useState(false);
+  const { toast } = useToast();
 
-  const translations = {
-    fr: {
-      comments: "Commentaires"
-    },
-    es: {
-      comments: "Comentarios"
+  const handleDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('donations')
+        .delete()
+        .eq('id', donation.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Don supprimé",
+        description: "Le don a été supprimé avec succès.",
+      });
+
+      onDelete?.();
+    } catch (error) {
+      console.error('Error deleting donation:', error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la suppression du don.",
+      });
     }
   };
 
-  const t = translations[language as keyof typeof translations];
+  const handlePhotosUpdate = () => {
+    setShowPhotoDialog(false);
+    onDelete?.(); // Refresh the list
+  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="group"
-    >
-      <Card className="overflow-hidden bg-white/80 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 border-cuba-turquoise/20 group-hover:border-cuba-turquoise/40">
-        <div className="p-6 space-y-6">
-          <DonationCardHeader donation={donation} />
+    <Card className="overflow-hidden">
+      <DonationCardHeader donation={donation} />
+      
+      <div className="p-4 space-y-4">
+        <DonationCardMedia 
+          donationId={donation.id}
+          photos={donation.photos || []}
+          videos={[]}
+          onPhotosUpdate={handlePhotosUpdate}
+          onVideosUpdate={() => {}}
+        />
 
-          <div className="border-t border-cuba-turquoise/10 pt-4">
-            <DonationDetails donation={donation} />
+        <div className="flex justify-between items-center">
+          <div className="text-sm text-gray-500">
+            {format(new Date(donation.donation_date), "d MMMM yyyy", { locale: fr })}
           </div>
-          
-          {donation.comments && (
-            <div className="border-t border-cuba-turquoise/10 pt-4">
-              <h4 className="text-sm font-medium text-gray-500 mb-2">{t.comments}</h4>
-              <p className="text-sm text-gray-700 leading-relaxed">{donation.comments}</p>
-            </div>
-          )}
-
-          {(photos.length > 0 || videos.length > 0) && (
-            <div className="border-t border-cuba-turquoise/10 pt-4">
-              <DonationCardMedia
-                donationId={donation.id}
-                photos={photos}
-                videos={videos}
-                onPhotosUpdate={() => {}}
-                onVideosUpdate={() => {}}
-              />
-            </div>
-          )}
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowPhotoDialog(true)}
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              Photos
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowEditDialog(true)}
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Modifier
+            </Button>
+            {canDelete && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDelete}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Supprimer
+              </Button>
+            )}
+          </div>
         </div>
-      </Card>
-    </motion.div>
+
+        {donation.comments && (
+          <p className="text-sm text-gray-600">{donation.comments}</p>
+        )}
+      </div>
+
+      <DonationDialog
+        open={showEditDialog}
+        onClose={() => setShowEditDialog(false)}
+        donation={donation}
+        onDonationUpdate={onDelete}
+      />
+
+      <PhotoUploadDialog
+        open={showPhotoDialog}
+        onClose={() => setShowPhotoDialog(false)}
+        donationId={donation.id}
+        onUploadComplete={handlePhotosUpdate}
+      />
+    </Card>
   );
 };
