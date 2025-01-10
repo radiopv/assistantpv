@@ -36,7 +36,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full lg:w-1/2 h-[50vh] lg:h-full relative"
+            className="w-full lg:w-1/2 h-[80vh] lg:h-full relative"
           >
             <div className="flex items-center gap-8 mb-8">
               <img 
@@ -54,13 +54,16 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
               </motion.h1>
             </div>
 
-            <img 
-              src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
-              alt="Hero background"
-              className="absolute inset-0 w-full h-full object-cover cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
-              onClick={onImageClick}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 rounded-lg" />
+            <div className="relative h-full w-full max-w-md mx-auto">
+              <img 
+                src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
+                alt="Hero background"
+                className="absolute inset-0 w-full h-full object-cover cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
+                style={{ objectPosition: 'center' }}
+                onClick={onImageClick}
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 rounded-lg" />
+            </div>
           </motion.div>
 
           <motion.div 
@@ -100,7 +103,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                   className="mt-12 bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-lg"
                 >
                   <h3 className="text-xl font-semibold text-white mb-4">
-                    {t('testimonials')}
+                    {t('testimonialTitle')}
                   </h3>
                   <Carousel
                     opts={{
