@@ -1,13 +1,12 @@
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { useQuery } from "@tanstack/react-query";
-import { Card } from "@/components/ui/card";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useState } from "react";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ImagePlus, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -54,7 +53,8 @@ const SponsorAlbum = () => {
           ),
           sponsors:sponsor_id (
             name,
-            role
+            role,
+            is_anonymous
           )
         `)
         .in("child_id", childIds)
