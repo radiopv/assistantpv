@@ -38,6 +38,22 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
             transition={{ duration: 0.5 }}
             className="w-full lg:w-1/2 h-[50vh] lg:h-full relative"
           >
+            <div className="flex items-center gap-8 mb-8">
+              <img 
+                src="/lovable-uploads/6ca4aca3-1116-4924-a084-ae21ae90bc33.png"
+                alt="Enfant cubain avec un ours en peluche"
+                className="w-48 h-48 object-cover rounded-lg shadow-xl"
+              />
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-4xl lg:text-5xl font-bold text-white font-title"
+              >
+                {heroSection?.title || t('heroTitle')}
+              </motion.h1>
+            </div>
+
             <img 
               src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
               alt="Hero background"
@@ -55,14 +71,6 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
           >
             <div className="max-w-xl mx-auto space-y-8">
               <div className="text-center lg:text-left">
-                <motion.h1 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                  className="text-4xl lg:text-5xl font-bold text-white font-title mb-4"
-                >
-                  {heroSection?.title || t('heroTitle')}
-                </motion.h1>
                 <motion.p 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
