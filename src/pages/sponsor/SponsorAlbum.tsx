@@ -47,11 +47,10 @@ const SponsorAlbum = () => {
           description,
           created_at,
           child_id,
-          sponsor_id,
           children (
             name
           ),
-          sponsor:sponsors (
+          sponsor:sponsor_id (
             name,
             role,
             is_anonymous
