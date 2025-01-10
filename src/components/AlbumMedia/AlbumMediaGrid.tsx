@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Play, ImagePlus } from "lucide-react";
+import { ImagePlus, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -27,9 +27,14 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
         .eq('child_id', childId)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return { media: mediaData, childName: childData?.name };
-    }
+      if (error) {
+        console.error("Error fetching album media:", error);
+        throw error;
+      }
+
+      return { media: mediaData || [], childName: childData?.name };
+    },
+    enabled: !!childId
   });
 
   const translations = {
