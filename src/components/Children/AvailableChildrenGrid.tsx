@@ -46,10 +46,10 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     loadFaceDetectionModels()
       .then(() => {
         setModelsLoaded(true);
-        console.log('Face detection models loaded successfully');
+        console.log('Modèles de détection faciale chargés avec succès');
       })
       .catch(error => {
-        console.error('Failed to load face detection models:', error);
+        console.error('Erreur lors du chargement des modèles de détection faciale:', error);
         toast({
           variant: "destructive",
           title: "Erreur",
@@ -64,15 +64,13 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     if (processedImages.current.has(photoUrl) || !modelsLoaded) return;
     
     try {
-      // Add a small delay to ensure image is fully loaded
       await new Promise(resolve => setTimeout(resolve, 100));
       
       const objectPosition = await detectFace(imgElement);
       imgElement.style.objectPosition = objectPosition;
       processedImages.current.add(photoUrl);
     } catch (error) {
-      console.error('Error processing image:', error);
-      // Set default position if face detection fails
+      console.error('Erreur lors du traitement de l\'image:', error);
       imgElement.style.objectPosition = '50% 20%';
     }
   };
@@ -126,7 +124,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
               <div className="flex items-center text-gray-600">
                 <MapPin className="w-4 h-4 mr-1" />
-                <span>{child.city}</span>
+                <span>{child.city || t("cityNotAvailable")}</span>
               </div>
 
               {childNeeds.length > 0 && (
