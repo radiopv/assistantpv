@@ -28,22 +28,20 @@ export default function AvailableChildren() {
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
-      console.log("Fetching children with filters:", { searchTerm, selectedGender, selectedAge, selectedCity, selectedStatus });
+      console.log("Recherche d'enfants avec les filtres:", { searchTerm, selectedGender, selectedAge, selectedCity, selectedStatus });
       
       let query = supabase
         .from("children")
         .select("*");
 
       if (searchTerm) {
-        console.log("Searching for name:", searchTerm);
+        console.log("Recherche par nom:", searchTerm);
         query = query.ilike('name', `%${searchTerm}%`);
       }
 
-      // Status filter
       if (selectedStatus === "available") {
         query = query.eq("is_sponsored", false);
       } else if (selectedStatus === "urgent") {
-        // For urgent needs, we need to check if any need in the array has is_urgent: true
         query = query
           .eq("is_sponsored", false)
           .not("needs", "eq", "[]")
@@ -61,12 +59,12 @@ export default function AvailableChildren() {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching children:", error);
+        console.error("Erreur lors de la récupération des enfants:", error);
         toast.error(t("errorFetchingChildren"));
         throw error;
       }
 
-      console.log("Query results:", data);
+      console.log("Résultats de la requête:", data);
       return data || [];
     }
   });
@@ -90,7 +88,7 @@ export default function AvailableChildren() {
       const birthDate = parseISO(child.birth_date);
       const ageInYears = differenceInYears(new Date(), birthDate);
       
-      console.log(`Age calculation for ${child.name}:`, ageInYears);
+      console.log(`Calcul de l'âge pour ${child.name}:`, ageInYears);
 
       if (ageInYears <= 2) {
         acc.infants = acc.infants || [];
@@ -140,7 +138,7 @@ export default function AvailableChildren() {
 
       navigate(`/become-sponsor/${childId}`);
     } catch (error) {
-      console.error("Error clicking sponsor button:", error);
+      console.error("Erreur lors du clic sur le bouton de parrainage:", error);
       toast.error(t("errorSponsorClick"));
     }
   };
