@@ -75,5 +75,8 @@ export const frenchTranslations = {
   searchChildren: "Rechercher un enfant",
   removeSponsorship: "Retirer le parrainage",
   comments: "Commentaires",
-  city: "Ville"
+  city: "Ville",
+  totalDonations: "Dons totaux",
+  peopleHelped: "Personnes aidées",
+  citiesCovered: "Villes couvertes"
 } as const;
