@@ -76,7 +76,7 @@ export const frenchTranslations = {
   removeSponsorship: "Retirer le parrainage",
   comments: "Commentaires",
   city: "Ville",
-  totalDonations: "Dons totaux",
+  totalDonations: "Total des dons",
   peopleHelped: "Personnes aidées",
   citiesCovered: "Villes couvertes",
   statisticsTitle: "Statistiques de l'Impact",
@@ -96,8 +96,5 @@ export const frenchTranslations = {
   monthlyDonationsTrend: "Tendance des Dons Mensuels",
   urgentNeedsByCity: "Besoins Urgents par Ville",
   donations: "Dons",
-  peopleHelped: "Personnes aidées",
-  cityDistribution: "Distribution par Ville",
-  totalDonations: "Total des dons",
-  citiesCovered: "Villes couvertes"
+  cityDistribution: "Distribution par Ville"
 } as const;
