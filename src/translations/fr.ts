@@ -12,5 +12,20 @@ export const frenchTranslations = {
   errorInvalidChild: "Enfant invalide",
   errorSponsorClick: "Erreur lors de la demande de parrainage",
   noUrgentChildren: "Aucun enfant n'a de besoins urgents pour le moment",
-  noCategoryChildren: "Aucun enfant ne correspond aux critères sélectionnés"
+  noCategoryChildren: "Aucun enfant ne correspond aux critères sélectionnés",
+  searchChild: "Rechercher un enfant...",
+  city: "Ville",
+  allCities: "Toutes les villes",
+  allGenders: "Tous les genres",
+  masculine: "Masculin",
+  feminine: "Féminin",
+  age: "Âge",
+  allAges: "Tous les âges",
+  years: "ans",
+  status: "Statut",
+  allStatus: "Tous les statuts",
+  available: "Disponible",
+  sponsored: "Parrainé",
+  pending: "En attente",
+  urgent: "Urgent"
 } as const;
