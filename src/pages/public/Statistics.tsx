@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { SponsorshipConversionStats, UserEngagementStats, TopCityStats } from "@/types/statistics";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   BarChart,
   Bar,
@@ -18,7 +19,6 @@ import {
   Line,
   Legend
 } from "recharts";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const COLORS = ['#0072BB', '#40C057', '#FA5252', '#7950F2', '#FD7E14'];
 
