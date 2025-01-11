@@ -24,7 +24,6 @@ export const spanishTranslations = {
   loading: "Cargando...",
   error: "Ocurrió un error",
   searchDonation: "Buscar una donación",
-  city: "Ciudad",
   allCities: "Todas las ciudades",
   sortBy: "Ordenar por",
   date: "Fecha",
@@ -65,7 +64,6 @@ export const spanishTranslations = {
   confirmPassword: "Confirmar contraseña",
   passwordsDoNotMatch: "Las contraseñas no coinciden",
   errorSubmittingRequest: "Ocurrió un error al enviar tu solicitud",
-  city: "Ciudad",
   cancel: "Cancelar",
   save: "Guardar",
   sponsorUpdateSuccess: "Actualización exitosa",
@@ -78,6 +76,6 @@ export const spanishTranslations = {
   select: "Seleccionar",
   searchChildren: "Buscar niño",
   removeSponsorship: "Eliminar apadrinamiento",
-  comments: "Comentarios",
-  age: "Edad"
+  age: "Edad",
+  city: "Ciudad"
 } as const;

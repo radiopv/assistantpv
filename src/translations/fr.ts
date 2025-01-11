@@ -14,7 +14,6 @@ export const frenchTranslations = {
   noUrgentChildren: "Aucun enfant n'a de besoins urgents pour le moment",
   noCategoryChildren: "Aucun enfant ne correspond aux critères sélectionnés",
   searchChild: "Rechercher un enfant...",
-  city: "Ville",
   allCities: "Toutes les villes",
   allGenders: "Tous les genres",
   masculine: "Masculin",
@@ -63,7 +62,6 @@ export const frenchTranslations = {
   confirmPassword: "Confirmer le mot de passe",
   passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
   errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande",
-  city: "Ville",
   cancel: "Annuler",
   save: "Enregistrer",
   sponsorUpdateSuccess: "Mise à jour réussie",
@@ -77,5 +75,5 @@ export const frenchTranslations = {
   searchChildren: "Rechercher un enfant",
   removeSponsorship: "Retirer le parrainage",
   comments: "Commentaires",
-  age: "Âge"
+  city: "Ville"
 } as const;
