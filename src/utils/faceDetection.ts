@@ -2,6 +2,7 @@ import * as faceapi from 'face-api.js';
 
 let modelsLoaded = false;
 let loadingPromise: Promise<void> | null = null;
+const detectionCache = new Map<string, string>();
 
 const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
 
@@ -11,43 +12,42 @@ export async function loadFaceDetectionModels() {
   // If already loading, return the existing promise
   if (loadingPromise) return loadingPromise;
   
-  console.log('Starting to load face detection models from CDN...');
+  console.log('Starting to load face detection models...');
   
   loadingPromise = Promise.all([
-    faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
-    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
     faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
   ]).then(() => {
     modelsLoaded = true;
-    console.log('Face detection models loaded successfully from CDN');
+    console.log('Face detection models loaded successfully');
   }).catch((error) => {
-    console.error('Detailed error loading face detection models:', error);
+    console.error('Error loading face detection models:', error);
     modelsLoaded = false;
     loadingPromise = null;
-    throw new Error(`Failed to load face detection models: ${error.message}`);
+    throw error;
   });
 
   return loadingPromise;
 }
 
 export async function detectFace(imgElement: HTMLImageElement): Promise<string> {
+  const imgSrc = imgElement.src;
+  
+  // Check cache first
+  if (detectionCache.has(imgSrc)) {
+    return detectionCache.get(imgSrc)!;
+  }
+
   try {
     if (!modelsLoaded) {
-      console.log('Models not loaded, attempting to load from CDN...');
       await loadFaceDetectionModels();
     }
 
-    // Try with SSD MobileNet first
-    let detection = await faceapi.detectSingleFace(imgElement);
+    const detection = await faceapi.detectSingleFace(
+      imgElement,
+      new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.3 })
+    );
     
-    // If no face found, try with TinyFaceDetector
-    if (!detection) {
-      console.log('No face detected with SSD MobileNet, trying TinyFaceDetector...');
-      detection = await faceapi.detectSingleFace(
-        imgElement,
-        new faceapi.TinyFaceDetectorOptions({ inputSize: 416, scoreThreshold: 0.3 })
-      );
-    }
+    let result = '50% 20%'; // Default fallback position
     
     if (detection) {
       const { box } = detection;
@@ -62,13 +62,22 @@ export async function detectFace(imgElement: HTMLImageElement): Promise<string> 
       const boundedX = Math.max(0, Math.min(100, centerX));
       const boundedY = Math.max(0, Math.min(100, centerY));
       
-      console.log(`Face detected, position: ${boundedX}% ${boundedY}%`);
-      return `${boundedX}% ${boundedY}%`;
+      result = `${boundedX}% ${boundedY}%`;
     }
+
+    // Cache the result
+    detectionCache.set(imgSrc, result);
+    return result;
+    
   } catch (error) {
-    console.error('Detailed error in face detection:', error);
+    console.error('Error in face detection:', error);
+    return '50% 20%'; // Default fallback position
   }
-  
-  console.log('Using default fallback position');
-  return '50% 20%';
+}
+
+// Clear cache when it gets too large
+export function clearDetectionCache() {
+  if (detectionCache.size > 100) {
+    detectionCache.clear();
+  }
 }
