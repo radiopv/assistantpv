@@ -9,7 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
-import { PhotoGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
+import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -46,7 +46,11 @@ const SponsorDashboard = () => {
       messages: "Mensajes",
       communicateWithAssistant: "Comuníquese con el asistente",
       plannedVisits: "Visitas Planificadas",
-      manageVisits: "Gestione sus visitas"
+      manageVisits: "Gestione sus visitas",
+      viewProfile: "Ver perfil",
+      viewAlbum: "Álbum de fotos",
+      hideProfile: "Ocultar perfil",
+      hideAlbum: "Ocultar álbum"
     }
   };
 
@@ -122,7 +126,6 @@ const SponsorDashboard = () => {
         <div className="p-6 bg-white/80 backdrop-blur-sm border-none rounded-lg shadow-lg">
           <p className="text-center text-gray-700">{t.loginRequired}</p>
           <Button 
-            onClick={() => navigate("/login")} 
             className="mt-4 mx-auto block bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white"
           >
             {t.login}
@@ -147,7 +150,6 @@ const SponsorDashboard = () => {
         <div className="p-6 bg-white/80 backdrop-blur-sm border-none rounded-lg shadow-lg">
           <p className="text-gray-700 mb-4">{t.noSponsorships}</p>
           <Button 
-            onClick={() => navigate("/become-sponsor")} 
             className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white"
           >
             {t.becomeASponsor}
@@ -193,7 +195,6 @@ const SponsorDashboard = () => {
             <Button
               variant="outline"
               className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange border-none transform hover:scale-105 transition-transform duration-200 h-auto"
-              onClick={() => navigate("/messages")}
             >
               <div className="flex items-center gap-4 w-full">
                 <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
@@ -209,7 +210,6 @@ const SponsorDashboard = () => {
             <Button
               variant="outline"
               className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-pink to-cuba-coral border-none transform hover:scale-105 transition-transform duration-200 h-auto"
-              onClick={() => navigate("/planned-visits")}
             >
               <div className="flex items-center gap-4 w-full">
                 <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
@@ -257,7 +257,7 @@ const SponsorDashboard = () => {
                         </Button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-4">
-                        <PhotoGrid childId={sponsorship.children.id} />
+                        <AlbumMediaGrid childId={sponsorship.children.id} />
                       </CollapsibleContent>
                     </Collapsible>
                   </div>
