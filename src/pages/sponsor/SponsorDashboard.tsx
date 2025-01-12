@@ -109,7 +109,6 @@ const SponsorDashboard = () => {
           </h1>
           <Button 
             onClick={() => {
-              // Share functionality
               if (navigator.share) {
                 navigator.share({
                   title: 'Rejoignez-moi comme parrain',
