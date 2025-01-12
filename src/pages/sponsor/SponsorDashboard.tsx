@@ -2,19 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
-import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/Cards/ImportantDatesCard";
 import { Share2, MessageSquare, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ProfileDetails } from "@/components/Children/ProfileDetails";
-import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { useNavigate } from "react-router-dom";
-import { convertJsonToNeeds } from "@/types/needs";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -34,16 +26,7 @@ const SponsorDashboard = () => {
       messages: "Messages",
       communicateWithAssistant: "Communiquez avec l'assistant",
       plannedVisits: "Visites Prévues",
-      manageVisits: "Gérez vos visites",
-      viewProfile: "Voir le profil",
-      viewAlbum: "Album photos",
-      hideProfile: "Masquer le profil",
-      hideAlbum: "Masquer l'album",
-      needs: "Besoins",
-      urgent: "Urgent",
-      description: "Description",
-      story: "Histoire",
-      comments: "Commentaires"
+      manageVisits: "Gérez vos visites"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -57,16 +40,7 @@ const SponsorDashboard = () => {
       messages: "Mensajes",
       communicateWithAssistant: "Comuníquese con el asistente",
       plannedVisits: "Visitas Planificadas",
-      manageVisits: "Gestione sus visitas",
-      viewProfile: "Ver perfil",
-      viewAlbum: "Álbum de fotos",
-      hideProfile: "Ocultar perfil",
-      hideAlbum: "Ocultar álbum",
-      needs: "Necesidades",
-      urgent: "Urgente",
-      description: "Descripción",
-      story: "Historia",
-      comments: "Comentarios"
+      manageVisits: "Gestione sus visitas"
     }
   };
 
@@ -207,7 +181,7 @@ const SponsorDashboard = () => {
 
       <div className="container mx-auto px-4">
         <div className="grid gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button
               variant="outline"
               className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange border-none transform hover:scale-105 transition-transform duration-200 h-auto"
@@ -241,120 +215,14 @@ const SponsorDashboard = () => {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <div className="grid gap-6">
-                {sponsorships.map((sponsorship) => (
-                  <div key={sponsorship.id} className="space-y-4">
-                    <SponsoredChildCard
-                      child={sponsorship.children}
-                      onViewProfile={() => {}}
-                      onViewAlbum={() => {}}
-                    />
-                    
-                    <Card className="p-4">
-                      <h3 className="text-lg font-semibold mb-4">{translations[language].needs}</h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        {convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
-                          <div
-                            key={`${need.category}-${index}`}
-                            className={`p-3 rounded-lg ${
-                              need.is_urgent
-                                ? "bg-red-50 border border-red-200"
-                                : "bg-gray-50 border border-gray-200"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between">
-                              <Badge
-                                variant={need.is_urgent ? "destructive" : "secondary"}
-                                className="mb-2"
-                              >
-                                {need.category}
-                                {need.is_urgent && (
-                                  <span className="ml-1 text-red-600 font-bold">
-                                    (!){" "}{translations[language].urgent}
-                                  </span>
-                                )}
-                              </Badge>
-                            </div>
-                            {need.description && (
-                              <p className="text-sm text-gray-600 mt-1">
-                                {need.description}
-                              </p>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
-
-                    {/* Additional Information Cards */}
-                    {sponsorship.children.description && (
-                      <Card className="p-4">
-                        <h3 className="text-lg font-semibold mb-2">{translations[language].description}</h3>
-                        <ScrollArea className="h-32">
-                          <p className="text-gray-600">{sponsorship.children.description}</p>
-                        </ScrollArea>
-                      </Card>
-                    )}
-
-                    {sponsorship.children.story && (
-                      <Card className="p-4">
-                        <h3 className="text-lg font-semibold mb-2">{translations[language].story}</h3>
-                        <ScrollArea className="h-32">
-                          <p className="text-gray-600">{sponsorship.children.story}</p>
-                        </ScrollArea>
-                      </Card>
-                    )}
-
-                    {sponsorship.children.comments && (
-                      <Card className="p-4">
-                        <h3 className="text-lg font-semibold mb-2">{translations[language].comments}</h3>
-                        <ScrollArea className="h-32">
-                          <p className="text-gray-600">{sponsorship.children.comments}</p>
-                        </ScrollArea>
-                      </Card>
-                    )}
-                    
-                    <Collapsible>
-                      <CollapsibleTrigger asChild>
-                        <Button variant="outline" className="w-full">
-                          {translations[language].viewProfile}
-                        </Button>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-4">
-                        <ProfileDetails
-                          child={sponsorship.children}
-                          editing={false}
-                          onChange={() => {}}
-                          onPhotoUpdate={() => {}}
-                        />
-                      </CollapsibleContent>
-                    </Collapsible>
-
-                    <Collapsible>
-                      <CollapsibleTrigger asChild>
-                        <Button variant="outline" className="w-full">
-                          {translations[language].viewAlbum}
-                        </Button>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="mt-4">
-                        <AlbumMediaGrid childId={sponsorship.children.id} />
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <ImportantDatesCard 
-                birthDates={sponsorships.map(s => ({
-                  childName: s.children.name,
-                  birthDate: s.children.birth_date
-                }))}
-                plannedVisits={plannedVisits || []}
+          <div className="grid gap-6">
+            {sponsorships.map((sponsorship) => (
+              <SponsoredChildSection
+                key={sponsorship.id}
+                sponsorship={sponsorship}
+                userId={user.id}
               />
-            </div>
+            ))}
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { StatisticsSection } from "./StatisticsSection";
 import { PlannedVisitForm } from "./PlannedVisitForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { SponsoredChildSection } from "./SponsoredChildSection";
 
 interface DashboardTabsProps {
   sponsorships: any[];
