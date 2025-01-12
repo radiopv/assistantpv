@@ -1,31 +1,32 @@
-import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Calendar, Heart, Image, MessageSquare } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Card } from "@/components/ui/card";
+import { Album, User } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsoredChildCardProps {
   child: any;
-  onViewAlbum: (childId: string) => void;
+  onViewProfile: () => void;
+  onViewAlbum: () => void;
 }
 
-export const SponsoredChildCard = ({ child, onViewAlbum }: SponsoredChildCardProps) => {
-  const navigate = useNavigate();
+export const SponsoredChildCard = ({ 
+  child, 
+  onViewProfile,
+  onViewAlbum 
+}: SponsoredChildCardProps) => {
   const { language } = useLanguage();
 
   const translations = {
     fr: {
       viewProfile: "Voir le profil",
       viewAlbum: "Album photos",
-      sendMessage: "Envoyer un message",
       age: "ans",
       months: "mois"
     },
     es: {
       viewProfile: "Ver perfil",
       viewAlbum: "Álbum de fotos",
-      sendMessage: "Enviar mensaje",
       age: "años",
       months: "meses"
     }
@@ -54,18 +55,18 @@ export const SponsoredChildCard = ({ child, onViewAlbum }: SponsoredChildCardPro
           <Button 
             variant="outline" 
             className="flex items-center gap-2"
-            onClick={() => navigate(`/children/${child.id}`)}
+            onClick={onViewProfile}
           >
-            <Heart className="w-4 h-4" />
+            <User className="w-4 h-4" />
             {t.viewProfile}
           </Button>
           
           <Button 
             variant="outline"
             className="flex items-center gap-2"
-            onClick={() => onViewAlbum(child.id)}
+            onClick={onViewAlbum}
           >
-            <Image className="w-4 h-4" />
+            <Album className="w-4 h-4" />
             {t.viewAlbum}
           </Button>
         </div>

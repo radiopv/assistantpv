@@ -27,7 +27,9 @@ const SponsorDashboard = () => {
       messages: "Messages",
       communicateWithAssistant: "Communiquez avec l'assistant",
       plannedVisits: "Visites Prévues",
-      manageVisits: "Gérez vos visites"
+      manageVisits: "Gérez vos visites",
+      viewProfile: "Voir le profil",
+      viewAlbum: "Album photos"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -152,8 +154,12 @@ const SponsorDashboard = () => {
     );
   }
 
+  const handleViewProfile = (childId: string) => {
+    navigate(`/children/${childId}`);
+  };
+
   const handleViewAlbum = (childId: string) => {
-    navigate(`/children/${childId}/album`);
+    navigate(`/sponsor-album/${childId}`);
   };
 
   return (
@@ -229,7 +235,8 @@ const SponsorDashboard = () => {
                   <SponsoredChildCard
                     key={sponsorship.id}
                     child={sponsorship.children}
-                    onViewAlbum={handleViewAlbum}
+                    onViewProfile={() => handleViewProfile(sponsorship.children.id)}
+                    onViewAlbum={() => handleViewAlbum(sponsorship.children.id)}
                   />
                 ))}
               </div>
