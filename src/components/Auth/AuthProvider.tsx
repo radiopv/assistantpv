@@ -29,35 +29,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuth = async () => {
       try {
         console.log("Checking authentication...");
-        const storedUser = localStorage.getItem('user');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
         
-        if (storedUser) {
-          console.log("Found stored user:", storedUser);
-          const parsedUser = JSON.parse(storedUser);
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          throw sessionError;
+        }
+
+        if (session?.user) {
+          console.log("Found authenticated user:", session.user);
           
-          const { data: sponsor, error } = await supabase
+          const { data: sponsor, error: sponsorError } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', parsedUser.id)
+            .eq('id', session.user.id)
             .maybeSingle();
 
-          if (error) {
-            console.error('Error fetching sponsor:', error);
-            localStorage.removeItem('user');
-            setUser(null);
-            navigate("/login");
-            return;
+          if (sponsorError) {
+            console.error('Error fetching sponsor:', sponsorError);
+            throw sponsorError;
           }
 
           if (!sponsor) {
             console.error('Sponsor not found in database');
-            localStorage.removeItem('user');
-            setUser(null);
-            navigate("/login");
-            return;
+            throw new Error('Sponsor not found');
           }
 
           console.log("Setting user with role:", sponsor.role);
+          localStorage.setItem('user', JSON.stringify(sponsor));
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
@@ -70,7 +69,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
           }
         } else {
-          console.log("No stored user found");
+          console.log("No authenticated session found");
+          localStorage.removeItem('user');
           setUser(null);
           if (!window.location.pathname.startsWith('/login')) {
             navigate("/login");
@@ -92,23 +92,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, session);
+      
       if (event === 'SIGNED_IN' && session?.user) {
-        const { data: sponsor, error } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
+        try {
+          const { data: sponsor, error } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
 
-        if (!error && sponsor) {
+          if (error) throw error;
+          if (!sponsor) throw new Error('Sponsor not found');
+
           localStorage.setItem('user', JSON.stringify(sponsor));
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+          
+          toast({
+            title: "Connexion réussie",
+            description: "Bienvenue !",
+          });
           
           if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
             navigate('/dashboard');
           } else {
             navigate('/sponsor-dashboard');
           }
+        } catch (error) {
+          console.error('Error handling sign in:', error);
+          toast({
+            title: "Erreur de connexion",
+            description: "Une erreur est survenue lors de la connexion",
+            variant: "destructive",
+          });
+          await supabase.auth.signOut();
+          localStorage.removeItem('user');
+          setUser(null);
+          navigate("/login");
         }
       } else if (event === 'SIGNED_OUT') {
         localStorage.removeItem('user');
