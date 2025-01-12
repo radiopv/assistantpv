@@ -11,9 +11,10 @@ interface DonationCardProps {
   donation: any;
   onDelete?: () => void;
   canDelete?: boolean;
+  isPublicView?: boolean;
 }
 
-export const DonationCard = ({ donation, onDelete, canDelete = false }: DonationCardProps) => {
+export const DonationCard = ({ donation, onDelete, canDelete = false, isPublicView = false }: DonationCardProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { deleteDonation, isDeleting } = useDeleteDonation();
 
