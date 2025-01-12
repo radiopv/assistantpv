@@ -9,11 +9,13 @@ import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/Sponsored
 import { toast } from "@/components/ui/use-toast";
 import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Image, MessageSquare, Calendar, Album } from "lucide-react";
+import { Image, MessageSquare, Calendar, Album, Share2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery({
     queryKey: ["sponsorships", user?.id],
@@ -93,101 +95,118 @@ const SponsorDashboard = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="grid gap-6">
-        {/* Header Section */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Mon Espace Parrain</h1>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate("/messages")} className="bg-white/80 backdrop-blur-sm">
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Messages
-            </Button>
-            <Button variant="outline" onClick={() => navigate("/sponsor-album")} className="bg-white/80 backdrop-blur-sm">
-              <Album className="w-4 h-4 mr-2" />
-              Album Photos
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige">
+      {/* Hero Section with Tropical Background */}
+      <div 
+        className="relative h-[300px] bg-cover bg-center mb-8"
+        style={{
+          backgroundImage: "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/cuba-beach.jpg')"
+        }}
+      >
+        <div className="container mx-auto px-4 h-full flex flex-col justify-center items-start">
+          <h1 className="text-4xl md:text-5xl font-title text-white mb-6 animate-fade-in">
+            Bienvenue, {user.email}
+          </h1>
+          <Button 
+            onClick={() => {
+              // Share functionality
+              if (navigator.share) {
+                navigator.share({
+                  title: 'Rejoignez-moi comme parrain',
+                  text: 'Devenez parrain et aidez un enfant cubain',
+                  url: window.location.origin + '/become-sponsor'
+                });
+              }
+            }}
+            className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white flex items-center gap-2 animate-fade-in"
+          >
+            <Share2 className="w-4 h-4" />
+            Inviter des amis
+          </Button>
         </div>
+      </div>
 
-        {/* Quick Actions Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange border-none">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
-                <Image className="w-6 h-6 text-cuba-turquoise" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Album Photos</h3>
-                <p className="text-sm text-gray-700">Gérez vos photos</p>
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-softYellow to-cuba-sand border-none">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
-                <MessageSquare className="w-6 h-6 text-cuba-turquoise" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Messages</h3>
-                <p className="text-sm text-gray-700">Communiquez avec l'assistant</p>
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-pink to-cuba-coral border-none">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
-                <Calendar className="w-6 h-6 text-cuba-turquoise" />
-              </div>
-              <div>
-                <h3 className="font-semibold">Visites Prévues</h3>
-                <p className="text-sm text-gray-700">Planifiez vos visites</p>
-              </div>
-            </div>
-          </Card>
-        </div>
-
-        {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Sponsored Children Section */}
-          <div className="lg:col-span-2">
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
-              <h2 className="text-xl font-semibold mb-4">Mes Filleuls</h2>
-              <ScrollArea className="h-[600px] pr-4">
-                <div className="space-y-6">
-                  {sponsorships.map((sponsorship) => (
-                    <SponsoredChildSection
-                      key={sponsorship.id}
-                      sponsorship={sponsorship}
-                      userId={user.id}
-                    />
-                  ))}
+      <div className="container mx-auto px-4">
+        <div className="grid gap-6">
+          {/* Quick Actions Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange border-none transform hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
+                  <Image className="w-6 h-6 text-cuba-turquoise" />
                 </div>
-              </ScrollArea>
+                <div>
+                  <h3 className="font-semibold">Album Photos</h3>
+                  <p className="text-sm text-gray-700">Gérez vos photos</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-softYellow to-cuba-sand border-none transform hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
+                  <MessageSquare className="w-6 h-6 text-cuba-turquoise" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Messages</h3>
+                  <p className="text-sm text-gray-700">Communiquez avec l'assistant</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-pink to-cuba-coral border-none transform hover:scale-105 transition-transform duration-200">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
+                  <Calendar className="w-6 h-6 text-cuba-turquoise" />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Visites Prévues</h3>
+                  <p className="text-sm text-gray-700">Planifiez vos visites</p>
+                </div>
+              </div>
             </Card>
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Important Dates */}
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
-              <h2 className="text-xl font-semibold mb-4">Dates Importantes</h2>
-              <ImportantDatesCard 
-                plannedVisits={[]}
-                birthDates={sponsorships.map(s => ({
-                  childName: s.children.name,
-                  birthDate: s.children.birth_date
-                }))}
-              />
-            </Card>
+          {/* Main Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Sponsored Children Section */}
+            <div className="lg:col-span-2">
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
+                <h2 className="text-xl font-title mb-4">Mes Filleuls</h2>
+                <ScrollArea className="h-[600px] pr-4">
+                  <div className="space-y-6">
+                    {sponsorships.map((sponsorship) => (
+                      <SponsoredChildSection
+                        key={sponsorship.id}
+                        sponsorship={sponsorship}
+                        userId={user.id}
+                      />
+                    ))}
+                  </div>
+                </ScrollArea>
+              </Card>
+            </div>
 
-            {/* Quick Actions */}
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
-              <h2 className="text-xl font-semibold mb-4">Actions Rapides</h2>
-              <DashboardActions />
-            </Card>
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Important Dates */}
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
+                <h2 className="text-xl font-title mb-4">Dates Importantes</h2>
+                <ImportantDatesCard 
+                  plannedVisits={[]}
+                  birthDates={sponsorships.map(s => ({
+                    childName: s.children.name,
+                    birthDate: s.children.birth_date
+                  }))}
+                />
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
+                <h2 className="text-xl font-title mb-4">Actions Rapides</h2>
+                <DashboardActions />
+              </Card>
+            </div>
           </div>
         </div>
       </div>
