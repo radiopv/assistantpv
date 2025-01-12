@@ -44,8 +44,8 @@ export default function AvailableChildren() {
       } else if (selectedStatus === "urgent") {
         query = query
           .eq("is_sponsored", false)
-          .not("needs", "eq", "[]")
-          .contains("needs", [{ is_urgent: true }]);
+          .not('needs', 'eq', '[]')
+          .contains('needs', [{ is_urgent: true }]);
       }
 
       if (selectedCity !== "all") {
@@ -177,7 +177,7 @@ export default function AvailableChildren() {
             <AvailableChildrenGrid 
               children={children}
               isLoading={isLoading}
-              onSponsorClick={handleSponsorClick}
+              onSponsorClick={(childId) => navigate(`/become-sponsor/${childId}`)}
             />
           </div>
         )}
