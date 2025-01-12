@@ -1,17 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
 import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/Cards/ImportantDatesCard";
 import { Share2, MessageSquare, Calendar } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ProfileDetails } from "@/components/Children/ProfileDetails";
+import { PhotoGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const { language } = useLanguage();
 
   const translations = {
@@ -29,7 +30,9 @@ const SponsorDashboard = () => {
       plannedVisits: "Visites Prévues",
       manageVisits: "Gérez vos visites",
       viewProfile: "Voir le profil",
-      viewAlbum: "Album photos"
+      viewAlbum: "Album photos",
+      hideProfile: "Masquer le profil",
+      hideAlbum: "Masquer l'album"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -154,14 +157,6 @@ const SponsorDashboard = () => {
     );
   }
 
-  const handleViewProfile = (childId: string) => {
-    navigate(`/children/${childId}`);
-  };
-
-  const handleViewAlbum = (childId: string) => {
-    navigate(`/sponsor-album/${childId}`);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige">
       <div 
@@ -232,12 +227,40 @@ const SponsorDashboard = () => {
             <div className="lg:col-span-2">
               <div className="grid gap-6">
                 {sponsorships.map((sponsorship) => (
-                  <SponsoredChildCard
-                    key={sponsorship.id}
-                    child={sponsorship.children}
-                    onViewProfile={() => handleViewProfile(sponsorship.children.id)}
-                    onViewAlbum={() => handleViewAlbum(sponsorship.children.id)}
-                  />
+                  <div key={sponsorship.id} className="space-y-4">
+                    <SponsoredChildCard
+                      child={sponsorship.children}
+                      onViewProfile={() => {}}
+                      onViewAlbum={() => {}}
+                    />
+                    
+                    <Collapsible>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="outline" className="w-full">
+                          {t.viewProfile}
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-4">
+                        <ProfileDetails
+                          child={sponsorship.children}
+                          editing={false}
+                          onChange={() => {}}
+                          onPhotoUpdate={() => {}}
+                        />
+                      </CollapsibleContent>
+                    </Collapsible>
+
+                    <Collapsible>
+                      <CollapsibleTrigger asChild>
+                        <Button variant="outline" className="w-full">
+                          {t.viewAlbum}
+                        </Button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="mt-4">
+                        <PhotoGrid childId={sponsorship.children.id} />
+                      </CollapsibleContent>
+                    </Collapsible>
+                  </div>
                 ))}
               </div>
             </div>
