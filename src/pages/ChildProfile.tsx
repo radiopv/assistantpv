@@ -11,6 +11,7 @@ import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { Card } from "@/components/ui/card";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/components/Auth/AuthProvider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +33,7 @@ const ChildProfile = () => {
   const [child, setChild] = useState<any>(null);
   const [editing, setEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     loadChild();
@@ -39,6 +41,12 @@ const ChildProfile = () => {
 
   const loadChild = async () => {
     try {
+      const { data: userData } = await supabase
+        .from('sponsors')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+
       const { data, error } = await supabase
         .from('children')
         .select('*')
@@ -96,6 +104,22 @@ const ChildProfile = () => {
 
   const handleDelete = async () => {
     try {
+      // First, check if user is admin or assistant
+      const { data: userData } = await supabase
+        .from('sponsors')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+
+      if (!userData || (userData.role !== 'admin' && userData.role !== 'assistant')) {
+        toast({
+          variant: "destructive",
+          title: t("error"),
+          description: t("unauthorizedAction"),
+        });
+        return;
+      }
+
       // First, delete related records in album_media
       const { error: albumError } = await supabase
         .from('album_media')
@@ -182,6 +206,7 @@ const ChildProfile = () => {
         onEdit={() => setEditing(true)}
         onSave={handleUpdate}
         onDelete={() => setShowDeleteDialog(true)}
+        userRole={user?.role}
       />
 
       <div className="grid gap-6">
