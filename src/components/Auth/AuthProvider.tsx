@@ -82,7 +82,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    // Vérification initiale de l'authentification
     checkAuth();
   }, [navigate]);
 
