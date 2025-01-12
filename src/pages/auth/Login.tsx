@@ -5,6 +5,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Shield, UserCheck } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,9 +18,8 @@ export default function Login() {
     setLoading(true);
 
     try {
-      console.log("Attempting login with email:", email);
+      console.log("Tentative de connexion avec l'email:", email);
       
-      // Direct query to sponsors table
       const { data: sponsor, error: sponsorError } = await supabase
         .from('sponsors')
         .select('*')
@@ -28,42 +28,51 @@ export default function Login() {
         .maybeSingle();
 
       if (sponsorError) {
-        console.error("Error fetching sponsor:", sponsorError);
-        throw sponsorError;
+        console.error("Erreur lors de la récupération du sponsor:", sponsorError);
+        throw new Error("Erreur de connexion");
       }
 
       if (!sponsor) {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      console.log("Sponsor found:", sponsor);
+      console.log("Sponsor trouvé:", sponsor);
 
-      // Update last_login timestamp
+      // Mise à jour de la date de dernière connexion
       const { error: updateError } = await supabase
         .from('sponsors')
         .update({ last_login: new Date().toISOString() })
         .eq('id', sponsor.id);
 
       if (updateError) {
-        console.error('Error updating last_login:', updateError);
+        console.error('Erreur lors de la mise à jour de last_login:', updateError);
       }
-      
-      // Store user data
+
+      // Stockage des données utilisateur
       localStorage.setItem('user', JSON.stringify(sponsor));
 
+      const icon = sponsor.role === 'admin' ? <Shield className="w-4 h-4 mr-2" /> : <UserCheck className="w-4 h-4 mr-2" />;
+      
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue !",
+        description: (
+          <div className="flex items-center">
+            {icon}
+            <span>Bienvenue {sponsor.name} !</span>
+          </div>
+        ),
       });
 
-      // Role-based redirection
+      // Redirection basée sur le rôle
       if (['admin', 'assistant'].includes(sponsor.role)) {
+        console.log("Redirection vers le dashboard admin");
         navigate('/dashboard');
       } else {
+        console.log("Redirection vers le dashboard parrain");
         navigate('/sponsor-dashboard');
       }
     } catch (error: any) {
-      console.error('Login error:', error);
+      console.error('Erreur de connexion:', error);
       toast({
         title: "Erreur de connexion",
         description: error.message || "Email ou mot de passe incorrect",
@@ -95,6 +104,7 @@ export default function Login() {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="mt-1"
+              placeholder="votre@email.com"
             />
           </div>
           <div>
@@ -111,6 +121,7 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="mt-1"
+              placeholder="Votre mot de passe"
             />
           </div>
           <Button

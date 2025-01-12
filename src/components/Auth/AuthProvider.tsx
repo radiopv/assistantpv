@@ -28,14 +28,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log("Checking authentication...");
+        console.log("Vérification de l'authentification...");
         const storedUser = localStorage.getItem('user');
         
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
-          console.log("Found stored user:", parsedUser);
+          console.log("Utilisateur trouvé dans le localStorage:", parsedUser);
           
-          // Verify if the user still exists in the database
+          // Vérifier si l'utilisateur existe toujours dans la base de données
           const { data: sponsor, error: sponsorError } = await supabase
             .from('sponsors')
             .select('*')
@@ -43,30 +43,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             .maybeSingle();
 
           if (sponsorError) {
-            console.error('Error verifying sponsor:', sponsorError);
+            console.error('Erreur lors de la vérification du sponsor:', sponsorError);
             throw sponsorError;
           }
 
           if (!sponsor) {
-            console.error('Sponsor not found in database');
-            throw new Error('Sponsor not found');
+            console.error('Sponsor non trouvé dans la base de données');
+            throw new Error('Sponsor non trouvé');
           }
 
-          // Update last_login timestamp
+          // Mise à jour de last_login
           const { error: updateError } = await supabase
             .from('sponsors')
             .update({ last_login: new Date().toISOString() })
             .eq('id', sponsor.id);
 
           if (updateError) {
-            console.error('Error updating last_login:', updateError);
+            console.error('Erreur lors de la mise à jour de last_login:', updateError);
           }
 
-          console.log("Setting user with role:", sponsor.role);
+          console.log("Définition du rôle utilisateur:", sponsor.role);
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
-          // Handle redirection based on role and current path
+          // Gestion de la redirection en fonction du rôle et du chemin actuel
           const currentPath = window.location.pathname;
           if (currentPath === '/login' || currentPath === '/') {
             if (['admin', 'assistant'].includes(sponsor.role)) {
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
           }
         } else {
-          console.log("No stored user found");
+          console.log("Aucun utilisateur trouvé dans le localStorage");
           localStorage.removeItem('user');
           setUser(null);
           const publicRoutes = ['/login', '/', '/available-children', '/public-donations', '/statistics', '/faq'];
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         }
       } catch (error) {
-        console.error('Error in checkAuth:', error);
+        console.error('Erreur dans checkAuth:', error);
         localStorage.removeItem('user');
         setUser(null);
         navigate("/login");
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       navigate("/login");
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Erreur lors de la déconnexion:", error);
       toast({
         title: "Erreur lors de la déconnexion",
         description: "Veuillez réessayer",
