@@ -26,6 +26,7 @@ import SponsorDashboard from "@/pages/SponsorDashboard";
 import PublicDonations from "@/pages/public/PublicDonations";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
+import SponsorsManagement from "@/pages/admin/SponsorsManagement";
 import Translations from "@/pages/admin/Translations";
 import Validation from "@/pages/admin/Validation";
 import Emails from "@/pages/admin/Emails";
@@ -71,6 +72,7 @@ export const AppRoutes = () => {
 
         {/* Admin routes */}
         <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
+        <Route path="/admin/sponsors-management" element={<SponsorsManagement />} />
         <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/emails" element={<Emails />} />
