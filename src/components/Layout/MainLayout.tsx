@@ -10,11 +10,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-interface MainLayoutProps {
-  children: React.ReactNode;
-}
-
-const MainLayout = ({ children }: MainLayoutProps) => {
+const MainLayout = () => {
   const { user } = useAuth();
   const showSidebar = user?.role === 'admin' || user?.role === 'assistant';
 
@@ -53,7 +49,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
         <main className={`flex-1 ${showSidebar ? 'md:ml-64' : ''} pb-16 md:pb-0`}>
           <div className="p-4 md:p-8">
             <div className="container mx-auto animate-fade-in">
-              {children}
+              <Outlet />
             </div>
           </div>
         </main>
