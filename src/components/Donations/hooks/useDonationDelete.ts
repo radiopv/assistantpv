@@ -6,7 +6,7 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
 
   const handleDelete = async (donationId: string) => {
     try {
-      // Supprimer les photos associées
+      // Delete associated photos
       const { error: photosError } = await supabase
         .from('donation_photos')
         .delete()
@@ -14,7 +14,7 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
 
       if (photosError) throw photosError;
 
-      // Supprimer les vidéos associées
+      // Delete associated videos
       const { error: videosError } = await supabase
         .from('donation_videos')
         .delete()
@@ -22,7 +22,7 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
 
       if (videosError) throw videosError;
 
-      // Supprimer les items du don
+      // Delete donation items
       const { error: itemsError } = await supabase
         .from('donation_items')
         .delete()
@@ -30,7 +30,7 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
 
       if (itemsError) throw itemsError;
 
-      // Supprimer les donneurs associés
+      // Delete associated donors
       const { error: donorsError } = await supabase
         .from('donors')
         .delete()
@@ -38,7 +38,7 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
 
       if (donorsError) throw donorsError;
 
-      // Finalement, supprimer le don
+      // Finally, delete the donation
       const { error: donationError } = await supabase
         .from('donations')
         .delete()
