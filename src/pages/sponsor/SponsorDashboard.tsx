@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { DashboardActions } from "@/components/Sponsors/Dashboard/DashboardActions";
 import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
 import { toast } from "@/components/ui/use-toast";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Image, MessageSquare, Calendar, Album } from "lucide-react";
@@ -86,7 +85,7 @@ const SponsorDashboard = () => {
     return (
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Mon Espace Parrain</h1>
-        <Card className="p-6">
+        <Card className="p-6 cuba-card">
           <p className="text-gray-600 mb-4">Vous ne parrainez pas encore d'enfant.</p>
           <Button onClick={() => navigate("/become-sponsor")}>
             Parrainer un enfant
@@ -116,7 +115,7 @@ const SponsorDashboard = () => {
 
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-[#FFE4E1] to-[#FFF0F5] border-none">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-lg">
                 <Image className="w-6 h-6 text-primary" />
@@ -128,7 +127,7 @@ const SponsorDashboard = () => {
             </div>
           </Card>
           
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-[#E6E6FA] to-[#F0F8FF] border-none">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-lg">
                 <MessageSquare className="w-6 h-6 text-primary" />
@@ -140,7 +139,7 @@ const SponsorDashboard = () => {
             </div>
           </Card>
           
-          <Card className="p-6 hover:shadow-lg transition-shadow">
+          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-[#F0FFF0] to-[#F5FFFA] border-none">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-lg">
                 <Calendar className="w-6 h-6 text-primary" />
@@ -157,7 +156,7 @@ const SponsorDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Sponsored Children Section */}
           <div className="lg:col-span-2">
-            <Card className="p-6">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-4">Mes Filleuls</h2>
               <ScrollArea className="h-[600px] pr-4">
                 <div className="space-y-6">
@@ -176,7 +175,7 @@ const SponsorDashboard = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Important Dates */}
-            <Card className="p-6">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-4">Dates Importantes</h2>
               <ImportantDatesCard 
                 plannedVisits={[]}
@@ -188,7 +187,7 @@ const SponsorDashboard = () => {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="p-6">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm">
               <h2 className="text-xl font-semibold mb-4">Actions Rapides</h2>
               <DashboardActions />
             </Card>
