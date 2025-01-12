@@ -49,11 +49,12 @@ export const translations = {
     engagement: "Engagement",
     impact: "Impact",
     successRate: "Taux de réussite",
-    monthlyDonationsTrend: "Tendance des dons mensuels",
-    donations: "Dons",
-    peopleHelped: "Personnes aidées",
-    urgentNeedsByCity: "Besoins urgents par ville",
-    cityDistribution: "Distribution par ville"
+    activityRate: "Taux d'activité",
+    assistants: "Assistants",
+    sponsoredChildren: "Enfants parrainés",
+    totalSponsors: "Total des parrains",
+    statisticsTitle: "Nos statistiques",
+    statisticsDescription: "Découvrez l'impact de notre communauté"
   },
   es: {
     addChild: "Agregar niño",
@@ -96,6 +97,20 @@ export const translations = {
     urgentNeedsByCity: "Necesidades urgentes por ciudad",
     cityDistribution: "Distribución por ciudad",
     donations: "Donaciones",
-    peopleHelped: "Personas ayudadas"
+    peopleHelped: "Personas ayudadas",
+    sponsorshipStats: "Estadísticas de patrocinio",
+    engagement: "Compromiso",
+    impact: "Impacto",
+    conversionRate: "Tasa de conversión",
+    avgDuration: "Duración promedio",
+    activityRate: "Tasa de actividad",
+    activeSponsors: "Padrinos activos",
+    assistants: "Asistentes",
+    sponsoredChildren: "Niños patrocinados",
+    totalSponsors: "Total de padrinos",
+    successRate: "Tasa de éxito",
+    statisticsTitle: "Nuestras estadísticas",
+    statisticsDescription: "Descubre el impacto de nuestra comunidad",
+    days: "días"
   }
 };
