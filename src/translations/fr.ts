@@ -28,8 +28,6 @@ export const frenchTranslations = {
   sponsored: "Parrainé",
   pending: "En attente",
   urgent: "Urgent",
-  
-  // Traductions pour la page Statistics
   statisticsTitle: "Nos statistiques",
   statisticsDescription: "Découvrez l'impact de notre communauté",
   sponsorshipStats: "Statistiques de parrainage",
@@ -67,6 +65,5 @@ export const frenchTranslations = {
   errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande",
   passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
   password: "Mot de passe",
-  confirmPassword: "Confirmer le mot de passe",
-  city: "Ville",
+  confirmPassword: "Confirmer le mot de passe"
 };

@@ -16,13 +16,11 @@ export const spanishTranslations = {
   markImportant: "Marcar como importante",
   archive: "Archivar",
   selectMessageToRead: "Selecciona un mensaje para leer",
-  
-  // Traducciones para la página de donaciones públicas
   donationsTitle: "Nuestras acciones en el terreno",
   donationsSubtitle: "Descubre todas las acciones realizadas por nuestros asistentes en Cuba",
   noDonationsFound: "No se encontró ninguna donación",
   loading: "Cargando...",
-  error: "Ocurrió un error",
+  error: "Error",
   searchDonation: "Buscar una donación",
   city: "Ciudad",
   allCities: "Todas las ciudades",
@@ -45,8 +43,6 @@ export const spanishTranslations = {
   sponsorOf: "padrino de",
   anonymousSponsor: "Padrino anónimo",
   noTestimonials: "No hay testimonios disponibles",
-
-  // Traducciones para la página BecomeSponsor
   becomeSponsor: "Convertirse en padrino",
   sponsorshipDescription: "Ayuda a cambiar la vida de un niño convirtiéndote en padrino",
   fullName: "Nombre completo",
@@ -61,13 +57,10 @@ export const spanishTranslations = {
   submitRequest: "Enviar solicitud",
   success: "Éxito",
   sponsorshipRequestSubmitted: "Tu solicitud de patrocinio ha sido enviada con éxito",
-  error: "Error",
   errorSubmittingRequest: "Ocurrió un error al enviar tu solicitud",
   passwordsDoNotMatch: "Las contraseñas no coinciden",
   password: "Contraseña",
   confirmPassword: "Confirmar contraseña",
-  city: "Ciudad",
-  // Traducciones para la página de niños disponibles
   availableChildren: "Niños disponibles para el apadrinamiento",
   searchChild: "Buscar un niño",
   allGenders: "Todos los géneros",
