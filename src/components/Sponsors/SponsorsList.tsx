@@ -84,12 +84,12 @@ export const SponsorsList = ({
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       
-      // Filtrer uniquement les parrainages actifs avec des enfants valides
+      // Filter only active sponsorships with valid children
       const validSponshorships = sponsor.sponsorships?.filter((s: any) => {
         return s.status === 'active' && s.children && s.children.id;
       }) || [];
 
-      // Supprimer les doublons en utilisant un Set pour les IDs des enfants
+      // Remove duplicates using a Set for child IDs
       const uniqueChildIds = new Set();
       const uniqueSponshorships = validSponshorships.filter((s: any) => {
         const childId = s.children.id;
@@ -100,7 +100,7 @@ export const SponsorsList = ({
         return false;
       });
 
-      // Mettre à jour les parrainages du sponsor
+      // Update the sponsor's sponsorships with the deduplicated list
       sponsor.sponsorships = uniqueSponshorships;
 
       const hasActiveSponshorships = uniqueSponshorships.length > 0;
