@@ -20,8 +20,6 @@ const SponsorDashboard = () => {
     queryFn: async () => {
       if (!user?.id) return null;
       
-      console.log("Fetching sponsorships for user:", user.id);
-      
       const { data, error } = await supabase
         .from("sponsorships")
         .select(`
@@ -58,7 +56,6 @@ const SponsorDashboard = () => {
         return null;
       }
 
-      console.log("Fetched sponsorships:", data);
       return data;
     },
     enabled: !!user?.id
@@ -85,9 +82,9 @@ const SponsorDashboard = () => {
     return (
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Mon Espace Parrain</h1>
-        <Card className="p-6 cuba-card">
+        <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
           <p className="text-gray-600 mb-4">Vous ne parrainez pas encore d'enfant.</p>
-          <Button onClick={() => navigate("/become-sponsor")}>
+          <Button onClick={() => navigate("/become-sponsor")} className="bg-cuba-turquoise hover:bg-cuba-turquoise/90">
             Parrainer un enfant
           </Button>
         </Card>
@@ -102,11 +99,11 @@ const SponsorDashboard = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold text-gray-900">Mon Espace Parrain</h1>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate("/messages")}>
+            <Button variant="outline" onClick={() => navigate("/messages")} className="bg-white/80 backdrop-blur-sm">
               <MessageSquare className="w-4 h-4 mr-2" />
               Messages
             </Button>
-            <Button variant="outline" onClick={() => navigate("/sponsor-album")}>
+            <Button variant="outline" onClick={() => navigate("/sponsor-album")} className="bg-white/80 backdrop-blur-sm">
               <Album className="w-4 h-4 mr-2" />
               Album Photos
             </Button>
@@ -115,38 +112,38 @@ const SponsorDashboard = () => {
 
         {/* Quick Actions Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-[#FFE4E1] to-[#FFF0F5] border-none">
+          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange border-none">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <Image className="w-6 h-6 text-primary" />
+              <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
+                <Image className="w-6 h-6 text-cuba-turquoise" />
               </div>
               <div>
                 <h3 className="font-semibold">Album Photos</h3>
-                <p className="text-sm text-gray-500">Gérez vos photos</p>
+                <p className="text-sm text-gray-700">Gérez vos photos</p>
               </div>
             </div>
           </Card>
           
-          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-[#E6E6FA] to-[#F0F8FF] border-none">
+          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-softYellow to-cuba-sand border-none">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <MessageSquare className="w-6 h-6 text-primary" />
+              <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
+                <MessageSquare className="w-6 h-6 text-cuba-turquoise" />
               </div>
               <div>
                 <h3 className="font-semibold">Messages</h3>
-                <p className="text-sm text-gray-500">Communiquez avec l'assistant</p>
+                <p className="text-sm text-gray-700">Communiquez avec l'assistant</p>
               </div>
             </div>
           </Card>
           
-          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-[#F0FFF0] to-[#F5FFFA] border-none">
+          <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-pink to-cuba-coral border-none">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-lg">
-                <Calendar className="w-6 h-6 text-primary" />
+              <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
+                <Calendar className="w-6 h-6 text-cuba-turquoise" />
               </div>
               <div>
                 <h3 className="font-semibold">Visites Prévues</h3>
-                <p className="text-sm text-gray-500">Planifiez vos visites</p>
+                <p className="text-sm text-gray-700">Planifiez vos visites</p>
               </div>
             </div>
           </Card>
@@ -156,7 +153,7 @@ const SponsorDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Sponsored Children Section */}
           <div className="lg:col-span-2">
-            <Card className="p-6 bg-white/80 backdrop-blur-sm">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
               <h2 className="text-xl font-semibold mb-4">Mes Filleuls</h2>
               <ScrollArea className="h-[600px] pr-4">
                 <div className="space-y-6">
@@ -175,7 +172,7 @@ const SponsorDashboard = () => {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Important Dates */}
-            <Card className="p-6 bg-white/80 backdrop-blur-sm">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
               <h2 className="text-xl font-semibold mb-4">Dates Importantes</h2>
               <ImportantDatesCard 
                 plannedVisits={[]}
@@ -187,7 +184,7 @@ const SponsorDashboard = () => {
             </Card>
 
             {/* Quick Actions */}
-            <Card className="p-6 bg-white/80 backdrop-blur-sm">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
               <h2 className="text-xl font-semibold mb-4">Actions Rapides</h2>
               <DashboardActions />
             </Card>

@@ -16,8 +16,8 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen bg-cuba-offwhite flex flex-col">
-      {/* Top Navigation for all users */}
-      <div className="sticky top-0 z-50 w-full bg-white border-b">
+      {/* Top Navigation for all users - Now sticky */}
+      <div className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-sm border-b shadow-sm">
         <Navigation />
       </div>
 
@@ -28,7 +28,7 @@ const MainLayout = () => {
             <div className="md:hidden fixed top-4 left-4 z-50">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="bg-white/80 backdrop-blur-sm">
                     <Menu className="h-6 w-6" />
                     <span className="sr-only">Menu</span>
                   </Button>
