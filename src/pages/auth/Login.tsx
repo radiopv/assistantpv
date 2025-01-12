@@ -18,35 +18,40 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { data: sponsor, error } = await supabase
-        .from('sponsors')
-        .select('*')
-        .eq('email', email)
-        .single();
+      const { data: { user }, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
       if (error) throw error;
 
-      if (!sponsor) {
-        throw new Error("Email ou mot de passe incorrect");
+      if (!user) {
+        throw new Error("No user returned from authentication");
       }
 
-      if (sponsor.password_hash !== password) {
-        throw new Error("Email ou mot de passe incorrect");
-      }
+      const { data: sponsor, error: sponsorError } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('id', user.id)
+        .single();
 
-      if (!['admin', 'assistant'].includes(sponsor.role)) {
-        throw new Error("Accès non autorisé");
-      }
+      if (sponsorError) throw sponsorError;
+      if (!sponsor) throw new Error('Sponsor not found');
 
       localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue dans l'espace administration",
+        description: "Bienvenue !",
       });
       
-      navigate("/dashboard");
+      if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
+        navigate('/dashboard');
+      } else {
+        navigate('/sponsor-dashboard');
+      }
     } catch (error: any) {
+      console.error('Login error:', error);
       toast({
         title: "Erreur de connexion",
         description: error.message || "Une erreur est survenue",
