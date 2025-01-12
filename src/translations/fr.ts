@@ -65,5 +65,7 @@ export const frenchTranslations = {
   errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande",
   passwordsDoNotMatch: "Les mots de passe ne correspondent pas",
   password: "Mot de passe",
-  confirmPassword: "Confirmer le mot de passe"
+  confirmPassword: "Confirmer le mot de passe",
+  totalDonations: "Total des dons",
+  citiesCovered: "Villes couvertes"
 };
