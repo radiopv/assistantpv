@@ -26,7 +26,10 @@ const SponsorDashboard = () => {
       messages: "Messages",
       communicateWithAssistant: "Communiquez avec l'assistant",
       plannedVisits: "Visites Prévues",
-      manageVisits: "Gérez vos visites"
+      manageVisits: "Gérez vos visites",
+      shareError: "Le partage n'est pas disponible sur votre appareil",
+      copySuccess: "Lien copié dans le presse-papiers !",
+      copyError: "Impossible de copier le lien"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -108,6 +111,31 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
+  const handleShare = async () => {
+    const shareData = {
+      title: translations[language].inviteFriends,
+      text: translations[language].becomeASponsor,
+      url: window.location.origin + '/become-sponsor'
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback to clipboard
+        await navigator.clipboard.writeText(shareData.url);
+        toast.success(translations[language].copySuccess);
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      if (error.name === 'NotAllowedError') {
+        toast.error(translations[language].shareError);
+      } else {
+        toast.error(translations[language].copyError);
+      }
+    }
+  };
+
   if (!user) {
     return (
       <div className="container mx-auto p-4">
@@ -162,15 +190,7 @@ const SponsorDashboard = () => {
             {translations[language].welcomeMessage}, {user.email}
           </h1>
           <Button 
-            onClick={() => {
-              if (navigator.share) {
-                navigator.share({
-                  title: translations[language].inviteFriends,
-                  text: translations[language].becomeASponsor,
-                  url: window.location.origin + '/become-sponsor'
-                });
-              }
-            }}
+            onClick={handleShare}
             className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white flex items-center gap-2 animate-fade-in"
           >
             <Share2 className="w-4 h-4" />
