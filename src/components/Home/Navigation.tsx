@@ -15,10 +15,6 @@ export const Navigation = () => {
   const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor';
 
-  console.log("Navigation - User:", user);
-  console.log("Navigation - Is Assistant:", isAssistant);
-  console.log("Navigation - Is Sponsor:", isSponsor);
-
   const handleLogout = async () => {
     try {
       await signOut();
@@ -198,16 +194,14 @@ export const Navigation = () => {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                {isSponsor && (
-                  <Button
-                    variant="ghost"
-                    onClick={() => navigate("/sponsor-dashboard")}
-                    className="text-primary"
-                  >
-                    <User className="h-4 w-4 mr-2" />
-                    Espace parrain
-                  </Button>
-                )}
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/sponsor-dashboard")}
+                  className="text-primary"
+                >
+                  <User className="h-4 w-4 mr-2" />
+                  Espace parrain
+                </Button>
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/messages")}

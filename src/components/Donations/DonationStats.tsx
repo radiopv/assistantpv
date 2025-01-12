@@ -15,15 +15,15 @@ export const DonationStats = ({ donations }: DonationStatsProps) => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       <Card className="p-4 bg-primary/5">
         <p className="text-sm text-gray-500">{t('totalDonations')}</p>
-        <p className="text-2xl font-bold text-[#8B5CF6]">{totalDonations}</p>
+        <p className="text-2xl font-bold">{totalDonations}</p>
       </Card>
       <Card className="p-4 bg-primary/5">
         <p className="text-sm text-gray-500">{t('peopleHelped')}</p>
-        <p className="text-2xl font-bold text-[#F97316]">{totalPeopleHelped}</p>
+        <p className="text-2xl font-bold">{totalPeopleHelped}</p>
       </Card>
       <Card className="p-4 bg-primary/5">
         <p className="text-sm text-gray-500">{t('citiesCovered')}</p>
-        <p className="text-2xl font-bold text-[#221F26]">{cities}</p>
+        <p className="text-2xl font-bold">{cities}</p>
       </Card>
     </div>
   );

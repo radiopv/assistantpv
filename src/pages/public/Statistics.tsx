@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { SponsorshipConversionStats, UserEngagementStats, TopCityStats } from "@/types/statistics";
 import { Progress } from "@/components/ui/progress";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   BarChart,
   Bar,
@@ -19,6 +18,7 @@ import {
   Line,
   Legend
 } from "recharts";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const COLORS = ['#0072BB', '#40C057', '#FA5252', '#7950F2', '#FD7E14'];
 
@@ -65,21 +65,9 @@ const Statistics = () => {
   const { data: urgentNeeds } = useQuery({
     queryKey: ['urgent-needs'],
     queryFn: async () => {
-      console.log('Fetching urgent needs by city...');
       const { data, error } = await supabase.rpc('get_urgent_needs_by_city');
-      
-      if (error) {
-        console.error('Error fetching urgent needs:', error);
-        throw error;
-      }
-      
-      console.log('Urgent needs data:', data);
-      return data?.map(need => ({
-        ...need,
-        urgent_needs_count: Number(need.urgent_needs_count),
-        total_needs: Number(need.total_needs),
-        urgent_needs_ratio: Number(need.urgent_needs_ratio)
-      })) || [];
+      if (error) throw error;
+      return data;
     }
   });
 

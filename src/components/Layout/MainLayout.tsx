@@ -12,12 +12,7 @@ import {
 
 const MainLayout = () => {
   const { user } = useAuth();
-  console.log("MainLayout - Current user:", user);
-  console.log("MainLayout - User role:", user?.role);
-  
-  // Show sidebar for admin and assistant roles
   const showSidebar = user?.role === 'admin' || user?.role === 'assistant';
-  console.log("MainLayout - Show sidebar:", showSidebar);
 
   return (
     <div className="min-h-screen bg-cuba-offwhite flex flex-col">

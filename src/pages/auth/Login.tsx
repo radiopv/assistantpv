@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, UserCheck } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { Label } from "@/components/ui/label";
 
-export default function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,64 +18,38 @@ export default function Login() {
     setLoading(true);
 
     try {
-      console.log("Tentative de connexion avec l'email:", email);
-      
-      const { data: sponsor, error: sponsorError } = await supabase
+      const { data: sponsor, error } = await supabase
         .from('sponsors')
         .select('*')
         .eq('email', email)
-        .eq('password_hash', password)
-        .maybeSingle();
+        .single();
 
-      if (sponsorError) {
-        console.error("Erreur lors de la récupération du sponsor:", sponsorError);
-        throw new Error("Erreur de connexion");
-      }
+      if (error) throw error;
 
       if (!sponsor) {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      console.log("Sponsor trouvé:", sponsor);
-
-      // Mise à jour de last_login
-      const { error: updateError } = await supabase
-        .from('sponsors')
-        .update({ last_login: new Date().toISOString() })
-        .eq('id', sponsor.id);
-
-      if (updateError) {
-        console.error('Erreur lors de la mise à jour de last_login:', updateError);
+      if (sponsor.password_hash !== password) {
+        throw new Error("Email ou mot de passe incorrect");
       }
 
-      // Stockage des données utilisateur
+      if (!['admin', 'assistant'].includes(sponsor.role)) {
+        throw new Error("Accès non autorisé");
+      }
+
       localStorage.setItem('user', JSON.stringify(sponsor));
 
-      const icon = sponsor.role === 'admin' ? <Shield className="w-4 h-4 mr-2" /> : <UserCheck className="w-4 h-4 mr-2" />;
-      
       toast({
         title: "Connexion réussie",
-        description: (
-          <div className="flex items-center">
-            {icon}
-            <span>Bienvenue {sponsor.name} !</span>
-          </div>
-        ),
+        description: "Bienvenue dans l'espace administration",
       });
-
-      // Redirection basée sur le rôle
-      if (['admin', 'assistant'].includes(sponsor.role)) {
-        console.log("Redirection vers le dashboard admin");
-        navigate('/dashboard');
-      } else {
-        console.log("Redirection vers le dashboard parrain");
-        navigate('/sponsor-dashboard');
-      }
+      
+      navigate("/dashboard");
     } catch (error: any) {
-      console.error('Erreur de connexion:', error);
       toast({
         title: "Erreur de connexion",
-        description: error.message || "Email ou mot de passe incorrect",
+        description: error.message || "Une erreur est survenue",
         variant: "destructive",
       });
     } finally {
@@ -84,55 +58,55 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <Card className="w-full max-w-md p-8">
-        <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">
-          Connexion
-        </h2>
-        <form onSubmit={handleLogin} className="space-y-6">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md p-8 space-y-6 bg-white">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Administration</h1>
+          <p className="text-gray-600">Connectez-vous pour accéder à l'espace administration</p>
+        </div>
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1"
               placeholder="votre@email.com"
+              className="w-full"
             />
           </div>
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Mot de passe
-            </label>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Mot de passe</Label>
             <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1"
-              placeholder="Votre mot de passe"
+              placeholder="••••••••"
+              className="w-full"
             />
           </div>
+
           <Button
             type="submit"
-            disabled={loading}
             className="w-full"
+            disabled={loading}
           >
             {loading ? "Connexion en cours..." : "Se connecter"}
           </Button>
         </form>
+
+        <p className="text-center text-sm text-gray-600">
+          Cette section est réservée aux administrateurs et assistants
+        </p>
       </Card>
     </div>
   );
-}
+};
+
+export default Login;

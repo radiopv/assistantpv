@@ -28,55 +28,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log("Vérification de l'authentification...");
         const storedUser = localStorage.getItem('user');
-        
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
-          console.log("Utilisateur trouvé dans le localStorage:", parsedUser);
           
-          // Vérifier si l'utilisateur existe toujours dans la base de données
-          const { data: sponsor, error: sponsorError } = await supabase
+          const { data: sponsor, error } = await supabase
             .from('sponsors')
             .select('*')
             .eq('id', parsedUser.id)
             .maybeSingle();
 
-          if (sponsorError) {
-            console.error('Erreur lors de la vérification du sponsor:', sponsorError);
-            throw sponsorError;
+          if (error || !sponsor) {
+            console.error('User not found in sponsors table:', error);
+            localStorage.removeItem('user');
+            setUser(null);
+            navigate("/login");
+            return;
           }
 
-          if (!sponsor) {
-            console.error('Sponsor non trouvé dans la base de données');
-            throw new Error('Sponsor non trouvé');
-          }
-
-          console.log("Définition du rôle utilisateur:", sponsor.role);
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
-          // Gestion de la redirection en fonction du rôle
-          const currentPath = window.location.pathname;
-          if (currentPath === '/login' || currentPath === '/') {
-            if (['admin', 'assistant'].includes(sponsor.role)) {
+          if (window.location.pathname === '/login') {
+            if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
             } else {
-              navigate('/sponsor-dashboard');
+              navigate('/');
             }
           }
         } else {
-          console.log("Aucun utilisateur trouvé dans le localStorage");
-          localStorage.removeItem('user');
           setUser(null);
-          const publicRoutes = ['/login', '/', '/available-children', '/public-donations', '/statistics', '/faq'];
-          if (!publicRoutes.includes(window.location.pathname)) {
+          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
             navigate("/login");
           }
         }
       } catch (error) {
-        console.error('Erreur dans checkAuth:', error);
-        localStorage.removeItem('user');
+        console.error('Error checking auth:', error);
         setUser(null);
         navigate("/login");
       } finally {
@@ -98,7 +85,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
       navigate("/login");
     } catch (error) {
-      console.error("Erreur lors de la déconnexion:", error);
+      console.error("Error signing out:", error);
       toast({
         title: "Erreur lors de la déconnexion",
         description: "Veuillez réessayer",
