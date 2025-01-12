@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuth = async () => {
       try {
         console.log("Checking authentication...");
-        // Vérifier si un utilisateur est stocké dans le localStorage
         const storedUser = localStorage.getItem('user');
         
         if (storedUser) {
