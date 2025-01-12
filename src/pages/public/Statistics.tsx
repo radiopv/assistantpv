@@ -52,7 +52,6 @@ const Statistics = () => {
     }
   });
 
-  // New stats queries
   const { data: monthlyDonations } = useQuery({
     queryKey: ['monthly-donations'],
     queryFn: async () => {
