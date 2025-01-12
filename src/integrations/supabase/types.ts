@@ -1078,6 +1078,7 @@ export type Database = {
         Row: {
           created_at: string | null
           end_date: string
+          hotel_name: string | null
           id: string
           notes: string | null
           purpose: string | null
@@ -1085,10 +1086,13 @@ export type Database = {
           start_date: string
           status: string | null
           updated_at: string | null
+          wants_donation_pickup: boolean | null
+          wants_to_visit_child: boolean | null
         }
         Insert: {
           created_at?: string | null
           end_date: string
+          hotel_name?: string | null
           id?: string
           notes?: string | null
           purpose?: string | null
@@ -1096,10 +1100,13 @@ export type Database = {
           start_date: string
           status?: string | null
           updated_at?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Update: {
           created_at?: string | null
           end_date?: string
+          hotel_name?: string | null
           id?: string
           notes?: string | null
           purpose?: string | null
@@ -1107,6 +1114,8 @@ export type Database = {
           start_date?: string
           status?: string | null
           updated_at?: string | null
+          wants_donation_pickup?: boolean | null
+          wants_to_visit_child?: boolean | null
         }
         Relationships: [
           {
