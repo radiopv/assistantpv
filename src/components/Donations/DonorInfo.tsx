@@ -1,32 +1,22 @@
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface DonorInfoProps {
-  donorName: string;
-  onDonorNameChange: (value: string) => void;
-  isAnonymous: boolean;
-  onAnonymousChange: (value: boolean) => void;
+  donors: Array<{
+    name: string;
+    is_anonymous: boolean;
+  }>;
 }
 
-export const DonorInfo = ({
-  donorName,
-  onDonorNameChange,
-  isAnonymous,
-  onAnonymousChange,
-}: DonorInfoProps) => {
+export const DonorInfo = ({ donors }: DonorInfoProps) => {
   const { language } = useLanguage();
 
   const translations = {
     fr: {
       donorInfo: "Information du donateur",
-      donorPlaceholder: "Nom du donateur (optionnel)",
       anonymous: "Anonyme"
     },
     es: {
       donorInfo: "Información del donante",
-      donorPlaceholder: "Nombre del donante (opcional)",
       anonymous: "Anónimo"
     }
   };
@@ -34,22 +24,14 @@ export const DonorInfo = ({
   const t = translations[language as keyof typeof translations];
 
   return (
-    <div className="space-y-4">
-      <Label>{t.donorInfo}</Label>
-      <div className="flex items-center gap-4">
-        <Input
-          placeholder={t.donorPlaceholder}
-          value={donorName}
-          onChange={(e) => onDonorNameChange(e.target.value)}
-          disabled={isAnonymous}
-        />
-        <Button
-          type="button"
-          variant={isAnonymous ? "default" : "outline"}
-          onClick={() => onAnonymousChange(!isAnonymous)}
-        >
-          {t.anonymous}
-        </Button>
+    <div className="space-y-2">
+      <h4 className="font-medium">{t.donorInfo}</h4>
+      <div className="space-y-1">
+        {donors.map((donor, index) => (
+          <p key={index} className="text-sm text-gray-600">
+            {donor.is_anonymous ? t.anonymous : donor.name}
+          </p>
+        ))}
       </div>
     </div>
   );
