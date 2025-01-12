@@ -15,24 +15,41 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
   const { data: media, isLoading } = useQuery({
     queryKey: ['album-media', childId],
     queryFn: async () => {
-      const { data: childData } = await supabase
+      // First get child info
+      const { data: childData, error: childError } = await supabase
         .from('children')
         .select('name')
         .eq('id', childId)
         .single();
 
-      const { data: mediaData, error } = await supabase
+      if (childError) throw childError;
+
+      // Then get media
+      const { data: mediaData, error: mediaError } = await supabase
         .from('album_media')
-        .select('*')
+        .select(`
+          id,
+          url,
+          type,
+          title,
+          description,
+          is_featured,
+          created_at,
+          sponsor_id,
+          sponsors (
+            name,
+            role
+          )
+        `)
         .eq('child_id', childId)
         .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error("Error fetching album media:", error);
-        throw error;
-      }
+      if (mediaError) throw mediaError;
 
-      return { media: mediaData || [], childName: childData?.name };
+      return {
+        media: mediaData || [],
+        childName: childData?.name
+      };
     },
     enabled: !!childId
   });
