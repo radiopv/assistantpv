@@ -29,24 +29,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkAuth = async () => {
       try {
         console.log("Checking authentication...");
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        // Vérifier si un utilisateur est stocké dans le localStorage
+        const storedUser = localStorage.getItem('user');
         
-        if (sessionError) {
-          console.error('Session error:', sessionError);
-          throw sessionError;
-        }
-
-        if (session?.user) {
-          console.log("Found authenticated user:", session.user);
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          console.log("Found stored user:", parsedUser);
           
+          // Vérifier si l'utilisateur existe toujours dans la base de données
           const { data: sponsor, error: sponsorError } = await supabase
             .from('sponsors')
             .select('*')
-            .eq('id', session.user.id)
+            .eq('id', parsedUser.id)
             .maybeSingle();
 
           if (sponsorError) {
-            console.error('Error fetching sponsor:', sponsorError);
+            console.error('Error verifying sponsor:', sponsorError);
             throw sponsorError;
           }
 
@@ -56,11 +54,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
 
           console.log("Setting user with role:", sponsor.role);
-          localStorage.setItem('user', JSON.stringify(sponsor));
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
-          // Redirect based on role
+          // Redirection basée sur le rôle
           if (window.location.pathname === '/login') {
             if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
@@ -69,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
           }
         } else {
-          console.log("No authenticated session found");
+          console.log("No stored user found");
           localStorage.removeItem('user');
           setUser(null);
           if (!window.location.pathname.startsWith('/login')) {
@@ -86,66 +83,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    // Initial auth check
+    // Vérification initiale de l'authentification
     checkAuth();
-
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session);
-      
-      if (event === 'SIGNED_IN' && session?.user) {
-        try {
-          const { data: sponsor, error } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-
-          if (error) throw error;
-          if (!sponsor) throw new Error('Sponsor not found');
-
-          localStorage.setItem('user', JSON.stringify(sponsor));
-          setUser(sponsor);
-          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-          
-          toast({
-            title: "Connexion réussie",
-            description: "Bienvenue !",
-          });
-          
-          if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
-            navigate('/dashboard');
-          } else {
-            navigate('/sponsor-dashboard');
-          }
-        } catch (error) {
-          console.error('Error handling sign in:', error);
-          toast({
-            title: "Erreur de connexion",
-            description: "Une erreur est survenue lors de la connexion",
-            variant: "destructive",
-          });
-          await supabase.auth.signOut();
-          localStorage.removeItem('user');
-          setUser(null);
-          navigate("/login");
-        }
-      } else if (event === 'SIGNED_OUT') {
-        localStorage.removeItem('user');
-        setUser(null);
-        setIsAssistant(false);
-        navigate("/login");
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, [navigate]);
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
       localStorage.removeItem('user');
       setUser(null);
       setIsAssistant(false);

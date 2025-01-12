@@ -16,7 +16,7 @@ export default function Login() {
     try {
       console.log("Attempting login with email:", email);
       
-      // Query the sponsors table directly
+      // Requête directe à la table sponsors
       const { data: sponsor, error: sponsorError } = await supabase
         .from('sponsors')
         .select('*')
@@ -30,12 +30,12 @@ export default function Login() {
       }
 
       if (!sponsor) {
-        throw new Error("Invalid email or password");
+        throw new Error("Email ou mot de passe incorrect");
       }
 
       console.log("Sponsor found:", sponsor);
       
-      // Store user data in localStorage
+      // Stockage des données utilisateur
       localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
@@ -43,7 +43,7 @@ export default function Login() {
         description: "Bienvenue !",
       });
 
-      // Redirect based on role
+      // Redirection basée sur le rôle
       if (['admin', 'assistant'].includes(sponsor.role)) {
         navigate('/dashboard');
       } else {
