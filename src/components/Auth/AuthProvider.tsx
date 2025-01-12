@@ -67,7 +67,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
           // Redirection basée sur le rôle
-          if (window.location.pathname === '/login') {
+          const currentPath = window.location.pathname;
+          if (currentPath === '/login' || currentPath === '/') {
             if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
             } else {
@@ -78,7 +79,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("No stored user found");
           localStorage.removeItem('user');
           setUser(null);
-          if (!window.location.pathname.startsWith('/login')) {
+          const publicRoutes = ['/login', '/', '/available-children', '/public-donations', '/statistics', '/faq'];
+          if (!publicRoutes.includes(window.location.pathname)) {
             navigate("/login");
           }
         }
