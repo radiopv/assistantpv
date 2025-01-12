@@ -2,6 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,7 +19,7 @@ export default function Login() {
     try {
       console.log("Attempting login with email:", email);
       
-      // Requête directe à la table sponsors
+      // Direct query to sponsors table
       const { data: sponsor, error: sponsorError } = await supabase
         .from('sponsors')
         .select('*')
@@ -45,7 +48,7 @@ export default function Login() {
         console.error('Error updating last_login:', updateError);
       }
       
-      // Stockage des données utilisateur
+      // Store user data
       localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
@@ -53,7 +56,7 @@ export default function Login() {
         description: "Bienvenue !",
       });
 
-      // Redirection basée sur le rôle
+      // Role-based redirection
       if (['admin', 'assistant'].includes(sponsor.role)) {
         navigate('/dashboard');
       } else {
@@ -73,7 +76,7 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
+      <Card className="w-full max-w-md p-8">
         <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">
           Connexion
         </h2>
@@ -85,13 +88,13 @@ export default function Login() {
             >
               Email
             </label>
-            <input
+            <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="mt-1"
             />
           </div>
           <div>
@@ -101,24 +104,24 @@ export default function Login() {
             >
               Mot de passe
             </label>
-            <input
+            <Input
               id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="mt-1"
             />
           </div>
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
+            className="w-full"
           >
             {loading ? "Connexion en cours..." : "Se connecter"}
-          </button>
+          </Button>
         </form>
-      </div>
+      </Card>
     </div>
   );
 }
