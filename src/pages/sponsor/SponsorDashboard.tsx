@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { convertJsonToNeeds } from "@/types/needs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -39,7 +40,10 @@ const SponsorDashboard = () => {
       hideProfile: "Masquer le profil",
       hideAlbum: "Masquer l'album",
       needs: "Besoins",
-      urgent: "Urgent"
+      urgent: "Urgent",
+      description: "Description",
+      story: "Histoire",
+      comments: "Commentaires"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -59,11 +63,12 @@ const SponsorDashboard = () => {
       hideProfile: "Ocultar perfil",
       hideAlbum: "Ocultar álbum",
       needs: "Necesidades",
-      urgent: "Urgente"
+      urgent: "Urgente",
+      description: "Descripción",
+      story: "Historia",
+      comments: "Comentarios"
     }
   };
-
-  const t = translations[language as keyof typeof translations];
 
   const { data: sponsorships, isLoading } = useQuery({
     queryKey: ["sponsorships", user?.id],
@@ -133,12 +138,12 @@ const SponsorDashboard = () => {
     return (
       <div className="container mx-auto p-4">
         <div className="p-6 bg-white/80 backdrop-blur-sm border-none rounded-lg shadow-lg">
-          <p className="text-center text-gray-700">{t.loginRequired}</p>
+          <p className="text-center text-gray-700">{translations[language].loginRequired}</p>
           <Button 
             onClick={() => navigate("/login")}
             className="mt-4 mx-auto block bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white"
           >
-            {t.login}
+            {translations[language].login}
           </Button>
         </div>
       </div>
@@ -148,7 +153,7 @@ const SponsorDashboard = () => {
   if (isLoading) {
     return (
       <div className="container mx-auto p-4">
-        <p className="text-center text-gray-700">{t.loading}</p>
+        <p className="text-center text-gray-700">{translations[language].loading}</p>
       </div>
     );
   }
@@ -156,14 +161,14 @@ const SponsorDashboard = () => {
   if (!sponsorships?.length) {
     return (
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">{t.sponsorDashboard}</h1>
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">{translations[language].sponsorDashboard}</h1>
         <div className="p-6 bg-white/80 backdrop-blur-sm border-none rounded-lg shadow-lg">
-          <p className="text-gray-700 mb-4">{t.noSponsorships}</p>
+          <p className="text-gray-700 mb-4">{translations[language].noSponsorships}</p>
           <Button 
             onClick={() => navigate("/become-sponsor")}
             className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white"
           >
-            {t.becomeASponsor}
+            {translations[language].becomeASponsor}
           </Button>
         </div>
       </div>
@@ -180,14 +185,14 @@ const SponsorDashboard = () => {
       >
         <div className="container mx-auto px-4 h-full flex flex-col justify-center items-start">
           <h1 className="text-4xl md:text-5xl font-title text-white mb-6 animate-fade-in">
-            {t.welcomeMessage}, {user.email}
+            {translations[language].welcomeMessage}, {user.email}
           </h1>
           <Button 
             onClick={() => {
               if (navigator.share) {
                 navigator.share({
-                  title: t.inviteFriends,
-                  text: t.becomeASponsor,
+                  title: translations[language].inviteFriends,
+                  text: translations[language].becomeASponsor,
                   url: window.location.origin + '/become-sponsor'
                 });
               }
@@ -195,7 +200,7 @@ const SponsorDashboard = () => {
             className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white flex items-center gap-2 animate-fade-in"
           >
             <Share2 className="w-4 h-4" />
-            {t.inviteFriends}
+            {translations[language].inviteFriends}
           </Button>
         </div>
       </div>
@@ -213,8 +218,8 @@ const SponsorDashboard = () => {
                   <MessageSquare className="w-6 h-6 text-cuba-turquoise" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-800">{t.messages}</h3>
-                  <p className="text-sm text-gray-700">{t.communicateWithAssistant}</p>
+                  <h3 className="font-semibold text-gray-800">{translations[language].messages}</h3>
+                  <p className="text-sm text-gray-700">{translations[language].communicateWithAssistant}</p>
                 </div>
               </div>
             </Button>
@@ -229,8 +234,8 @@ const SponsorDashboard = () => {
                   <Calendar className="w-6 h-6 text-cuba-turquoise" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-800">{t.plannedVisits}</h3>
-                  <p className="text-sm text-gray-700">{t.manageVisits}</p>
+                  <h3 className="font-semibold text-gray-800">{translations[language].plannedVisits}</h3>
+                  <p className="text-sm text-gray-700">{translations[language].manageVisits}</p>
                 </div>
               </div>
             </Button>
@@ -248,7 +253,7 @@ const SponsorDashboard = () => {
                     />
                     
                     <Card className="p-4">
-                      <h3 className="text-lg font-semibold mb-4">{t.needs}</h3>
+                      <h3 className="text-lg font-semibold mb-4">{translations[language].needs}</h3>
                       <div className="grid grid-cols-2 gap-3">
                         {convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
                           <div
@@ -267,7 +272,7 @@ const SponsorDashboard = () => {
                                 {need.category}
                                 {need.is_urgent && (
                                   <span className="ml-1 text-red-600 font-bold">
-                                    (!){" "}{t.urgent}
+                                    (!){" "}{translations[language].urgent}
                                   </span>
                                 )}
                               </Badge>
@@ -281,11 +286,39 @@ const SponsorDashboard = () => {
                         ))}
                       </div>
                     </Card>
+
+                    {/* Additional Information Cards */}
+                    {sponsorship.children.description && (
+                      <Card className="p-4">
+                        <h3 className="text-lg font-semibold mb-2">{translations[language].description}</h3>
+                        <ScrollArea className="h-32">
+                          <p className="text-gray-600">{sponsorship.children.description}</p>
+                        </ScrollArea>
+                      </Card>
+                    )}
+
+                    {sponsorship.children.story && (
+                      <Card className="p-4">
+                        <h3 className="text-lg font-semibold mb-2">{translations[language].story}</h3>
+                        <ScrollArea className="h-32">
+                          <p className="text-gray-600">{sponsorship.children.story}</p>
+                        </ScrollArea>
+                      </Card>
+                    )}
+
+                    {sponsorship.children.comments && (
+                      <Card className="p-4">
+                        <h3 className="text-lg font-semibold mb-2">{translations[language].comments}</h3>
+                        <ScrollArea className="h-32">
+                          <p className="text-gray-600">{sponsorship.children.comments}</p>
+                        </ScrollArea>
+                      </Card>
+                    )}
                     
                     <Collapsible>
                       <CollapsibleTrigger asChild>
                         <Button variant="outline" className="w-full">
-                          {t.viewProfile}
+                          {translations[language].viewProfile}
                         </Button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-4">
@@ -301,7 +334,7 @@ const SponsorDashboard = () => {
                     <Collapsible>
                       <CollapsibleTrigger asChild>
                         <Button variant="outline" className="w-full">
-                          {t.viewAlbum}
+                          {translations[language].viewAlbum}
                         </Button>
                       </CollapsibleTrigger>
                       <CollapsibleContent className="mt-4">
