@@ -14,29 +14,15 @@ export default function Login() {
     setLoading(true);
 
     try {
-      console.log("Attempting login with:", { email });
+      console.log("Attempting login with email:", email);
       
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        console.error("Authentication error:", error);
-        throw error;
-      }
-
-      if (!data.user) {
-        throw new Error("No user returned from authentication");
-      }
-
-      console.log("Authentication successful, fetching sponsor data...");
-
+      // Query the sponsors table directly
       const { data: sponsor, error: sponsorError } = await supabase
         .from('sponsors')
         .select('*')
-        .eq('id', data.user.id)
-        .single();
+        .eq('email', email)
+        .eq('password_hash', password)
+        .maybeSingle();
 
       if (sponsorError) {
         console.error("Error fetching sponsor:", sponsorError);
@@ -44,18 +30,20 @@ export default function Login() {
       }
 
       if (!sponsor) {
-        console.error("No sponsor found");
-        throw new Error("Sponsor not found");
+        throw new Error("Invalid email or password");
       }
 
-      console.log("Sponsor data retrieved:", sponsor);
+      console.log("Sponsor found:", sponsor);
+      
+      // Store user data in localStorage
       localStorage.setItem('user', JSON.stringify(sponsor));
 
       toast({
         title: "Connexion réussie",
         description: "Bienvenue !",
       });
-      
+
+      // Redirect based on role
       if (['admin', 'assistant'].includes(sponsor.role)) {
         navigate('/dashboard');
       } else {
@@ -65,7 +53,7 @@ export default function Login() {
       console.error('Login error:', error);
       toast({
         title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue lors de la connexion",
+        description: error.message || "Email ou mot de passe incorrect",
         variant: "destructive",
       });
     } finally {
