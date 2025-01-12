@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { DonationCategorySelect } from "./DonationCategorySelect";
 import { DonationBasicInfo } from "./DonationBasicInfo";
-import { DonorInfo } from "./DonorInfo";
+import { DonorInfoInput } from "./DonorInfoInput";
 import { DonationSubmitButton } from "./DonationSubmitButton";
 import { DonationMediaUpload } from "./Media/DonationMediaUpload";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -187,7 +187,7 @@ export const DonationForm = ({ onDonationComplete }: DonationFormProps) => {
           />
         </div>
 
-        <DonorInfo
+        <DonorInfoInput
           donorName={donorName}
           onDonorNameChange={setDonorName}
           isAnonymous={isAnonymous}
