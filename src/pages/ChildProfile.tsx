@@ -149,7 +149,7 @@ const ChildProfile = () => {
         name={child.name}
         editing={editing}
         onBack={() => navigate('/children')}
-        onEdit={() => {}} // Disable editing for sponsors
+        onEdit={() => setEditing(true)}
         onSave={handleUpdate}
         userRole={user?.role}
       />
