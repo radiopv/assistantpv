@@ -9,7 +9,7 @@ interface ProfileHeaderProps {
   onBack: () => void;
   onEdit: () => void;
   onSave: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
 export const ProfileHeader = ({
@@ -46,7 +46,7 @@ export const ProfileHeader = ({
           </Button>
         )}
         
-        {canDelete && !editing && (
+        {canDelete && !editing && onDelete && (
           <Button
             onClick={onDelete}
             variant="destructive"

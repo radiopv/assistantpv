@@ -35,7 +35,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
           throw childError;
         }
 
-        // Then get media
+        // Then get media with specific foreign key relationship
         const { data: mediaData, error: mediaError } = await supabase
           .from('album_media')
           .select(`
@@ -47,7 +47,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
             is_featured,
             created_at,
             sponsor_id,
-            sponsors (
+            sponsors!album_media_new_sponsor_id_fkey (
               name,
               role
             )
