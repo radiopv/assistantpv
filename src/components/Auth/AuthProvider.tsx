@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const parsedUser = JSON.parse(storedUser);
           console.log("Found stored user:", parsedUser);
           
-          // Vérifier si l'utilisateur existe toujours dans la base de données
+          // Verify if the user still exists in the database
           const { data: sponsor, error: sponsorError } = await supabase
             .from('sponsors')
             .select('*')
@@ -66,10 +66,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
-          // Redirection basée sur le rôle
+          // Handle redirection based on role and current path
           const currentPath = window.location.pathname;
           if (currentPath === '/login' || currentPath === '/') {
-            if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
+            if (['admin', 'assistant'].includes(sponsor.role)) {
               navigate('/dashboard');
             } else {
               navigate('/sponsor-dashboard');
