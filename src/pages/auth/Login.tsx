@@ -38,7 +38,7 @@ export default function Login() {
 
       console.log("Sponsor trouvé:", sponsor);
 
-      // Mise à jour de la date de dernière connexion
+      // Mise à jour de last_login
       const { error: updateError } = await supabase
         .from('sponsors')
         .update({ last_login: new Date().toISOString() })

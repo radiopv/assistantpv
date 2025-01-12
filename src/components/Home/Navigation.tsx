@@ -15,6 +15,10 @@ export const Navigation = () => {
   const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor';
 
+  console.log("Navigation - User:", user);
+  console.log("Navigation - Is Assistant:", isAssistant);
+  console.log("Navigation - Is Sponsor:", isSponsor);
+
   const handleLogout = async () => {
     try {
       await signOut();
