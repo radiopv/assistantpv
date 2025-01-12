@@ -76,11 +76,9 @@ const BecomeSponsor = () => {
     }
 
     try {
-      // Hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(formData.password, salt);
 
-      // Create sponsorship request with hashed password
       const { error } = await supabase
         .from('sponsorship_requests')
         .insert({
