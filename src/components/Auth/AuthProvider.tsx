@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
-          // Gestion de la redirection en fonction du rôle et du chemin actuel
+          // Gestion de la redirection en fonction du rôle
           const currentPath = window.location.pathname;
           if (currentPath === '/login' || currentPath === '/') {
             if (['admin', 'assistant'].includes(sponsor.role)) {

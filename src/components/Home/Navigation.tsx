@@ -198,14 +198,16 @@ export const Navigation = () => {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/sponsor-dashboard")}
-                  className="text-primary"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  Espace parrain
-                </Button>
+                {isSponsor && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate("/sponsor-dashboard")}
+                    className="text-primary"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Espace parrain
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   onClick={() => navigate("/messages")}
