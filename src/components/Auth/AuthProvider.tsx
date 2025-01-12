@@ -28,8 +28,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        console.log("Checking authentication...");
         const storedUser = localStorage.getItem('user');
+        
         if (storedUser) {
+          console.log("Found stored user:", storedUser);
           const parsedUser = JSON.parse(storedUser);
           
           const { data: sponsor, error } = await supabase
@@ -38,32 +41,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             .eq('id', parsedUser.id)
             .maybeSingle();
 
-          if (error || !sponsor) {
-            console.error('User not found in sponsors table:', error);
+          if (error) {
+            console.error('Error fetching sponsor:', error);
             localStorage.removeItem('user');
             setUser(null);
             navigate("/login");
             return;
           }
 
+          if (!sponsor) {
+            console.error('Sponsor not found in database');
+            localStorage.removeItem('user');
+            setUser(null);
+            navigate("/login");
+            return;
+          }
+
+          console.log("Setting user with role:", sponsor.role);
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
+          // Redirect based on role
           if (window.location.pathname === '/login') {
             if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
             } else {
-              navigate('/');
+              navigate('/sponsor-dashboard');
             }
           }
         } else {
+          console.log("No stored user found");
           setUser(null);
-          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
+          if (!window.location.pathname.startsWith('/login')) {
             navigate("/login");
           }
         }
       } catch (error) {
-        console.error('Error checking auth:', error);
+        console.error('Error in checkAuth:', error);
+        localStorage.removeItem('user');
         setUser(null);
         navigate("/login");
       } finally {
@@ -71,11 +86,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
+    // Initial auth check
     checkAuth();
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event, session);
+      if (event === 'SIGNED_IN' && session?.user) {
+        const { data: sponsor, error } = await supabase
+          .from('sponsors')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+
+        if (!error && sponsor) {
+          localStorage.setItem('user', JSON.stringify(sponsor));
+          setUser(sponsor);
+          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+          
+          if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
+            navigate('/dashboard');
+          } else {
+            navigate('/sponsor-dashboard');
+          }
+        }
+      } else if (event === 'SIGNED_OUT') {
+        localStorage.removeItem('user');
+        setUser(null);
+        setIsAssistant(false);
+        navigate("/login");
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const signOut = async () => {
     try {
+      await supabase.auth.signOut();
       localStorage.removeItem('user');
       setUser(null);
       setIsAssistant(false);
