@@ -35,7 +35,7 @@ export default function SponsorsManagement() {
       const { data, error } = await supabase
         .from("sponsors")
         .select("id, name, email, last_login, password_hash")
-        .order("name");
+        .order('last_login', { ascending: false }); // Sort by last_login in descending order
 
       if (error) throw error;
       setSponsors(data || []);
