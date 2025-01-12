@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ImagePlus, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AlbumMediaGridProps {
   childId: string;
@@ -12,44 +13,68 @@ interface AlbumMediaGridProps {
 
 export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
   const { language } = useLanguage();
+  const { toast } = useToast();
+
   const { data: media, isLoading } = useQuery({
     queryKey: ['album-media', childId],
     queryFn: async () => {
-      // First get child info
-      const { data: childData, error: childError } = await supabase
-        .from('children')
-        .select('name')
-        .eq('id', childId)
-        .single();
+      try {
+        // First get child info
+        const { data: childData, error: childError } = await supabase
+          .from('children')
+          .select('name')
+          .eq('id', childId)
+          .maybeSingle();
 
-      if (childError) throw childError;
+        if (childError) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not fetch child information"
+          });
+          throw childError;
+        }
 
-      // Then get media
-      const { data: mediaData, error: mediaError } = await supabase
-        .from('album_media')
-        .select(`
-          id,
-          url,
-          type,
-          title,
-          description,
-          is_featured,
-          created_at,
-          sponsor_id,
-          sponsors (
-            name,
-            role
-          )
-        `)
-        .eq('child_id', childId)
-        .order('created_at', { ascending: false });
+        // Then get media
+        const { data: mediaData, error: mediaError } = await supabase
+          .from('album_media')
+          .select(`
+            id,
+            url,
+            type,
+            title,
+            description,
+            is_featured,
+            created_at,
+            sponsor_id,
+            sponsors (
+              name,
+              role
+            )
+          `)
+          .eq('child_id', childId)
+          .order('created_at', { ascending: false });
 
-      if (mediaError) throw mediaError;
+        if (mediaError) {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Could not fetch album media"
+          });
+          throw mediaError;
+        }
 
-      return {
-        media: mediaData || [],
-        childName: childData?.name
-      };
+        return {
+          media: mediaData || [],
+          childName: childData?.name
+        };
+      } catch (error) {
+        console.error('Error fetching album media:', error);
+        return {
+          media: [],
+          childName: null
+        };
+      }
     },
     enabled: !!childId
   });

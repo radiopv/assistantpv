@@ -4,7 +4,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorAlert } from "@/components/ErrorAlert";
-import { AlbumMediaUpload } from "@/components/AlbumMedia/AlbumMediaUpload";
 import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { ProfileHeader } from "@/components/Children/ProfileHeader";
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
@@ -12,16 +11,6 @@ import { Card } from "@/components/ui/card";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 const ChildProfile = () => {
   const { id } = useParams();
@@ -32,7 +21,6 @@ const ChildProfile = () => {
   const [error, setError] = useState<string | null>(null);
   const [child, setChild] = useState<any>(null);
   const [editing, setEditing] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
@@ -45,13 +33,13 @@ const ChildProfile = () => {
         .from('sponsors')
         .select('role')
         .eq('id', user?.id)
-        .single();
+        .maybeSingle();
 
       const { data, error } = await supabase
         .from('children')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -61,6 +49,8 @@ const ChildProfile = () => {
       };
       
       setChild(formattedChild);
+      // Only allow editing for admins and assistants
+      setEditing(false);
     } catch (err: any) {
       console.error('Error loading child:', err);
       setError(err.message);
@@ -71,8 +61,22 @@ const ChildProfile = () => {
 
   const handleUpdate = async () => {
     try {
-      console.log("Updating child with needs:", child.needs);
-      
+      const { data: userData } = await supabase
+        .from('sponsors')
+        .select('role')
+        .eq('id', user?.id)
+        .maybeSingle();
+
+      // Only allow updates for admins and assistants
+      if (!userData || (userData.role !== 'admin' && userData.role !== 'assistant')) {
+        toast({
+          variant: "destructive",
+          title: t("error"),
+          description: t("unauthorizedAction"),
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from('children')
         .update({
@@ -81,10 +85,7 @@ const ChildProfile = () => {
         })
         .eq('id', id);
 
-      if (error) {
-        console.error('Error updating child:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       toast({
         title: t("profileUpdated"),
@@ -98,61 +99,6 @@ const ChildProfile = () => {
         variant: "destructive",
         title: t("error"),
         description: t("profileUpdateError"),
-      });
-    }
-  };
-
-  const handleDelete = async () => {
-    try {
-      // First, check if user is admin or assistant
-      const { data: userData } = await supabase
-        .from('sponsors')
-        .select('role')
-        .eq('id', user?.id)
-        .single();
-
-      if (!userData || (userData.role !== 'admin' && userData.role !== 'assistant')) {
-        toast({
-          variant: "destructive",
-          title: t("error"),
-          description: t("unauthorizedAction"),
-        });
-        return;
-      }
-
-      // First, delete related records in album_media
-      const { error: albumError } = await supabase
-        .from('album_media')
-        .delete()
-        .eq('child_id', id);
-
-      if (albumError) {
-        console.error('Error deleting album media:', albumError);
-        throw albumError;
-      }
-
-      // Then delete the child record
-      const { error } = await supabase
-        .from('children')
-        .delete()
-        .eq('id', id);
-
-      if (error) {
-        console.error('Error deleting child:', error);
-        throw error;
-      }
-
-      toast({
-        title: t("childDeleted"),
-        description: t("childDeleteSuccess"),
-      });
-      navigate('/children');
-    } catch (err: any) {
-      console.error('Error in deletion process:', err);
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: t("childDeleteError"),
       });
     }
   };
@@ -203,9 +149,8 @@ const ChildProfile = () => {
         name={child.name}
         editing={editing}
         onBack={() => navigate('/children')}
-        onEdit={() => setEditing(true)}
+        onEdit={() => {}} // Disable editing for sponsors
         onSave={handleUpdate}
-        onDelete={() => setShowDeleteDialog(true)}
         userRole={user?.role}
       />
 
@@ -223,28 +168,10 @@ const ChildProfile = () => {
             {t("sponsorAlbumDescription")}
           </p>
           <div className="space-y-6">
-            <AlbumMediaUpload childId={id!} onUploadComplete={loadChild} />
             <AlbumMediaGrid childId={id!} />
           </div>
         </Card>
       </div>
-
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cet enfant ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Cette action est irréversible. Toutes les données associées à cet enfant seront supprimées définitivement.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
-              Supprimer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
