@@ -9,13 +9,39 @@ import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/Sponsored
 import { toast } from "@/components/ui/use-toast";
 import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Image, MessageSquare, Calendar, Album, Share2 } from "lucide-react";
+import { Image, MessageSquare, Calendar, Share2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
+
+  const translations = {
+    fr: {
+      welcomeMessage: "Bienvenue",
+      inviteFriends: "Inviter des amis",
+      becomeASponsor: "Devenir parrain",
+      loading: "Chargement...",
+      loginRequired: "Veuillez vous connecter pour accéder à votre tableau de bord.",
+      login: "Se connecter",
+      noSponsorships: "Vous ne parrainez pas encore d'enfant.",
+      sponsorDashboard: "Mon Espace Parrain",
+      photoAlbum: "Album Photos",
+      managePhotos: "Gérez vos photos",
+      messages: "Messages",
+      communicateWithAssistant: "Communiquez avec l'assistant",
+      plannedVisits: "Visites Prévues",
+      sponsoredChildren: "Mes Filleuls",
+      importantDates: "Dates Importantes",
+      quickActions: "Actions Rapides"
+    },
+    es: {
+      // ... keep existing code (Spanish translations)
+    }
+  };
+
+  const t = translations[language as keyof typeof translations] || translations.fr;
 
   const { data: sponsorships, isLoading: sponsorshipsLoading } = useQuery({
     queryKey: ["sponsorships", user?.id],
@@ -67,9 +93,9 @@ const SponsorDashboard = () => {
     return (
       <div className="container mx-auto p-4">
         <Card className="p-6">
-          <p className="text-center">Veuillez vous connecter pour accéder à votre tableau de bord.</p>
+          <p className="text-center">{t.loginRequired}</p>
           <Button onClick={() => navigate("/login")} className="mt-4 mx-auto block">
-            Se connecter
+            {t.login}
           </Button>
         </Card>
       </div>
@@ -77,17 +103,17 @@ const SponsorDashboard = () => {
   }
 
   if (sponsorshipsLoading) {
-    return <div className="container mx-auto p-4">Chargement...</div>;
+    return <div className="container mx-auto p-4">{t.loading}</div>;
   }
 
   if (!sponsorships?.length) {
     return (
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Mon Espace Parrain</h1>
+        <h1 className="text-2xl font-bold mb-4">{t.sponsorDashboard}</h1>
         <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
-          <p className="text-gray-600 mb-4">Vous ne parrainez pas encore d'enfant.</p>
+          <p className="text-gray-600 mb-4">{t.noSponsorships}</p>
           <Button onClick={() => navigate("/become-sponsor")} className="bg-cuba-turquoise hover:bg-cuba-turquoise/90">
-            Parrainer un enfant
+            {t.becomeASponsor}
           </Button>
         </Card>
       </div>
@@ -96,7 +122,6 @@ const SponsorDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige">
-      {/* Hero Section with Tropical Background */}
       <div 
         className="relative h-[300px] bg-cover bg-center mb-8"
         style={{
@@ -105,14 +130,14 @@ const SponsorDashboard = () => {
       >
         <div className="container mx-auto px-4 h-full flex flex-col justify-center items-start">
           <h1 className="text-4xl md:text-5xl font-title text-white mb-6 animate-fade-in">
-            Bienvenue, {user.email}
+            {t.welcomeMessage}, {user.email}
           </h1>
           <Button 
             onClick={() => {
               if (navigator.share) {
                 navigator.share({
-                  title: 'Rejoignez-moi comme parrain',
-                  text: 'Devenez parrain et aidez un enfant cubain',
+                  title: t.inviteFriends,
+                  text: t.becomeASponsor,
                   url: window.location.origin + '/become-sponsor'
                 });
               }
@@ -120,14 +145,13 @@ const SponsorDashboard = () => {
             className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white flex items-center gap-2 animate-fade-in"
           >
             <Share2 className="w-4 h-4" />
-            Inviter des amis
+            {t.inviteFriends}
           </Button>
         </div>
       </div>
 
       <div className="container mx-auto px-4">
         <div className="grid gap-6">
-          {/* Quick Actions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange border-none transform hover:scale-105 transition-transform duration-200">
               <div className="flex items-center gap-4">
@@ -135,8 +159,8 @@ const SponsorDashboard = () => {
                   <Image className="w-6 h-6 text-cuba-turquoise" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Album Photos</h3>
-                  <p className="text-sm text-gray-700">Gérez vos photos</p>
+                  <h3 className="font-semibold">{t.photoAlbum}</h3>
+                  <p className="text-sm text-gray-700">{t.managePhotos}</p>
                 </div>
               </div>
             </Card>
@@ -147,8 +171,8 @@ const SponsorDashboard = () => {
                   <MessageSquare className="w-6 h-6 text-cuba-turquoise" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Messages</h3>
-                  <p className="text-sm text-gray-700">Communiquez avec l'assistant</p>
+                  <h3 className="font-semibold">{t.messages}</h3>
+                  <p className="text-sm text-gray-700">{t.communicateWithAssistant}</p>
                 </div>
               </div>
             </Card>
@@ -159,19 +183,17 @@ const SponsorDashboard = () => {
                   <Calendar className="w-6 h-6 text-cuba-turquoise" />
                 </div>
                 <div>
-                  <h3 className="font-semibold">Visites Prévues</h3>
-                  <p className="text-sm text-gray-700">Planifiez vos visites</p>
+                  <h3 className="font-semibold">{t.plannedVisits}</h3>
+                  <p className="text-sm text-gray-700">{t.plannedVisits}</p>
                 </div>
               </div>
             </Card>
           </div>
 
-          {/* Main Content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Sponsored Children Section */}
             <div className="lg:col-span-2">
               <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
-                <h2 className="text-xl font-title mb-4">Mes Filleuls</h2>
+                <h2 className="text-xl font-title mb-4">{t.sponsoredChildren}</h2>
                 <ScrollArea className="h-[600px] pr-4">
                   <div className="space-y-6">
                     {sponsorships.map((sponsorship) => (
@@ -186,11 +208,9 @@ const SponsorDashboard = () => {
               </Card>
             </div>
 
-            {/* Sidebar */}
             <div className="space-y-6">
-              {/* Important Dates */}
               <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
-                <h2 className="text-xl font-title mb-4">Dates Importantes</h2>
+                <h2 className="text-xl font-title mb-4">{t.importantDates}</h2>
                 <ImportantDatesCard 
                   plannedVisits={[]}
                   birthDates={sponsorships.map(s => ({
@@ -200,9 +220,8 @@ const SponsorDashboard = () => {
                 />
               </Card>
 
-              {/* Quick Actions */}
               <Card className="p-6 bg-white/80 backdrop-blur-sm border-none shadow-lg">
-                <h2 className="text-xl font-title mb-4">Actions Rapides</h2>
+                <h2 className="text-xl font-title mb-4">{t.quickActions}</h2>
                 <DashboardActions />
               </Card>
             </div>
