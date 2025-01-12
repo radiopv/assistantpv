@@ -27,5 +27,26 @@ export const frenchTranslations = {
   available: "Disponible",
   sponsored: "Parrainé",
   pending: "En attente",
-  urgent: "Urgent"
+  urgent: "Urgent",
+  
+  // Traductions pour la page Statistics
+  statisticsTitle: "Nos statistiques",
+  statisticsDescription: "Découvrez l'impact de notre communauté",
+  sponsorshipStats: "Statistiques de parrainage",
+  engagement: "Engagement",
+  impact: "Impact",
+  conversionRate: "Taux de conversion",
+  avgDuration: "Durée moyenne",
+  activeSponsors: "Parrains actifs",
+  activityRate: "Taux d'activité",
+  assistants: "Assistants",
+  sponsoredChildren: "Enfants parrainés",
+  totalSponsors: "Total des parrains",
+  successRate: "Taux de réussite",
+  monthlyDonationsTrend: "Tendance des dons mensuels",
+  donations: "Dons",
+  peopleHelped: "Personnes aidées",
+  urgentNeedsByCity: "Besoins urgents par ville",
+  cityDistribution: "Distribution par ville",
+  days: "jours"
 } as const;
