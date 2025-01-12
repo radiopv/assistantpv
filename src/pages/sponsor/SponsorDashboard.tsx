@@ -11,6 +11,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ProfileDetails } from "@/components/Children/ProfileDetails";
 import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { useNavigate } from "react-router-dom";
+import { convertJsonToNeeds } from "@/types/needs";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -34,7 +37,9 @@ const SponsorDashboard = () => {
       viewProfile: "Voir le profil",
       viewAlbum: "Album photos",
       hideProfile: "Masquer le profil",
-      hideAlbum: "Masquer l'album"
+      hideAlbum: "Masquer l'album",
+      needs: "Besoins",
+      urgent: "Urgent"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -52,7 +57,9 @@ const SponsorDashboard = () => {
       viewProfile: "Ver perfil",
       viewAlbum: "Álbum de fotos",
       hideProfile: "Ocultar perfil",
-      hideAlbum: "Ocultar álbum"
+      hideAlbum: "Ocultar álbum",
+      needs: "Necesidades",
+      urgent: "Urgente"
     }
   };
 
@@ -239,6 +246,41 @@ const SponsorDashboard = () => {
                       onViewProfile={() => {}}
                       onViewAlbum={() => {}}
                     />
+                    
+                    <Card className="p-4">
+                      <h3 className="text-lg font-semibold mb-4">{t.needs}</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        {convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
+                          <div
+                            key={`${need.category}-${index}`}
+                            className={`p-3 rounded-lg ${
+                              need.is_urgent
+                                ? "bg-red-50 border border-red-200"
+                                : "bg-gray-50 border border-gray-200"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <Badge
+                                variant={need.is_urgent ? "destructive" : "secondary"}
+                                className="mb-2"
+                              >
+                                {need.category}
+                                {need.is_urgent && (
+                                  <span className="ml-1 text-red-600 font-bold">
+                                    (!){" "}{t.urgent}
+                                  </span>
+                                )}
+                              </Badge>
+                            </div>
+                            {need.description && (
+                              <p className="text-sm text-gray-600 mt-1">
+                                {need.description}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
                     
                     <Collapsible>
                       <CollapsibleTrigger asChild>
