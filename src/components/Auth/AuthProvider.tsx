@@ -52,6 +52,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             throw new Error('Sponsor not found');
           }
 
+          // Update last_login timestamp
+          const { error: updateError } = await supabase
+            .from('sponsors')
+            .update({ last_login: new Date().toISOString() })
+            .eq('id', sponsor.id);
+
+          if (updateError) {
+            console.error('Error updating last_login:', updateError);
+          }
+
           console.log("Setting user with role:", sponsor.role);
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));

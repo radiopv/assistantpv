@@ -34,6 +34,16 @@ export default function Login() {
       }
 
       console.log("Sponsor found:", sponsor);
+
+      // Update last_login timestamp
+      const { error: updateError } = await supabase
+        .from('sponsors')
+        .update({ last_login: new Date().toISOString() })
+        .eq('id', sponsor.id);
+
+      if (updateError) {
+        console.error('Error updating last_login:', updateError);
+      }
       
       // Stockage des données utilisateur
       localStorage.setItem('user', JSON.stringify(sponsor));
