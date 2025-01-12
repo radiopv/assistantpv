@@ -45,7 +45,7 @@ export default function AvailableChildren() {
         query = query
           .eq("is_sponsored", false)
           .not('needs', 'eq', '[]')
-          .contains('needs', [{ is_urgent: true }]);
+          .contains('needs', [{ "is_urgent": true }]);
       }
 
       if (selectedCity !== "all") {
@@ -129,20 +129,6 @@ export default function AvailableChildren() {
     return ageRanges[selectedAge as keyof typeof ageRanges] || [];
   }, [children, selectedAge, categorizedChildren]);
 
-  const handleSponsorClick = async (childId: string) => {
-    try {
-      if (!childId) {
-        toast.error(t("errorInvalidChild"));
-        return;
-      }
-
-      navigate(`/become-sponsor/${childId}`);
-    } catch (error) {
-      console.error("Erreur lors du clic sur le bouton de parrainage:", error);
-      toast.error(t("errorSponsorClick"));
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
       <div className="container mx-auto p-4 space-y-6">
@@ -175,7 +161,7 @@ export default function AvailableChildren() {
         {!isLoading && children && (
           <div className="animate-fade-in">
             <AvailableChildrenGrid 
-              children={children}
+              children={filteredChildren}
               isLoading={isLoading}
               onSponsorClick={(childId) => navigate(`/become-sponsor/${childId}`)}
             />
