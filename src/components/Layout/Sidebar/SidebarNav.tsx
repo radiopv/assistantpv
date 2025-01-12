@@ -15,7 +15,7 @@ import {
   Mail,
   Building2,
 } from "lucide-react";
-import { SidebarSection } from "./SidebarSection";
+import { SidebarLink } from "./SidebarLink";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 const adminLinks = [
@@ -134,25 +134,37 @@ export const SidebarNav = ({ onClose }: { onClose?: () => void }) => {
   const location = useLocation();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2 p-2">
       {user && (
         <>
           {!isAssistant && (
-            <SidebarSection
-              title="Espace parrain"
-              links={sponsorLinks}
-              currentPath={location.pathname}
-              onClose={onClose}
-            />
+            <div className="space-y-1">
+              {sponsorLinks.map((link) => (
+                <SidebarLink
+                  key={link.href}
+                  href={link.href}
+                  label={link.label}
+                  icon={link.icon}
+                  isActive={location.pathname === link.href}
+                  onClose={onClose}
+                />
+              ))}
+            </div>
           )}
 
           {isAssistant && (
-            <SidebarSection
-              title="Administration"
-              links={adminLinks}
-              currentPath={location.pathname}
-              onClose={onClose}
-            />
+            <div className="space-y-1">
+              {adminLinks.map((link) => (
+                <SidebarLink
+                  key={link.href}
+                  href={link.href}
+                  label={link.label}
+                  icon={link.icon}
+                  isActive={location.pathname === link.href}
+                  onClose={onClose}
+                />
+              ))}
+            </div>
           )}
         </>
       )}
