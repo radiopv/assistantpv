@@ -123,7 +123,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                       }`}
                     >
                       <div className="font-medium">
-                        {need.category}
+                        {t(need.category)}
                         {need.is_urgent && (
                           <span className="ml-1 text-red-600">(!)</span>
                         )}

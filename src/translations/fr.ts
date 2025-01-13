@@ -67,5 +67,15 @@ export const frenchTranslations = {
   password: "Mot de passe",
   confirmPassword: "Confirmer le mot de passe",
   totalDonations: "Total des dons",
-  citiesCovered: "Villes couvertes"
+  citiesCovered: "Villes couvertes",
+  noChildren: "Aucun enfant disponible",
+  needs: "Besoins",
+  learnMore: "En savoir plus",
+  education: "Éducation",
+  jouet: "Jouets",
+  vetement: "Vêtements",
+  nourriture: "Nourriture",
+  medicament: "Médicaments",
+  hygiene: "Hygiène",
+  autre: "Autre",
 };
