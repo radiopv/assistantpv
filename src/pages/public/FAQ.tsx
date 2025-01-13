@@ -28,8 +28,8 @@ const FAQ = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-8 space-y-4">
-        <Skeleton className="h-8 w-48" />
+      <div className="container mx-auto p-4 md:p-8 space-y-4">
+        <Skeleton className="h-12 w-48 mx-auto" />
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <Skeleton key={i} className="h-24" />
@@ -40,21 +40,35 @@ const FAQ = () => {
   }
 
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8 text-center">{t("faq")}</h1>
-      
-      <Accordion type="single" collapsible className="w-full space-y-4">
-        {faqItems?.map((item) => (
-          <AccordionItem key={item.id} value={item.id}>
-            <AccordionTrigger className="text-lg font-medium">
-              {item.question}
-            </AccordionTrigger>
-            <AccordionContent className="text-gray-600 whitespace-pre-wrap">
-              {item.answer}
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+    <div className="min-h-screen bg-gradient-to-b from-cuba-turquoise/10 to-cuba-warmBeige/20">
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-title text-center mb-8 text-cuba-turquoise">
+            {t("faq")}
+          </h1>
+          
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-8">
+            <Accordion type="single" collapsible className="space-y-4">
+              {faqItems?.map((item) => (
+                <AccordionItem 
+                  key={item.id} 
+                  value={item.id}
+                  className="border border-cuba-turquoise/20 rounded-lg overflow-hidden transition-all duration-200 hover:border-cuba-turquoise/40 bg-white/50"
+                >
+                  <AccordionTrigger className="px-4 py-3 text-lg font-title hover:no-underline hover:text-cuba-turquoise">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-4 py-3 text-gray-600 prose max-w-none">
+                    <div className="whitespace-pre-wrap">
+                      {item.answer}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
