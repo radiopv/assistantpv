@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
+import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -196,8 +197,10 @@ const SponsorDashboard = () => {
             </Button>
           </div>
 
+          <NeedNotifications />
+
           <div className="grid gap-6">
-            {sponsorships.map((sponsorship) => (
+            {sponsorships?.map((sponsorship) => (
               <SponsoredChildSection
                 key={sponsorship.id}
                 sponsorship={sponsorship}
