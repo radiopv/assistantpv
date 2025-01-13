@@ -84,26 +84,23 @@ export const SponsorsList = ({
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       
-      // Filter only active sponsorships with valid children
+      // Get only active sponsorships with valid children
       const validSponshorships = sponsor.sponsorships?.filter((s: any) => {
         return s.status === 'active' && s.children && s.children.id;
       }) || [];
 
-      // Remove duplicates using a Set for child IDs
-      const uniqueChildIds = new Set();
-      const uniqueSponshorships = validSponshorships.filter((s: any) => {
-        const childId = s.children.id;
-        if (!uniqueChildIds.has(childId)) {
-          uniqueChildIds.add(childId);
-          return true;
+      // Create a Map to store unique children using their IDs
+      const uniqueChildren = new Map();
+      validSponshorships.forEach((s: any) => {
+        if (!uniqueChildren.has(s.children.id)) {
+          uniqueChildren.set(s.children.id, s);
         }
-        return false;
       });
 
-      // Update the sponsor's sponsorships with the deduplicated list
-      sponsor.sponsorships = uniqueSponshorships;
+      // Convert Map values back to array
+      sponsor.sponsorships = Array.from(uniqueChildren.values());
 
-      const hasActiveSponshorships = uniqueSponshorships.length > 0;
+      const hasActiveSponshorships = sponsor.sponsorships.length > 0;
       return searchString.includes(searchTermLower) && 
              (isActive ? hasActiveSponshorships : !hasActiveSponshorships);
     });
