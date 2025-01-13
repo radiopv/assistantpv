@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { differenceInYears, parseISO } from "date-fns";
+import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -23,8 +23,9 @@ import {
 const ChildDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { language } = useLanguage();
   const { user } = useAuth();
+  const { t } = useLanguage();
 
   const { data: child, isLoading, error } = useQuery({
     queryKey: ["child", id],
@@ -33,12 +34,29 @@ const ChildDetails = () => {
         .from("children")
         .select("*")
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
     }
   });
+
+  const formatAge = (birthDate: string) => {
+    const today = new Date();
+    const birth = parseISO(birthDate);
+    const years = differenceInYears(today, birth);
+    const months = differenceInMonths(today, birth) % 12;
+
+    if (years === 0) {
+      return `${months} ${t('months')}`;
+    }
+    
+    if (months === 0) {
+      return `${years} ${t('years')}`;
+    }
+
+    return `${years} ${t('years')} ${t('and')} ${months} ${t('months')}`;
+  };
 
   const handleSponsorshipRequest = async () => {
     if (!user) {
@@ -101,10 +119,6 @@ const ChildDetails = () => {
     );
   }
 
-  const age = child?.birth_date 
-    ? differenceInYears(new Date(), parseISO(child.birth_date))
-    : null;
-
   const needs = child?.needs ? convertJsonToNeeds(child.needs) : [];
 
   return (
@@ -159,7 +173,9 @@ const ChildDetails = () => {
                 <Calendar className="w-4 h-4 text-orange-500" />
                 <div>
                   <p className="text-sm text-orange-600">{t("age")}</p>
-                  <p className="font-medium">{age ? `${age} ${t("years")}` : t("ageNotAvailable")}</p>
+                  <p className="font-medium">
+                    {child?.birth_date ? formatAge(child.birth_date) : t("ageNotAvailable")}
+                  </p>
                 </div>
               </div>
 
@@ -168,7 +184,7 @@ const ChildDetails = () => {
                 <div>
                   <p className="text-sm text-orange-600">{t("gender")}</p>
                   <p className="font-medium">
-                    {child?.gender === "M" ? t("male") : t("female")}
+                    {child?.gender === "male" ? t("male") : t("female")}
                   </p>
                 </div>
               </div>
@@ -204,7 +220,7 @@ const ChildDetails = () => {
                   >
                     <Heart className={`w-4 h-4 ${need.is_urgent ? "text-red-500" : "text-orange-500"}`} />
                     <div>
-                      <span className="font-medium">{need.category}</span>
+                      <span className="font-medium">{t(need.category)}</span>
                       {need.description && (
                         <p className="text-sm mt-1">{need.description}</p>
                       )}
