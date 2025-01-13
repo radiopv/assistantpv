@@ -19,16 +19,32 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
     queryKey: ['sponsored-children', userId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('sponsored_children_view')
-        .select('*')
-        .eq('sponsorship_status', 'active');
+        .from('sponsorships')
+        .select(`
+          id,
+          children (
+            id,
+            name,
+            photo_url,
+            city,
+            needs
+          )
+        `)
+        .eq('sponsor_id', userId)
+        .eq('status', 'active');
 
       if (error) {
         console.error('Error fetching sponsored children:', error);
         return [];
       }
 
-      return data;
+      return data.map(sponsorship => ({
+        id: sponsorship.children.id,
+        name: sponsorship.children.name,
+        photo_url: sponsorship.children.photo_url,
+        city: sponsorship.children.city,
+        needs: sponsorship.children.needs
+      }));
     }
   });
 
