@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
-import { differenceInMonths, differenceInDays, differenceInYears, parseISO } from "date-fns";
+import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsoredChildrenListProps {
@@ -32,28 +32,6 @@ const formatAge = (birthDate: string | null) => {
   }
 };
 
-const formatSponsorshipDuration = (sponsorshipDate: string | null) => {
-  if (!sponsorshipDate) return "";
-  
-  try {
-    const today = new Date();
-    const startDate = parseISO(sponsorshipDate);
-    const months = differenceInMonths(today, startDate);
-    const remainingDays = differenceInDays(today, startDate) % 30;
-    
-    if (months === 0) {
-      return `${remainingDays} jours`;
-    }
-    
-    return remainingDays > 0 
-      ? `${months} mois et ${remainingDays} jours` 
-      : `${months} mois`;
-  } catch (error) {
-    console.error('Error formatting sponsorship duration:', error);
-    return "";
-  }
-};
-
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
   const { t } = useLanguage();
   
@@ -70,7 +48,7 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
             <img
               src={child.photo_url || "/placeholder.svg"}
               alt={child.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-lg"
             />
           </div>
           <div className="p-4 space-y-4">
@@ -80,11 +58,6 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
               <div className="mt-2 space-y-1 text-sm text-gray-600">
                 <p>{formatAge(child.birth_date)}</p>
                 <p>{child.city}</p>
-                {child.sponsorship_date && (
-                  <p className="text-cuba-coral font-medium">
-                    {formatSponsorshipDuration(child.sponsorship_date)}
-                  </p>
-                )}
               </div>
             </div>
 
