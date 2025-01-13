@@ -10,7 +10,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SponsoredChildSection } from "./SponsoredChildSection";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 interface DashboardTabsProps {
   sponsorships: any[];
@@ -19,8 +18,8 @@ interface DashboardTabsProps {
 }
 
 export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: DashboardTabsProps) => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const location = useLocation();
   const birthDates = sponsorships.map(s => ({
     childName: s.children.name,
     birthDate: s.children.birth_date
@@ -40,15 +39,24 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
     },
   });
 
-  // Get the active tab from the URL hash or default to "actions"
+  // Get the active tab from the pathname
   const getActiveTab = () => {
-    const hash = location.hash.replace("#", "");
-    return hash || "actions";
+    const path = location.pathname.split('/').pop();
+    switch(path) {
+      case 'gallery':
+        return 'gallery';
+      case 'visits':
+        return 'visits';
+      case 'statistics':
+        return 'statistics';
+      default:
+        return 'actions';
+    }
   };
 
-  // Update URL hash when tab changes
+  // Update route when tab changes
   const handleTabChange = (value: string) => {
-    navigate(`#${value}`, { replace: true });
+    navigate(`/sponsor-dashboard/${value === 'actions' ? '' : value}`);
   };
 
   return (
