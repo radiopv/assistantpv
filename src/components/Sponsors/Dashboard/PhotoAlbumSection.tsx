@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-const PhotoAlbumSection = () => {
+interface PhotoAlbumSectionProps {
+  childId: string;
+  sponsorId: string;
+  childName: string;
+}
+
+const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionProps) => {
   const { toast } = useToast();
   const [photos, setPhotos] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -21,7 +27,7 @@ const PhotoAlbumSection = () => {
       const uploadPromises = photos.map(async (photo) => {
         const { data, error } = await supabase.storage
           .from('photos')
-          .upload(`public/${photo.name}`, photo);
+          .upload(`${childId}/${photo.name}`, photo);
 
         if (error) {
           throw error;
