@@ -83,15 +83,19 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
       console.log("Fetched photos:", data);
       return data || [];
     },
-    retry: 1
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    refetchOnWindowFocus: false
   });
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
     const file = event.target.files?.[0];
     if (file) setSelectedFile(file);
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!selectedFile) return;
 
     try {
@@ -100,7 +104,7 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
       const filePath = `${childId}/${fileName}`;
 
       // Upload to storage
-      const { error: uploadError, data: uploadData } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('album-media')
         .upload(filePath, selectedFile);
 
@@ -206,7 +210,10 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
               id="photo-upload"
             />
             <Button
-              onClick={() => document.getElementById('photo-upload')?.click()}
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('photo-upload')?.click();
+              }}
               variant="outline"
             >
               <ImagePlus className="w-4 h-4 mr-2" />
