@@ -105,6 +105,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 <MapPin className="w-4 h-4 ml-2" />
                 <span>{child.city}</span>
               </div>
+              {child.is_sponsored && child.sponsor_name && (
+                <div className="mt-2 text-sm bg-orange-500/80 px-2 py-1 rounded-full inline-block">
+                  {t("sponsoredBy")}: {child.sponsor_name}
+                </div>
+              )}
             </div>
           </div>
 
