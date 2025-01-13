@@ -7,32 +7,46 @@ interface SponsoredChildrenListProps {
   children: any[];
 }
 
-const formatAge = (birthDate: string) => {
-  const today = new Date();
-  const birth = parseISO(birthDate);
-  const years = differenceInYears(today, birth);
-  const months = differenceInMonths(today, birth) % 12;
+const formatAge = (birthDate: string | null) => {
+  if (!birthDate) return "Âge inconnu";
   
-  if (years === 0) {
-    return `${months} mois`;
+  try {
+    const today = new Date();
+    const birth = parseISO(birthDate);
+    const years = differenceInYears(today, birth);
+    const months = differenceInMonths(today, birth) % 12;
+    
+    if (years === 0) {
+      return `${months} mois`;
+    }
+    
+    return months > 0 ? `${years} ans et ${months} mois` : `${years} ans`;
+  } catch (error) {
+    console.error('Error formatting age:', error);
+    return "Âge inconnu";
   }
-  
-  return months > 0 ? `${years} ans et ${months} mois` : `${years} ans`;
 };
 
-const formatSponsorshipDuration = (sponsorshipDate: string) => {
-  const today = new Date();
-  const startDate = parseISO(sponsorshipDate);
-  const months = differenceInMonths(today, startDate);
-  const remainingDays = differenceInDays(today, startDate) % 30;
+const formatSponsorshipDuration = (sponsorshipDate: string | null) => {
+  if (!sponsorshipDate) return "";
   
-  if (months === 0) {
-    return `${remainingDays} jours`;
+  try {
+    const today = new Date();
+    const startDate = parseISO(sponsorshipDate);
+    const months = differenceInMonths(today, startDate);
+    const remainingDays = differenceInDays(today, startDate) % 30;
+    
+    if (months === 0) {
+      return `${remainingDays} jours`;
+    }
+    
+    return remainingDays > 0 
+      ? `${months} mois et ${remainingDays} jours` 
+      : `${months} mois`;
+  } catch (error) {
+    console.error('Error formatting sponsorship duration:', error);
+    return "";
   }
-  
-  return remainingDays > 0 
-    ? `${months} mois et ${remainingDays} jours` 
-    : `${months} mois`;
 };
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
