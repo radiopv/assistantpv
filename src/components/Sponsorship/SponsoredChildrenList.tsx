@@ -73,7 +73,8 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
               </Button>
             </div>
           </Card>
-        ))}
+        );
+      })}
     </div>
   );
 };
