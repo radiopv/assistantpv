@@ -35,14 +35,14 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0072BB", // Cuban Ocean Blue
+          DEFAULT: "#FF6B6B", // Updated to warm orange-red
           foreground: "#FFFFFF",
-          hover: "#005d99",
+          hover: "#ff5252",
         },
         secondary: {
-          DEFAULT: "#FF2400", // Cuban Warm Orange/Red
-          foreground: "#FFFFFF",
-          hover: "#cc1d00",
+          DEFAULT: "#FEC6A1", // Soft orange
+          foreground: "#000000",
+          hover: "#fdb88a",
         },
         accent: {
           DEFAULT: "#FFD700", // Cuban Gold
@@ -50,17 +50,19 @@ export default {
           hover: "#ccac00",
         },
         cuba: {
-          turquoise: "#0072BB", // Ocean Blue
-          red: "#FF2400",      // Warm Red
-          gold: "#FFD700",     // Warm Gold
-          coral: "#FF6B6B",    // Coral Red
-          emerald: "#50C878",  // Emerald Green
-          pink: "#FFB6C1",     // Soft Pink
-          sand: "#F4D03F",     // Sand Yellow
-          offwhite: "#F5F5F5", // Light Background
-          warmBeige: "#FDE1D3", // Warm Beige
-          softYellow: "#FEF7CD", // Soft Yellow
-          softOrange: "#FEC6A1", // Soft Orange
+          turquoise: "#0072BB",     // Ocean Blue
+          red: "#FF6B6B",           // Warm Red
+          gold: "#FFD700",          // Warm Gold
+          coral: "#FF6B6B",         // Coral Red
+          emerald: "#50C878",       // Emerald Green
+          pink: "#FFB6C1",          // Soft Pink
+          sand: "#F4D03F",          // Sand Yellow
+          offwhite: "#FFF9F5",      // Warm Off-white
+          warmBeige: "#FDE1D3",     // Warm Beige
+          softYellow: "#FEF7CD",    // Soft Yellow
+          softOrange: "#FEC6A1",    // Soft Orange
+          deepOrange: "#FF5733",    // Deep Orange
+          warmGray: "#8B7355",      // Warm Gray
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -92,6 +94,16 @@ export default {
         'fluid-2xl': 'clamp(1.95rem, 1.56vw + 1.56rem, 2.81rem)',
         'fluid-3xl': 'clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem)',
       },
+      backgroundImage: {
+        'cuba-gradient': 'linear-gradient(135deg, #FF6B6B 0%, #FEC6A1 100%)',
+        'sunset-gradient': 'linear-gradient(to right, #FF6B6B, #FFD700)',
+        'beach-gradient': 'linear-gradient(to bottom, #0072BB, #FFF9F5)',
+        'warm-gradient': 'linear-gradient(to right, #FDE1D3, #FEC6A1)',
+        'golden-shimmer': 'linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent)',
+        'admin-gradient': 'linear-gradient(135deg, #FEC6A1 0%, #FF6B6B 100%)',
+        'card-gradient': 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5))',
+        'hover-gradient': 'linear-gradient(to bottom right, rgba(254, 198, 161, 0.1), rgba(255, 107, 107, 0.1))',
+      },
       keyframes: {
         "fade-in": {
           "0%": { opacity: "0", transform: "translateY(10px)" },
@@ -115,13 +127,6 @@ export default {
         "slide-in": "slide-in 0.3s ease-out",
         "slide-up": "slide-up 0.3s ease-out",
         "golden-light": "golden-light 15s linear infinite",
-      },
-      backgroundImage: {
-        'cuba-gradient': 'linear-gradient(135deg, #0072BB 0%, #005d99 100%)',
-        'sunset-gradient': 'linear-gradient(to right, #FF2400, #FFD700)',
-        'beach-gradient': 'linear-gradient(to bottom, #0072BB, #F5F5F5)',
-        'warm-gradient': 'linear-gradient(to right, #FDE1D3, #FEC6A1)',
-        'golden-shimmer': 'linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent)',
       },
     },
   },
