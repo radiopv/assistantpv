@@ -60,19 +60,10 @@ export const translations = {
     sponsorshipRequestSent: "Demande envoyée",
     sponsorshipRequestPending: "Votre demande de parrainage est en cours d'examen",
     errorRequestingSponsorship: "Erreur lors de la demande de parrainage",
-    male: "Masculin",
-    female: "Féminin",
-    months: "mois",
-    years: "ans",
-    description: "Description",
-    story: "Histoire",
-    needs: "Besoins",
-    back: "Retour",
-    generalInfo: "Informations générales",
-    cityNotAvailable: "Ville non renseignée",
-    ageNotAvailable: "Âge non renseigné",
     age: "Âge",
-    gender: "Genre"
+    genderLabel: "Genre",
+    genderMale: "Masculin",
+    genderFemale: "Féminin"
   },
   es: {
     addChild: "Agregar niño",
@@ -132,18 +123,9 @@ export const translations = {
     sponsorshipRequestSent: "Solicitud enviada",
     sponsorshipRequestPending: "Su solicitud de apadrinamiento está siendo revisada",
     errorRequestingSponsorship: "Error al solicitar el apadrinamiento",
-    male: "Masculino",
-    female: "Femenino",
-    months: "meses",
-    years: "años",
-    description: "Descripción",
-    story: "Historia",
-    needs: "Necesidades",
-    back: "Volver",
-    generalInfo: "Información general",
-    cityNotAvailable: "Ciudad no disponible",
-    ageNotAvailable: "Edad no disponible",
     age: "Edad",
-    gender: "Género"
+    genderLabel: "Género",
+    genderMale: "Masculino",
+    genderFemale: "Femenino"
   }
 };

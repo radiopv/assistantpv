@@ -182,9 +182,9 @@ const ChildDetails = () => {
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-orange-500" />
                 <div>
-                  <p className="text-sm text-orange-600">{t("gender")}</p>
+                  <p className="text-sm text-orange-600">{t("genderLabel")}</p>
                   <p className="font-medium">
-                    {child?.gender === "male" ? t("male") : t("female")}
+                    {child?.gender === "male" ? t("genderMale") : t("genderFemale")}
                   </p>
                 </div>
               </div>
