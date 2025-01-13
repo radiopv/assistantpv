@@ -31,14 +31,14 @@ export const ChildNeeds = ({ child, needs }: ChildNeedsProps) => {
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Badge variant={need.is_urgent ? "destructive" : "default"}>
-                  {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                </Badge>
                 {need.is_urgent && (
-                  <Badge variant="outline" className="text-red-500 border-red-500">
+                  <Badge variant="destructive">
                     Urgent
                   </Badge>
                 )}
+                <span className="text-gray-900">
+                  {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                </span>
               </div>
               <div className="text-sm text-gray-600">{need.description}</div>
             </div>
@@ -47,4 +47,4 @@ export const ChildNeeds = ({ child, needs }: ChildNeedsProps) => {
       </div>
     </Card>
   );
-});
+};
