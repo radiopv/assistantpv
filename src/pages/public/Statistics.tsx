@@ -41,29 +41,26 @@ const Statistics = () => {
     }
   });
 
-  const { data: urgentNeeds } = useQuery({
-    queryKey: ['urgent-needs'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_urgent_needs_by_city');
-      if (error) throw error;
-      return data;
-    }
-  });
-
   const { data: childrenStats } = useQuery({
     queryKey: ['children-stats'],
     queryFn: async () => {
       const { data: children, error } = await supabase
         .from('children')
-        .select('status, is_sponsored, age')
-        .order('created_at');
+        .select('status, is_sponsored, birth_date');
       
       if (error) throw error;
 
       const totalChildren = children.length;
       const availableChildren = children.filter(c => !c.is_sponsored).length;
       const sponsoredChildren = children.filter(c => c.is_sponsored).length;
-      const averageAge = children.reduce((acc, curr) => acc + (curr.age || 0), 0) / totalChildren;
+
+      // Calculate average age in years
+      const averageAge = children.reduce((acc, curr) => {
+        if (!curr.birth_date) return acc;
+        const birthDate = new Date(curr.birth_date);
+        const ageInYears = (new Date().getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+        return acc + ageInYears;
+      }, 0) / children.filter(c => c.birth_date).length;
 
       return {
         totalChildren,
@@ -147,15 +144,15 @@ const Statistics = () => {
                   <p className="text-2xl font-bold text-green-600">{childrenStats?.availableChildren}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Âge moyen</p>
-                  <p className="text-2xl font-bold text-cuba-orange">{childrenStats?.averageAge} ans</p>
+                  <p className="text-sm text-muted-foreground">Enfants parrainés</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{childrenStats?.sponsoredChildren}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 gap-6 mb-8">
           <Card className="bg-white/90 shadow-lg">
             <CardHeader>
               <CardTitle>Évolution mensuelle des dons</CardTitle>
@@ -184,35 +181,6 @@ const Statistics = () => {
                       name="Dons"
                     />
                   </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/90 shadow-lg">
-            <CardHeader>
-              <CardTitle>Besoins urgents par ville</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={urgentNeeds}
-                      dataKey="urgent_needs_count"
-                      nameKey="city"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      label
-                    >
-                      {urgentNeeds?.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
