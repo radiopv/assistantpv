@@ -77,6 +77,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
+  const handleLearnMore = (childId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/child/${childId}`);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {children.map((child) => (
@@ -136,7 +141,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
             )}
 
             <Button 
-              onClick={() => navigate(`/child/${child.id}`)}
+              onClick={(e) => handleLearnMore(child.id, e)}
               className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white group-hover:scale-105 transition-all duration-300"
             >
               <Info className="w-4 h-4 mr-2" />
