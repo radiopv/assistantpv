@@ -81,7 +81,33 @@ export const frenchTranslations = {
   confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
   confirmCancel: "Êtes-vous sûr de vouloir annuler ?",
   confirmSave: "Êtes-vous sûr de vouloir enregistrer ?",
-  confirmUpdate: "Êtes-vous sûr de vouloir mettre à jour ?"
-};
+  confirmUpdate: "Êtes-vous sûr de vouloir mettre à jour ?",
 
-export { frenchTranslations as fr };
+  // Home page translations
+  heroTitle: "Changez une vie aujourd'hui",
+  heroSubtitle: "Votre soutien peut faire une réelle différence dans la vie d'un enfant cubain",
+  changeLifeToday: "Changez une vie aujourd'hui",
+  supportMakesADifference: "Votre soutien peut faire une réelle différence dans la vie d'un enfant",
+  sponsorAChild: "Parrainer un enfant",
+  howItWorks: "Comment ça marche ?",
+  chooseChild: "Choisir un enfant",
+  browseChildrenProfiles: "Parcourez les profils des enfants en attente de parrainage",
+  completeProfile: "Compléter votre profil",
+  fillRequiredInfo: "Remplissez les informations nécessaires pour devenir parrain",
+  startSponsorship: "Commencer le parrainage",
+  startSponsorshipJourney: "Démarrez votre aventure de parrainage avec votre filleul(e)",
+  featuredMoments: "Moments Partagés",
+  impactTitle: "Notre Impact",
+  impactSubtitle: "Ensemble, nous faisons la différence",
+  testimonialTitle: "Ce que disent nos parrains",
+  ourStats: "Nos statistiques",
+  helpingChildren: "Comment nous aidons",
+  sponsorship: "Parrainage",
+  sponsorshipDesc: "Créez un lien spécial avec un enfant cubain",
+  donations: "Dons",
+  donationsDesc: "Apportez une aide concrète et immédiate",
+  community: "Communauté",
+  communityDesc: "Rejoignez une communauté solidaire",
+  impact: "Impact",
+  impactDesc: "Changez des vies durablement",
+};

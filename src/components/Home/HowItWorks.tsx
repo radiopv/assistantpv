@@ -1,25 +1,28 @@
 import { ArrowRight } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const HowItWorks = () => {
+  const { t } = useLanguage();
+
   const steps = [
     {
-      title: "Choisir un enfant",
-      description: "Parcourez les profils des enfants en attente de parrainage",
+      title: t('chooseChild'),
+      description: t('browseChildrenProfiles'),
     },
     {
-      title: "Compléter votre profil",
-      description: "Remplissez les informations nécessaires pour devenir parrain",
+      title: t('completeProfile'),
+      description: t('fillRequiredInfo'),
     },
     {
-      title: "Commencer le parrainage",
-      description: "Démarrez votre aventure de parrainage avec votre filleul(e)",
+      title: t('startSponsorship'),
+      description: t('startSponsorshipJourney'),
     },
   ];
 
   return (
     <section className="py-12 bg-gray-50">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12">Comment ça marche ?</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">{t('howItWorks')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((step, index) => (
             <div key={index} className="flex items-center">

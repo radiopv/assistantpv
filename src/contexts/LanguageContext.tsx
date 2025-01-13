@@ -26,19 +26,19 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
   useEffect(() => {
     const storedLanguage = localStorage.getItem('preferredLanguage') as Language;
-    const browserLang = navigator.language.toLowerCase();
     
     if (storedLanguage && (storedLanguage === 'fr' || storedLanguage === 'es')) {
       setLanguage(storedLanguage);
-    } else if (browserLang.startsWith('es')) {
-      setLanguage('es');
-    } else if (browserLang.startsWith('fr')) {
+    } else {
+      // Set French as default language
       setLanguage('fr');
+      localStorage.setItem('preferredLanguage', 'fr');
     }
   }, []);
 
   useEffect(() => {
     localStorage.setItem('preferredLanguage', language);
+    document.documentElement.lang = language;
   }, [language]);
 
   const t = (key: string): string => {
