@@ -28,7 +28,9 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
       upload: "Upload",
       success: "Photo ajoutée avec succès",
       error: "Une erreur est survenue lors de l'upload",
-      albumOf: "Album de"
+      albumOf: "Album de",
+      noPhotos: "Aucune photo disponible pour le moment",
+      loadingPhotos: "Chargement des photos..."
     },
     es: {
       addPhoto: "Agregar una foto",
@@ -36,15 +38,19 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
       upload: "Subir",
       success: "Foto agregada con éxito",
       error: "Ocurrió un error durante la subida",
-      albumOf: "Álbum de"
+      albumOf: "Álbum de",
+      noPhotos: "No hay fotos disponibles por el momento",
+      loadingPhotos: "Cargando fotos..."
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
-  const { data: photos, isLoading, refetch } = useQuery({
-    queryKey: ['album-photos', childId],
+  const { data: photos, isLoading, error, refetch } = useQuery({
+    queryKey: ['album-photos', childId, sponsorId],
     queryFn: async () => {
+      console.log("Fetching photos for child:", childId, "and sponsor:", sponsorId);
+      
       const { data, error } = await supabase
         .from('album_media')
         .select(`
@@ -70,11 +76,14 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
 
       if (error) {
         console.error('Error fetching photos:', error);
+        toast.error("Erreur lors du chargement des photos");
         throw error;
       }
 
+      console.log("Fetched photos:", data);
       return data || [];
-    }
+    },
+    retry: 1
   });
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,16 +99,22 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${childId}/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
+      // Upload to storage
+      const { error: uploadError, data: uploadData } = await supabase.storage
         .from('album-media')
         .upload(filePath, selectedFile);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Storage upload error:', uploadError);
+        throw uploadError;
+      }
 
+      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('album-media')
         .getPublicUrl(filePath);
 
+      // Insert into database
       const { error: dbError } = await supabase
         .from('album_media')
         .insert({
@@ -110,7 +125,10 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
           is_approved: true
         });
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error('Database insert error:', dbError);
+        throw dbError;
+      }
 
       toast.success(t.success);
       setSelectedFile(null);
@@ -156,8 +174,22 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
     }
   };
 
+  if (error) {
+    return (
+      <Card className="p-6">
+        <div className="text-center text-red-500">
+          Une erreur est survenue lors du chargement des photos
+        </div>
+      </Card>
+    );
+  }
+
   if (isLoading) {
-    return <div>Chargement...</div>;
+    return (
+      <Card className="p-6">
+        <div className="text-center">{t.loadingPhotos}</div>
+      </Card>
+    );
   }
 
   return (
@@ -188,11 +220,17 @@ export const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumS
           handleUpload={handleUpload}
         />
 
-        <PhotoGrid
-          photos={photos || []}
-          onPhotoDelete={(id) => setPhotoToDelete(id)}
-          onToggleFeature={(id, featured) => handleToggleFavorite(id, featured)}
-        />
+        {photos && photos.length > 0 ? (
+          <PhotoGrid
+            photos={photos}
+            onPhotoDelete={(id) => setPhotoToDelete(id)}
+            onToggleFeature={(id, featured) => handleToggleFavorite(id, featured)}
+          />
+        ) : (
+          <div className="text-center text-gray-500 py-8">
+            {t.noPhotos}
+          </div>
+        )}
 
         <DeletePhotoDialog
           open={!!photoToDelete}
