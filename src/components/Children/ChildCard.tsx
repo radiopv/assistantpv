@@ -245,7 +245,9 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
                     {need.is_urgent && " (!)"} 
                   </div>
                   {need.description && (
-                    <p className="text-xs mt-1 text-gray-600 italic">{need.description}</p>
+                    <p className="text-xs mt-1 text-gray-600 italic line-clamp-2">
+                      {need.description}
+                    </p>
                   )}
                 </div>
               ))}
