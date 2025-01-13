@@ -12,13 +12,14 @@ import { NeedItem } from "./NeedItem";
 interface NeedNotification {
   id: string;
   created_at: string;
-  type: 'need_update' | 'message' | 'system' | 'sponsorship_update';
+  type: string;
   metadata: {
-    child_id: string;
-    child_name: string;
-    new_needs: any[];
-    is_read: boolean;
-  };
+    child_id?: string;
+    child_name?: string;
+    new_needs?: any[];
+    is_read?: boolean;
+  } | null;
+  is_read: boolean;
 }
 
 export const NeedNotifications = () => {
@@ -56,7 +57,17 @@ export const NeedNotifications = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as NeedNotification[];
+
+      // Transform the data to match the NeedNotification interface
+      return (data as any[]).map(notification => ({
+        ...notification,
+        metadata: notification.metadata || {
+          child_id: null,
+          child_name: '',
+          new_needs: [],
+          is_read: false
+        }
+      })) as NeedNotification[];
     }
   });
 
@@ -99,7 +110,7 @@ export const NeedNotifications = () => {
           <Card 
             key={notification.id}
             className={`p-4 ${
-              notification.metadata.is_read 
+              notification.metadata?.is_read 
                 ? "bg-gray-50" 
                 : "bg-white border-l-4 border-l-blue-500"
             }`}
@@ -108,13 +119,13 @@ export const NeedNotifications = () => {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-medium">
-                    {translations[language].needsUpdated} {notification.metadata.child_name}
+                    {translations[language].needsUpdated} {notification.metadata?.child_name}
                   </h3>
                   <p className="text-sm text-gray-500">
                     {format(new Date(notification.created_at), "PPp", { locale: dateLocale })}
                   </p>
                 </div>
-                {!notification.metadata.is_read && (
+                {!notification.metadata?.is_read && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -128,7 +139,7 @@ export const NeedNotifications = () => {
               </div>
               
               <div className="space-y-2">
-                {notification.metadata.new_needs.map((need: any, index: number) => (
+                {notification.metadata?.new_needs?.map((need: any, index: number) => (
                   <NeedItem
                     key={`${need.category}-${index}`}
                     need={need}
