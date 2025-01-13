@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { MessageSquare, Star } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface SponsoredChildrenGridProps {
   userId: string;
@@ -70,71 +71,76 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {sponsoredChildren.map((child) => (
-        <Card 
-          key={child.id} 
-          className="overflow-hidden hover:shadow-lg transition-shadow duration-200 bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange"
-        >
-          <div className="aspect-square relative">
-            <img
-              src={child.photo_url || "/placeholder.svg"}
-              alt={child.name}
-              className="w-full h-full object-cover"
-            />
-            {child.needs?.some((need: any) => need.is_urgent) && (
-              <div className="absolute top-2 right-2">
-                <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">
-                  {t.urgent}
-                </span>
-              </div>
-            )}
-          </div>
-          
-          <div className="p-4 space-y-4">
-            <h3 className="text-xl font-semibold">{child.name}</h3>
-            
-            <div className="space-y-2">
-              <p className="text-sm font-medium">{t.needs}:</p>
-              <div className="flex flex-wrap gap-2">
-                {child.needs?.map((need: any, index: number) => (
-                  <span 
-                    key={index}
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      need.is_urgent 
-                        ? 'bg-red-100 text-red-700' 
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {need.category}
-                  </span>
-                ))}
-              </div>
-            </div>
+      {sponsoredChildren.map((child) => {
+        const childNeeds = convertJsonToNeeds(child.needs);
+        const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
 
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="flex-1 flex items-center gap-2"
-                onClick={() => navigate(`/children/${child.id}/album`)}
-              >
-                <Star className="w-4 h-4" />
-                {t.viewAlbum}
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm"
-                className="flex-1 flex items-center gap-2"
-                onClick={() => navigate('/messages')}
-              >
-                <MessageSquare className="w-4 h-4" />
-                {t.sendMessage}
-              </Button>
+        return (
+          <Card 
+            key={child.id} 
+            className="overflow-hidden hover:shadow-lg transition-shadow duration-200 bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange"
+          >
+            <div className="aspect-square relative">
+              <img
+                src={child.photo_url || "/placeholder.svg"}
+                alt={child.name}
+                className="w-full h-full object-cover"
+              />
+              {hasUrgentNeeds && (
+                <div className="absolute top-2 right-2">
+                  <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">
+                    {t.urgent}
+                  </span>
+                </div>
+              )}
             </div>
-          </div>
-        </Card>
-      ))}
+            
+            <div className="p-4 space-y-4">
+              <h3 className="text-xl font-semibold">{child.name}</h3>
+              
+              <div className="space-y-2">
+                <p className="text-sm font-medium">{t.needs}:</p>
+                <div className="flex flex-wrap gap-2">
+                  {childNeeds.map((need, index) => (
+                    <span 
+                      key={index}
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        need.is_urgent 
+                          ? 'bg-red-100 text-red-700' 
+                          : 'bg-gray-100 text-gray-700'
+                      }`}
+                    >
+                      {need.category}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex-1 flex items-center gap-2"
+                  onClick={() => navigate(`/children/${child.id}/album`)}
+                >
+                  <Star className="w-4 h-4" />
+                  {t.viewAlbum}
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="flex-1 flex items-center gap-2"
+                  onClick={() => navigate('/messages')}
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  {t.sendMessage}
+                </Button>
+              </div>
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
 };
