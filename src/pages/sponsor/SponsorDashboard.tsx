@@ -43,7 +43,10 @@ const SponsorDashboard = () => {
       messages: "Mensajes",
       communicateWithAssistant: "Comuníquese con el asistente",
       plannedVisits: "Visitas Planificadas",
-      manageVisits: "Gestione sus visitas"
+      manageVisits: "Gestione sus visitas",
+      shareError: "El compartir no está disponible en su dispositivo",
+      copySuccess: "¡Enlace copiado al portapapeles!",
+      copyError: "No se pudo copiar el enlace"
     }
   };
 
