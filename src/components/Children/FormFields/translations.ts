@@ -155,7 +155,6 @@ export const translations = {
     requestDate: "Fecha de solicitud",
     accountStatus: "Estado de la cuenta",
     approvalStatus: "Estado de aprobación",
-    childInfo: "Información del niño",
     created: "Creado",
     pending: "Pendiente",
     approved: "Aprobado",
