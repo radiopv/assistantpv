@@ -28,8 +28,8 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
         if (childError) {
           toast({
             variant: "destructive",
-            title: "Error",
-            description: "Could not fetch child information"
+            title: "Erreur",
+            description: "Impossible de récupérer les informations de l'enfant"
           });
           throw childError;
         }
@@ -45,7 +45,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
             is_featured,
             created_at,
             sponsor_id,
-            sponsors!album_media_new_sponsor_id_fkey (
+            sponsors (
               name,
               role
             )
@@ -57,20 +57,20 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
         if (mediaError) {
           toast({
             variant: "destructive",
-            title: "Error",
-            description: "Could not fetch album media"
+            title: "Erreur",
+            description: "Impossible de récupérer les photos de l'album"
           });
           throw mediaError;
         }
 
-        console.log('Fetched media:', mediaData);
+        console.log('Photos récupérées:', mediaData);
 
         return {
           media: mediaData || [],
           childName: childData?.name
         };
       } catch (error) {
-        console.error('Error fetching album media:', error);
+        console.error('Erreur lors de la récupération des photos:', error);
         return {
           media: [],
           childName: null

@@ -4,6 +4,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { AlbumMediaGrid } from '@/components/AlbumMedia/AlbumMediaGrid';
+import { Button } from '@/components/ui/button';
+import { ImagePlus } from 'lucide-react';
 
 interface PhotoAlbumSectionProps {
   childId: string;
@@ -15,35 +17,6 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
   const { toast } = useToast();
   const [photos, setPhotos] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const { data: albumPhotos, isLoading, refetch } = useQuery({
-    queryKey: ['album-photos', childId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('album_media')
-        .select(`
-          id,
-          url,
-          type,
-          title,
-          description,
-          is_featured,
-          created_at,
-          child_id,
-          sponsor_id
-        `)
-        .eq('child_id', childId)
-        .eq('is_approved', true)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching photos:', error);
-        throw error;
-      }
-
-      return data || [];
-    },
-  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -94,9 +67,8 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
       });
 
       setPhotos([]);
-      refetch();
     } catch (error) {
-      console.error('Error uploading photos:', error);
+      console.error('Erreur lors du téléchargement des photos:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
@@ -109,31 +81,44 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-medium">Album photo de {childName}</h3>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input 
-          type="file" 
-          multiple 
-          onChange={handleFileChange}
-          accept="image/*"
-          className="block w-full text-sm text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-full file:border-0
-            file:text-sm file:font-semibold
-            file:bg-violet-50 file:text-violet-700
-            hover:file:bg-violet-100"
-        />
-        <button 
-          type="submit" 
-          disabled={loading || photos.length === 0}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-        >
-          {loading ? 'Téléchargement...' : 'Télécharger les photos'}
-        </button>
-      </form>
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-medium">Album photo de {childName}</h3>
+          <Button 
+            variant="outline" 
+            onClick={() => document.getElementById(`photo-upload-${childId}`)?.click()}
+            disabled={loading}
+          >
+            <ImagePlus className="w-4 h-4 mr-2" />
+            Ajouter des photos
+          </Button>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input 
+            id={`photo-upload-${childId}`}
+            type="file" 
+            multiple 
+            onChange={handleFileChange}
+            accept="image/*"
+            className="hidden"
+          />
+          {photos.length > 0 && (
+            <div className="flex justify-end">
+              <Button 
+                type="submit" 
+                disabled={loading}
+              >
+                {loading ? 'Téléchargement...' : 'Télécharger les photos'}
+              </Button>
+            </div>
+          )}
+        </form>
 
-      <AlbumMediaGrid childId={childId} />
+        <div className="mt-6">
+          <AlbumMediaGrid childId={childId} />
+        </div>
+      </Card>
     </div>
   );
 };
