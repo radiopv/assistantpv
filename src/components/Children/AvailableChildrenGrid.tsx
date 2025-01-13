@@ -59,20 +59,25 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   const formatAge = (birthDate: string) => {
     if (!birthDate) return t("ageNotAvailable");
     
-    const today = new Date();
-    const birth = parseISO(birthDate);
-    const years = differenceInYears(today, birth);
-    const months = differenceInMonths(today, birth) % 12;
-    
-    if (years === 0) {
-      return `${months} ${t("months")}`;
+    try {
+      const today = new Date();
+      const birth = parseISO(birthDate);
+      const years = differenceInYears(today, birth);
+      const months = differenceInMonths(today, birth) % 12;
+      
+      if (years === 0) {
+        return `${months} ${t("months")}`;
+      }
+      
+      if (months === 0) {
+        return `${years} ${t("years")}`;
+      }
+      
+      return `${years} ${t("years")} ${months} ${t("months")}`;
+    } catch (error) {
+      console.error('Error calculating age:', error);
+      return t("ageNotAvailable");
     }
-    
-    if (months === 0) {
-      return `${years} ${t("years")}`;
-    }
-    
-    return `${years} ${t("years")} ${months} ${t("months")}`;
   };
 
   if (isLoading) {
@@ -106,7 +111,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       {children.map((child) => (
         <Card 
           key={child.id} 
-          className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm border border-cuba-warmBeige"
+          className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
         >
           <div className="aspect-video relative">
             <img
@@ -135,7 +140,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
           <div className="p-4 space-y-4">
             {child.description && (
-              <div className="space-y-2">
+              <div className="space-y-2 bg-white/80 rounded-lg p-3">
                 <h4 className="text-sm font-medium text-gray-600">{t("description")}:</h4>
                 <ScrollArea className="h-20">
                   <p className="text-sm text-gray-600">{child.description}</p>
@@ -144,7 +149,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
             )}
 
             {child.story && (
-              <div className="space-y-2">
+              <div className="space-y-2 bg-white/80 rounded-lg p-3">
                 <h4 className="text-sm font-medium text-gray-600">{t("story")}:</h4>
                 <ScrollArea className="h-20">
                   <p className="text-sm text-gray-600">{child.story}</p>
@@ -153,26 +158,30 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
             )}
 
             {Array.isArray(child.needs) && child.needs.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-2 bg-white/80 rounded-lg p-3">
                 <h4 className="text-sm font-medium text-gray-600">{t("needs")}:</h4>
-                <div className="grid grid-cols-1 gap-2">
+                <div className="space-y-2">
                   {child.needs.map((need: any, index: number) => (
                     <div
                       key={`${need.category}-${index}`}
-                      className={`px-3 py-2 rounded-lg ${
+                      className={`p-3 rounded-lg ${
                         need.is_urgent
-                          ? "bg-red-50 text-red-800 border border-red-200"
-                          : "bg-orange-50 text-orange-800 border border-orange-200"
+                          ? "bg-red-50 border border-red-200"
+                          : "bg-orange-50 border border-orange-200"
                       }`}
                     >
-                      <div className="font-medium">
-                        {t(need.category)}
+                      <div className="flex items-center justify-between">
+                        <span className={`font-medium ${need.is_urgent ? "text-red-800" : "text-orange-800"}`}>
+                          {t(need.category)}
+                        </span>
                         {need.is_urgent && (
-                          <span className="ml-1 text-red-600">(!)</span>
+                          <span className="text-red-600 font-bold text-sm">
+                            URGENT
+                          </span>
                         )}
                       </div>
                       {need.description && (
-                        <p className="text-xs mt-1 text-gray-600 italic line-clamp-2">
+                        <p className={`mt-1 text-sm ${need.is_urgent ? "text-red-700" : "text-orange-700"}`}>
                           {need.description}
                         </p>
                       )}
