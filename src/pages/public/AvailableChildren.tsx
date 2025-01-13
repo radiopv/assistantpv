@@ -44,8 +44,8 @@ export default function AvailableChildren() {
       } else if (selectedStatus === "urgent") {
         query = query
           .eq("is_sponsored", false)
-          .not('needs', 'eq', '[]')
-          .contains('needs', [{ "is_urgent": true }]);
+          .not('needs', 'is', null)
+          .neq('needs', '[]');
       }
 
       if (selectedCity !== "all") {
@@ -62,6 +62,14 @@ export default function AvailableChildren() {
         console.error("Erreur lors de la récupération des enfants:", error);
         toast.error(t("errorFetchingChildren"));
         throw error;
+      }
+
+      // Filter children with urgent needs if status is "urgent"
+      if (selectedStatus === "urgent") {
+        return data.filter((child: any) => {
+          if (!child.needs || !Array.isArray(child.needs)) return false;
+          return child.needs.some((need: any) => need.is_urgent === true);
+        });
       }
 
       console.log("Résultats de la requête:", data);
