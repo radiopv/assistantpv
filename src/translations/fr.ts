@@ -178,7 +178,29 @@ export const frenchTranslations = {
   confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
   confirmCancel: "Êtes-vous sûr de vouloir annuler ?",
   confirmSave: "Êtes-vous sûr de vouloir enregistrer ?",
-  confirmUpdate: "Êtes-vous sûr de vouloir mettre à jour ?"
+  confirmUpdate: "Êtes-vous sûr de vouloir mettre à jour ?",
+
+  // Become Sponsor page translations
+  becomeSponsor: "Devenir parrain",
+  sponsorshipDescription: "En devenant parrain, vous pouvez faire une réelle différence dans la vie d'un enfant cubain.",
+  fullName: "Nom complet",
+  city: "Ville",
+  email: "Email",
+  phone: "Téléphone",
+  facebookUrl: "Lien Facebook",
+  motivation: "Motivation",
+  password: "Mot de passe",
+  confirmPassword: "Confirmer le mot de passe",
+  longTermSponsorship: "Parrainage à long terme",
+  oneTimeSponsorship: "Parrainage ponctuel",
+  sponsorshipTerminationNote: "Vous pouvez mettre fin à votre parrainage à tout moment en nous contactant.",
+  submitting: "Envoi en cours...",
+  submitRequest: "Envoyer la demande",
+  success: "Succès",
+  error: "Erreur",
+  sponsorshipRequestSubmitted: "Votre demande de parrainage a été envoyée avec succès.",
+  errorSubmittingRequest: "Une erreur est survenue lors de l'envoi de votre demande.",
+  passwordsDoNotMatch: "Les mots de passe ne correspondent pas.",
 };
 
 export { frenchTranslations as fr };
