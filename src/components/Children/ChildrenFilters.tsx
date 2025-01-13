@@ -95,7 +95,6 @@ export const ChildrenFilters = ({
             <SelectItem value="all">{t("allStatus")}</SelectItem>
             <SelectItem value="available">{t("available")}</SelectItem>
             <SelectItem value="sponsored">{t("sponsored")}</SelectItem>
-            <SelectItem value="pending">{t("pending")}</SelectItem>
             <SelectItem value="urgent">{t("urgent")}</SelectItem>
           </SelectContent>
         </Select>
