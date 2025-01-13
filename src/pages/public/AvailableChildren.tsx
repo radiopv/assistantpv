@@ -138,18 +138,18 @@ export default function AvailableChildren() {
   }, [children, selectedAge, categorizedChildren]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
+    <div className="min-h-screen bg-gradient-to-b from-orange-100 to-white">
       <div className="container mx-auto p-4 space-y-6">
-        <div className="bg-cuba-gradient text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold font-title mb-4">
+        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
+          <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
             {t("availableChildren")}
           </h1>
-          <p className="text-white/90 max-w-2xl mx-auto">
+          <p className="text-white/90 max-w-2xl mx-auto text-lg">
             {t("availableChildrenDescription")}
           </p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-cuba-turquoise/20">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-orange-200">
           <ChildrenFilters
             searchTerm={searchTerm}
             selectedCity={selectedCity}
@@ -177,7 +177,7 @@ export default function AvailableChildren() {
         )}
 
         {!children?.length && (
-          <div className="text-center py-8 text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-cuba-turquoise/20">
+          <div className="text-center py-8 text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-orange-200">
             {selectedStatus === "urgent" ? t("noUrgentChildren") : t("noCategoryChildren")}
           </div>
         )}

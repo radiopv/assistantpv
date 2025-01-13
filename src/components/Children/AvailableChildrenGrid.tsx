@@ -17,25 +17,6 @@ interface AvailableChildrenGridProps {
   onSponsorClick: (childId: string) => void;
 }
 
-const formatAge = (birthDate: string | undefined | null) => {
-  const { t } = useLanguage();
-  
-  if (!birthDate) {
-    return t("ageNotAvailable");
-  }
-
-  const today = new Date();
-  const birth = parseISO(birthDate);
-  const years = differenceInYears(today, birth);
-  
-  if (years === 0) {
-    const months = differenceInMonths(today, birth);
-    return `${months} ${t("months")}`;
-  }
-  
-  return `${years} ${t("years")}`;
-};
-
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -64,15 +45,12 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     if (processedImages.current.has(photoUrl) || !modelsLoaded) return;
     
     try {
-      // Add a small delay to ensure image is fully loaded
       await new Promise(resolve => setTimeout(resolve, 100));
-      
       const objectPosition = await detectFace(imgElement);
       imgElement.style.objectPosition = objectPosition;
       processedImages.current.add(photoUrl);
     } catch (error) {
       console.error('Error processing image:', error);
-      // Set default position if face detection fails
       imgElement.style.objectPosition = '50% 20%';
     }
   };
@@ -101,61 +79,72 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {children.map((child) => {
-        const childNeeds = Array.isArray(child.needs) ? child.needs : [];
-        
-        return (
-          <Card key={child.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-            <div className="aspect-video relative">
-              <img
-                src={child.photo_url || "/placeholder.svg"}
-                alt={child.name}
-                className="w-full h-full object-cover transition-transform duration-300"
-                onLoad={(e) => handleImageLoad(e, child.photo_url)}
-                crossOrigin="anonymous"
-              />
-            </div>
-            <div className="p-4 space-y-4">
-              <div className="flex justify-between items-start">
-                <h3 className="text-xl font-semibold">{child.name}</h3>
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="w-4 h-4 mr-1" />
-                  <span>{formatAge(child.birth_date)}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center text-gray-600">
-                <MapPin className="w-4 h-4 mr-1" />
+      {children.map((child) => (
+        <Card 
+          key={child.id} 
+          className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-white/80 backdrop-blur-sm border border-cuba-warmBeige"
+        >
+          <div className="aspect-video relative">
+            <img
+              src={child.photo_url || "/placeholder.svg"}
+              alt={child.name}
+              className="w-full h-full object-cover transition-transform duration-300"
+              onLoad={(e) => handleImageLoad(e, child.photo_url)}
+              crossOrigin="anonymous"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
+            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+              <h3 className="text-2xl font-title font-bold">{child.name}</h3>
+              <div className="flex items-center gap-2 text-sm mt-1">
+                <Calendar className="w-4 h-4" />
+                <span>{child.age} {t("years")}</span>
+                <MapPin className="w-4 h-4 ml-2" />
                 <span>{child.city}</span>
               </div>
-
-              {childNeeds.length > 0 && (
-                <div className="space-y-2">
-                  <p className="text-sm font-medium text-gray-600">{t("needs")}:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {childNeeds.map((need: Need, index: number) => (
-                      <Badge 
-                        key={`${need.category}-${index}`}
-                        variant={need.is_urgent ? "destructive" : "secondary"}
-                      >
-                        {need.category}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <Button 
-                className="w-full flex items-center justify-center gap-2" 
-                onClick={() => navigate(`/child-details/${child.id}`)}
-              >
-                <Info className="w-4 h-4" />
-                {t("learnMore")}
-              </Button>
             </div>
-          </Card>
-        );
-      })}
+          </div>
+
+          <div className="p-4 space-y-4">
+            {Array.isArray(child.needs) && child.needs.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-600">{t("needs")}:</h4>
+                <div className="grid grid-cols-1 gap-2">
+                  {child.needs.map((need: any, index: number) => (
+                    <div
+                      key={`${need.category}-${index}`}
+                      className={`px-3 py-2 rounded-lg ${
+                        need.is_urgent
+                          ? "bg-red-50 text-red-800 border border-red-200"
+                          : "bg-orange-50 text-orange-800 border border-orange-200"
+                      }`}
+                    >
+                      <div className="font-medium">
+                        {need.category}
+                        {need.is_urgent && (
+                          <span className="ml-1 text-red-600">(!)</span>
+                        )}
+                      </div>
+                      {need.description && (
+                        <p className="text-xs mt-1 text-gray-600 italic line-clamp-2">
+                          {need.description}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Button 
+              onClick={() => navigate(`/child/${child.id}`)}
+              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white group-hover:scale-105 transition-all duration-300"
+            >
+              <Info className="w-4 h-4 mr-2" />
+              {t("learnMore")}
+            </Button>
+          </div>
+        </Card>
+      ))}
     </div>
   );
 };
