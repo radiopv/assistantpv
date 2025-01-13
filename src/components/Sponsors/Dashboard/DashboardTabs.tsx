@@ -9,7 +9,7 @@ import { PlannedVisitForm } from "./PlannedVisitForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SponsoredChildSection } from "./SponsoredChildSection";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 interface DashboardTabsProps {
   sponsorships: any[];
@@ -18,12 +18,7 @@ interface DashboardTabsProps {
 }
 
 export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: DashboardTabsProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const birthDates = sponsorships.map(s => ({
-    childName: s.children.name,
-    birthDate: s.children.birth_date
-  }));
+  const [activeTab, setActiveTab] = useState('actions');
 
   const { refetch: refetchVisits } = useQuery({
     queryKey: ["planned-visits", userId],
@@ -39,34 +34,12 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
     },
   });
 
-  const getActiveTab = () => {
-    const path = location.pathname;
-    if (path === '/sponsor-dashboard') return 'actions';
-    if (path.includes('gallery')) return 'gallery';
-    if (path.includes('visits')) return 'visits';
-    if (path.includes('statistics')) return 'statistics';
-    return 'actions';
-  };
-
   const handleTabChange = (value: string) => {
-    switch (value) {
-      case 'actions':
-        navigate('/sponsor-dashboard');
-        break;
-      case 'gallery':
-        navigate('/sponsor-dashboard/gallery');
-        break;
-      case 'visits':
-        navigate('/sponsor-dashboard/visits');
-        break;
-      case 'statistics':
-        navigate('/sponsor-dashboard/statistics');
-        break;
-    }
+    setActiveTab(value);
   };
 
   return (
-    <Tabs defaultValue={getActiveTab()} className="w-full" onValueChange={handleTabChange}>
+    <Tabs defaultValue="actions" value={activeTab} className="w-full" onValueChange={handleTabChange}>
       <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="actions">Actions</TabsTrigger>
         <TabsTrigger value="gallery">Album Photos</TabsTrigger>
@@ -100,7 +73,10 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
           <Card className="p-6">
             <ImportantDatesCard
               plannedVisits={plannedVisits?.filter(v => v.sponsor_id === userId)}
-              birthDates={birthDates}
+              birthDates={sponsorships.map(s => ({
+                childName: s.children.name,
+                birthDate: s.children.birth_date
+              }))}
             />
           </Card>
           <Card className="p-6">
