@@ -30,6 +30,16 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? "grid" : "table");
 
+  // Dédupliquer les enfants basé sur leur ID
+  const uniqueChildren = children.reduce((acc, current) => {
+    const x = acc.find(item => item.id === current.id);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, []);
+
   const { data: sponsors } = useQuery({
     queryKey: ['sponsors'],
     queryFn: async () => {
@@ -142,7 +152,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
 
       {(viewMode === "grid" || isMobile) ? (
         <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {children.map((child) => (
+          {uniqueChildren.map((child) => (
             <div key={child.id} className="space-y-2">
               <ChildCard
                 child={child}
@@ -164,7 +174,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
         </div>
       ) : (
         <ChildrenTable
-          children={children}
+          children={uniqueChildren}
           onViewProfile={onViewProfile}
           onSponsorClick={setSelectedChild}
         />
