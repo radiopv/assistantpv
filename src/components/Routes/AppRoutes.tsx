@@ -66,15 +66,10 @@ export const AppRoutes = () => {
         <Route path="/messages" element={<Messages />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
-        
-        {/* Sponsor Dashboard Routes */}
-        <Route path="/sponsor-dashboard" element={<SponsorDashboard />}>
-          <Route path="" element={<SponsorDashboard />} />
-          <Route path="gallery" element={<SponsorDashboard />} />
-          <Route path="visits" element={<SponsorDashboard />} />
-          <Route path="statistics" element={<SponsorDashboard />} />
-        </Route>
 
+        {/* Sponsor Dashboard Routes */}
+        <Route path="/sponsor-dashboard/*" element={<SponsorDashboard />} />
+        
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}

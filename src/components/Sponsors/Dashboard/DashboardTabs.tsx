@@ -41,8 +41,12 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
 
   // Get the active tab from the pathname
   const getActiveTab = () => {
-    const path = location.pathname.split('/').pop();
-    return path === 'sponsor-dashboard' ? 'actions' : path || 'actions';
+    const path = location.pathname;
+    if (path === '/sponsor-dashboard') return 'actions';
+    if (path.includes('/gallery')) return 'gallery';
+    if (path.includes('/visits')) return 'visits';
+    if (path.includes('/statistics')) return 'statistics';
+    return 'actions';
   };
 
   // Update route when tab changes
