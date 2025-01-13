@@ -1,10 +1,39 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
+import { differenceInMonths, differenceInDays, differenceInYears, parseISO } from "date-fns";
 
 interface SponsoredChildrenListProps {
   children: any[];
 }
+
+const formatAge = (birthDate: string) => {
+  const today = new Date();
+  const birth = parseISO(birthDate);
+  const years = differenceInYears(today, birth);
+  const months = differenceInMonths(today, birth) % 12;
+  
+  if (years === 0) {
+    return `${months} mois`;
+  }
+  
+  return months > 0 ? `${years} ans et ${months} mois` : `${years} ans`;
+};
+
+const formatSponsorshipDuration = (sponsorshipDate: string) => {
+  const today = new Date();
+  const startDate = parseISO(sponsorshipDate);
+  const months = differenceInMonths(today, startDate);
+  const remainingDays = differenceInDays(today, startDate) % 30;
+  
+  if (months === 0) {
+    return `${remainingDays} jours`;
+  }
+  
+  return remainingDays > 0 
+    ? `${months} mois et ${remainingDays} jours` 
+    : `${months} mois`;
+};
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
   // Filter out duplicates and keep only sponsored children
@@ -28,8 +57,13 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
             <div>
               <h3 className="font-semibold text-lg">{child.name}</h3>
               <div className="mt-2 space-y-1 text-sm text-gray-600">
-                <p>{child.age} ans</p>
+                <p>{formatAge(child.birth_date)}</p>
                 <p>{child.city}</p>
+                {child.sponsorship_date && (
+                  <p className="text-cuba-warm">
+                    Parrain depuis: {formatSponsorshipDuration(child.sponsorship_date)}
+                  </p>
+                )}
               </div>
             </div>
 
