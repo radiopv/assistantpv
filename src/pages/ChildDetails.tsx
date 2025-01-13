@@ -12,8 +12,6 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import {
   User,
   Calendar,
-  Mail,
-  Phone,
   MapPin,
   ArrowLeft,
   Heart,
