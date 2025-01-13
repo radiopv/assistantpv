@@ -19,7 +19,7 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
   const { data: sponsoredChildren, isLoading } = useQuery({
     queryKey: ['sponsored-children', userId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: sponsorships, error } = await supabase
         .from('sponsorships')
         .select(`
           id,
@@ -30,6 +30,11 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
             city,
             needs,
             birth_date
+          ),
+          album_media (
+            id,
+            url,
+            is_featured
           )
         `)
         .eq('sponsor_id', userId)
@@ -40,13 +45,14 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
         return [];
       }
 
-      return data.map(sponsorship => ({
+      return sponsorships.map(sponsorship => ({
         id: sponsorship.children.id,
         name: sponsorship.children.name,
         photo_url: sponsorship.children.photo_url,
         city: sponsorship.children.city,
         needs: sponsorship.children.needs,
-        birth_date: sponsorship.children.birth_date
+        birth_date: sponsorship.children.birth_date,
+        photos: sponsorship.album_media || []
       }));
     }
   });
@@ -110,6 +116,7 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
         const childNeeds = convertJsonToNeeds(child.needs);
         const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
         const daysUntilBirthday = getBirthdayCountdown(child.birth_date);
+        const featuredPhotos = child.photos.filter(photo => photo.is_featured);
 
         return (
           <Card 
@@ -157,6 +164,19 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
                   ))}
                 </div>
               </div>
+
+              {featuredPhotos.length > 0 && (
+                <div className="grid grid-cols-3 gap-2 mt-4">
+                  {featuredPhotos.slice(0, 3).map((photo) => (
+                    <img
+                      key={photo.id}
+                      src={photo.url}
+                      alt={`Photo de ${child.name}`}
+                      className="w-full h-20 object-cover rounded"
+                    />
+                  ))}
+                </div>
+              )}
 
               <Button 
                 variant="outline" 
