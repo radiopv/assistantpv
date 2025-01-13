@@ -17,8 +17,45 @@ import {
   MapPin,
   ArrowLeft,
   Heart,
-  Info
+  Info,
+  GraduationCap,
+  Shirt,
+  Apple,
+  Stethoscope,
+  Sparkles,
+  Book
 } from "lucide-react";
+
+const NEED_CATEGORIES = {
+  education: {
+    icon: GraduationCap,
+    color: "text-yellow-500"
+  },
+  jouet: {
+    icon: Sparkles,
+    color: "text-purple-500"
+  },
+  vetement: {
+    icon: Shirt,
+    color: "text-blue-500"
+  },
+  nourriture: {
+    icon: Apple,
+    color: "text-green-500"
+  },
+  medicament: {
+    icon: Stethoscope,
+    color: "text-red-500"
+  },
+  hygiene: {
+    icon: Book,
+    color: "text-cyan-500"
+  },
+  autre: {
+    icon: Info,
+    color: "text-gray-500"
+  }
+};
 
 const ChildDetails = () => {
   const { id } = useParams();
@@ -209,24 +246,29 @@ const ChildDetails = () => {
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-orange-200">
               <h2 className="text-xl font-semibold mb-4 text-orange-800">{t("needs")}</h2>
               <div className="grid gap-2">
-                {needs.map((need, index) => (
-                  <div
-                    key={index}
-                    className={`p-3 rounded-lg flex items-center gap-2 ${
-                      need.is_urgent 
-                        ? "bg-red-100/80 backdrop-blur-sm text-red-800" 
-                        : "bg-orange-100/80 backdrop-blur-sm text-orange-800"
-                    }`}
-                  >
-                    <Heart className={`w-4 h-4 ${need.is_urgent ? "text-red-500" : "text-orange-500"}`} />
-                    <div>
-                      <span className="font-medium">{t(need.category)}</span>
-                      {need.description && (
-                        <p className="text-sm mt-1">{need.description}</p>
-                      )}
+                {needs.map((need, index) => {
+                  const NeedIcon = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]?.icon || Info;
+                  const iconColor = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]?.color || "text-gray-500";
+                  
+                  return (
+                    <div
+                      key={index}
+                      className={`p-3 rounded-lg flex items-center gap-2 ${
+                        need.is_urgent 
+                          ? "bg-red-100/80 backdrop-blur-sm text-red-800" 
+                          : "bg-orange-100/80 backdrop-blur-sm text-orange-800"
+                      }`}
+                    >
+                      <NeedIcon className={`w-4 h-4 ${iconColor}`} />
+                      <div>
+                        <span className="font-medium">{t(need.category)}</span>
+                        {need.description && (
+                          <p className="text-sm mt-1">{need.description}</p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
           )}

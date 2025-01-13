@@ -63,7 +63,18 @@ export const translations = {
     age: "Âge",
     genderLabel: "Genre",
     genderMale: "Masculin",
-    genderFemale: "Féminin"
+    genderFemale: "Féminin",
+    education: "Éducation",
+    jouet: "Jouets",
+    vetement: "Vêtements",
+    nourriture: "Nourriture",
+    medicament: "Médicaments",
+    hygiene: "Hygiène",
+    autre: "Autre",
+    urgentNeeds: "Besoins urgents",
+    availableForSponsorship: "Disponible pour le parrainage",
+    learnMore: "En savoir plus",
+    sponsorshipStatus: "Statut du parrainage"
   },
   es: {
     addChild: "Agregar niño",
