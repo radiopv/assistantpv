@@ -67,18 +67,18 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
                     key={`${need.category}-${index}`}
                     className={`px-3 py-2 rounded-lg ${
                       need.is_urgent
-                        ? "bg-red-50 text-red-800 border border-red-200"
+                        ? "bg-red-600 text-white border border-red-700"
                         : "bg-orange-50 text-orange-800 border border-orange-200"
                     }`}
                   >
                     <div className="font-medium">
                       {need.category}
                       {need.is_urgent && (
-                        <span className="ml-1 text-red-600">(!)</span>
+                        <span className="ml-1 font-bold">(!)</span>
                       )}
                     </div>
                     {need.description && (
-                      <p className="text-xs mt-1 text-gray-600 italic line-clamp-2">
+                      <p className={`text-xs mt-1 ${need.is_urgent ? 'text-red-100' : 'text-gray-600'} italic line-clamp-2`}>
                         {need.description}
                       </p>
                     )}
