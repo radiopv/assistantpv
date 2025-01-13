@@ -86,7 +86,8 @@ export const translations = {
     errorRejectingRequest: "Erreur lors du rejet de la demande",
     sponsorshipRequestRejected: "Demande de parrainage rejetée",
     sponsorshipRequestApproved: "Demande de parrainage approuvée",
-    errorApprovingRequest: "Erreur lors de l'approbation de la demande"
+    errorApprovingRequest: "Erreur lors de l'approbation de la demande",
+    sponsoredBy: "Parrainé par"
   },
   es: {
     addChild: "Agregar niño",
@@ -161,6 +162,7 @@ export const translations = {
     errorRejectingRequest: "Error al rechazar la solicitud",
     sponsorshipRequestRejected: "Solicitud de patrocinio rechazada",
     sponsorshipRequestApproved: "Solicitud de patrocinio aprobada",
-    errorApprovingRequest: "Error al aprobar la solicitud"
+    errorApprovingRequest: "Error al aprobar la solicitud",
+    sponsoredBy: "Patrocinado por"
   }
 };
