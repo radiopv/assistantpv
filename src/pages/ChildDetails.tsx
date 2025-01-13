@@ -58,9 +58,8 @@ const NEED_CATEGORIES = {
 const ChildDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { language } = useLanguage();
-  const { user } = useAuth();
   const { t } = useLanguage();
+  const { user } = useAuth();
 
   const { data: child, isLoading, error } = useQuery({
     queryKey: ["child", id],
