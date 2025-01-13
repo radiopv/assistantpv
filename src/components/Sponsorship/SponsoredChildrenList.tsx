@@ -58,7 +58,7 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {uniqueChildren.map((child) => (
-        <Card key={child.id} className="overflow-hidden">
+        <Card key={child.id} className="overflow-hidden bg-gradient-to-br from-white to-cuba-warmBeige border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-all duration-300">
           <div className="aspect-square relative h-48">
             <img
               src={child.photo_url || "/placeholder.svg"}
@@ -68,13 +68,13 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
           </div>
           <div className="p-4 space-y-4">
             {/* Basic Info */}
-            <div>
-              <h3 className="font-semibold text-lg">{child.name}</h3>
+            <div className="bg-white/80 rounded-lg p-3 shadow-sm">
+              <h3 className="font-title text-xl text-cuba-deepOrange mb-2">{child.name}</h3>
               <div className="mt-2 space-y-1 text-sm text-gray-600">
                 <p>{formatAge(child.birth_date)}</p>
                 <p>{child.city}</p>
                 {child.sponsorship_date && (
-                  <p className="text-cuba-warm">
+                  <p className="text-cuba-coral font-medium">
                     Parrain depuis: {formatSponsorshipDuration(child.sponsorship_date)}
                   </p>
                 )}
@@ -83,23 +83,23 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
 
             {/* Description */}
             {child.description && (
-              <div>
-                <h4 className="font-medium text-sm mb-1">Description</h4>
+              <div className="bg-white/60 rounded-lg p-3">
+                <h4 className="font-medium text-sm mb-1 text-cuba-warmGray">Description</h4>
                 <p className="text-sm text-gray-700">{child.description}</p>
               </div>
             )}
 
             {/* Story */}
             {child.story && (
-              <div>
-                <h4 className="font-medium text-sm mb-1">Histoire</h4>
+              <div className="bg-white/60 rounded-lg p-3">
+                <h4 className="font-medium text-sm mb-1 text-cuba-warmGray">Histoire</h4>
                 <p className="text-sm text-gray-700 italic">{child.story}</p>
               </div>
             )}
 
             {/* Sponsorship Info */}
             {child.sponsor_name && (
-              <div className="pt-2 border-t">
+              <div className="pt-2 border-t border-cuba-softOrange/20">
                 <p className="text-sm text-gray-600">
                   Parrainé par: <span className="font-medium">{child.sponsor_name}</span>
                 </p>
@@ -107,8 +107,8 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
             )}
 
             {/* Needs Section */}
-            <div className="pt-2 border-t">
-              <h4 className="font-medium text-sm mb-2">Besoins</h4>
+            <div className="pt-2 border-t border-cuba-softOrange/20">
+              <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Besoins</h4>
               <div className="grid gap-2">
                 {convertJsonToNeeds(child.needs).map((need, index) => (
                   <div
