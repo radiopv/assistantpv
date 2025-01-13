@@ -55,11 +55,6 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
                 <p className="text-sm text-gray-600">
                   Parrainé par: <span className="font-medium">{child.sponsor_name}</span>
                 </p>
-                {child.sponsorship_date && (
-                  <p className="text-sm text-gray-600">
-                    Depuis: {new Date(child.sponsorship_date).toLocaleDateString()}
-                  </p>
-                )}
               </div>
             )}
 
