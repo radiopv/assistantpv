@@ -9,32 +9,6 @@ export const frenchTranslations = {
   errorCheckingLink: "Erreur lors de la vérification du lien",
 
   // Available children translations
-
-  // Statistics page translations
-  statisticsTitle: "Statistiques et Impact",
-  statisticsDescription: "Découvrez l'impact de notre communauté sur la vie des enfants cubains",
-  sponsorshipStats: "Statistiques de parrainage",
-  conversionRate: "Taux de conversion",
-  avgDuration: "Durée moyenne",
-  activeSponsors: "Parrains actifs",
-  engagement: "Engagement",
-  activityRate: "Taux d'activité",
-  assistants: "Assistants",
-  impact: "Impact",
-  sponsoredChildren: "Enfants parrainés",
-  totalSponsors: "Total des parrains",
-  successRate: "Taux de réussite",
-  monthlyDonationsTrend: "Évolution mensuelle des dons",
-  urgentNeedsByCity: "Besoins urgents par ville",
-  cityDistribution: "Distribution par ville",
-  donations: "Dons",
-  peopleHelped: "Personnes aidées",
-  coverage: "Couverture",
-  citiesCovered: "Villes couvertes",
-  assistantPerformance: "Performance des assistants",
-  donationsByCategory: "Distribution des dons par catégorie",
-  numberOfDonations: "Nombre de dons",
-
   availableChildren: "Enfants à parrainer",
   availableChildrenDescription: "Découvrez les enfants qui attendent un parrain ou une marraine. Votre soutien peut faire une réelle différence dans leur vie.",
   errorFetchingChildren: "Erreur lors de la récupération des enfants",
@@ -72,33 +46,25 @@ export const frenchTranslations = {
   gridView: "Vue grille",
   tableView: "Vue tableau",
 
-  // Sponsorship validation translations
-  approve: "Approuver",
-  reject: "Rejeter",
-  cancel: "Annuler",
-  confirmApproval: "Confirmer l'approbation",
-  confirmRejection: "Confirmer le rejet",
-  approvalConfirmationMessage: "Êtes-vous sûr de vouloir approuver cette demande de parrainage ?",
-  rejectionConfirmationMessage: "Êtes-vous sûr de vouloir rejeter cette demande de parrainage ?",
-  sponsorshipRequestApproved: "La demande de parrainage a été approuvée",
-  sponsorshipRequestRejected: "La demande de parrainage a été rejetée",
-  errorApprovingRequest: "Une erreur est survenue lors de l'approbation de la demande",
-  errorRejectingRequest: "Une erreur est survenue lors du rejet de la demande",
-  success: "Succès",
-  error: "Erreur",
-  noRequestsPending: "Aucune demande en attente",
-  requestDate: "Date de la demande",
-  childInfo: "Informations sur l'enfant",
-  motivation: "Motivation",
-  accountStatus: "Statut du compte",
-  approvalStatus: "Statut d'approbation",
-  created: "Créé",
-  pending: "En attente",
-  approved: "Approuvé",
-  welcome: "Bienvenue",
-  user: "Utilisateur",
-  editProfile: "Modifier le profil",
-  logout: "Déconnexion",
+  // Statistics page translations
+  statisticsTitle: "Statistiques et Impact",
+  statisticsDescription: "Découvrez l'impact de notre communauté sur la vie des enfants cubains",
+  sponsorshipStats: "Statistiques de parrainage",
+  conversionRate: "Taux de conversion",
+  avgDuration: "Durée moyenne",
+  activeSponsors: "Parrains actifs",
+  engagement: "Engagement",
+  activityRate: "Taux d'activité",
+  assistants: "Assistants",
+  impact: "Impact",
+  sponsoredChildren: "Enfants parrainés",
+  totalSponsors: "Total des parrains",
+  successRate: "Taux de réussite",
+  monthlyDonationsTrend: "Évolution mensuelle des dons",
+  urgentNeedsByCity: "Besoins urgents par ville",
+  cityDistribution: "Distribution par ville",
+  donations: "Dons",
+  peopleHelped: "Personnes aidées",
 
   // Child Details Page translations
   back: "Retour",
@@ -109,57 +75,69 @@ export const frenchTranslations = {
   sponsorThisChild: "Parrainer cet enfant",
   description: "Description",
   story: "Histoire",
-  needs: "Besoins",
-  age: "Âge",
   cityNotAvailable: "Ville non renseignée",
-  ageNotAvailable: "Âge non disponible",
-  years: "ans",
-  months: "mois",
   and: "et",
   sponsorshipRequestSent: "Demande envoyée",
   sponsorshipRequestPending: "Votre demande de parrainage est en cours d'examen",
   errorRequestingSponsorship: "Erreur lors de la demande de parrainage",
-  
-  // Need categories
-  education: "Éducation",
-  jouet: "Jouets",
-  vetement: "Vêtements",
-  nourriture: "Nourriture",
-  medicament: "Médicaments",
-  hygiene: "Hygiène",
-  autre: "Autre",
   urgentNeeds: "Besoins urgents",
 
-  // Navigation translations
-  availableChildren: "Enfants disponibles",
-  sponsoredChildren: "Enfants parrainés",
-  donations: "Dons",
-  statistics: "Statistiques",
+  // Navigation and common elements
+  dashboard: "Tableau de bord",
+  overview: "Vue d'ensemble",
+  recentActivity: "Activité récente",
+  upcomingEvents: "Événements à venir",
+  notifications: "Notifications",
   messages: "Messages",
   settings: "Paramètres",
   profile: "Profil",
   logout: "Déconnexion",
-  
-  // Common translations
-  loading: "Chargement...",
-  error: "Erreur",
-  success: "Succès",
-  cancel: "Annuler",
+  welcome: "Bienvenue",
+  user: "Utilisateur",
+  editProfile: "Modifier le profil",
   save: "Enregistrer",
   delete: "Supprimer",
   edit: "Modifier",
   view: "Voir",
   close: "Fermer",
   confirm: "Confirmer",
-  
-  // Status translations
-  status: "Statut",
-  pending: "En attente",
-  approved: "Approuvé",
-  rejected: "Rejeté",
-  active: "Actif",
-  inactive: "Inactif",
-  
+  cancel: "Annuler",
+  error: "Erreur",
+  success: "Succès",
+
+  // Time related
+  today: "Aujourd'hui",
+  yesterday: "Hier",
+  tomorrow: "Demain",
+  thisWeek: "Cette semaine",
+  lastWeek: "Semaine dernière",
+  thisMonth: "Ce mois",
+  lastMonth: "Mois dernier",
+  thisYear: "Cette année",
+  lastYear: "Année dernière",
+
+  // Form and filter related
+  submit: "Soumettre",
+  update: "Mettre à jour",
+  create: "Créer",
+  search: "Rechercher",
+  filter: "Filtrer",
+  clearFilters: "Effacer les filtres",
+  applyFilters: "Appliquer les filtres",
+  showMore: "Voir plus",
+  showLess: "Voir moins",
+  loadMore: "Charger plus",
+
+  // Profile related
+  name: "Nom",
+  email: "Email",
+  phone: "Téléphone",
+  address: "Adresse",
+  country: "Pays",
+  birthDate: "Date de naissance",
+  gender: "Genre",
+  language: "Langue",
+
   // Sponsorship related
   sponsorshipStatus: "Statut du parrainage",
   sponsorshipDate: "Date de parrainage",
@@ -170,34 +148,14 @@ export const frenchTranslations = {
   sponsorshipPaymentMethod: "Méthode de paiement",
   sponsorshipStartDate: "Date de début",
   sponsorshipEndDate: "Date de fin",
-  
-  // Profile related
-  name: "Nom",
-  email: "Email",
-  phone: "Téléphone",
-  address: "Adresse",
-  city: "Ville",
-  country: "Pays",
-  birthDate: "Date de naissance",
-  gender: "Genre",
-  language: "Langue",
-  
-  // Dashboard related
-  dashboard: "Tableau de bord",
-  overview: "Vue d'ensemble",
-  recentActivity: "Activité récente",
-  upcomingEvents: "Événements à venir",
-  notifications: "Notifications",
-  
-  // Statistics related
-  totalChildren: "Nombre total d'enfants",
-  availableForSponsorship: "Disponibles pour le parrainage",
-  currentlySponsored: "Actuellement parrainés",
-  totalSponsors: "Nombre total de parrains",
-  activeSponsors: "Parrains actifs",
-  totalDonations: "Total des dons",
-  successRate: "Taux de réussite",
-  
+
+  // Status related
+  pending: "En attente",
+  approved: "Approuvé",
+  rejected: "Rejeté",
+  active: "Actif",
+  inactive: "Inactif",
+
   // Error messages
   errorLoadingData: "Erreur lors du chargement des données",
   errorSavingData: "Erreur lors de l'enregistrement des données",
@@ -209,41 +167,18 @@ export const frenchTranslations = {
   errorForbidden: "Accès interdit",
   errorNotFound: "Non trouvé",
   errorServerError: "Erreur serveur",
-  
+
   // Success messages
   successSavingData: "Données enregistrées avec succès",
   successDeletingData: "Données supprimées avec succès",
   successUpdatingData: "Données mises à jour avec succès",
   successOperation: "Opération réussie",
-  
+
   // Confirmation messages
   confirmDelete: "Êtes-vous sûr de vouloir supprimer ?",
   confirmCancel: "Êtes-vous sûr de vouloir annuler ?",
   confirmSave: "Êtes-vous sûr de vouloir enregistrer ?",
-  confirmUpdate: "Êtes-vous sûr de vouloir mettre à jour ?",
-  
-  // Button labels
-  submit: "Soumettre",
-  update: "Mettre à jour",
-  create: "Créer",
-  search: "Rechercher",
-  filter: "Filtrer",
-  clearFilters: "Effacer les filtres",
-  applyFilters: "Appliquer les filtres",
-  showMore: "Voir plus",
-  showLess: "Voir moins",
-  loadMore: "Charger plus",
-  
-  // Time related
-  today: "Aujourd'hui",
-  yesterday: "Hier",
-  tomorrow: "Demain",
-  thisWeek: "Cette semaine",
-  lastWeek: "Semaine dernière",
-  thisMonth: "Ce mois",
-  lastMonth: "Mois dernier",
-  thisYear: "Cette année",
-  lastYear: "Année dernière"
+  confirmUpdate: "Êtes-vous sûr de vouloir mettre à jour ?"
 };
 
 export { frenchTranslations as fr };
