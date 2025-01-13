@@ -1898,16 +1898,19 @@ export type Database = {
       }
       sponsored_children_view: {
         Row: {
-          album_photos: Json | null
+          age: number | null
           city: string | null
+          description: string | null
           id: string | null
           is_sponsored: boolean | null
           name: string | null
           needs: Json | null
           photo_url: string | null
+          photos: Json | null
           sponsor_name: string | null
           sponsorship_date: string | null
           sponsorship_status: string | null
+          story: string | null
         }
         Relationships: []
       }

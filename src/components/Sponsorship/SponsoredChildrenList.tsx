@@ -12,7 +12,7 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
 
   // Filter out duplicates and keep only sponsored children
   const uniqueChildren = children.filter((child, index, self) =>
-    index === self.findIndex((c) => c.id === child.id) && child.status === 'sponsored'
+    index === self.findIndex((c) => c.id === child.id) && child.is_sponsored
   );
 
   return (

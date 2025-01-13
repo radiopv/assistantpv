@@ -17,14 +17,16 @@ const SponsoredChildren = () => {
           photo_url,
           city,
           needs,
-          age,
           description,
           story,
           is_sponsored,
           sponsor_name,
           sponsorship_date,
-          sponsorship_status
+          sponsorship_status,
+          age,
+          photos
         `)
+        .eq('is_sponsored', true)
         .eq('sponsorship_status', 'active');
 
       if (error) {
@@ -32,7 +34,10 @@ const SponsoredChildren = () => {
         return [];
       }
 
-      return data;
+      return data.map(child => ({
+        ...child,
+        needs: Array.isArray(child.needs) ? child.needs : []
+      }));
     }
   });
 
