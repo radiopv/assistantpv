@@ -116,7 +116,7 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
         const childNeeds = convertJsonToNeeds(child.needs);
         const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
         const daysUntilBirthday = getBirthdayCountdown(child.birth_date);
-        const featuredPhotos = child.photos.filter(photo => photo.is_featured);
+        const featuredPhotos = child.photos?.filter(photo => photo.is_featured) || [];
 
         return (
           <Card 
