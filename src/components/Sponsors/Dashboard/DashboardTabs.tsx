@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { DashboardActions } from "./DashboardActions";
-import { PhotoAlbumSection } from "./PhotoAlbumSection";
+import PhotoAlbumSection from "./PhotoAlbumSection";
 import { StatisticsSection } from "./StatisticsSection";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
