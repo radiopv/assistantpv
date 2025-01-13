@@ -72,6 +72,9 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
                     }`}
                   >
                     <div className="font-medium">
+                      {need.is_urgent && (
+                        <span className="font-bold mr-2">URGENT</span>
+                      )}
                       {need.category}
                       {need.is_urgent && (
                         <span className="ml-1 font-bold">(!)</span>
