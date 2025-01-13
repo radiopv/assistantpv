@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useQuery } from '@tanstack/react-query';
 import { Card } from '@/components/ui/card';
 import { AlbumMediaGrid } from '@/components/AlbumMedia/AlbumMediaGrid';
 import { Button } from '@/components/ui/button';

@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ImagePlus, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface AlbumMediaGridProps {
   childId: string;
@@ -19,21 +19,6 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     queryKey: ['album-media', childId],
     queryFn: async () => {
       try {
-        const { data: childData, error: childError } = await supabase
-          .from('children')
-          .select('name')
-          .eq('id', childId)
-          .maybeSingle();
-
-        if (childError) {
-          toast({
-            variant: "destructive",
-            title: "Erreur",
-            description: "Impossible de récupérer les informations de l'enfant"
-          });
-          throw childError;
-        }
-
         const { data: mediaData, error: mediaError } = await supabase
           .from('album_media')
           .select(`
@@ -64,17 +49,10 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
         }
 
         console.log('Photos récupérées:', mediaData);
-
-        return {
-          media: mediaData || [],
-          childName: childData?.name
-        };
+        return mediaData || [];
       } catch (error) {
         console.error('Erreur lors de la récupération des photos:', error);
-        return {
-          media: [],
-          childName: null
-        };
+        return [];
       }
     },
     enabled: !!childId
@@ -83,13 +61,11 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
   const translations = {
     fr: {
       noPhotos: "Aucune photo dans l'album",
-      addPhotos: "Ajouter des photos",
-      albumOf: "Album de"
+      addPhotos: "Ajouter des photos"
     },
     es: {
       noPhotos: "No hay fotos en el álbum",
-      addPhotos: "Agregar fotos",
-      albumOf: "Álbum de"
+      addPhotos: "Agregar fotos"
     }
   };
 
@@ -105,7 +81,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     );
   }
 
-  if (!media?.media?.length) {
+  if (!media?.length) {
     return (
       <Card className="p-8 flex flex-col items-center justify-center space-y-4">
         <ImagePlus className="w-12 h-12 text-gray-400" />
@@ -116,37 +92,32 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-center">
-        {t.albumOf} {media.childName}
-      </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {media.media.map((item) => (
-          <Card key={item.id} className="overflow-hidden relative group hover:shadow-lg transition-shadow">
-            {item.type === 'video' ? (
-              <div className="relative aspect-square">
-                <video
-                  src={item.url}
-                  className="w-full h-full object-cover cursor-pointer"
-                  onClick={() => window.open(item.url, '_blank')}
-                />
-                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Play className="w-12 h-12 text-white" />
-                </div>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      {media.map((item) => (
+        <Card key={item.id} className="overflow-hidden relative group hover:shadow-lg transition-shadow">
+          {item.type === 'video' ? (
+            <div className="relative aspect-square">
+              <video
+                src={item.url}
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => window.open(item.url, '_blank')}
+              />
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Play className="w-12 h-12 text-white" />
               </div>
-            ) : (
-              <div className="aspect-square overflow-hidden">
-                <img
-                  src={item.url}
-                  alt={`Photo de ${media.childName}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
-                  onClick={() => window.open(item.url, '_blank')}
-                />
-              </div>
-            )}
-          </Card>
-        ))}
-      </div>
+            </div>
+          ) : (
+            <div className="aspect-square overflow-hidden">
+              <img
+                src={item.url}
+                alt={item.title || "Photo"}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+                onClick={() => window.open(item.url, '_blank')}
+              />
+            </div>
+          )}
+        </Card>
+      ))}
     </div>
   );
 };
