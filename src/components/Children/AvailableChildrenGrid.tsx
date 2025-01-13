@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
 import { toast } from "@/components/ui/use-toast";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -133,6 +134,24 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
           </div>
 
           <div className="p-4 space-y-4">
+            {child.description && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-600">{t("description")}:</h4>
+                <ScrollArea className="h-20">
+                  <p className="text-sm text-gray-600">{child.description}</p>
+                </ScrollArea>
+              </div>
+            )}
+
+            {child.story && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-600">{t("story")}:</h4>
+                <ScrollArea className="h-20">
+                  <p className="text-sm text-gray-600">{child.story}</p>
+                </ScrollArea>
+              </div>
+            )}
+
             {Array.isArray(child.needs) && child.needs.length > 0 && (
               <div className="space-y-2">
                 <h4 className="text-sm font-medium text-gray-600">{t("needs")}:</h4>
