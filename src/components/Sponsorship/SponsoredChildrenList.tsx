@@ -1,80 +1,86 @@
+import { useTranslation } from "react-i18next";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { NeedCategoryIcon } from "@/components/Dashboard/ChildrenNeeds/NeedCategoryIcon";
-import { convertJsonToNeeds } from "@/types/needs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatDate } from "@/utils/dates";
 
 interface SponsoredChildrenListProps {
   children: any[];
 }
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
-  const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {children.map((child) => {
-        const childNeeds = convertJsonToNeeds(child.needs);
-        const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
-
-        return (
-          <Card key={child.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
-            <div className="aspect-square relative">
-              <img
-                src={child.photo_url || "/placeholder.svg"}
-                alt={child.name}
-                className="w-full h-full object-cover"
-              />
-              {hasUrgentNeeds && (
-                <div className="absolute top-2 right-2">
-                  <Badge variant="destructive">
-                    Besoins urgents
-                  </Badge>
-                </div>
-              )}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+      {children.map((child) => (
+        <Card key={child.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200">
+          <div className="relative aspect-[4/3]">
+            <img
+              src={child.photo_url || "/placeholder.svg"}
+              alt={child.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="p-4 space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold">{child.name}</h3>
+              <p className="text-sm text-gray-500">
+                {t("sponsoredSince")}: {formatDate(child.sponsorship_date)}
+              </p>
             </div>
-            <div className="p-4">
-              <h3 className="font-semibold text-lg mb-2">{child.name}</h3>
-              
-              {child.sponsor_name && (
-                <div className="mt-4 flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Avatar>
-                    <AvatarImage src={child.sponsor_photo_url} />
-                    <AvatarFallback>
-                      {child.sponsor_name?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">Parrainé par {child.sponsor_name}</p>
-                  </div>
-                </div>
-              )}
 
-              <div className="mt-3 flex flex-wrap gap-2">
-                {childNeeds.map((need, index) => (
-                  <Badge 
-                    key={`${need.category}-${index}`}
-                    variant={need.is_urgent ? "destructive" : "secondary"}
-                    className="flex items-center gap-1"
-                  >
-                    <NeedCategoryIcon category={need.category} className="w-3 h-3" />
-                    {need.category}
-                  </Badge>
-                ))}
+            {child.description && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-600">{t("description")}:</h4>
+                <ScrollArea className="h-20">
+                  <p className="text-sm text-gray-600">{child.description}</p>
+                </ScrollArea>
               </div>
-              
-              <Button 
-                className="w-full mt-4" 
-                onClick={() => navigate(`/children/${child.id}`)}
-              >
-                Voir le profil
-              </Button>
-            </div>
-          </Card>
-        );
-      })}
+            )}
+
+            {child.story && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-600">{t("story")}:</h4>
+                <ScrollArea className="h-20">
+                  <p className="text-sm text-gray-600">{child.story}</p>
+                </ScrollArea>
+              </div>
+            )}
+
+            {Array.isArray(child.needs) && child.needs.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-600">{t("needs")}:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {child.needs.map((need: any, index: number) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cuba-warmBeige text-cuba-deepOrange"
+                    >
+                      {need.category}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {child.album_photos && child.album_photos.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-gray-600">{t("photos")}:</h4>
+                <div className="flex gap-2 overflow-x-auto">
+                  {child.album_photos.map((photo: any) => (
+                    <img
+                      key={photo.id}
+                      src={photo.url}
+                      alt=""
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      ))}
     </div>
   );
 };
