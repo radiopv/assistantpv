@@ -22,6 +22,24 @@ interface NeedNotification {
   is_read: boolean;
 }
 
+interface DatabaseNotification {
+  id: string;
+  created_at: string;
+  type: string;
+  content: string;
+  title: string;
+  recipient_id: string;
+  link: string | null;
+  is_read: boolean;
+  updated_at: string;
+  metadata: {
+    child_id?: string;
+    child_name?: string;
+    new_needs?: any[];
+    is_read?: boolean;
+  } | null;
+}
+
 export const NeedNotifications = () => {
   const { language } = useLanguage();
 
@@ -59,14 +77,17 @@ export const NeedNotifications = () => {
       if (error) throw error;
 
       // Transform the data to match the NeedNotification interface
-      return (data as any[]).map(notification => ({
-        ...notification,
+      return (data as DatabaseNotification[]).map(notification => ({
+        id: notification.id,
+        created_at: notification.created_at,
+        type: notification.type,
         metadata: notification.metadata || {
           child_id: null,
           child_name: '',
           new_needs: [],
           is_read: false
-        }
+        },
+        is_read: notification.is_read
       })) as NeedNotification[];
     }
   });
@@ -93,7 +114,7 @@ export const NeedNotifications = () => {
   if (!notifications?.length) {
     return (
       <Card className="p-4">
-        <p className="text-gray-500 text-center">
+        <p className="text-center text-gray-500">
           {translations[language].noNotifications}
         </p>
       </Card>
