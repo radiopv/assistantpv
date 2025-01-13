@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { Share2, MessageSquare, Calendar } from "lucide-react";
+import { Share2, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -25,8 +25,6 @@ const SponsorDashboard = () => {
       becomeASponsor: "Devenir parrain",
       messages: "Messages",
       communicateWithAssistant: "Communiquez avec l'assistant",
-      plannedVisits: "Visites Prévues",
-      manageVisits: "Gérez vos visites",
       shareError: "Le partage n'est pas disponible sur votre appareil",
       copySuccess: "Lien copié dans le presse-papiers !",
       copyError: "Impossible de copier le lien"
@@ -42,8 +40,6 @@ const SponsorDashboard = () => {
       becomeASponsor: "Convertirse en padrino",
       messages: "Mensajes",
       communicateWithAssistant: "Comuníquese con el asistente",
-      plannedVisits: "Visitas Planificadas",
-      manageVisits: "Gestione sus visitas",
       shareError: "El compartir no está disponible en su dispositivo",
       copySuccess: "¡Enlace copiado al portapapeles!",
       copyError: "No se pudo copiar el enlace"
@@ -84,28 +80,6 @@ const SponsorDashboard = () => {
       if (error) {
         console.error("Error fetching sponsorships:", error);
         toast.error("Impossible de charger vos parrainages");
-        return null;
-      }
-
-      return data;
-    },
-    enabled: !!user?.id
-  });
-
-  const { data: plannedVisits } = useQuery({
-    queryKey: ["planned-visits", user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-
-      const { data, error } = await supabase
-        .from("planned_visits")
-        .select("*")
-        .eq("sponsor_id", user.id)
-        .gte("start_date", new Date().toISOString())
-        .order("start_date", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching planned visits:", error);
         return null;
       }
 
@@ -204,7 +178,7 @@ const SponsorDashboard = () => {
 
       <div className="container mx-auto px-4">
         <div className="grid gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
             <Button
               variant="outline"
               className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange border-none transform hover:scale-105 transition-transform duration-200 h-auto"
@@ -217,22 +191,6 @@ const SponsorDashboard = () => {
                 <div className="text-left">
                   <h3 className="font-semibold text-gray-800">{translations[language].messages}</h3>
                   <p className="text-sm text-gray-700">{translations[language].communicateWithAssistant}</p>
-                </div>
-              </div>
-            </Button>
-            
-            <Button
-              variant="outline"
-              className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-pink to-cuba-coral border-none transform hover:scale-105 transition-transform duration-200 h-auto"
-              onClick={() => navigate("/planned-visits")}
-            >
-              <div className="flex items-center gap-4 w-full">
-                <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
-                  <Calendar className="w-6 h-6 text-cuba-turquoise" />
-                </div>
-                <div className="text-left">
-                  <h3 className="font-semibold text-gray-800">{translations[language].plannedVisits}</h3>
-                  <p className="text-sm text-gray-700">{translations[language].manageVisits}</p>
                 </div>
               </div>
             </Button>
