@@ -11,7 +11,20 @@ const SponsoredChildren = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('sponsored_children_view')
-        .select('*')
+        .select(`
+          id,
+          name,
+          photo_url,
+          city,
+          needs,
+          age,
+          description,
+          story,
+          is_sponsored,
+          sponsor_name,
+          sponsorship_date,
+          sponsorship_status
+        `)
         .eq('sponsorship_status', 'active');
 
       if (error) {
