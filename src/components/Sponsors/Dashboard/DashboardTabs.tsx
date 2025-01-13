@@ -39,22 +39,29 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
     },
   });
 
-  // Get the active tab from the pathname
   const getActiveTab = () => {
     const path = location.pathname;
     if (path === '/sponsor-dashboard') return 'actions';
-    if (path.includes('/gallery')) return 'gallery';
-    if (path.includes('/visits')) return 'visits';
-    if (path.includes('/statistics')) return 'statistics';
+    if (path.includes('gallery')) return 'gallery';
+    if (path.includes('visits')) return 'visits';
+    if (path.includes('statistics')) return 'statistics';
     return 'actions';
   };
 
-  // Update route when tab changes
   const handleTabChange = (value: string) => {
-    if (value === 'actions') {
-      navigate('/sponsor-dashboard');
-    } else {
-      navigate(`/sponsor-dashboard/${value}`);
+    switch (value) {
+      case 'actions':
+        navigate('/sponsor-dashboard');
+        break;
+      case 'gallery':
+        navigate('/sponsor-dashboard/gallery');
+        break;
+      case 'visits':
+        navigate('/sponsor-dashboard/visits');
+        break;
+      case 'statistics':
+        navigate('/sponsor-dashboard/statistics');
+        break;
     }
   };
 
