@@ -82,7 +82,7 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
                 <p>{child.city}</p>
                 {child.sponsorship_date && (
                   <p className="text-cuba-coral font-medium">
-                    Parrain depuis: {formatSponsorshipDuration(child.sponsorship_date)}
+                    {formatSponsorshipDuration(child.sponsorship_date)}
                   </p>
                 )}
               </div>
