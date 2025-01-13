@@ -52,6 +52,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
   };
 
   const handleNeedsChange = (needs: any[]) => {
+    console.log("Saving needs directly:", needs);
     setEditedChild(prev => ({
       ...prev,
       needs: needs
@@ -239,10 +240,12 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
                       : "bg-gray-100 text-gray-800"
                   }`}
                 >
-                  {need.category}
-                  {need.is_urgent && " (!)"} 
+                  <div className="font-medium">
+                    {need.category}
+                    {need.is_urgent && " (!)"} 
+                  </div>
                   {need.description && (
-                    <p className="text-xs mt-1 text-gray-600">{need.description}</p>
+                    <p className="text-xs mt-1 text-gray-600 italic">{need.description}</p>
                   )}
                 </div>
               ))}
