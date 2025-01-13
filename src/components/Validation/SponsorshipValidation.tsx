@@ -1,20 +1,36 @@
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Check, X, AlertTriangle } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 export const SponsorshipValidation = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
   const queryClient = useQueryClient();
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    type: 'approve' | 'reject';
+    requestId: string | null;
+  }>({ isOpen: false, type: 'approve', requestId: null });
 
   const { data: requests, isLoading } = useQuery({
-    queryKey: ['sponsorships-pending'],
+    queryKey: ['sponsorship-requests'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: requests, error } = await supabase
         .from('sponsorship_requests')
         .select(`
           *,
@@ -22,18 +38,23 @@ export const SponsorshipValidation = () => {
             name,
             photo_url,
             age,
-            city
+            city,
+            needs
           )
         `)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      return data;
+
+      if (error) {
+        console.error('Error fetching requests:', error);
+        throw error;
+      }
+
+      return requests;
     }
   });
 
-  const handleApprove = async (id: string) => {
+  const handleApprove = async (requestId: string) => {
     try {
       const currentUser = await supabase.auth.getUser();
       const adminId = currentUser.data.user?.id;
@@ -43,29 +64,33 @@ export const SponsorshipValidation = () => {
       }
 
       const { error } = await supabase.rpc('approve_sponsorship_request', {
-        request_id: id,
+        request_id: requestId,
         admin_id: adminId
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error approving request:', error);
+        throw error;
+      }
 
-      await queryClient.invalidateQueries({ queryKey: ['sponsorships-pending'] });
+      await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
 
       toast({
         title: t("success"),
         description: t("sponsorshipRequestApproved"),
       });
     } catch (error: any) {
-      console.error('Error approving request:', error);
+      console.error('Error in handleApprove:', error);
       toast({
         variant: "destructive",
         title: t("error"),
         description: t("errorApprovingRequest"),
       });
     }
+    setConfirmDialog({ isOpen: false, type: 'approve', requestId: null });
   };
 
-  const handleReject = async (id: string) => {
+  const handleReject = async (requestId: string) => {
     try {
       const currentUser = await supabase.auth.getUser();
       const adminId = currentUser.data.user?.id;
@@ -75,7 +100,7 @@ export const SponsorshipValidation = () => {
       }
 
       const { error } = await supabase.rpc('reject_sponsorship_request', {
-        request_id: id,
+        request_id: requestId,
         admin_id: adminId,
         rejection_reason: "Rejected by admin"
       });
@@ -85,20 +110,21 @@ export const SponsorshipValidation = () => {
         throw error;
       }
 
-      await queryClient.invalidateQueries({ queryKey: ['sponsorships-pending'] });
+      await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
 
       toast({
         title: t("success"),
         description: t("sponsorshipRequestRejected"),
       });
     } catch (error: any) {
-      console.error('Error rejecting request:', error);
+      console.error('Error in handleReject:', error);
       toast({
         variant: "destructive",
         title: t("error"),
         description: t("errorRejectingRequest"),
       });
     }
+    setConfirmDialog({ isOpen: false, type: 'reject', requestId: null });
   };
 
   if (isLoading) {
@@ -144,7 +170,11 @@ export const SponsorshipValidation = () => {
                 variant="outline"
                 size="sm"
                 className="text-green-600 hover:text-green-700"
-                onClick={() => handleApprove(request.id)}
+                onClick={() => setConfirmDialog({
+                  isOpen: true,
+                  type: 'approve',
+                  requestId: request.id
+                })}
               >
                 <Check className="w-4 h-4 mr-1" />
                 {t("approve")}
@@ -153,7 +183,11 @@ export const SponsorshipValidation = () => {
                 variant="outline"
                 size="sm"
                 className="text-red-600 hover:text-red-700"
-                onClick={() => handleReject(request.id)}
+                onClick={() => setConfirmDialog({
+                  isOpen: true,
+                  type: 'reject',
+                  requestId: request.id
+                })}
               >
                 <X className="w-4 h-4 mr-1" />
                 {t("reject")}
@@ -165,6 +199,40 @@ export const SponsorshipValidation = () => {
       {!requests?.length && (
         <p className="text-center text-gray-500">{t("noRequestsPending")}</p>
       )}
+
+      <AlertDialog 
+        open={confirmDialog.isOpen} 
+        onOpenChange={(isOpen) => !isOpen && setConfirmDialog(prev => ({ ...prev, isOpen: false }))}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {confirmDialog.type === 'approve' ? t("confirmApproval") : t("confirmRejection")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {confirmDialog.type === 'approve' 
+                ? t("approvalConfirmationMessage")
+                : t("rejectionConfirmationMessage")
+              }
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (!confirmDialog.requestId) return;
+                if (confirmDialog.type === 'approve') {
+                  handleApprove(confirmDialog.requestId);
+                } else {
+                  handleReject(confirmDialog.requestId);
+                }
+              }}
+            >
+              {confirmDialog.type === 'approve' ? t("approve") : t("reject")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
