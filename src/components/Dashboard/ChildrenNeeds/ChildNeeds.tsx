@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { Need } from "@/types/needs";
-import { Badge } from "@/components/ui/badge";
 
 interface ChildNeedsProps {
   child: any;
@@ -25,22 +24,24 @@ export const ChildNeeds = ({ child, needs }: ChildNeedsProps) => {
         {needs?.map((need: Need, index: number) => (
           <div 
             key={`${need.category}-${index}`}
-            className={`p-3 rounded-lg border ${
-              need.is_urgent ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'
-            }`}
+            className="p-3 rounded-lg border bg-gray-50"
           >
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
+              <div className="flex items-start gap-2">
                 {need.is_urgent && (
-                  <Badge variant="destructive">
-                    Urgent
-                  </Badge>
+                  <span className="text-red-600 font-medium">URGENT:</span>
                 )}
-                <span className="text-gray-900">
-                  {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
-                </span>
+                <div>
+                  <span className="font-medium">
+                    {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                  </span>
+                  {need.description && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {need.description}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="text-sm text-gray-600">{need.description}</div>
             </div>
           </div>
         ))}
