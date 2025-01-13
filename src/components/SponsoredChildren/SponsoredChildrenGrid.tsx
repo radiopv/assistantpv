@@ -6,6 +6,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Heart, Calendar } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
+
+interface AlbumPhoto {
+  id: string;
+  url: string;
+  type: string;
+}
 
 interface SponsoredChild {
   id: string;
@@ -15,12 +22,23 @@ interface SponsoredChild {
   needs: any[];
   sponsor_name: string | null;
   sponsorship_date: string;
-  album_photos: Array<{
-    id: string;
-    url: string;
-    type: string;
-  }>;
+  album_photos: AlbumPhoto[];
 }
+
+const convertJsonToAlbumPhotos = (jsonPhotos: Json | null): AlbumPhoto[] => {
+  if (!jsonPhotos) return [];
+  try {
+    const photos = Array.isArray(jsonPhotos) ? jsonPhotos : JSON.parse(jsonPhotos as string);
+    return photos.map((photo: any) => ({
+      id: photo.id || '',
+      url: photo.url || '',
+      type: photo.type || ''
+    }));
+  } catch (error) {
+    console.error('Error parsing album photos:', error);
+    return [];
+  }
+};
 
 export const SponsoredChildrenGrid = () => {
   const { t, language } = useLanguage();
@@ -38,7 +56,10 @@ export const SponsoredChildrenGrid = () => {
         return [];
       }
 
-      return data as SponsoredChild[];
+      return data.map(child => ({
+        ...child,
+        album_photos: convertJsonToAlbumPhotos(child.album_photos)
+      })) as SponsoredChild[];
     }
   });
 
