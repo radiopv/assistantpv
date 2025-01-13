@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/components/Auth/AuthProvider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +21,7 @@ import { useState } from "react";
 export const SponsorshipValidation = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
@@ -59,19 +61,15 @@ export const SponsorshipValidation = () => {
   const handleApprove = async (requestId: string) => {
     try {
       console.log("Starting approval process for request:", requestId);
-      const currentUser = await supabase.auth.getUser();
-      console.log("Current user data:", currentUser);
-      const adminId = currentUser.data.user?.id;
-
-      if (!adminId) {
-        console.error("No admin ID found in user data:", currentUser);
+      if (!user?.id) {
+        console.error("No admin ID found in auth context");
         throw new Error('No admin ID found');
       }
 
-      console.log("Calling approve_sponsorship_request with:", { requestId, adminId });
+      console.log("Calling approve_sponsorship_request with:", { requestId, adminId: user.id });
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: requestId,
-        admin_id: adminId
+        admin_id: user.id
       });
 
       if (error) {
@@ -99,19 +97,15 @@ export const SponsorshipValidation = () => {
   const handleReject = async (requestId: string) => {
     try {
       console.log("Starting rejection process for request:", requestId);
-      const currentUser = await supabase.auth.getUser();
-      console.log("Current user data:", currentUser);
-      const adminId = currentUser.data.user?.id;
-
-      if (!adminId) {
-        console.error("No admin ID found in user data:", currentUser);
+      if (!user?.id) {
+        console.error("No admin ID found in auth context");
         throw new Error('No admin ID found');
       }
 
-      console.log("Calling reject_sponsorship_request with:", { requestId, adminId });
+      console.log("Calling reject_sponsorship_request with:", { requestId, adminId: user.id });
       const { error } = await supabase.rpc('reject_sponsorship_request', {
         request_id: requestId,
-        admin_id: adminId,
+        admin_id: user.id,
         rejection_reason: "Rejected by admin"
       });
 
