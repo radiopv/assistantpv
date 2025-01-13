@@ -30,6 +30,7 @@ export const SponsorshipValidation = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['sponsorship-requests'],
     queryFn: async () => {
+      console.log("Fetching sponsorship requests...");
       const { data: requests, error } = await supabase
         .from('sponsorship_requests')
         .select(`
@@ -50,26 +51,31 @@ export const SponsorshipValidation = () => {
         throw error;
       }
 
+      console.log("Fetched requests:", requests);
       return requests;
     }
   });
 
   const handleApprove = async (requestId: string) => {
     try {
+      console.log("Starting approval process for request:", requestId);
       const currentUser = await supabase.auth.getUser();
+      console.log("Current user data:", currentUser);
       const adminId = currentUser.data.user?.id;
 
       if (!adminId) {
+        console.error("No admin ID found in user data:", currentUser);
         throw new Error('No admin ID found');
       }
 
+      console.log("Calling approve_sponsorship_request with:", { requestId, adminId });
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: requestId,
         admin_id: adminId
       });
 
       if (error) {
-        console.error('Error approving request:', error);
+        console.error('Error in RPC call:', error);
         throw error;
       }
 
@@ -92,13 +98,17 @@ export const SponsorshipValidation = () => {
 
   const handleReject = async (requestId: string) => {
     try {
+      console.log("Starting rejection process for request:", requestId);
       const currentUser = await supabase.auth.getUser();
+      console.log("Current user data:", currentUser);
       const adminId = currentUser.data.user?.id;
 
       if (!adminId) {
+        console.error("No admin ID found in user data:", currentUser);
         throw new Error('No admin ID found');
       }
 
+      console.log("Calling reject_sponsorship_request with:", { requestId, adminId });
       const { error } = await supabase.rpc('reject_sponsorship_request', {
         request_id: requestId,
         admin_id: adminId,
@@ -130,6 +140,8 @@ export const SponsorshipValidation = () => {
   if (isLoading) {
     return <div className="text-center">{t("loading")}</div>;
   }
+
+  // ... keep existing code (JSX for rendering the requests list and confirmation dialog)
 
   return (
     <div className="space-y-4">
