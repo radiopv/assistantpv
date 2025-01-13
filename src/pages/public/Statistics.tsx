@@ -4,19 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SponsorshipConversionStats, UserEngagementStats, TopCityStats } from "@/types/statistics";
 import { Progress } from "@/components/ui/progress";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  Legend
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, LineChart, Line, Legend, AreaChart, Area
 } from "recharts";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -70,94 +59,106 @@ const Statistics = () => {
     }
   });
 
-  const calculateSuccessRate = () => {
-    if (!sponsorshipStats?.active_sponsorships || !engagementStats) return 0;
-    const totalSponsors = (engagementStats.active_sponsors || 0) + (engagementStats.inactive_sponsors || 0);
-    if (totalSponsors === 0) return 0;
-    const rate = Math.min((sponsorshipStats.active_sponsorships / totalSponsors) * 100, 100);
-    return Math.round(rate);
-  };
+  const { data: assistantStats } = useQuery({
+    queryKey: ['assistant-stats'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_assistant_performance_stats');
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const { data: categoryStats } = useQuery({
+    queryKey: ['category-stats'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_category_donation_stats');
+      if (error) throw error;
+      return data;
+    }
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-cuba-gradient text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold font-title">
-            {t("statisticsTitle")}
-          </h1>
-          <p className="text-white/90 mt-2">
-            {t("statisticsDescription")}
+        <div className="bg-gradient-to-r from-cuba-orange to-cuba-red text-white p-8 rounded-xl shadow-lg text-center mb-8">
+          <h1 className="text-3xl font-bold mb-2">Statistiques et Impact</h1>
+          <p className="text-white/90">
+            Découvrez l'impact de notre communauté sur la vie des enfants cubains
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 hover:border-cuba-turquoise/40 transition-colors">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card className="bg-white/90 shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle className="font-title">{t("sponsorshipStats")}</CardTitle>
+              <CardTitle>Parrainages</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("conversionRate")}</p>
-                  <p className="text-2xl font-bold text-cuba-turquoise">{sponsorshipStats?.conversion_rate}%</p>
+                  <p className="text-sm text-muted-foreground">Taux de conversion</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{sponsorshipStats?.conversion_rate}%</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("avgDuration")}</p>
-                  <p className="text-2xl font-bold text-cuba-turquoise">{sponsorshipStats?.avg_duration_days} {t("days")}</p>
+                  <p className="text-sm text-muted-foreground">Durée moyenne</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{sponsorshipStats?.avg_duration_days} jours</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("activeSponsors")}</p>
-                  <p className="text-2xl font-bold text-cuba-turquoise">{sponsorshipStats?.active_sponsorships}</p>
+                  <p className="text-sm text-muted-foreground">Parrainages actifs</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{sponsorshipStats?.active_sponsorships}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 hover:border-cuba-turquoise/40 transition-colors">
+          <Card className="bg-white/90 shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle className="font-title">{t("engagement")}</CardTitle>
+              <CardTitle>Engagement</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm text-muted-foreground">{t("activityRate")}</span>
+                    <span className="text-sm text-muted-foreground">Taux d'activité</span>
                     <span className="font-medium">{engagementStats?.activity_rate}%</span>
                   </div>
-                  <Progress value={engagementStats?.activity_rate} className="h-2 bg-cuba-turquoise/20" />
+                  <Progress value={engagementStats?.activity_rate} className="h-2" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("activeSponsors")}</p>
-                  <p className="text-2xl font-bold text-cuba-turquoise">{engagementStats?.active_sponsors}</p>
+                  <p className="text-sm text-muted-foreground">Parrains actifs</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{engagementStats?.active_sponsors}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("assistants")}</p>
-                  <p className="text-2xl font-bold text-cuba-turquoise">{engagementStats?.total_assistants}</p>
+                  <p className="text-sm text-muted-foreground">Assistants</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{engagementStats?.total_assistants}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 hover:border-cuba-turquoise/40 transition-colors">
+          <Card className="bg-white/90 shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle className="font-title">{t("impact")}</CardTitle>
+              <CardTitle>Couverture</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("sponsoredChildren")}</p>
-                  <p className="text-2xl font-bold text-cuba-turquoise">{sponsorshipStats?.active_sponsorships}</p>
+                  <p className="text-sm text-muted-foreground">Villes couvertes</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{engagementStats?.cities_coverage}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("totalSponsors")}</p>
-                  <p className="text-2xl font-bold text-cuba-turquoise">
+                  <p className="text-sm text-muted-foreground">Total des parrains</p>
+                  <p className="text-2xl font-bold text-cuba-orange">
                     {(engagementStats?.active_sponsors || 0) + (engagementStats?.inactive_sponsors || 0)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">{t("successRate")}</p>
+                  <p className="text-sm text-muted-foreground">Taux de réussite</p>
                   <p className="text-2xl font-bold text-green-600">
-                    {calculateSuccessRate()}%
+                    {Math.min(
+                      ((sponsorshipStats?.active_sponsorships || 0) / 
+                      ((engagementStats?.active_sponsors || 0) + (engagementStats?.inactive_sponsors || 0))) * 100,
+                      100
+                    ).toFixed(1)}%
                   </p>
                 </div>
               </div>
@@ -166,30 +167,42 @@ const Statistics = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20">
+          <Card className="bg-white/90 shadow-lg">
             <CardHeader>
-              <CardTitle className="font-title">{t("monthlyDonationsTrend")}</CardTitle>
+              <CardTitle>Évolution mensuelle des dons</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={monthlyDonations}>
+                  <AreaChart data={monthlyDonations}>
+                    <defs>
+                      <linearGradient id="colorDonations" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#0072BB" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#0072BB" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line type="monotone" dataKey="donations" stroke="#0072BB" name={t("donations")} />
-                    <Line type="monotone" dataKey="people_helped" stroke="#40C057" name={t("peopleHelped")} />
-                  </LineChart>
+                    <Area 
+                      type="monotone" 
+                      dataKey="donations" 
+                      stroke="#0072BB" 
+                      fillOpacity={1} 
+                      fill="url(#colorDonations)" 
+                      name="Dons"
+                    />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20">
+          <Card className="bg-white/90 shadow-lg">
             <CardHeader>
-              <CardTitle className="font-title">{t("urgentNeedsByCity")}</CardTitle>
+              <CardTitle>Besoins urgents par ville</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
@@ -217,9 +230,61 @@ const Statistics = () => {
           </Card>
         </div>
 
-        <Card className="bg-white/80 backdrop-blur-sm border-cuba-turquoise/20 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Card className="bg-white/90 shadow-lg">
+            <CardHeader>
+              <CardTitle>Performance des assistants</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={assistantStats}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
+                    <XAxis dataKey="assistant_name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="donations_count" fill="#0072BB" name="Nombre de dons" />
+                    <Bar dataKey="people_helped" fill="#40C057" name="Personnes aidées" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/90 shadow-lg">
+            <CardHeader>
+              <CardTitle>Distribution des dons par catégorie</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryStats}
+                      dataKey="quantity"
+                      nameKey="category"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label
+                    >
+                      {categoryStats?.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="bg-white/90 shadow-lg mt-8">
           <CardHeader>
-            <CardTitle className="font-title">{t("cityDistribution")}</CardTitle>
+            <CardTitle>Distribution par ville</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
@@ -229,7 +294,7 @@ const Statistics = () => {
                   <XAxis dataKey="city" />
                   <YAxis />
                   <Tooltip />
-                  <Bar dataKey="active_sponsorships" fill="#0072BB" name={t("activeSponsors")} />
+                  <Bar dataKey="active_sponsorships" fill="#0072BB" name="Parrainages actifs" />
                 </BarChart>
               </ResponsiveContainer>
             </div>

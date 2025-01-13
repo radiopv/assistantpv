@@ -9,6 +9,32 @@ export const frenchTranslations = {
   errorCheckingLink: "Erreur lors de la vérification du lien",
 
   // Available children translations
+
+  // Statistics page translations
+  statisticsTitle: "Statistiques et Impact",
+  statisticsDescription: "Découvrez l'impact de notre communauté sur la vie des enfants cubains",
+  sponsorshipStats: "Statistiques de parrainage",
+  conversionRate: "Taux de conversion",
+  avgDuration: "Durée moyenne",
+  activeSponsors: "Parrains actifs",
+  engagement: "Engagement",
+  activityRate: "Taux d'activité",
+  assistants: "Assistants",
+  impact: "Impact",
+  sponsoredChildren: "Enfants parrainés",
+  totalSponsors: "Total des parrains",
+  successRate: "Taux de réussite",
+  monthlyDonationsTrend: "Évolution mensuelle des dons",
+  urgentNeedsByCity: "Besoins urgents par ville",
+  cityDistribution: "Distribution par ville",
+  donations: "Dons",
+  peopleHelped: "Personnes aidées",
+  coverage: "Couverture",
+  citiesCovered: "Villes couvertes",
+  assistantPerformance: "Performance des assistants",
+  donationsByCategory: "Distribution des dons par catégorie",
+  numberOfDonations: "Nombre de dons",
+
   availableChildren: "Enfants à parrainer",
   availableChildrenDescription: "Découvrez les enfants qui attendent un parrain ou une marraine. Votre soutien peut faire une réelle différence dans leur vie.",
   errorFetchingChildren: "Erreur lors de la récupération des enfants",
