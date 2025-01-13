@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, AlertTriangle } from "lucide-react";
+import { Check } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { format } from "date-fns";
@@ -12,6 +12,7 @@ import { NeedItem } from "./NeedItem";
 interface NeedNotification {
   id: string;
   created_at: string;
+  type: 'need_update' | 'message' | 'system' | 'sponsorship_update';
   metadata: {
     child_id: string;
     child_name: string;
