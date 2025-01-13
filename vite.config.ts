@@ -13,10 +13,13 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
+          vendor: ['react', 'react-dom', 'react-i18next', 'i18next'],
         },
       },
     },
     copyPublicDir: true,
   },
+  server: {
+    port: 8080
+  }
 })
