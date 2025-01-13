@@ -9,6 +9,8 @@ import { PlannedVisitForm } from "./PlannedVisitForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SponsoredChildSection } from "./SponsoredChildSection";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 interface DashboardTabsProps {
   sponsorships: any[];
@@ -17,6 +19,8 @@ interface DashboardTabsProps {
 }
 
 export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: DashboardTabsProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const birthDates = sponsorships.map(s => ({
     childName: s.children.name,
     birthDate: s.children.birth_date
@@ -36,8 +40,19 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
     },
   });
 
+  // Get the active tab from the URL hash or default to "actions"
+  const getActiveTab = () => {
+    const hash = location.hash.replace("#", "");
+    return hash || "actions";
+  };
+
+  // Update URL hash when tab changes
+  const handleTabChange = (value: string) => {
+    navigate(`#${value}`, { replace: true });
+  };
+
   return (
-    <Tabs defaultValue="actions" className="w-full">
+    <Tabs defaultValue={getActiveTab()} className="w-full" onValueChange={handleTabChange}>
       <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="actions">Actions</TabsTrigger>
         <TabsTrigger value="gallery">Album Photos</TabsTrigger>

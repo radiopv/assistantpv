@@ -23,7 +23,7 @@ import Settings from "@/pages/Settings";
 import Tasks from "@/pages/Tasks";
 import AssistantPhotos from "@/pages/AssistantPhotos";
 import MediaManagement from "@/pages/MediaManagement";
-import SponsorDashboard from "@/pages/sponsor/SponsorDashboard"; // Updated import
+import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 import Translations from "@/pages/admin/Translations";
@@ -66,7 +66,7 @@ export const AppRoutes = () => {
         <Route path="/messages" element={<Messages />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
-        <Route path="/sponsor-dashboard" element={<SponsorDashboard />} /> {/* Updated route */}
+        <Route path="/sponsor-dashboard/*" element={<SponsorDashboard />} />
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}
