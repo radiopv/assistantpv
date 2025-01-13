@@ -81,7 +81,7 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
                       )}
                     </div>
                     {need.description && (
-                      <p className={`text-xs mt-1 ${need.is_urgent ? 'text-red-100' : 'text-gray-600'} italic line-clamp-2`}>
+                      <p className={`text-xs mt-1 ${need.is_urgent ? 'text-red-100' : 'text-gray-600'} italic`}>
                         {need.description}
                       </p>
                     )}
