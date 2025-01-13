@@ -35,9 +35,16 @@ export const SponsorshipValidation = () => {
 
   const handleApprove = async (id: string) => {
     try {
+      const currentUser = await supabase.auth.getUser();
+      const adminId = currentUser.data.user?.id;
+
+      if (!adminId) {
+        throw new Error('No admin ID found');
+      }
+
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: id,
-        admin_id: (await supabase.auth.getUser()).data.user?.id
+        admin_id: adminId
       });
 
       if (error) throw error;
@@ -70,10 +77,13 @@ export const SponsorshipValidation = () => {
       const { error } = await supabase.rpc('reject_sponsorship_request', {
         request_id: id,
         admin_id: adminId,
-        rejection_reason: "Rejected by admin" // You can make this dynamic if needed
+        rejection_reason: "Rejected by admin"
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('RPC Error:', error);
+        throw error;
+      }
 
       await queryClient.invalidateQueries({ queryKey: ['sponsorships-pending'] });
 

@@ -74,7 +74,19 @@ export const translations = {
     urgentNeeds: "Besoins urgents",
     availableForSponsorship: "Disponible pour le parrainage",
     learnMore: "En savoir plus",
-    sponsorshipStatus: "Statut du parrainage"
+    sponsorshipStatus: "Statut du parrainage",
+    approve: "Approuver",
+    reject: "Rejeter",
+    requestDate: "Date de la demande",
+    accountStatus: "Statut du compte",
+    approvalStatus: "Statut d'approbation",
+    created: "Créé",
+    pending: "En attente",
+    approved: "Approuvé",
+    errorRejectingRequest: "Erreur lors du rejet de la demande",
+    sponsorshipRequestRejected: "Demande de parrainage rejetée",
+    sponsorshipRequestApproved: "Demande de parrainage approuvée",
+    errorApprovingRequest: "Erreur lors de l'approbation de la demande"
   },
   es: {
     addChild: "Agregar niño",
@@ -137,6 +149,19 @@ export const translations = {
     age: "Edad",
     genderLabel: "Género",
     genderMale: "Masculino",
-    genderFemale: "Femenino"
+    genderFemale: "Femenino",
+    approve: "Aprobar",
+    reject: "Rechazar",
+    requestDate: "Fecha de solicitud",
+    accountStatus: "Estado de la cuenta",
+    approvalStatus: "Estado de aprobación",
+    childInfo: "Información del niño",
+    created: "Creado",
+    pending: "Pendiente",
+    approved: "Aprobado",
+    errorRejectingRequest: "Error al rechazar la solicitud",
+    sponsorshipRequestRejected: "Solicitud de patrocinio rechazada",
+    sponsorshipRequestApproved: "Solicitud de patrocinio aprobada",
+    errorApprovingRequest: "Error al aprobar la solicitud"
   }
 };
