@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import { Card } from '@/components/ui/card';
+import { AlbumMediaGrid } from '@/components/AlbumMedia/AlbumMediaGrid';
 
 interface PhotoAlbumSectionProps {
   childId: string;
@@ -25,29 +28,49 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
 
     try {
       const uploadPromises = photos.map(async (photo) => {
-        const { data, error } = await supabase.storage
-          .from('photos')
-          .upload(`${childId}/${photo.name}`, photo);
+        const fileExt = photo.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${childId}/${fileName}`;
 
-        if (error) {
-          throw error;
-        }
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('album-media')
+          .upload(filePath, photo);
 
-        return data;
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('album-media')
+          .getPublicUrl(filePath);
+
+        const { error: dbError } = await supabase
+          .from('album_media')
+          .insert({
+            child_id: childId,
+            sponsor_id: sponsorId,
+            url: publicUrl,
+            type: 'image',
+            is_approved: true
+          });
+
+        if (dbError) throw dbError;
+
+        return uploadData;
       });
 
       await Promise.all(uploadPromises);
+
       toast({
-        title: 'Success',
-        description: 'Photos uploaded successfully!',
+        title: "Succès",
+        description: "Photos téléchargées avec succès",
       });
+
       setPhotos([]);
     } catch (error) {
       console.error('Error uploading photos:', error);
       toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'There was an error uploading your photos.',
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors du téléchargement des photos",
       });
     } finally {
       setLoading(false);
@@ -55,12 +78,33 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="file" multiple onChange={handleFileChange} />
-      <button type="submit" disabled={loading}>
-        {loading ? 'Uploading...' : 'Upload Photos'}
-      </button>
-    </form>
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium">Album photo de {childName}</h3>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input 
+          type="file" 
+          multiple 
+          onChange={handleFileChange}
+          accept="image/*"
+          className="block w-full text-sm text-gray-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-full file:border-0
+            file:text-sm file:font-semibold
+            file:bg-violet-50 file:text-violet-700
+            hover:file:bg-violet-100"
+        />
+        <button 
+          type="submit" 
+          disabled={loading || photos.length === 0}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+        >
+          {loading ? 'Téléchargement...' : 'Télécharger les photos'}
+        </button>
+      </form>
+
+      <AlbumMediaGrid childId={childId} />
+    </div>
   );
 };
 
