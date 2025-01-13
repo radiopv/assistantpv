@@ -68,7 +68,11 @@ export const frenchTranslations = {
   approvalStatus: "Statut d'approbation",
   created: "Créé",
   pending: "En attente",
-  approved: "Approuvé"
+  approved: "Approuvé",
+  welcome: "Bienvenue",
+  user: "Utilisateur",
+  editProfile: "Modifier le profil",
+  logout: "Déconnexion"
 };
 
-export const fr = frenchTranslations;
+export { frenchTranslations as fr };
