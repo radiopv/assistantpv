@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SponsorFilters } from "./SponsorFilters";
 import { SponsorListItem } from "./SponsorListItem";
@@ -84,20 +87,21 @@ export const SponsorsList = ({
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       
-      // Get only active sponsorships with valid children
-      const validSponshorships = sponsor.sponsorships?.filter((s: any) => {
-        return s.status === 'active' && s.children && s.children.id;
+      // First, filter only active sponsorships
+      const activeSponshorships = sponsor.sponsorships?.filter((s: any) => {
+        return s.status === 'active';
       }) || [];
 
-      // Create a Map to store unique children using their IDs
+      // Then create a Map to store unique children, using child ID as key
       const uniqueChildren = new Map();
-      validSponshorships.forEach((s: any) => {
-        if (!uniqueChildren.has(s.children.id)) {
+      activeSponshorships.forEach((s: any) => {
+        // Only add if the child exists and has an ID
+        if (s.children && s.children.id) {
           uniqueChildren.set(s.children.id, s);
         }
       });
 
-      // Convert Map values back to array
+      // Convert Map values back to array and assign to sponsor
       sponsor.sponsorships = Array.from(uniqueChildren.values());
 
       const hasActiveSponshorships = sponsor.sponsorships.length > 0;
