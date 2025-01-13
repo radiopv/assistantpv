@@ -52,19 +52,6 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
     e.preventDefault();
 
     try {
-      // Update sponsor's visit information
-      const { error: sponsorError } = await supabase
-        .from('sponsors')
-        .update({
-          wants_to_visit_child: wantsToVisitChild,
-          wants_donation_pickup: wantsDonationPickup,
-          visit_start_date: startDate,
-          visit_end_date: endDate
-        })
-        .eq('id', sponsorId);
-
-      if (sponsorError) throw sponsorError;
-
       // Create planned visit record
       const { error: visitError } = await supabase
         .from('planned_visits')
@@ -78,6 +65,19 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
         });
 
       if (visitError) throw visitError;
+
+      // Update sponsor's visit information
+      const { error: sponsorError } = await supabase
+        .from('sponsors')
+        .update({
+          wants_to_visit_child: wantsToVisitChild,
+          wants_donation_pickup: wantsDonationPickup,
+          visit_start_date: startDate,
+          visit_end_date: endDate
+        })
+        .eq('id', sponsorId);
+
+      if (sponsorError) throw sponsorError;
 
       toast.success(t.success);
       onVisitPlanned();
