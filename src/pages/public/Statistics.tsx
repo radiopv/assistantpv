@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { SponsorshipConversionStats, UserEngagementStats, TopCityStats } from "@/types/statistics";
+import { SponsorshipConversionStats, UserEngagementStats } from "@/types/statistics";
 import { Progress } from "@/components/ui/progress";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, Legend, AreaChart, Area
+  PieChart, Pie, Cell, AreaChart, Area, Legend
 } from "recharts";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -32,15 +32,6 @@ const Statistics = () => {
     }
   });
 
-  const { data: cityStats } = useQuery({
-    queryKey: ['city-stats'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_top_sponsorship_cities');
-      if (error) throw error;
-      return data as TopCityStats[];
-    }
-  });
-
   const { data: monthlyDonations } = useQuery({
     queryKey: ['monthly-donations'],
     queryFn: async () => {
@@ -59,21 +50,27 @@ const Statistics = () => {
     }
   });
 
-  const { data: assistantStats } = useQuery({
-    queryKey: ['assistant-stats'],
+  const { data: childrenStats } = useQuery({
+    queryKey: ['children-stats'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_assistant_performance_stats');
+      const { data: children, error } = await supabase
+        .from('children')
+        .select('status, is_sponsored, age')
+        .order('created_at');
+      
       if (error) throw error;
-      return data;
-    }
-  });
 
-  const { data: categoryStats } = useQuery({
-    queryKey: ['category-stats'],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_category_donation_stats');
-      if (error) throw error;
-      return data;
+      const totalChildren = children.length;
+      const availableChildren = children.filter(c => !c.is_sponsored).length;
+      const sponsoredChildren = children.filter(c => c.is_sponsored).length;
+      const averageAge = children.reduce((acc, curr) => acc + (curr.age || 0), 0) / totalChildren;
+
+      return {
+        totalChildren,
+        availableChildren,
+        sponsoredChildren,
+        averageAge: Math.round(averageAge * 10) / 10
+      };
     }
   });
 
@@ -137,29 +134,21 @@ const Statistics = () => {
 
           <Card className="bg-white/90 shadow-lg hover:shadow-xl transition-shadow">
             <CardHeader>
-              <CardTitle>Couverture</CardTitle>
+              <CardTitle>Enfants</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Villes couvertes</p>
-                  <p className="text-2xl font-bold text-cuba-orange">{engagementStats?.cities_coverage}</p>
+                  <p className="text-sm text-muted-foreground">Total des enfants</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{childrenStats?.totalChildren}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total des parrains</p>
-                  <p className="text-2xl font-bold text-cuba-orange">
-                    {(engagementStats?.active_sponsors || 0) + (engagementStats?.inactive_sponsors || 0)}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Enfants disponibles</p>
+                  <p className="text-2xl font-bold text-green-600">{childrenStats?.availableChildren}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Taux de réussite</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {Math.min(
-                      ((sponsorshipStats?.active_sponsorships || 0) / 
-                      ((engagementStats?.active_sponsors || 0) + (engagementStats?.inactive_sponsors || 0))) * 100,
-                      100
-                    ).toFixed(1)}%
-                  </p>
+                  <p className="text-sm text-muted-foreground">Âge moyen</p>
+                  <p className="text-2xl font-bold text-cuba-orange">{childrenStats?.averageAge} ans</p>
                 </div>
               </div>
             </CardContent>
@@ -229,77 +218,6 @@ const Statistics = () => {
             </CardContent>
           </Card>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Card className="bg-white/90 shadow-lg">
-            <CardHeader>
-              <CardTitle>Performance des assistants</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={assistantStats}>
-                    <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
-                    <XAxis dataKey="assistant_name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="donations_count" fill="#0072BB" name="Nombre de dons" />
-                    <Bar dataKey="people_helped" fill="#40C057" name="Personnes aidées" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/90 shadow-lg">
-            <CardHeader>
-              <CardTitle>Distribution des dons par catégorie</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryStats}
-                      dataKey="quantity"
-                      nameKey="category"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      label
-                    >
-                      {categoryStats?.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className="bg-white/90 shadow-lg mt-8">
-          <CardHeader>
-            <CardTitle>Distribution par ville</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={cityStats}>
-                  <CartesianGrid strokeDasharray="3 3" className="opacity-50" />
-                  <XAxis dataKey="city" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="active_sponsorships" fill="#0072BB" name="Parrainages actifs" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
