@@ -78,7 +78,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   }
 
   const handleLearnMore = (childId: string) => {
-    navigate(`/child/${childId}`);
+    navigate(`/child-details/${childId}`);
   };
 
   return (
