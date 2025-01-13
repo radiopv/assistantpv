@@ -158,7 +158,7 @@ export const ChildCard = ({ child, onViewProfile }: ChildCardProps) => {
           </div>
           {child.is_sponsored && child.sponsor_name && (
             <div className="col-span-2">
-              <p className="text-gray-400">Parrain/Marraine</p>
+              <p className="text-gray-400">{t('sponsoredBy')}</p>
               <p className="font-medium text-blue-600">{child.sponsor_name}</p>
             </div>
           )}
