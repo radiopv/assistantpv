@@ -6,7 +6,7 @@ import { Star } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { convertJsonToNeeds } from "@/types/needs";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, parseISO, differenceInYears, differenceInMonths } from "date-fns";
 
 interface SponsoredChildrenGridProps {
   userId: string;
@@ -15,6 +15,35 @@ interface SponsoredChildrenGridProps {
 export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+
+  const translations = {
+    fr: {
+      welcomeMessage: "Bienvenue",
+      inviteFriends: "Inviter des amis",
+      viewAlbum: "Voir l'album",
+      birthdayIn: "Anniversaire dans",
+      days: "jours",
+      years: "ans",
+      months: "mois",
+      needs: "Besoins",
+      urgent: "URGENT",
+      noChildren: "Vous ne parrainez aucun enfant actuellement"
+    },
+    es: {
+      welcomeMessage: "Bienvenido",
+      inviteFriends: "Invitar amigos",
+      viewAlbum: "Ver álbum",
+      birthdayIn: "Cumpleaños en",
+      days: "días",
+      years: "años",
+      months: "meses",
+      needs: "Necesidades",
+      urgent: "URGENTE",
+      noChildren: "No tienes niños apadrinados actualmente"
+    }
+  };
+
+  const t = translations[language as keyof typeof translations];
 
   const { data: sponsoredChildren, isLoading } = useQuery({
     queryKey: ['sponsored-children', userId],
@@ -29,7 +58,9 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
             photo_url,
             city,
             needs,
-            birth_date
+            birth_date,
+            description,
+            story
           ),
           album_media (
             id,
@@ -46,43 +77,30 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
       }
 
       return sponsorships.map(sponsorship => ({
-        id: sponsorship.children.id,
-        name: sponsorship.children.name,
-        photo_url: sponsorship.children.photo_url,
-        city: sponsorship.children.city,
-        needs: sponsorship.children.needs,
-        birth_date: sponsorship.children.birth_date,
+        ...sponsorship.children,
         photos: sponsorship.album_media || []
       }));
-    }
+    },
+    enabled: !!userId
   });
 
-  const translations = {
-    fr: {
-      noChildren: "Vous ne parrainez aucun enfant actuellement",
-      viewAlbum: "Voir l'album",
-      birthdayIn: "Anniversaire dans",
-      days: "jours",
-      needs: "Besoins",
-      urgent: "Urgent"
-    },
-    es: {
-      noChildren: "No tienes niños apadrinados actualmente",
-      viewAlbum: "Ver álbum",
-      birthdayIn: "Cumpleaños en",
-      days: "días",
-      needs: "Necesidades",
-      urgent: "Urgente"
-    }
+  const calculateAge = (birthDate: string) => {
+    const today = new Date();
+    const birth = parseISO(birthDate);
+    const years = differenceInYears(today, birth);
+    const months = differenceInMonths(today, birth) % 12;
+    
+    return {
+      years,
+      months
+    };
   };
-
-  const t = translations[language as keyof typeof translations];
 
   const getBirthdayCountdown = (birthDate: string) => {
     if (!birthDate) return null;
     
     const today = new Date();
-    const birth = new Date(birthDate);
+    const birth = parseISO(birthDate);
     const nextBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
     
     if (nextBirthday < today) {
@@ -93,13 +111,7 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
   };
 
   if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="h-64 animate-pulse bg-gray-100" />
-        ))}
-      </div>
-    );
+    return <div>Chargement...</div>;
   }
 
   if (!sponsoredChildren?.length) {
@@ -116,12 +128,13 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
         const childNeeds = convertJsonToNeeds(child.needs);
         const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
         const daysUntilBirthday = getBirthdayCountdown(child.birth_date);
+        const age = calculateAge(child.birth_date);
         const featuredPhotos = child.photos?.filter(photo => photo.is_featured) || [];
 
         return (
           <Card 
             key={child.id} 
-            className="overflow-hidden hover:shadow-lg transition-shadow duration-200 bg-gradient-to-br from-cuba-warmBeige to-cuba-softOrange"
+            className="overflow-hidden hover:shadow-lg transition-shadow duration-200 bg-gradient-to-br from-cuba-offwhite to-cuba-warmBeige"
           >
             <div className="aspect-square relative">
               <img
@@ -129,44 +142,49 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
                 alt={child.name}
                 className="w-full h-full object-cover"
               />
-              {hasUrgentNeeds && (
-                <div className="absolute top-2 right-2">
-                  <span className="bg-red-500 text-white px-2 py-1 rounded-full text-xs">
-                    {t.urgent}
-                  </span>
-                </div>
-              )}
             </div>
             
             <div className="p-4 space-y-4">
-              <h3 className="text-xl font-semibold">{child.name}</h3>
-              
-              {daysUntilBirthday && (
+              <div>
+                <h3 className="text-xl font-semibold">{child.name}</h3>
                 <p className="text-cuba-coral">
-                  {t.birthdayIn} {daysUntilBirthday} {t.days}
+                  {age.years} {t.years} {age.months > 0 && `${age.months} ${t.months}`}
                 </p>
-              )}
-              
-              <div className="space-y-2">
-                <p className="text-sm font-medium">{t.needs}:</p>
-                <div className="flex flex-wrap gap-2">
-                  {childNeeds.map((need, index) => (
-                    <span 
-                      key={index}
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        need.is_urgent 
-                          ? 'bg-red-100 text-red-700' 
-                          : 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      {need.category}
-                    </span>
-                  ))}
-                </div>
+                {daysUntilBirthday && (
+                  <p className="text-cuba-coral">
+                    {t.birthdayIn} {daysUntilBirthday} {t.days}
+                  </p>
+                )}
+                <p className="text-gray-600">{child.city}</p>
               </div>
 
+              {child.description && (
+                <p className="text-sm text-gray-700">{child.description}</p>
+              )}
+
+              {childNeeds.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">{t.needs}:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {childNeeds.map((need, index) => (
+                      <span 
+                        key={index}
+                        className={`text-xs px-2 py-1 rounded-full ${
+                          need.is_urgent 
+                            ? 'bg-red-100 text-red-700' 
+                            : 'bg-gray-100 text-gray-700'
+                        }`}
+                      >
+                        {need.category}
+                        {need.is_urgent && ` (${t.urgent})`}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {featuredPhotos.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 mt-4">
+                <div className="grid grid-cols-3 gap-2">
                   {featuredPhotos.slice(0, 3).map((photo) => (
                     <img
                       key={photo.id}
