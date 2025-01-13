@@ -126,6 +126,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "album_media_new_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "album_media_new_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -243,6 +250,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "birthday_reminders_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "birthday_reminders_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -285,6 +299,13 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "child_assignment_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
             referencedColumns: ["id"]
           },
           {
@@ -1452,6 +1473,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "sponsors_to_children_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "sponsors_to_children_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -1529,6 +1557,13 @@ export type Database = {
             referencedRelation: "children"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "sponsorship_requests_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
         ]
       }
       sponsorships: {
@@ -1577,6 +1612,13 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorships_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
             referencedColumns: ["id"]
           },
           {
@@ -1665,6 +1707,13 @@ export type Database = {
             columns: ["child_id"]
             isOneToOne: false
             referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "temoignage_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
             referencedColumns: ["id"]
           },
           {
@@ -1811,6 +1860,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "album_media_new_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "album_media_new_sponsor_id_fkey"
             columns: ["sponsor_id"]
             isOneToOne: false
@@ -1839,6 +1895,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      sponsored_children_view: {
+        Row: {
+          album_photos: Json | null
+          city: string | null
+          id: string | null
+          is_sponsored: boolean | null
+          name: string | null
+          needs: Json | null
+          photo_url: string | null
+          sponsor_name: string | null
+          sponsorship_date: string | null
+          sponsorship_status: string | null
+        }
+        Relationships: []
       }
       statistics_summary: {
         Row: {

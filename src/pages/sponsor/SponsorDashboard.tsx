@@ -6,7 +6,7 @@ import { Share2, MessageSquare } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { SponsoredChildSection } from "@/components/Sponsors/Dashboard/SponsoredChildSection";
+import { SponsoredChildrenGrid } from "@/components/Sponsors/Dashboard/SponsoredChildrenGrid";
 import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
 
 const SponsorDashboard = () => {
@@ -22,8 +22,6 @@ const SponsorDashboard = () => {
       login: "Se connecter",
       loading: "Chargement...",
       sponsorDashboard: "Mon Espace Parrain",
-      noSponsorships: "Vous ne parrainez pas encore d'enfant.",
-      becomeASponsor: "Devenir parrain",
       messages: "Messages",
       communicateWithAssistant: "Communiquez avec l'assistant",
       shareError: "Le partage n'est pas disponible sur votre appareil",
@@ -37,8 +35,6 @@ const SponsorDashboard = () => {
       login: "Iniciar sesión",
       loading: "Cargando...",
       sponsorDashboard: "Mi Panel de Padrino",
-      noSponsorships: "Aún no apadrina a ningún niño.",
-      becomeASponsor: "Convertirse en padrino",
       messages: "Mensajes",
       communicateWithAssistant: "Comuníquese con el asistente",
       shareError: "El compartir no está disponible en su dispositivo",
@@ -47,52 +43,12 @@ const SponsorDashboard = () => {
     }
   };
 
-  const { data: sponsorships, isLoading } = useQuery({
-    queryKey: ["sponsorships", user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      
-      const { data, error } = await supabase
-        .from("sponsorships")
-        .select(`
-          id,
-          sponsor_id,
-          child_id,
-          status,
-          start_date,
-          end_date,
-          children (
-            id,
-            name,
-            birth_date,
-            photo_url,
-            city,
-            needs,
-            description,
-            story,
-            comments,
-            age,
-            gender
-          )
-        `)
-        .eq("sponsor_id", user.id)
-        .eq("status", "active");
-
-      if (error) {
-        console.error("Error fetching sponsorships:", error);
-        toast.error("Impossible de charger vos parrainages");
-        return null;
-      }
-
-      return data;
-    },
-    enabled: !!user?.id
-  });
+  const t = translations[language as keyof typeof translations];
 
   const handleShare = async () => {
     const shareData = {
       title: translations[language].inviteFriends,
-      text: translations[language].becomeASponsor,
+      text: translations[language].inviteFriends,
       url: window.location.origin + '/become-sponsor'
     };
 
@@ -100,16 +56,15 @@ const SponsorDashboard = () => {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        // Fallback to clipboard
         await navigator.clipboard.writeText(shareData.url);
-        toast.success(translations[language].copySuccess);
+        toast.success(t.copySuccess);
       }
     } catch (error) {
       console.error('Error sharing:', error);
       if (error.name === 'NotAllowedError') {
-        toast.error(translations[language].shareError);
+        toast.error(t.shareError);
       } else {
-        toast.error(translations[language].copyError);
+        toast.error(t.copyError);
       }
     }
   };
@@ -118,37 +73,12 @@ const SponsorDashboard = () => {
     return (
       <div className="container mx-auto p-4">
         <div className="p-6 bg-white/80 backdrop-blur-sm border-none rounded-lg shadow-lg">
-          <p className="text-center text-gray-700">{translations[language].loginRequired}</p>
+          <p className="text-center text-gray-700">{t.loginRequired}</p>
           <Button 
             onClick={() => navigate("/login")}
             className="mt-4 mx-auto block bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white"
           >
-            {translations[language].login}
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-4">
-        <p className="text-center text-gray-700">{translations[language].loading}</p>
-      </div>
-    );
-  }
-
-  if (!sponsorships?.length) {
-    return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">{translations[language].sponsorDashboard}</h1>
-        <div className="p-6 bg-white/80 backdrop-blur-sm border-none rounded-lg shadow-lg">
-          <p className="text-gray-700 mb-4">{translations[language].noSponsorships}</p>
-          <Button 
-            onClick={() => navigate("/become-sponsor")}
-            className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white"
-          >
-            {translations[language].becomeASponsor}
+            {t.login}
           </Button>
         </div>
       </div>
@@ -165,14 +95,14 @@ const SponsorDashboard = () => {
       >
         <div className="container mx-auto px-4 h-full flex flex-col justify-center items-start">
           <h1 className="text-4xl md:text-5xl font-title text-white mb-6 animate-fade-in">
-            {translations[language].welcomeMessage}, {user.email}
+            {t.welcomeMessage}, {user.email}
           </h1>
           <Button 
             onClick={handleShare}
             className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white flex items-center gap-2 animate-fade-in"
           >
             <Share2 className="w-4 h-4" />
-            {translations[language].inviteFriends}
+            {t.inviteFriends}
           </Button>
         </div>
       </div>
@@ -190,8 +120,8 @@ const SponsorDashboard = () => {
                   <MessageSquare className="w-6 h-6 text-cuba-turquoise" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-800">{translations[language].messages}</h3>
-                  <p className="text-sm text-gray-700">{translations[language].communicateWithAssistant}</p>
+                  <h3 className="font-semibold text-gray-800">{t.messages}</h3>
+                  <p className="text-sm text-gray-700">{t.communicateWithAssistant}</p>
                 </div>
               </div>
             </Button>
@@ -199,14 +129,8 @@ const SponsorDashboard = () => {
 
           <NeedNotifications />
 
-          <div className="grid gap-6">
-            {sponsorships?.map((sponsorship) => (
-              <SponsoredChildSection
-                key={sponsorship.id}
-                sponsorship={sponsorship}
-                userId={user.id}
-              />
-            ))}
+          <div className="space-y-6">
+            <SponsoredChildrenGrid userId={user.id} />
           </div>
         </div>
       </div>
