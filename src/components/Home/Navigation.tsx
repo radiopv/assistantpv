@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut, Home, Menu, Heart } from "lucide-react";
+import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut, Home, Menu } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
@@ -57,18 +57,6 @@ export const Navigation = () => {
       >
         <Users className="h-4 w-4 mr-2" />
         Enfants disponibles
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/sponsored-children");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <Heart className="h-4 w-4 mr-2" />
-        Enfants parrainés
       </Button>
 
       <Button
