@@ -10,16 +10,16 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <LanguageProvider>
+    <LanguageProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
           <AuthProvider>
             <AppRoutes />
             <Toaster />
           </AuthProvider>
-        </LanguageProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </LanguageProvider>
   );
 }
 
