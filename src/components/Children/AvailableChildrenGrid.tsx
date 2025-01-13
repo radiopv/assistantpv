@@ -55,6 +55,25 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     }
   };
 
+  const formatAge = (birthDate: string) => {
+    if (!birthDate) return t("ageNotAvailable");
+    
+    const today = new Date();
+    const birth = parseISO(birthDate);
+    const years = differenceInYears(today, birth);
+    const months = differenceInMonths(today, birth) % 12;
+    
+    if (years === 0) {
+      return `${months} ${t("months")}`;
+    }
+    
+    if (months === 0) {
+      return `${years} ${t("years")}`;
+    }
+    
+    return `${years} ${t("years")} ${months} ${t("months")}`;
+  };
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -101,7 +120,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               <h3 className="text-2xl font-title font-bold">{child.name}</h3>
               <div className="flex items-center gap-2 text-sm mt-1">
                 <Calendar className="w-4 h-4" />
-                <span>{child.age} {t("years")}</span>
+                <span>{formatAge(child.birth_date)}</span>
                 <MapPin className="w-4 h-4 ml-2" />
                 <span>{child.city}</span>
               </div>
