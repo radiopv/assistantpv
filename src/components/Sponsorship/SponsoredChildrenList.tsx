@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChildNeeds } from "@/components/Dashboard/ChildrenNeeds/ChildNeeds";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface SponsoredChildrenListProps {
   children: any[];
@@ -61,7 +61,33 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
             {/* Needs Section */}
             <div className="pt-2 border-t">
               <h4 className="font-medium text-sm mb-2">Besoins</h4>
-              <ChildNeeds child={child} needs={child.needs} />
+              <div className="grid gap-2">
+                {convertJsonToNeeds(child.needs).map((need, index) => (
+                  <div
+                    key={`${need.category}-${index}`}
+                    className={`px-3 py-2 rounded-lg ${
+                      need.is_urgent
+                        ? "bg-red-50 text-red-800 border border-red-200"
+                        : "bg-orange-50 text-orange-800 border border-orange-200"
+                    }`}
+                  >
+                    <div className="font-medium">
+                      {need.category}
+                      {need.is_urgent && (
+                        <span className="ml-1 text-red-600">(!)</span>
+                      )}
+                    </div>
+                    {need.description && (
+                      <p className="text-xs mt-1 text-gray-600 italic line-clamp-2">
+                        {need.description}
+                      </p>
+                    )}
+                  </div>
+                ))}
+                {(!Array.isArray(child.needs) || child.needs.length === 0) && (
+                  <p className="text-sm text-gray-500">Aucun besoin enregistré</p>
+                )}
+              </div>
             </div>
           </div>
         </Card>
