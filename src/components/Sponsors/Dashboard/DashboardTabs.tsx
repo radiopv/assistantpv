@@ -3,9 +3,6 @@ import { Card } from "@/components/ui/card";
 import { DashboardActions } from "./DashboardActions";
 import PhotoAlbumSection from "./PhotoAlbumSection";
 import { StatisticsSection } from "./StatisticsSection";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { SponsoredChildSection } from "./SponsoredChildSection";
 import { useState } from "react";
 
 interface DashboardTabsProps {
@@ -37,7 +34,7 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
         <Card className="p-6">
           {sponsorships.map((sponsorship) => (
             <PhotoAlbumSection
-              key={sponsorship.id}
+              key={sponsorship.children.id}
               childId={sponsorship.children.id}
               sponsorId={userId}
               childName={sponsorship.children.name}

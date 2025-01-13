@@ -16,6 +16,35 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
   const [photos, setPhotos] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const { data: albumPhotos, isLoading, refetch } = useQuery({
+    queryKey: ['album-photos', childId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('album_media')
+        .select(`
+          id,
+          url,
+          type,
+          title,
+          description,
+          is_featured,
+          created_at,
+          child_id,
+          sponsor_id
+        `)
+        .eq('child_id', childId)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching photos:', error);
+        throw error;
+      }
+
+      return data || [];
+    },
+  });
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setPhotos(Array.from(e.target.files));
@@ -65,6 +94,7 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
       });
 
       setPhotos([]);
+      refetch();
     } catch (error) {
       console.error('Error uploading photos:', error);
       toast({

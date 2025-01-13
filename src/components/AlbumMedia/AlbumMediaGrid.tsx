@@ -19,7 +19,6 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     queryKey: ['album-media', childId],
     queryFn: async () => {
       try {
-        // First get child info
         const { data: childData, error: childError } = await supabase
           .from('children')
           .select('name')
@@ -35,7 +34,6 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
           throw childError;
         }
 
-        // Then get media with specific foreign key relationship
         const { data: mediaData, error: mediaError } = await supabase
           .from('album_media')
           .select(`
@@ -53,6 +51,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
             )
           `)
           .eq('child_id', childId)
+          .eq('is_approved', true)
           .order('created_at', { ascending: false });
 
         if (mediaError) {
@@ -63,6 +62,8 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
           });
           throw mediaError;
         }
+
+        console.log('Fetched media:', mediaData);
 
         return {
           media: mediaData || [],
