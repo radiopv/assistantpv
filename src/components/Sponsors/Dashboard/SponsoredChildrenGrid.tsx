@@ -2,10 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { convertJsonToNeeds } from "@/types/needs";
+import { differenceInDays } from "date-fns";
 
 interface SponsoredChildrenGridProps {
   userId: string;
@@ -27,7 +28,8 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
             name,
             photo_url,
             city,
-            needs
+            needs,
+            birth_date
           )
         `)
         .eq('sponsor_id', userId)
@@ -43,7 +45,8 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
         name: sponsorship.children.name,
         photo_url: sponsorship.children.photo_url,
         city: sponsorship.children.city,
-        needs: sponsorship.children.needs
+        needs: sponsorship.children.needs,
+        birth_date: sponsorship.children.birth_date
       }));
     }
   });
@@ -52,20 +55,36 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
     fr: {
       noChildren: "Vous ne parrainez aucun enfant actuellement",
       viewAlbum: "Voir l'album",
-      sendMessage: "Envoyer un message",
+      birthdayIn: "Anniversaire dans",
+      days: "jours",
       needs: "Besoins",
       urgent: "Urgent"
     },
     es: {
       noChildren: "No tienes niños apadrinados actualmente",
       viewAlbum: "Ver álbum",
-      sendMessage: "Enviar mensaje",
+      birthdayIn: "Cumpleaños en",
+      days: "días",
       needs: "Necesidades",
       urgent: "Urgente"
     }
   };
 
   const t = translations[language as keyof typeof translations];
+
+  const getBirthdayCountdown = (birthDate: string) => {
+    if (!birthDate) return null;
+    
+    const today = new Date();
+    const birth = new Date(birthDate);
+    const nextBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+    
+    if (nextBirthday < today) {
+      nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+    
+    return differenceInDays(nextBirthday, today);
+  };
 
   if (isLoading) {
     return (
@@ -90,6 +109,7 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
       {sponsoredChildren.map((child) => {
         const childNeeds = convertJsonToNeeds(child.needs);
         const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
+        const daysUntilBirthday = getBirthdayCountdown(child.birth_date);
 
         return (
           <Card 
@@ -114,6 +134,12 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
             <div className="p-4 space-y-4">
               <h3 className="text-xl font-semibold">{child.name}</h3>
               
+              {daysUntilBirthday && (
+                <p className="text-cuba-coral">
+                  {t.birthdayIn} {daysUntilBirthday} {t.days}
+                </p>
+              )}
+              
               <div className="space-y-2">
                 <p className="text-sm font-medium">{t.needs}:</p>
                 <div className="flex flex-wrap gap-2">
@@ -132,27 +158,15 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
                 </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex-1 flex items-center gap-2"
-                  onClick={() => navigate(`/children/${child.id}/album`)}
-                >
-                  <Star className="w-4 h-4" />
-                  {t.viewAlbum}
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  className="flex-1 flex items-center gap-2"
-                  onClick={() => navigate('/messages')}
-                >
-                  <MessageSquare className="w-4 h-4" />
-                  {t.sendMessage}
-                </Button>
-              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="w-full flex items-center gap-2"
+                onClick={() => navigate(`/children/${child.id}/album`)}
+              >
+                <Star className="w-4 h-4" />
+                {t.viewAlbum}
+              </Button>
             </div>
           </Card>
         );
