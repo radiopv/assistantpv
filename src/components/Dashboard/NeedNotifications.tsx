@@ -97,7 +97,8 @@ export const NeedNotifications = () => {
       const { error } = await supabase
         .from("notifications")
         .update({ 
-          metadata: { is_read: true } 
+          metadata: { is_read: true },
+          is_read: true
         })
         .eq("id", notificationId);
 
