@@ -77,8 +77,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
-  const handleLearnMore = (childId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleLearnMore = (childId: string) => {
     navigate(`/child/${childId}`);
   };
 
@@ -141,7 +140,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
             )}
 
             <Button 
-              onClick={(e) => handleLearnMore(child.id, e)}
+              onClick={() => handleLearnMore(child.id)}
               className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white group-hover:scale-105 transition-all duration-300"
             >
               <Info className="w-4 h-4 mr-2" />
