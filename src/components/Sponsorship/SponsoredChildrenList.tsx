@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
 import { differenceInMonths, differenceInDays, differenceInYears, parseISO } from "date-fns";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsoredChildrenListProps {
   children: any[];
@@ -20,9 +21,13 @@ const formatAge = (birthDate: string | null) => {
       return `${months} mois`;
     }
     
-    return months > 0 ? `${years} ans et ${months} mois` : `${years} ans`;
+    if (months === 0) {
+      return `${years} ans`;
+    }
+    
+    return `${years} ans et ${months} mois`;
   } catch (error) {
-    console.error('Error formatting age:', error);
+    console.error('Error calculating age:', error);
     return "Âge inconnu";
   }
 };
@@ -50,6 +55,8 @@ const formatSponsorshipDuration = (sponsorshipDate: string | null) => {
 };
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
+  const { t } = useLanguage();
+  
   // Filter out duplicates and keep only sponsored children
   const uniqueChildren = children.filter((child, index, self) =>
     index === self.findIndex((c) => c.id === child.id) && child.is_sponsored
