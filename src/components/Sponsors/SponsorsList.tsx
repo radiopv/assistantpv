@@ -88,23 +88,25 @@ export const SponsorsList = ({
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
       
-      // First, filter only active sponsorships
-      const activeSponshorships = sponsor.sponsorships?.filter((s: any) => {
-        return s.status === 'active';
-      }) || [];
-
-      // Then create a Map to store unique children, using child ID as key
+      // Créer un Map pour stocker les enfants uniques par ID
       const uniqueChildren = new Map();
+      
+      // Filtrer d'abord les parrainages actifs
+      const activeSponshorships = sponsor.sponsorships?.filter((s: any) => s.status === 'active') || [];
+      
+      // Pour chaque parrainage actif, ajouter l'enfant au Map s'il existe
       activeSponshorships.forEach((s: any) => {
-        // Only add if the child exists and has an ID
         if (s.children && s.children.id) {
-          uniqueChildren.set(s.children.id, s);
+          // Si l'enfant n'est pas déjà dans le Map, l'ajouter
+          if (!uniqueChildren.has(s.children.id)) {
+            uniqueChildren.set(s.children.id, s);
+          }
         }
       });
-
-      // Convert Map values back to array and assign to sponsor
+      
+      // Convertir le Map en array et réassigner à sponsor.sponsorships
       sponsor.sponsorships = Array.from(uniqueChildren.values());
-
+      
       const hasActiveSponshorships = sponsor.sponsorships.length > 0;
       return searchString.includes(searchTermLower) && 
              (isActive ? hasActiveSponshorships : !hasActiveSponshorships);
