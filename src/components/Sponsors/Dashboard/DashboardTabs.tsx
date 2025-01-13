@@ -48,7 +48,7 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
       </TabsList>
 
       <TabsContent value="actions">
-        <DashboardActions />
+        <DashboardActions onTabChange={handleTabChange} />
       </TabsContent>
 
       <TabsContent value="gallery">

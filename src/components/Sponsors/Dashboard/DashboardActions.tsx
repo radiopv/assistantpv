@@ -4,7 +4,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-export const DashboardActions = () => {
+interface DashboardActionsProps {
+  onTabChange?: (tab: string) => void;
+}
+
+export const DashboardActions = ({ onTabChange }: DashboardActionsProps) => {
   const { language } = useLanguage();
   const navigate = useNavigate();
 
@@ -57,6 +61,12 @@ export const DashboardActions = () => {
     }
   };
 
+  const handleVisitsClick = () => {
+    if (onTabChange) {
+      onTabChange('visits');
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Button
@@ -78,7 +88,7 @@ export const DashboardActions = () => {
       <Button
         variant="outline"
         className="p-6 hover:shadow-lg transition-shadow bg-gradient-to-br from-cuba-pink to-cuba-coral border-none transform hover:scale-105 transition-transform duration-200 h-auto"
-        onClick={() => document.querySelector('[value="visits"]')?.dispatchEvent(new Event('click'))}
+        onClick={handleVisitsClick}
       >
         <div className="flex items-center gap-4 w-full">
           <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
