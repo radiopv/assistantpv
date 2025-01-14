@@ -15,6 +15,13 @@ const Home = () => {
             <h1 className="text-4xl md:text-6xl font-bold mb-6 font-title">
               Changez une vie aujourd'hui
             </h1>
+            <div className="relative mb-8">
+              <img 
+                src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
+                alt="Enfants cubains souriants"
+                className="rounded-lg shadow-xl mx-auto max-w-full h-auto mb-8"
+              />
+            </div>
             <p className="text-xl mb-8">
               Rejoignez notre communauté de parrains et faites une différence dans la vie d'un enfant cubain
             </p>
