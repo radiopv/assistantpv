@@ -15,9 +15,9 @@ interface SponsorshipTimelineProps {
 }
 
 export const SponsorshipTimeline = ({ events }: SponsorshipTimelineProps) => {
-  const sortedEvents = [...events].sort((a, b) => 
-    new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const sortedEvents = [...events]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5); // Limit to 5 most recent events
 
   const getIcon = (type: string) => {
     switch (type) {
