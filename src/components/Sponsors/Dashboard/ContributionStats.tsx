@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { ChartBar, Heart, Photo, MessageSquare } from "lucide-react";
+import { ChartBar, Heart, Photo, MessageSquare, Clock } from "lucide-react";
 
 interface ContributionStatsProps {
   totalPhotos: number;
@@ -52,4 +52,4 @@ export const ContributionStats = ({
       </div>
     </Card>
   );
-});
+};

@@ -56,4 +56,4 @@ export const SponsorshipTimeline = ({ events }: SponsorshipTimelineProps) => {
       </div>
     </Card>
   );
-});
+};

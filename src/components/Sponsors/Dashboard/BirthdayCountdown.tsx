@@ -64,4 +64,4 @@ export const BirthdayCountdown = ({ children }: BirthdayCountdownProps) => {
       </div>
     </Card>
   );
-});
+};
