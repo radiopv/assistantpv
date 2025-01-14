@@ -5,6 +5,12 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface DonationCardMediaProps {
   donationId: string;
+  donationPhotos?: {
+    id: string;
+    url: string;
+    title?: string;
+    is_featured?: boolean;
+  }[];
   videos?: {
     id: string;
     url: string;
@@ -18,11 +24,12 @@ interface DonationCardMediaProps {
 
 export const DonationCardMedia = ({
   donationId,
+  donationPhotos = [],
   videos = [],
   onPhotosUpdate = () => {},
   isPublicView = false,
 }: DonationCardMediaProps) => {
-  const { photos: donationPhotos } = useDonationMedia(donationId);
+  const { photos } = useDonationMedia(donationId);
   const { user } = useAuth();
 
   const canManagePhotos = user?.role === 'admin' || user?.role === 'assistant';
@@ -30,7 +37,7 @@ export const DonationCardMedia = ({
   return (
     <div className="space-y-4">
       <PhotoGrid 
-        photos={donationPhotos || []} 
+        photos={photos || []} 
         onPhotoDelete={!isPublicView && canManagePhotos ? () => onPhotosUpdate() : undefined}
         onToggleFavorite={!isPublicView && canManagePhotos ? (id, status) => {
           onPhotosUpdate();

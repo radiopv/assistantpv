@@ -37,10 +37,10 @@ export const DonationCard = ({ donation, onDelete, canDelete = false, isPublicVi
           <DonationDetails donation={donation} />
           <DonationCardMedia
             donationId={donation.id}
-            photos={donation.photos || []}
+            donationPhotos={donation.photos || []}
             videos={[]}
             onPhotosUpdate={() => {}}
-            onVideosUpdate={() => {}}
+            isPublicView={isPublicView}
           />
           <DonorInfo donors={donation.donors || []} />
         </div>
