@@ -47,7 +47,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
             is_featured,
             created_at,
             sponsor_id,
-            sponsors (
+            sponsors!album_media_new_sponsor_id_fkey (
               name,
               role,
               is_anonymous
