@@ -104,6 +104,7 @@ const SponsorDashboard = () => {
         .select(`
           id,
           child_id,
+          start_date,
           children (
             id,
             name,
@@ -232,8 +233,6 @@ const SponsorDashboard = () => {
             const childTestimonials = testimonials?.filter(testimonial =>
               testimonial.child_id === sponsorship.children?.id
             ) || [];
-
-            const daysUntilBirthday = calculateSponsorshipDuration(sponsorship.start_date);
 
             return (
               <Card 
@@ -413,7 +412,8 @@ const SponsorDashboard = () => {
                           <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
                             <h4 className="font-medium mb-2">{t.nextBirthday}</h4>
                             <p className="text-2xl font-bold text-cuba-coral">
-                              {daysUntilBirthday} {t.daysLeft}
+                              {sponsorship.children?.birth_date ? 
+                                getBirthdayCountdown(sponsorship.children.birth_date) : null} {t.daysLeft}
                             </p>
                           </div>
                         </TabsContent>
