@@ -240,40 +240,25 @@ const SponsorDashboard = () => {
                 )}
 
                 <Tabs defaultValue="photos" className="mt-4 md:mt-6">
-                  <TabsList className="flex flex-col w-full md:grid md:grid-cols-5 gap-1">
-                    <TabsTrigger 
-                      value="photos" 
-                      className="w-full text-sm px-3 py-2 mb-1 md:mb-0"
-                    >
-                      {t.photos}
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="testimonials" 
-                      className="w-full text-sm px-3 py-2 mb-1 md:mb-0"
-                    >
-                      {t.testimonials}
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="statistics" 
-                      className="w-full text-sm px-3 py-2 mb-1 md:mb-0"
-                    >
-                      {t.statistics}
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="needs" 
-                      className="w-full text-sm px-3 py-2 mb-1 md:mb-0"
-                    >
-                      {t.needs}
-                    </TabsTrigger>
-                    <TabsTrigger 
-                      value="story" 
-                      className="w-full text-sm px-3 py-2 mb-1 md:mb-0"
-                    >
-                      {t.story}
-                    </TabsTrigger>
+                  <TabsList className="flex flex-col w-full md:grid md:grid-cols-5 gap-2">
+                    {[
+                      { value: "photos", label: t.photos },
+                      { value: "testimonials", label: t.testimonials },
+                      { value: "statistics", label: t.statistics },
+                      { value: "needs", label: t.needs },
+                      { value: "story", label: t.story }
+                    ].map((tab) => (
+                      <TabsTrigger
+                        key={tab.value}
+                        value={tab.value}
+                        className="w-full text-sm px-3 py-3 mb-1 md:mb-0 bg-white hover:bg-gray-50"
+                      >
+                        {tab.label}
+                      </TabsTrigger>
+                    ))}
                   </TabsList>
 
-                  <div className="mt-4 space-y-4">
+                  <div className="mt-6 space-y-6">
                     <TabsContent value="photos" className="focus:outline-none">
                       <PhotoGallery 
                         photos={childPhotos} 
