@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
 import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SponsoredChildrenListProps {
   children: any[];
@@ -36,25 +38,58 @@ const formatAge = (birthDate: string | null) => {
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
   const { t } = useLanguage();
-  
+
   // Filter out duplicates and keep only sponsored children
   const uniqueChildren = children.filter((child, index, self) =>
     index === self.findIndex((c) => c.id === child.id) && child.is_sponsored
   );
 
+  // Fetch album photos for each child
+  const { data: albumPhotos } = useQuery({
+    queryKey: ['sponsored-children-photos'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .in('child_id', uniqueChildren.map(child => child.id))
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching album photos:', error);
+        return {};
+      }
+
+      // Group photos by child_id
+      return data.reduce((acc: Record<string, any[]>, photo) => {
+        if (!acc[photo.child_id]) {
+          acc[photo.child_id] = [];
+        }
+        acc[photo.child_id].push(photo);
+        return acc;
+      }, {});
+    },
+    enabled: uniqueChildren.length > 0
+  });
+
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {uniqueChildren.map((child) => (
-        <Card key={child.id} className="overflow-hidden bg-gradient-to-br from-white to-cuba-warmBeige border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-all duration-300">
-          <div className="aspect-square relative h-48">
+        <Card 
+          key={child.id} 
+          className="overflow-hidden bg-gradient-to-br from-white to-cuba-warmBeige border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          {/* Photo principale centrée */}
+          <div className="aspect-square relative h-48 flex items-center justify-center bg-white/50">
             <img
               src={child.photo_url || "/placeholder.svg"}
               alt={child.name}
-              className="w-full h-full object-cover rounded-lg"
+              className="h-full w-auto object-contain rounded-lg"
             />
           </div>
+
           <div className="p-4 space-y-4">
-            {/* Basic Info */}
+            {/* Basic Info avec fond doux */}
             <div className="bg-white/80 rounded-lg p-3 shadow-sm">
               <h3 className="font-title text-xl text-cuba-deepOrange mb-2">{child.name}</h3>
               <div className="mt-2 space-y-1 text-sm text-gray-600">
@@ -62,6 +97,24 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
                 <p>{child.city}</p>
               </div>
             </div>
+
+            {/* Album Photos Grid */}
+            {albumPhotos && albumPhotos[child.id] && albumPhotos[child.id].length > 0 && (
+              <div className="bg-white/60 rounded-lg p-3">
+                <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  {albumPhotos[child.id].slice(0, 3).map((photo: any) => (
+                    <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
+                      <img
+                        src={photo.url}
+                        alt="Photo album"
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Description */}
             {child.description && (
@@ -88,7 +141,7 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
               </div>
             )}
 
-            {/* Needs Section */}
+            {/* Needs Section avec couleurs douces */}
             <div className="pt-2 border-t border-cuba-softOrange/20">
               <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Besoins</h4>
               <div className="grid gap-2">
