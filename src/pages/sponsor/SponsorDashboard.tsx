@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { differenceInDays } from "date-fns";
+import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import {
   Tabs,
   TabsContent,
@@ -20,6 +21,7 @@ import { TestimonialSection } from "@/components/Sponsors/Dashboard/Sections/Tes
 import { StatisticsSection } from "@/components/Sponsors/Dashboard/Sections/StatisticsSection";
 import { NeedsSection } from "@/components/Sponsors/Dashboard/Sections/NeedsSection";
 import { StorySection } from "@/components/Sponsors/Dashboard/Sections/StorySection";
+import { convertJsonToNeeds } from "@/types/needs";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -42,6 +44,8 @@ const SponsorDashboard = () => {
       statistics: "Statistiques",
       needs: "Besoins",
       story: "Histoire",
+      uploadSuccess: "Photo ajoutée avec succès",
+      uploadError: "Erreur lors de l'ajout de la photo"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -58,6 +62,8 @@ const SponsorDashboard = () => {
       statistics: "Estadísticas",
       needs: "Necesidades",
       story: "Historia",
+      uploadSuccess: "Foto agregada con éxito",
+      uploadError: "Error al agregar la foto"
     }
   };
 
@@ -105,7 +111,7 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  const { data: childrenPhotos } = useQuery({
+  const { data: childrenPhotos, refetch: refetchPhotos } = useQuery({
     queryKey: ["children-photos", sponsoredChildren?.map(s => s.child_id)],
     queryFn: async () => {
       if (!sponsoredChildren?.length) return [];
@@ -158,12 +164,16 @@ const SponsorDashboard = () => {
     }
   };
 
+  const handleUploadSuccess = () => {
+    toast.success(t.uploadSuccess);
+    refetchPhotos();
+  };
+
   const calculateSponsorshipDuration = (startDate: string) => {
     if (!startDate) return 0;
     const start = new Date(startDate);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return differenceInDays(now, start);
   };
 
   if (!user) {
@@ -206,6 +216,8 @@ const SponsorDashboard = () => {
               testimonial.child_id === sponsorship.children?.id
             ) || [];
 
+            const childNeeds = sponsorship.children?.needs ? convertJsonToNeeds(sponsorship.children.needs) : [];
+
             return (
               <Card 
                 key={sponsorship.id} 
@@ -228,10 +240,16 @@ const SponsorDashboard = () => {
                     </TabsList>
 
                     <TabsContent value="photos">
-                      <PhotoGallery 
-                        photos={childPhotos} 
-                        childName={sponsorship.children?.name} 
-                      />
+                      <div className="space-y-4">
+                        <PhotoUploader
+                          childId={sponsorship.children?.id}
+                          onUploadSuccess={handleUploadSuccess}
+                        />
+                        <PhotoGallery 
+                          photos={childPhotos} 
+                          childName={sponsorship.children?.name} 
+                        />
+                      </div>
                     </TabsContent>
 
                     <TabsContent value="testimonials">
@@ -241,14 +259,14 @@ const SponsorDashboard = () => {
                     <TabsContent value="statistics">
                       <StatisticsSection
                         photos={childPhotos}
-                        needs={sponsorship.children?.needs || []}
+                        needs={childNeeds}
                         sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
                         sponsorshipStartDate={sponsorship.start_date}
                       />
                     </TabsContent>
 
                     <TabsContent value="needs">
-                      <NeedsSection needs={sponsorship.children?.needs} />
+                      <NeedsSection needs={childNeeds} />
                     </TabsContent>
 
                     <TabsContent value="story">
