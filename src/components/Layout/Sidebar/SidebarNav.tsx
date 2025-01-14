@@ -12,7 +12,6 @@ import {
   Bell,
   Link,
   Mail,
-  Building2,
   ClipboardList,
 } from "lucide-react";
 import { SidebarLink } from "./SidebarLink";
@@ -25,8 +24,8 @@ const adminLinks = [
     icon: Users,
   },
   {
-    href: "/donations",
-    label: "Dons",
+    href: "/admin/donations-management",
+    label: "Donations",
     icon: Gift,
   },
   {
@@ -53,11 +52,6 @@ const adminLinks = [
     href: "/admin/faq",
     label: "FAQ",
     icon: FileText,
-  },
-  {
-    href: "/admin/cities",
-    label: "Villes",
-    icon: Building2,
   },
   {
     href: "/admin/notifications",

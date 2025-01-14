@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
 import ChildrenManagement from "@/pages/admin/ChildrenManagement";
+import DonationsManagement from "@/pages/admin/DonationsManagement";
 
 // Public pages
 import Home from "@/pages/Home";
@@ -78,11 +79,11 @@ export const AppRoutes = () => {
 
         {/* Admin routes */}
         <Route path="/admin/children-management" element={<ChildrenManagement />} />
+        <Route path="/admin/donations-management" element={<DonationsManagement />} />
         <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<AdminFAQ />} />
-        <Route path="/admin/cities" element={<CitiesManagement />} />
         <Route path="/admin/notifications" element={<Notifications />} />
         <Route path="/admin/link-checker" element={<LinkChecker />} />
         <Route path="/admin/home-content" element={<HomeContentManagement />} />
