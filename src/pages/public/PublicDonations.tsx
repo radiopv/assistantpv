@@ -60,7 +60,7 @@ const PublicDonations = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <ErrorAlert 
-          message={error.message}
+          message="Une erreur est survenue lors du chargement des dons"
           retry={() => refetch()}
         />
       </div>

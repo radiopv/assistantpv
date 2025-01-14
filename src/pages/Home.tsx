@@ -1,188 +1,54 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
-import { HowItWorks } from "@/components/Home/HowItWorks";
 import { CallToAction } from "@/components/Home/CallToAction";
+import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
-import { HeroSection } from "@/components/Home/HeroSection";
-import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Heart, Users, Gift, Star } from "lucide-react";
+import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
+import { HowItWorks } from "@/components/Home/HowItWorks";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const [isImageCropOpen, setIsImageCropOpen] = useState(false);
-
-  const { data: sections, isLoading } = useQuery({
-    queryKey: ['homepage-sections'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('homepage_sections')
-        .select('*')
-        .order('order_index');
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const heroSection = sections?.find(section => section.section_key === 'hero');
-
-  const handleImageCrop = async (croppedImageBlob: Blob) => {
-    try {
-      const file = new File([croppedImageBlob], 'hero-image.jpg', { type: 'image/jpeg' });
-      
-      const { data, error } = await supabase.storage
-        .from('homepage-media')
-        .upload('hero-image.jpg', file, {
-          upsert: true,
-        });
-
-      if (error) throw error;
-
-      const { error: updateError } = await supabase
-        .from('homepage_sections')
-        .update({
-          content: heroSection?.content ? 
-            { ...heroSection.content as Record<string, unknown>, imageUrl: `${process.env.SUPABASE_URL}/storage/v1/object/public/homepage-media/hero-image.jpg` } 
-            : { imageUrl: `${process.env.SUPABASE_URL}/storage/v1/object/public/homepage-media/hero-image.jpg` }
-        })
-        .eq('section_key', 'hero');
-
-      if (updateError) throw updateError;
-
-      toast.success("Image mise à jour avec succès");
-      setIsImageCropOpen(false);
-    } catch (error) {
-      console.error('Error updating hero image:', error);
-      toast.error("Erreur lors de la mise à jour de l'image");
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen">
-        <section className="relative h-[90vh] bg-cuba-gradient">
-          <div className="container mx-auto h-full">
-            <div className="flex flex-col lg:flex-row h-full">
-              <div className="w-full lg:w-1/2 h-[50vh] lg:h-full relative">
-                <Skeleton className="absolute inset-0" />
-              </div>
-              <div className="w-full lg:w-1/2 p-6 lg:p-12 bg-white/90 backdrop-blur-sm">
-                <div className="max-w-xl mx-auto space-y-8">
-                  <div className="text-center lg:text-left animate-fade-in">
-                    <Skeleton className="h-12 w-3/4 mb-4" />
-                    <Skeleton className="h-6 w-full mb-8" />
-                    <Skeleton className="h-10 w-40" />
-                  </div>
-                </div>
-              </div>
-            </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
+      {/* Hero Section */}
+      <section className="relative min-h-[90vh] bg-cuba-gradient overflow-hidden">
+        <div className="absolute inset-0 bg-golden-shimmer animate-golden-light" />
+        <div className="container mx-auto px-4 py-12 relative z-10">
+          <div className="max-w-4xl mx-auto text-center text-white">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 font-title">
+              Changez une vie aujourd'hui
+            </h1>
+            <p className="text-xl mb-8">
+              Rejoignez notre communauté de parrains et faites une différence dans la vie d'un enfant cubain
+            </p>
           </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-12 space-y-24">
+        <CallToAction />
+        
+        <section>
+          <h2 className="text-3xl font-bold text-center mb-12 font-title">
+            Enfants en attente de parrainage
+          </h2>
+          <FeaturedChildren />
+        </section>
+
+        <HowItWorks />
+
+        <section>
+          <h2 className="text-3xl font-bold text-center mb-12 font-title">
+            Nos derniers souvenirs
+          </h2>
+          <FeaturedAlbum />
+        </section>
+
+        <section>
+          <h2 className="text-3xl font-bold text-center mb-12 font-title">
+            Témoignages de nos parrains
+          </h2>
+          <FeaturedTestimonials />
         </section>
       </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-cuba-offwhite">
-      <CallToAction />
-
-      <section className="py-16 bg-cuba-softYellow">
-        <div className="container mx-auto px-4">
-          <HowItWorks />
-        </div>
-      </section>
-
-      {/* Section Points forts */}
-      <motion.section 
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        className="py-16 bg-white"
-      >
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-title font-bold text-center text-cuba-turquoise mb-12">
-            Comment nous aidons
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: <Heart className="w-12 h-12 text-cuba-red" />,
-                title: "Parrainage",
-                description: "Créez un lien spécial avec un enfant cubain"
-              },
-              {
-                icon: <Gift className="w-12 h-12 text-cuba-gold" />,
-                title: "Dons",
-                description: "Apportez une aide concrète et immédiate"
-              },
-              {
-                icon: <Users className="w-12 h-12 text-cuba-turquoise" />,
-                title: "Communauté",
-                description: "Rejoignez une communauté solidaire"
-              },
-              {
-                icon: <Star className="w-12 h-12 text-cuba-emerald" />,
-                title: "Impact",
-                description: "Changez des vies durablement"
-              }
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
-              >
-                <div className="flex flex-col items-center text-center">
-                  <div className="mb-4">
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </motion.section>
-
-      <HeroSection 
-        heroSection={heroSection} 
-        onImageClick={() => setIsImageCropOpen(true)} 
-      />
-
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <FeaturedChildren />
-        </div>
-      </section>
-
-      <section className="py-16 bg-cuba-warmBeige">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-1 gap-8">
-            <div className="space-y-6">
-              <h2 className="text-3xl font-title font-bold text-cuba-turquoise mb-4">
-                Moments Partagés
-              </h2>
-              <FeaturedAlbum />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <ImageCropDialog
-        open={isImageCropOpen}
-        onClose={() => setIsImageCropOpen(false)}
-        imageSrc="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
-        onCropComplete={handleImageCrop}
-      />
     </div>
   );
 };

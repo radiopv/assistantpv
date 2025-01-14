@@ -1,24 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
 import { AvailableChildrenGrid } from "@/components/Children/AvailableChildrenGrid";
 import { useState, useMemo } from "react";
 import { differenceInYears, parseISO } from "date-fns";
 
-interface CategorizedChildren {
-  infants: any[];
-  toddlers: any[];
-  children: any[];
-  teens: any[];
-  unknown: any[];
-}
-
 export default function AvailableChildren() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
@@ -35,7 +25,6 @@ export default function AvailableChildren() {
         .select("*");
 
       if (searchTerm) {
-        console.log("Recherche par nom:", searchTerm);
         query = query.ilike('name', `%${searchTerm}%`);
       }
 
@@ -60,92 +49,50 @@ export default function AvailableChildren() {
 
       if (error) {
         console.error("Erreur lors de la récupération des enfants:", error);
-        toast.error(t("errorFetchingChildren"));
+        toast.error("Erreur lors de la récupération des enfants");
         throw error;
       }
 
-      // Filter children with urgent needs if status is "urgent"
-      if (selectedStatus === "urgent") {
-        return data.filter((child: any) => {
-          if (!child.needs || !Array.isArray(child.needs)) return false;
-          return child.needs.some((need: any) => need.is_urgent === true);
-        });
-      }
-
-      console.log("Résultats de la requête:", data);
       return data || [];
     }
   });
-
-  const categorizedChildren = useMemo(() => {
-    if (!children) return {
-      infants: [],
-      toddlers: [],
-      children: [],
-      teens: [],
-      unknown: []
-    } as CategorizedChildren;
-
-    return children.reduce((acc: CategorizedChildren, child) => {
-      if (!child.birth_date) {
-        acc.unknown = acc.unknown || [];
-        acc.unknown.push(child);
-        return acc;
-      }
-
-      const birthDate = parseISO(child.birth_date);
-      const ageInYears = differenceInYears(new Date(), birthDate);
-      
-      console.log(`Calcul de l'âge pour ${child.name}:`, ageInYears);
-
-      if (ageInYears <= 2) {
-        acc.infants = acc.infants || [];
-        acc.infants.push(child);
-      } else if (ageInYears <= 5) {
-        acc.toddlers = acc.toddlers || [];
-        acc.toddlers.push(child);
-      } else if (ageInYears <= 12) {
-        acc.children = acc.children || [];
-        acc.children.push(child);
-      } else {
-        acc.teens = acc.teens || [];
-        acc.teens.push(child);
-      }
-
-      return acc;
-    }, {
-      infants: [],
-      toddlers: [],
-      children: [],
-      teens: [],
-      unknown: []
-    } as CategorizedChildren);
-  }, [children]);
 
   const filteredChildren = useMemo(() => {
     if (selectedAge === "all") {
       return children;
     }
     
-    const ageRanges = {
-      "0-2": categorizedChildren.infants,
-      "3-5": categorizedChildren.toddlers,
-      "6-12": categorizedChildren.children,
-      "13+": categorizedChildren.teens
+    const ageRanges: { [key: string]: any[] } = {
+      "0-2": children.filter(child => {
+        const age = differenceInYears(new Date(), parseISO(child.birth_date));
+        return age <= 2;
+      }),
+      "3-5": children.filter(child => {
+        const age = differenceInYears(new Date(), parseISO(child.birth_date));
+        return age > 2 && age <= 5;
+      }),
+      "6-12": children.filter(child => {
+        const age = differenceInYears(new Date(), parseISO(child.birth_date));
+        return age > 5 && age <= 12;
+      }),
+      "13+": children.filter(child => {
+        const age = differenceInYears(new Date(), parseISO(child.birth_date));
+        return age > 12;
+      })
     };
     
-    return ageRanges[selectedAge as keyof typeof ageRanges] || [];
-  }, [children, selectedAge, categorizedChildren]);
+    return ageRanges[selectedAge] || [];
+  }, [children, selectedAge]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-100 to-white">
       <div className="container mx-auto p-4 space-y-6">
         <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
-            {t("availableChildren")}
+            Enfants disponibles pour le parrainage
           </h1>
           <p className="text-white/90 max-w-2xl mx-auto text-lg">
-            {t("availableChildrenDescription")}
+            Découvrez les enfants qui attendent votre soutien et votre amour
           </p>
         </div>
 
@@ -178,7 +125,9 @@ export default function AvailableChildren() {
 
         {!children?.length && (
           <div className="text-center py-8 text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-orange-200">
-            {selectedStatus === "urgent" ? t("noUrgentChildren") : t("noCategoryChildren")}
+            {selectedStatus === "urgent" ? 
+              "Aucun enfant n'a de besoins urgents pour le moment" : 
+              "Aucun enfant disponible ne correspond à vos critères"}
           </div>
         )}
       </div>

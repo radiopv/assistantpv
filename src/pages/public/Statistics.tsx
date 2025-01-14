@@ -1,25 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { SponsorshipConversionStats, UserEngagementStats } from "@/types/statistics";
 import { Progress } from "@/components/ui/progress";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area, Legend
 } from "recharts";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 const COLORS = ['#0072BB', '#40C057', '#FA5252', '#7950F2', '#FD7E14'];
 
 const Statistics = () => {
-  const { t } = useLanguage();
-
   const { data: sponsorshipStats } = useQuery({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
       if (error) throw error;
-      return data as unknown as SponsorshipConversionStats;
+      return data;
     }
   });
 
@@ -28,7 +24,7 @@ const Statistics = () => {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');
       if (error) throw error;
-      return data as unknown as UserEngagementStats;
+      return data;
     }
   });
 
@@ -54,7 +50,6 @@ const Statistics = () => {
       const availableChildren = children.filter(c => !c.is_sponsored).length;
       const sponsoredChildren = children.filter(c => c.is_sponsored).length;
 
-      // Calculate average age in years
       const averageAge = children.reduce((acc, curr) => {
         if (!curr.birth_date) return acc;
         const birthDate = new Date(curr.birth_date);
