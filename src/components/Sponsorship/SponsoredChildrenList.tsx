@@ -14,6 +14,12 @@ const formatAge = (birthDate: string | null) => {
   try {
     const today = new Date();
     const birth = parseISO(birthDate);
+    
+    // Vérifier si la date est valide
+    if (isNaN(birth.getTime())) {
+      return "Âge inconnu";
+    }
+    
     const years = differenceInYears(today, birth);
     
     if (years === 0) {
