@@ -37,7 +37,7 @@ export const SponsoredChildCard = ({
   };
 
   return (
-    <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
+    <Card className="p-4 hover:shadow-lg transition-shadow duration-300 w-full">
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
           <Avatar className="w-16 h-16">
@@ -51,10 +51,10 @@ export const SponsoredChildCard = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col w-full gap-2">
           <Button
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 w-full"
             onClick={onAddPhoto}
           >
             <ImagePlus className="w-4 h-4" />
@@ -63,7 +63,7 @@ export const SponsoredChildCard = ({
           
           <Button
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 w-full"
             onClick={handleAddTestimonial}
           >
             <MessageSquarePlus className="w-4 h-4" />
