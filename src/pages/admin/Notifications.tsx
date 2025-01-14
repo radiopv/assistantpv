@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bell, Check, Trash2 } from "lucide-react";
+import { Bell, Check, Trash2, Image, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { NotificationService } from "@/services/NotificationService";
@@ -66,6 +66,19 @@ const Notifications = () => {
     refetch();
   };
 
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'photo_added':
+        return <Image className="w-5 h-5 text-blue-500" />;
+      case 'needs_update':
+        return <AlertCircle className="w-5 h-5 text-orange-500" />;
+      case 'child_update':
+        return <Bell className="w-5 h-5 text-purple-500" />;
+      default:
+        return <Bell className="w-5 h-5 text-gray-500" />;
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -94,12 +107,17 @@ const Notifications = () => {
                 className={`p-4 ${!notification.is_read ? 'bg-blue-50' : ''}`}
               >
                 <div className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{notification.title}</h3>
-                    <p className="text-sm text-gray-600 mt-1">{notification.content}</p>
-                    <p className="text-xs text-gray-400 mt-2">
-                      {format(new Date(notification.created_at), "dd/MM/yyyy HH:mm", { locale: fr })}
-                    </p>
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 mt-1">
+                      {getNotificationIcon(notification.type)}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{notification.title}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{notification.content}</p>
+                      <p className="text-xs text-gray-400 mt-2">
+                        {format(new Date(notification.created_at), "dd/MM/yyyy HH:mm", { locale: fr })}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     {!notification.is_read && (
