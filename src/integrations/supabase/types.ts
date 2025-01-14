@@ -168,57 +168,6 @@ export type Database = {
           },
         ]
       }
-      album_media_backup: {
-        Row: {
-          badge_id: string | null
-          child_id: string | null
-          created_at: string | null
-          description: string | null
-          featured_until: string | null
-          id: string | null
-          is_approved: boolean | null
-          is_featured: boolean | null
-          is_public: boolean | null
-          sponsor_id: string | null
-          title: string | null
-          type: string | null
-          updated_at: string | null
-          url: string | null
-        }
-        Insert: {
-          badge_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          featured_until?: string | null
-          id?: string | null
-          is_approved?: boolean | null
-          is_featured?: boolean | null
-          is_public?: boolean | null
-          sponsor_id?: string | null
-          title?: string | null
-          type?: string | null
-          updated_at?: string | null
-          url?: string | null
-        }
-        Update: {
-          badge_id?: string | null
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          featured_until?: string | null
-          id?: string | null
-          is_approved?: boolean | null
-          is_featured?: boolean | null
-          is_public?: boolean | null
-          sponsor_id?: string | null
-          title?: string | null
-          type?: string | null
-          updated_at?: string | null
-          url?: string | null
-        }
-        Relationships: []
-      }
       birthday_reminders: {
         Row: {
           child_id: string
@@ -753,30 +702,6 @@ export type Database = {
         }
         Relationships: []
       }
-      homepage_content: {
-        Row: {
-          content: string | null
-          created_at: string | null
-          id: number
-          title: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string | null
-          id?: number
-          title?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          content?: string | null
-          created_at?: string | null
-          id?: number
-          title?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       homepage_modules: {
         Row: {
           content: Json | null
@@ -888,36 +813,6 @@ export type Database = {
           status_code?: number | null
           updated_at?: string | null
           url?: string
-        }
-        Relationships: []
-      }
-      login_attempts: {
-        Row: {
-          attempt_count: number | null
-          created_at: string | null
-          email: string
-          id: string
-          is_locked: boolean | null
-          last_attempt: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          attempt_count?: number | null
-          created_at?: string | null
-          email: string
-          id?: string
-          is_locked?: boolean | null
-          last_attempt?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          attempt_count?: number | null
-          created_at?: string | null
-          email?: string
-          id?: string
-          is_locked?: boolean | null
-          last_attempt?: string | null
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1884,33 +1779,6 @@ export type Database = {
           },
         ]
       }
-      tasks: {
-        Row: {
-          child_id: string | null
-          created_at: string | null
-          description: string | null
-          id: number
-          is_completed: boolean | null
-          title: string
-        }
-        Insert: {
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: number
-          is_completed?: boolean | null
-          title: string
-        }
-        Update: {
-          child_id?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: number
-          is_completed?: boolean | null
-          title?: string
-        }
-        Relationships: []
-      }
       temoignage: {
         Row: {
           child_id: string | null
@@ -1978,24 +1846,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      translation_reports: {
-        Row: {
-          created_at: string | null
-          id: string
-          report: Json
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          report: Json
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          report?: Json
-        }
-        Relationships: []
       }
       translations: {
         Row: {
