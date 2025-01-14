@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { convertJsonToNeeds } from "@/types/needs";
+import { differenceInDays } from "date-fns";
 
 interface SponsorDashboardTranslations {
   welcomeMessage: string;
@@ -35,7 +36,6 @@ interface SponsorDashboardTranslations {
   addTestimonial: string;
   nextBirthday: string;
   daysLeft: string;
-  viewProfile: string;
   needs: string;
   story: string;
   description: string;
@@ -65,7 +65,6 @@ const SponsorDashboard = () => {
       addTestimonial: "Ajouter un témoignage",
       nextBirthday: "Prochain anniversaire",
       daysLeft: "jours restants",
-      viewProfile: "Voir le profil",
       needs: "Besoins",
       story: "Histoire",
       description: "Description",
@@ -88,7 +87,6 @@ const SponsorDashboard = () => {
       addTestimonial: "Agregar testimonio",
       nextBirthday: "Próximo cumpleaños",
       daysLeft: "días restantes",
-      viewProfile: "Ver perfil",
       needs: "Necesidades",
       story: "Historia",
       description: "Descripción",
@@ -180,6 +178,20 @@ const SponsorDashboard = () => {
     }
   };
 
+  const getBirthdayCountdown = (birthDate: string) => {
+    if (!birthDate) return null;
+    
+    const today = new Date();
+    const birth = new Date(birthDate);
+    const nextBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+    
+    if (nextBirthday < today) {
+      nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+    
+    return differenceInDays(nextBirthday, today);
+  };
+
   if (!user) {
     return (
       <div className="container mx-auto p-4">
@@ -217,6 +229,12 @@ const SponsorDashboard = () => {
             const childPhotos = childrenPhotos?.filter(photo => 
               photo.child_id === sponsorship.children?.id
             ) || [];
+
+            const childTestimonials = testimonials?.filter(testimonial =>
+              testimonial.child_id === sponsorship.children?.id
+            ) || [];
+
+            const daysUntilBirthday = getBirthdayCountdown(sponsorship.children?.birth_date);
 
             return (
               <Card 
@@ -287,11 +305,11 @@ const SponsorDashboard = () => {
 
                         <TabsContent value="testimonials" className="space-y-4">
                           <div className="bg-white p-4 rounded-lg">
-                            {testimonials?.length === 0 ? (
+                            {childTestimonials.length === 0 ? (
                               <p className="text-center text-gray-500">{t.noTestimonials}</p>
                             ) : (
                               <div className="space-y-4">
-                                {testimonials?.map((testimonial) => (
+                                {childTestimonials.map((testimonial) => (
                                   <div 
                                     key={testimonial.id} 
                                     className="p-4 bg-gray-50 rounded-lg border border-gray-200"
@@ -319,7 +337,7 @@ const SponsorDashboard = () => {
                           <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
                             <h4 className="font-medium mb-2">{t.nextBirthday}</h4>
                             <p className="text-2xl font-bold text-cuba-coral">
-                              365 {t.daysLeft}
+                              {daysUntilBirthday} {t.daysLeft}
                             </p>
                           </div>
                         </TabsContent>
@@ -370,15 +388,6 @@ const SponsorDashboard = () => {
                           </div>
                         </TabsContent>
                       </Tabs>
-
-                      <div className="mt-4 flex justify-end">
-                        <Button
-                          variant="outline"
-                          onClick={() => navigate(`/child/${sponsorship.children?.id}`)}
-                        >
-                          {t.viewProfile}
-                        </Button>
-                      </div>
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
