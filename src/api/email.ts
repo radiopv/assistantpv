@@ -8,6 +8,8 @@ export interface EmailRequest {
 }
 
 export const sendEmail = async (request: EmailRequest) => {
+  console.log('Sending email with request:', request);
+  
   const { data, error } = await supabase.functions.invoke('send-email', {
     body: request
   });
@@ -17,5 +19,6 @@ export const sendEmail = async (request: EmailRequest) => {
     throw new Error('Failed to send email');
   }
 
+  console.log('Email sent successfully:', data);
   return data;
 };

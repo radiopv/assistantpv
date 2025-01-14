@@ -3,23 +3,27 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { EmailForm } from "./EmailForm";
-import emailjs from '@emailjs/browser';
+import { sendEmail } from "@/api/email";
 
 const EmailManager = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  // Ajout des logs pour vérifier les variables d'environnement
-  console.log('EmailJS Config:', {
-    publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-    serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-    templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID
-  });
-
   const getSponsorsEmails = async (sponsorType: "all" | "active" | "pending") => {
-    // Simulation des emails pour test
-    return ["test@example.com"];
+    try {
+      const { data: sponsors, error } = await supabase
+        .from('sponsors')
+        .select('email')
+        .eq('is_active', true)
+        .eq(sponsorType === 'pending' ? 'status' : 'is_verified', sponsorType === 'pending' ? 'pending' : true);
+
+      if (error) throw error;
+      return sponsors.map(sponsor => sponsor.email);
+    } catch (error) {
+      console.error('Error fetching sponsor emails:', error);
+      throw new Error('Failed to fetch sponsor emails');
+    }
   };
 
   const handleSendEmails = async (subject: string, content: string, sponsorType: "all" | "active" | "pending") => {
@@ -32,64 +36,21 @@ const EmailManager = () => {
       return;
     }
 
-    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
-    // Log des valeurs pour vérification
-    console.log('Attempting to send email with config:', {
-      serviceId,
-      templateId,
-      publicKey,
-      subject,
-      content,
-      sponsorType
-    });
-
-    if (!serviceId || !templateId || !publicKey) {
-      console.error('Missing EmailJS configuration:', { serviceId, templateId, publicKey });
-      toast({
-        title: t("error"),
-        description: "Configuration EmailJS manquante. Veuillez vérifier vos variables d'environnement.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
       const emails = await getSponsorsEmails(sponsorType);
       console.log('Sending emails to:', emails);
-      
-      // Réinitialiser EmailJS avec la clé publique
-      emailjs.init(publicKey);
-      
-      // Configuration EmailJS
-      const templateParams = {
-        to_email: emails.join(', '),
-        subject: subject,
-        message: content,
-        from_name: 'Your Organization'
-      };
 
-      console.log('EmailJS params:', templateParams);
-      
-      const response = await emailjs.send(
-        serviceId,
-        templateId,
-        templateParams
-      );
+      await sendEmail({
+        to: emails,
+        subject,
+        html: content,
+      });
 
-      console.log('EmailJS response:', response);
-
-      if (response.status === 200) {
-        toast({
-          title: t("success"),
-          description: t("emailsSentSuccess"),
-        });
-      } else {
-        throw new Error('Failed to send email');
-      }
+      toast({
+        title: t("success"),
+        description: t("emailsSentSuccess"),
+      });
     } catch (error: any) {
       console.error('Error sending emails:', error);
       toast({
