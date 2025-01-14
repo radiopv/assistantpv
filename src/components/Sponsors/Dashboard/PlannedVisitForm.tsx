@@ -73,11 +73,11 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
 
       console.log("Visit planned successfully:", visitData);
 
-      // Get assistant's ID (looking for role 'assistant')
+      // Get assistant's ID (looking for Vitia's email)
       const { data: assistantData, error: assistantError } = await supabase
         .from('sponsors')
         .select('id')
-        .eq('role', 'assistant')
+        .eq('email', 'vitia@passionvaradero.ca')
         .maybeSingle();
 
       if (assistantError) {
