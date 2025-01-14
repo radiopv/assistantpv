@@ -7,7 +7,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Bell, Image } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, es } from "date-fns/locale";
 
 interface NeedNotification {
   id: string;
@@ -29,7 +29,9 @@ export const NeedNotifications = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<NeedNotification[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const dateLocale = language === 'fr' ? fr : es;
 
   useEffect(() => {
     if (user) {
@@ -172,7 +174,7 @@ export const NeedNotifications = () => {
                 </p>
                 <div className="text-xs text-gray-400 mt-2">
                   {format(new Date(notification.created_at), "dd/MM/yyyy HH:mm", {
-                    locale: fr,
+                    locale: dateLocale,
                   })}
                 </div>
               </div>

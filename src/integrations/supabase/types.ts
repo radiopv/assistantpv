@@ -1076,6 +1076,30 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_types: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           content: string
@@ -1083,6 +1107,7 @@ export type Database = {
           id: string
           is_read: boolean | null
           link: string | null
+          metadata: Json | null
           recipient_id: string | null
           title: string
           type: string
@@ -1094,6 +1119,7 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           link?: string | null
+          metadata?: Json | null
           recipient_id?: string | null
           title: string
           type: string
@@ -1105,6 +1131,7 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           link?: string | null
+          metadata?: Json | null
           recipient_id?: string | null
           title?: string
           type?: string
@@ -1941,6 +1968,22 @@ export type Database = {
             columns: ["sponsorship_id"]
             isOneToOne: false
             referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_summary: {
+        Row: {
+          latest_notification: string | null
+          recipient_id: string | null
+          unread_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_recipient_id_fkey"
+            columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
             referencedColumns: ["id"]
           },
         ]
