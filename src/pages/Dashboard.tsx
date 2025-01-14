@@ -6,10 +6,12 @@ import { format, addYears, differenceInDays } from "date-fns";
 import { fr, es } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { DetailedStats } from "@/components/Dashboard/DetailedStats";
-import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
-import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
-import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
+import { TestimonialValidation } from "@/components/Validation/TestimonialValidation";
+import { SponsorshipValidation } from "@/components/Validation/SponsorshipValidation";
+import { PhotoValidation } from "@/components/Validation/PhotoValidation";
+import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignmentValidation";
+import { AuditLogsList } from "@/components/Admin/AuditLogs/AuditLogsList";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Dashboard = () => {
   const { language } = useLanguage();
@@ -25,8 +27,12 @@ const Dashboard = () => {
       days: "jours",
       willCelebrate: "Fêtera ses",
       years: "ans",
-      statistics: "Statistiques",
-      overview: "Vue d'ensemble"
+      validation: "Validation",
+      history: "Historique",
+      sponsorships: "Parrainages",
+      photos: "Photos",
+      testimonials: "Témoignages",
+      childRequests: "Demandes d'enfants"
     },
     es: {
       dashboard: "Panel de control",
@@ -37,8 +43,12 @@ const Dashboard = () => {
       days: "días",
       willCelebrate: "Cumplirá",
       years: "años",
-      statistics: "Estadísticas",
-      overview: "Vista general"
+      validation: "Validación",
+      history: "Historial",
+      sponsorships: "Patrocinios",
+      photos: "Fotos",
+      testimonials: "Testimonios",
+      childRequests: "Solicitudes de niños"
     }
   };
 
@@ -92,17 +102,50 @@ const Dashboard = () => {
         </div>
       </Card>
 
-      {/* Statistiques avancées pour les assistants */}
+      {/* Section Validation et Historique */}
       {isAssistant && (
         <div className="grid gap-6">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-6">{t.statistics}</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <AssistantStats />
-              <SponsorshipStats />
-              <UserEngagementStats />
-            </div>
-          </Card>
+          <Tabs defaultValue="validation" className="w-full">
+            <TabsList>
+              <TabsTrigger value="validation">{t.validation}</TabsTrigger>
+              <TabsTrigger value="history">{t.history}</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="validation">
+              <Card className="p-6">
+                <Tabs defaultValue="sponsorships">
+                  <TabsList>
+                    <TabsTrigger value="sponsorships">{t.sponsorships}</TabsTrigger>
+                    <TabsTrigger value="photos">{t.photos}</TabsTrigger>
+                    <TabsTrigger value="testimonials">{t.testimonials}</TabsTrigger>
+                    <TabsTrigger value="children">{t.childRequests}</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="sponsorships">
+                    <SponsorshipValidation />
+                  </TabsContent>
+
+                  <TabsContent value="photos">
+                    <PhotoValidation />
+                  </TabsContent>
+
+                  <TabsContent value="testimonials">
+                    <TestimonialValidation />
+                  </TabsContent>
+
+                  <TabsContent value="children">
+                    <ChildAssignmentValidation />
+                  </TabsContent>
+                </Tabs>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="history">
+              <Card className="p-6">
+                <AuditLogsList />
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       )}
 
@@ -132,9 +175,6 @@ const Dashboard = () => {
           </div>
         </Card>
       )}
-
-      {/* Statistiques détaillées */}
-      <DetailedStats />
     </div>
   );
 };
