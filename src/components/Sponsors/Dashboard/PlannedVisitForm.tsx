@@ -91,6 +91,15 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
       } else {
         console.log("Found assistant:", assistantData);
 
+        // Get sponsor info for the notification
+        const { data: sponsorData } = await supabase
+          .from('sponsors')
+          .select('name')
+          .eq('id', sponsorId)
+          .single();
+
+        const sponsorName = sponsorData?.name || 'Un parrain';
+
         // Create notification for the assistant
         const { error: notificationError } = await supabase
           .from('notifications')
@@ -99,13 +108,14 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
             sender_id: sponsorId,
             type: 'planned_visit',
             title: 'Nouveau voyage planifié',
-            content: 'Un parrain a planifié un voyage à Cuba',
+            content: `${sponsorName} a planifié un voyage à Cuba`,
             metadata: {
               start_date: startDate,
               end_date: endDate,
               hotel_name: hotelName,
               wants_to_visit_child: wantsToVisitChild,
-              wants_donation_pickup: wantsDonationPickup
+              wants_donation_pickup: wantsDonationPickup,
+              sponsor_name: sponsorName
             },
             is_read: false
           });
