@@ -5,19 +5,21 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface DonationCardMediaProps {
   donationId: string;
-  photos: any[];
-  videos: any[];
-  onPhotosUpdate: () => void;
-  onVideosUpdate: () => void;
+  videos?: {
+    id: string;
+    url: string;
+    title?: string;
+    description?: string;
+    thumbnail_url?: string;
+  }[];
+  onPhotosUpdate?: () => void;
   isPublicView?: boolean;
 }
 
 export const DonationCardMedia = ({
   donationId,
-  photos,
-  videos,
-  onPhotosUpdate,
-  onVideosUpdate,
+  videos = [],
+  onPhotosUpdate = () => {},
   isPublicView = false,
 }: DonationCardMediaProps) => {
   const { photos: donationPhotos } = useDonationMedia(donationId);
