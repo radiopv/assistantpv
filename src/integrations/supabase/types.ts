@@ -73,6 +73,8 @@ export type Database = {
       }
       album_media: {
         Row: {
+          caption: string | null
+          category: string | null
           child_id: string | null
           created_at: string | null
           description: string | null
@@ -88,6 +90,8 @@ export type Database = {
           url: string
         }
         Insert: {
+          caption?: string | null
+          category?: string | null
           child_id?: string | null
           created_at?: string | null
           description?: string | null
@@ -103,6 +107,8 @@ export type Database = {
           url: string
         }
         Update: {
+          caption?: string | null
+          category?: string | null
           child_id?: string | null
           created_at?: string | null
           description?: string | null
