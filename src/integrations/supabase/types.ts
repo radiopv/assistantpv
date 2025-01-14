@@ -2304,6 +2304,12 @@ export type Database = {
         }
         Returns: Json
       }
+      get_sponsor_statistics: {
+        Args: {
+          sponsor_uuid: string
+        }
+        Returns: Json
+      }
       get_sponsorship_conversion_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json

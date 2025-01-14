@@ -40,7 +40,6 @@ const SponsorDashboard = () => {
       nextBirthday: "Prochain anniversaire",
       daysLeft: "jours restants",
       addTestimonial: "Ajouter un témoignage",
-      viewAlbum: "Voir l'album",
       viewProfile: "Voir le profil"
     },
     es: {
@@ -58,7 +57,7 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
-  const { data: sponsoredChildren } = useQuery({
+  const { data: sponsoredChildren, isLoading } = useQuery({
     queryKey: ["sponsored-children", user?.id],
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
@@ -85,6 +84,25 @@ const SponsorDashboard = () => {
       return sponsorships;
     },
     enabled: !!user?.id
+  });
+
+  // Query pour récupérer les photos des enfants
+  const { data: childrenPhotos } = useQuery({
+    queryKey: ["children-photos", sponsoredChildren?.map(s => s.child_id)],
+    queryFn: async () => {
+      if (!sponsoredChildren?.length) return [];
+      
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .in('child_id', sponsoredChildren.map(s => s.child_id))
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!sponsoredChildren?.length
   });
 
   const handleShare = async () => {
@@ -140,102 +158,109 @@ const SponsorDashboard = () => {
         <NeedNotifications />
 
         <div className="grid gap-6">
-          {sponsoredChildren?.map((sponsorship) => (
-            <Card 
-              key={sponsorship.id} 
-              className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
-            >
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="item-1" className="border-none">
-                  <AccordionTrigger className="px-6 py-4 hover:no-underline">
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={sponsorship.children?.photo_url || "/placeholder.svg"}
-                        alt={sponsorship.children?.name}
-                        className="w-16 h-16 rounded-full object-cover"
-                      />
-                      <div className="text-left">
-                        <h3 className="text-lg font-semibold">{sponsorship.children?.name}</h3>
-                        <p className="text-sm text-gray-600">{sponsorship.children?.city}</p>
+          {sponsoredChildren?.map((sponsorship) => {
+            const childPhotos = childrenPhotos?.filter(photo => 
+              photo.child_id === sponsorship.children?.id
+            ) || [];
+
+            return (
+              <Card 
+                key={sponsorship.id} 
+                className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value="item-1" className="border-none">
+                    <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={sponsorship.children?.photo_url || "/placeholder.svg"}
+                          alt={sponsorship.children?.name}
+                          className="w-16 h-16 rounded-full object-cover"
+                        />
+                        <div className="text-left">
+                          <h3 className="text-lg font-semibold">{sponsorship.children?.name}</h3>
+                          <p className="text-sm text-gray-600">{sponsorship.children?.city}</p>
+                        </div>
                       </div>
-                    </div>
-                  </AccordionTrigger>
-                  
-                  <AccordionContent className="px-6 pb-4">
-                    <Tabs defaultValue="photos" className="w-full">
-                      <TabsList className="grid w-full grid-cols-4 mb-4">
-                        <TabsTrigger value="photos" className="flex items-center gap-2">
-                          <Image className="w-4 h-4" />
-                          {t.photos}
-                        </TabsTrigger>
-                        <TabsTrigger value="testimonials" className="flex items-center gap-2">
-                          <Heart className="w-4 h-4" />
-                          {t.testimonials}
-                        </TabsTrigger>
-                        <TabsTrigger value="statistics" className="flex items-center gap-2">
-                          <ChartBar className="w-4 h-4" />
-                          {t.statistics}
-                        </TabsTrigger>
-                        <TabsTrigger value="birthday" className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          {t.birthday}
-                        </TabsTrigger>
-                      </TabsList>
+                    </AccordionTrigger>
+                    
+                    <AccordionContent className="px-6 pb-4">
+                      <Tabs defaultValue="photos" className="w-full">
+                        <TabsList className="grid w-full grid-cols-4 mb-4">
+                          <TabsTrigger value="photos" className="flex items-center gap-2">
+                            <Image className="w-4 h-4" />
+                            {t.photos}
+                          </TabsTrigger>
+                          <TabsTrigger value="testimonials" className="flex items-center gap-2">
+                            <Heart className="w-4 h-4" />
+                            {t.testimonials}
+                          </TabsTrigger>
+                          <TabsTrigger value="statistics" className="flex items-center gap-2">
+                            <ChartBar className="w-4 h-4" />
+                            {t.statistics}
+                          </TabsTrigger>
+                          <TabsTrigger value="birthday" className="flex items-center gap-2">
+                            <Calendar className="w-4 h-4" />
+                            {t.birthday}
+                          </TabsTrigger>
+                        </TabsList>
 
-                      <TabsContent value="photos" className="space-y-4">
-                        <div className="grid grid-cols-3 gap-2">
-                          {/* Placeholder for photos grid */}
-                          <div className="aspect-square bg-gray-100 rounded-lg"></div>
-                          <div className="aspect-square bg-gray-100 rounded-lg"></div>
-                          <div className="aspect-square bg-gray-100 rounded-lg"></div>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          className="w-full"
-                          onClick={() => navigate(`/children/${sponsorship.children?.id}/album`)}
+                        <TabsContent value="photos" className="space-y-4">
+                          <div className="grid grid-cols-3 gap-2">
+                            {childPhotos.slice(0, 3).map((photo) => (
+                              <div 
+                                key={photo.id} 
+                                className="aspect-square relative overflow-hidden rounded-lg"
+                              >
+                                <img
+                                  src={photo.url}
+                                  alt={`Photo de ${sponsorship.children?.name}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </TabsContent>
+
+                        <TabsContent value="testimonials" className="space-y-4">
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => navigate('/testimonials/new')}
+                          >
+                            {t.addTestimonial}
+                          </Button>
+                        </TabsContent>
+
+                        <TabsContent value="statistics" className="space-y-4">
+                          {/* Add statistics content here */}
+                        </TabsContent>
+
+                        <TabsContent value="birthday" className="space-y-4">
+                          <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
+                            <h4 className="font-medium mb-2">{t.nextBirthday}</h4>
+                            <p className="text-2xl font-bold text-cuba-coral">
+                              {/* Add birthday countdown logic here */}
+                              365 {t.daysLeft}
+                            </p>
+                          </div>
+                        </TabsContent>
+                      </Tabs>
+
+                      <div className="mt-4 flex justify-end">
+                        <Button
+                          variant="outline"
+                          onClick={() => navigate(`/child/${sponsorship.children?.id}`)}
                         >
-                          {t.viewAlbum}
+                          {t.viewProfile}
                         </Button>
-                      </TabsContent>
-
-                      <TabsContent value="testimonials" className="space-y-4">
-                        <Button 
-                          variant="outline" 
-                          className="w-full"
-                          onClick={() => navigate('/testimonials/new')}
-                        >
-                          {t.addTestimonial}
-                        </Button>
-                      </TabsContent>
-
-                      <TabsContent value="statistics" className="space-y-4">
-                        {/* Add statistics content here */}
-                      </TabsContent>
-
-                      <TabsContent value="birthday" className="space-y-4">
-                        <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
-                          <h4 className="font-medium mb-2">{t.nextBirthday}</h4>
-                          <p className="text-2xl font-bold text-cuba-coral">
-                            {/* Add birthday countdown logic here */}
-                            365 {t.daysLeft}
-                          </p>
-                        </div>
-                      </TabsContent>
-                    </Tabs>
-
-                    <div className="mt-4 flex justify-end">
-                      <Button
-                        variant="outline"
-                        onClick={() => navigate(`/child/${sponsorship.children?.id}`)}
-                      >
-                        {t.viewProfile}
-                      </Button>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </Card>
-          ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
