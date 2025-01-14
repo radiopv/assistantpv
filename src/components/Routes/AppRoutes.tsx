@@ -29,7 +29,6 @@ import MediaManagement from "@/pages/MediaManagement";
 import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
-import Translations from "@/pages/admin/Translations";
 import Validation from "@/pages/admin/Validation";
 import Emails from "@/pages/admin/Emails";
 import AdminFAQ from "@/pages/admin/FAQ";
@@ -80,7 +79,6 @@ export const AppRoutes = () => {
         {/* Admin routes */}
         <Route path="/admin/children-management" element={<ChildrenManagement />} />
         <Route path="/admin/donations-management" element={<DonationsManagement />} />
-        <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<AdminFAQ />} />

@@ -29,11 +29,6 @@ const adminLinks = [
     icon: Gift,
   },
   {
-    href: "/admin/translations",
-    label: "Traductions",
-    icon: Globe,
-  },
-  {
     href: "/admin/validation",
     label: "Validation",
     icon: CheckSquare,
