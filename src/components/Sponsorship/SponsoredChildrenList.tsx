@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
-import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,30 +9,37 @@ interface SponsoredChildrenListProps {
   children: any[];
 }
 
-const formatAge = (birthDate: string | null) => {
-  if (!birthDate) return "Âge inconnu";
+const calculateAge = (birthDate: string | null): number | null => {
+  if (!birthDate) return null;
   
   try {
     const today = new Date();
-    const birth = parseISO(birthDate);
+    const birth = new Date(birthDate);
     
     // Vérifier si la date est valide
     if (isNaN(birth.getTime())) {
-      return "Âge inconnu";
+      console.error('Invalid birth date:', birthDate);
+      return null;
     }
     
-    const years = differenceInYears(today, birth);
-    
-    if (years === 0) {
-      const months = differenceInMonths(today, birth);
-      return `${months} mois`;
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+
+    // Ajuster l'âge si l'anniversaire n'est pas encore passé cette année
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+      age--;
     }
     
-    return `${years} ans`;
+    return age;
   } catch (error) {
     console.error('Error calculating age:', error);
-    return "Âge inconnu";
+    return null;
   }
+};
+
+const formatAge = (age: number | null): string => {
+  if (age === null) return "Âge inconnu";
+  return `${age} ans`;
 };
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
@@ -92,7 +98,7 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
             {/* Informations à droite de la photo */}
             <div className="w-full md:w-1/2 space-y-2">
               <h3 className="font-title text-xl text-cuba-deepOrange">{child.name}</h3>
-              <p className="text-sm text-gray-600">{formatAge(child.birth_date)}</p>
+              <p className="text-sm text-gray-600">{formatAge(calculateAge(child.birth_date))}</p>
               <p className="text-sm text-gray-600">{child.city}</p>
               {child.sponsor_name && (
                 <div className="mt-2 pt-2 border-t border-cuba-softOrange/20">
