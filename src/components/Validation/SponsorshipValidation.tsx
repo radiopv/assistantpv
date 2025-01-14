@@ -66,7 +66,6 @@ export const SponsorshipValidation = () => {
         throw new Error('No admin ID found');
       }
 
-      console.log("Calling approve_sponsorship_request with:", { requestId, adminId: user.id });
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: requestId,
         admin_id: user.id
@@ -102,11 +101,21 @@ export const SponsorshipValidation = () => {
         throw new Error('No admin ID found');
       }
 
+      // First check if user is authenticated
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !session) {
+        throw new Error('User not authenticated');
+      }
+
       console.log("Calling reject_sponsorship_request with:", { requestId, adminId: user.id });
       const { error } = await supabase.rpc('reject_sponsorship_request', {
         request_id: requestId,
         admin_id: user.id,
         rejection_reason: "Rejected by admin"
+      }, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
       });
 
       if (error) {
