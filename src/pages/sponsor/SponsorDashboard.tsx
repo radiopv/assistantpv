@@ -21,6 +21,7 @@ import { StatisticsSection } from "@/components/Sponsors/Dashboard/Sections/Stat
 import { NeedsSection } from "@/components/Sponsors/Dashboard/Sections/NeedsSection";
 import { StorySection } from "@/components/Sponsors/Dashboard/Sections/StorySection";
 import { convertJsonToNeeds } from "@/types/needs";
+import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -185,6 +186,11 @@ const SponsorDashboard = () => {
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
+        {/* Notifications Section */}
+        <div className="mb-4">
+          <NeedNotifications />
+        </div>
+
         <div className="grid gap-4 md:gap-6">
           {sponsoredChildren?.map((sponsorship) => {
             const childPhotos = childrenPhotos?.filter(photo => 
@@ -204,79 +210,77 @@ const SponsorDashboard = () => {
             return (
               <Card 
                 key={sponsorship.id} 
-                className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 md:p-6"
               >
-                <div className="p-3 md:p-6">
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between">
-                      <SponsoredChildCard
-                        child={{
-                          ...sponsorship.children,
-                          age: childAge
-                        }}
-                        onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
-                        onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
-                      />
-                      {hasUrgentNeeds && (
-                        <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0">
-                          {t.urgentNeeds}
-                        </span>
-                      )}
-                    </div>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between">
+                    <SponsoredChildCard
+                      child={{
+                        ...sponsorship.children,
+                        age: childAge
+                      }}
+                      onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
+                      onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
+                    />
+                    {hasUrgentNeeds && (
+                      <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0">
+                        {t.urgentNeeds}
+                      </span>
+                    )}
                   </div>
-
-                  {selectedChild === sponsorship.children?.id && (
-                    <div className="mt-4">
-                      <PhotoUploader
-                        childId={selectedChild}
-                        onUploadSuccess={handleUploadSuccess}
-                      />
-                    </div>
-                  )}
-
-                  <Tabs defaultValue="photos" className="mt-4 md:mt-6">
-                    <TabsList className="w-full grid grid-cols-3 md:grid-cols-5 gap-1">
-                      <TabsTrigger value="photos" className="text-xs md:text-sm">{t.photos}</TabsTrigger>
-                      <TabsTrigger value="testimonials" className="text-xs md:text-sm">{t.testimonials}</TabsTrigger>
-                      <TabsTrigger value="statistics" className="text-xs md:text-sm">{t.statistics}</TabsTrigger>
-                      <TabsTrigger value="needs" className="text-xs md:text-sm hidden md:block">{t.needs}</TabsTrigger>
-                      <TabsTrigger value="story" className="text-xs md:text-sm hidden md:block">{t.story}</TabsTrigger>
-                    </TabsList>
-
-                    <div className="mt-4 space-y-4">
-                      <TabsContent value="photos">
-                        <PhotoGallery 
-                          photos={childPhotos} 
-                          childName={sponsorship.children?.name} 
-                        />
-                      </TabsContent>
-
-                      <TabsContent value="testimonials">
-                        <TestimonialSection testimonials={childTestimonials} />
-                      </TabsContent>
-
-                      <TabsContent value="statistics">
-                        <StatisticsSection
-                          photos={childPhotos}
-                          needs={childNeeds}
-                          sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
-                          sponsorshipStartDate={sponsorship.start_date}
-                        />
-                      </TabsContent>
-
-                      <TabsContent value="needs">
-                        <NeedsSection needs={childNeeds} />
-                      </TabsContent>
-
-                      <TabsContent value="story">
-                        <StorySection
-                          description={sponsorship.children?.description}
-                          story={sponsorship.children?.story}
-                        />
-                      </TabsContent>
-                    </div>
-                  </Tabs>
                 </div>
+
+                {selectedChild === sponsorship.children?.id && (
+                  <div className="mt-4">
+                    <PhotoUploader
+                      childId={selectedChild}
+                      onUploadSuccess={handleUploadSuccess}
+                    />
+                  </div>
+                )}
+
+                <Tabs defaultValue="photos" className="mt-4 md:mt-6">
+                  <TabsList className="w-full grid grid-cols-3 md:grid-cols-5 gap-1">
+                    <TabsTrigger value="photos" className="text-xs md:text-sm">{t.photos}</TabsTrigger>
+                    <TabsTrigger value="testimonials" className="text-xs md:text-sm">{t.testimonials}</TabsTrigger>
+                    <TabsTrigger value="statistics" className="text-xs md:text-sm">{t.statistics}</TabsTrigger>
+                    <TabsTrigger value="needs" className="text-xs md:text-sm hidden md:block">{t.needs}</TabsTrigger>
+                    <TabsTrigger value="story" className="text-xs md:text-sm hidden md:block">{t.story}</TabsTrigger>
+                  </TabsList>
+
+                  <div className="mt-4 space-y-4">
+                    <TabsContent value="photos">
+                      <PhotoGallery 
+                        photos={childPhotos} 
+                        childName={sponsorship.children?.name} 
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="testimonials">
+                      <TestimonialSection testimonials={childTestimonials} />
+                    </TabsContent>
+
+                    <TabsContent value="statistics">
+                      <StatisticsSection
+                        photos={childPhotos}
+                        needs={childNeeds}
+                        sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
+                        sponsorshipStartDate={sponsorship.start_date}
+                      />
+                    </TabsContent>
+
+                    <TabsContent value="needs">
+                      <NeedsSection needs={childNeeds} />
+                    </TabsContent>
+
+                    <TabsContent value="story">
+                      <StorySection
+                        description={sponsorship.children?.description}
+                        story={sponsorship.children?.story}
+                      />
+                    </TabsContent>
+                  </div>
+                </Tabs>
               </Card>
             );
           })}
