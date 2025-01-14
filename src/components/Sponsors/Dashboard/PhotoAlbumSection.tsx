@@ -26,6 +26,7 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log('Starting photo upload for child:', childName);
 
     try {
       const uploadPromises = photos.map(async (photo) => {
@@ -33,16 +34,21 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `${childId}/${fileName}`;
 
+        // Upload photo to storage
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('album-media')
           .upload(filePath, photo);
 
         if (uploadError) throw uploadError;
 
+        // Get public URL
         const { data: { publicUrl } } = supabase.storage
           .from('album-media')
           .getPublicUrl(filePath);
 
+        console.log('Photo uploaded successfully, creating database entry');
+
+        // Create album media entry
         const { error: dbError } = await supabase
           .from('album_media')
           .insert({
@@ -54,6 +60,26 @@ const PhotoAlbumSection = ({ childId, sponsorId, childName }: PhotoAlbumSectionP
           });
 
         if (dbError) throw dbError;
+
+        console.log('Database entry created, sending notification');
+
+        // Create notification for sponsor
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert({
+            recipient_id: sponsorId,
+            type: 'photo_upload',
+            title: 'Nouvelle photo ajoutée',
+            content: `Une nouvelle photo a été ajoutée à l'album de ${childName}`,
+            link: `/children/${childId}/album`
+          });
+
+        if (notifError) {
+          console.error('Error creating notification:', notifError);
+          throw notifError;
+        }
+
+        console.log('Notification created successfully');
 
         return uploadData;
       });
