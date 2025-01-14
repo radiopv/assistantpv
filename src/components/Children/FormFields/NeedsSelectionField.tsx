@@ -70,7 +70,6 @@ export const NeedsSelectionField = ({
 
       if (updateError) throw updateError;
 
-      // Create notification
       if (childId) {
         const { error: notifError } = await supabase
           .from('notifications')

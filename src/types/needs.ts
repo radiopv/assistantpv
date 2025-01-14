@@ -56,7 +56,7 @@ export const convertNeedsToJson = (needs: Need[]): Json => {
       category: need.category,
       description: need.description,
       is_urgent: need.is_urgent
-    }));
+    })) as unknown as Json;
   } catch (error) {
     console.error('Error converting needs to JSON:', error);
     return [];

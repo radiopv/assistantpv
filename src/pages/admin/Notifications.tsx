@@ -5,8 +5,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Bell, Check, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { NotificationService, type Notification } from "@/services/NotificationService";
+import { NotificationService } from "@/services/NotificationService";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { NotificationMetadata } from "@/types/needs";
+
+interface Notification {
+  id: string;
+  recipient_id: string;
+  type: string;
+  title: string;
+  content: string;
+  link?: string;
+  is_read: boolean;
+  created_at: string;
+  metadata: NotificationMetadata;
+}
 
 const Notifications = () => {
   const { language } = useLanguage();
@@ -32,7 +45,10 @@ const Notifications = () => {
 
   const { data: notifications = [], refetch } = useQuery({
     queryKey: ['notifications'],
-    queryFn: NotificationService.getNotifications
+    queryFn: async () => {
+      const data = await NotificationService.getNotifications();
+      return data as Notification[];
+    }
   });
 
   const handleMarkAsRead = async (notification: Notification) => {
