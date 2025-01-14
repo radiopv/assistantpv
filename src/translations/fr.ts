@@ -33,5 +33,25 @@ export const frenchTranslations = {
   noUrgentChildren: "Aucun enfant n'a de besoins urgents pour le moment",
   noCategoryChildren: "Aucun enfant disponible dans cette catégorie",
   sponsoredBy: "Parrainé par",
-  sponsorThisChild: "Parrainer cet enfant"
+  sponsorThisChild: "Parrainer cet enfant",
+  // Traductions de la page d'accueil
+  dashboard: "Tableau de bord",
+  dashboardDescription: "Gérez vos parrainages et suivez l'impact de votre aide",
+  howItWorks: "Comment ça marche",
+  sponsorship: "Parrainage",
+  donations: "Dons",
+  community: "Communauté",
+  impact: "Impact",
+  sponsorshipDescription: "Créez un lien spécial avec un enfant cubain",
+  donationsDescription: "Apportez une aide concrète et immédiate",
+  communityDescription: "Rejoignez une communauté solidaire",
+  impactDescription: "Changez des vies durablement",
+  sharedMoments: "Moments Partagés",
+  featuredChildren: "Enfants mis en avant",
+  becomeASponsor: "Devenir parrain",
+  learnMoreAboutSponsorship: "En savoir plus sur le parrainage",
+  ourMission: "Notre mission",
+  ourMissionDescription: "Aider les enfants cubains à avoir un meilleur avenir",
+  joinUs: "Rejoignez-nous",
+  joinUsDescription: "Ensemble, nous pouvons faire la différence"
 };

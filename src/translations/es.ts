@@ -33,5 +33,25 @@ export const spanishTranslations = {
   noUrgentChildren: "Ningún niño tiene necesidades urgentes en este momento",
   noCategoryChildren: "No hay niños disponibles en esta categoría",
   sponsoredBy: "Apadrinado por",
-  sponsorThisChild: "Apadrinar este niño"
+  sponsorThisChild: "Apadrinar este niño",
+  // Traducciones de la página de inicio
+  dashboard: "Panel de control",
+  dashboardDescription: "Gestiona tus apadrinamientos y sigue el impacto de tu ayuda",
+  howItWorks: "Cómo funciona",
+  sponsorship: "Apadrinamiento",
+  donations: "Donaciones",
+  community: "Comunidad",
+  impact: "Impacto",
+  sponsorshipDescription: "Crea un vínculo especial con un niño cubano",
+  donationsDescription: "Proporciona ayuda concreta e inmediata",
+  communityDescription: "Únete a una comunidad solidaria",
+  impactDescription: "Cambia vidas de manera duradera",
+  sharedMoments: "Momentos Compartidos",
+  featuredChildren: "Niños destacados",
+  becomeASponsor: "Conviértete en padrino",
+  learnMoreAboutSponsorship: "Más información sobre el apadrinamiento",
+  ourMission: "Nuestra misión",
+  ourMissionDescription: "Ayudar a los niños cubanos a tener un mejor futuro",
+  joinUs: "Únete a nosotros",
+  joinUsDescription: "Juntos podemos hacer la diferencia"
 };
