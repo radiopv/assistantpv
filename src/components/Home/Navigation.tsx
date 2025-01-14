@@ -12,9 +12,6 @@ export const Navigation = () => {
   const { user, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
-  const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
-  const isSponsor = user?.role === 'sponsor';
-
   const handleLogout = async () => {
     try {
       await signOut();
@@ -106,20 +103,6 @@ export const Navigation = () => {
         <HelpCircle className="h-4 w-4 mr-2" />
         FAQ
       </Button>
-
-      {isAssistant && (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            navigate("/dashboard");
-            setIsOpen(false);
-          }}
-          className="justify-start md:justify-center text-primary w-full md:w-auto"
-        >
-          <LayoutDashboard className="h-4 w-4 mr-2" />
-          Tableau de bord
-        </Button>
-      )}
     </div>
   );
 
@@ -127,16 +110,16 @@ export const Navigation = () => {
     <nav className="bg-white shadow-sm sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - Always visible on mobile */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="relative">
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
+              <SheetContent side="left" className="w-[80%] sm:w-[385px]">
                 <div className="flex flex-col h-full">
                   <div className="flex-1 py-6 space-y-4">
                     <MenuItems />
@@ -198,7 +181,7 @@ export const Navigation = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex flex-1 space-x-4">
+          <div className="hidden md:flex flex-1 items-center space-x-4">
             <MenuItems />
           </div>
 
@@ -232,6 +215,22 @@ export const Navigation = () => {
                   Déconnexion
                 </Button>
               </>
+            ) : (
+              <Button
+                variant="ghost"
+                onClick={() => navigate("/login")}
+                className="text-primary"
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Connexion
+              </Button>
+            )}
+          </div>
+
+          {/* Mobile Login/Profile Button - Always visible on mobile */}
+          <div className="md:hidden">
+            {user ? (
+              <UserProfileMenu />
             ) : (
               <Button
                 variant="ghost"
