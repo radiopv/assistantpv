@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload } from "lucide-react";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
@@ -55,22 +55,22 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         }
       }
 
-      console.log("Début de l'upload de la photo...");
+      console.log("1. Upload de la photo...");
       const { error: uploadError } = await supabase.storage
         .from('children-photos')
         .upload(filePath, croppedImageBlob);
 
       if (uploadError) {
-        console.error("Erreur lors de l'upload:", uploadError);
+        console.error("Erreur upload:", uploadError);
         throw uploadError;
       }
 
-      console.log("Photo uploadée avec succès, récupération de l'URL publique...");
+      console.log("2. Récupération URL publique...");
       const { data: { publicUrl } } = supabase.storage
         .from('children-photos')
         .getPublicUrl(filePath);
 
-      console.log("Récupération des données de l'enfant et des parrainages...");
+      console.log("3. Récupération des données de l'enfant...");
       const { data: child, error: childError } = await supabase
         .from('children')
         .select(`
@@ -81,49 +81,51 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
           )
         `)
         .eq('id', childId)
-        .eq('sponsorships.status', 'active')
         .single();
 
       if (childError) {
-        console.error("Erreur lors de la récupération des données de l'enfant:", childError);
+        console.error("Erreur données enfant:", childError);
         throw childError;
       }
 
-      console.log("Données de l'enfant récupérées:", child);
+      console.log("4. Données enfant récupérées:", child);
 
       if (child?.sponsorships && child.sponsorships.length > 0) {
-        console.log("Création des notifications pour les parrains...");
-        
-        for (const sponsorship of child.sponsorships) {
-          console.log("Création d'une notification pour le parrain:", sponsorship.sponsor_id);
+        const activeSponsors = child.sponsorships.filter(s => s.status === 'active');
+        console.log("5. Parrains actifs trouvés:", activeSponsors);
+
+        for (const sponsorship of activeSponsors) {
+          console.log("6. Création notification pour:", sponsorship.sponsor_id);
           
+          const notificationData = {
+            recipient_id: sponsorship.sponsor_id,
+            type: 'photo_added',
+            title: `Nouvelle photo de ${child.name}`,
+            content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
+            link: `/children/${childId}/album`,
+            is_read: false
+          };
+
+          console.log("7. Données notification:", notificationData);
+
           const { data: notification, error: notifError } = await supabase
             .from('notifications')
-            .insert({
-              recipient_id: sponsorship.sponsor_id,
-              type: 'photo_added',
-              title: `Nouvelle photo de ${child.name}`,
-              content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
-              link: `/children/${childId}/album`,
-              is_read: false
-            })
+            .insert(notificationData)
             .select()
             .single();
 
           if (notifError) {
-            console.error("Erreur lors de la création de la notification:", notifError);
-            console.error("Détails de l'erreur:", {
-              sponsorId: sponsorship.sponsor_id,
-              childName: child.name,
-              error: notifError
+            console.error("Erreur création notification:", {
+              error: notifError,
+              data: notificationData
             });
             throw notifError;
           }
 
-          console.log("Notification créée avec succès:", notification);
+          console.log("8. Notification créée:", notification);
         }
       } else {
-        console.log("Aucun parrainage actif trouvé pour cet enfant");
+        console.log("Aucun parrainage actif trouvé");
       }
 
       onUploadComplete(publicUrl);
