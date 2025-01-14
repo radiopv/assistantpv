@@ -16,19 +16,34 @@ export const CardActions = ({
   onCancel,
   onLearnMore
 }: CardActionsProps) => {
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click event
+    onEdit();
+  };
+
+  const handleSaveClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onSave();
+  };
+
+  const handleCancelClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onCancel();
+  };
+
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-2" onClick={e => e.stopPropagation()}>
       {editing ? (
         <>
           <Button 
             className="w-full sm:w-3/4 bg-green-600 hover:bg-green-700 text-white"
-            onClick={onSave}
+            onClick={handleSaveClick}
           >
             Enregistrer
           </Button>
           <Button 
             className="w-full sm:w-3/4 bg-gray-100 hover:bg-gray-200 text-gray-900"
-            onClick={onCancel}
+            onClick={handleCancelClick}
           >
             Annuler
           </Button>
@@ -38,7 +53,7 @@ export const CardActions = ({
           <Button 
             className="w-full sm:w-3/4 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200" 
             variant="outline"
-            onClick={onEdit}
+            onClick={handleEditClick}
           >
             Modifier
           </Button>
