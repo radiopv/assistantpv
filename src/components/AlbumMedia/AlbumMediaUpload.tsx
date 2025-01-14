@@ -106,6 +106,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
       if (child?.sponsorships) {
         const activeSponsorship = child.sponsorships.find(s => s.status === 'active');
         if (activeSponsorship?.sponsor_id) {
+          console.log("Creating notification for sponsor:", activeSponsorship.sponsor_id);
           const { error: notifError } = await supabase
             .from('notifications')
             .insert({
@@ -129,6 +130,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
             console.error("Error creating notification:", notifError);
             throw notifError;
           }
+          console.log("Notification created successfully");
         }
       }
 
