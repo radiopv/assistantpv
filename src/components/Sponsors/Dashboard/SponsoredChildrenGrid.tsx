@@ -63,7 +63,7 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
     }
   });
 
-  const { data: childPhotos } = useQuery({
+  const { data: allChildPhotos } = useQuery({
     queryKey: ['child-photos', sponsoredChildren?.map(s => s.child_id)],
     enabled: !!sponsoredChildren?.length,
     queryFn: async () => {
@@ -107,7 +107,7 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {sponsoredChildren?.map((sponsorship) => {
         const child = sponsorship.children;
-        const childPhotos = childPhotos?.filter(photo => photo.child_id === child.id) || [];
+        const childPhotos = allChildPhotos?.filter(photo => photo.child_id === child.id) || [];
 
         return (
           <div key={child.id} className="space-y-4">
