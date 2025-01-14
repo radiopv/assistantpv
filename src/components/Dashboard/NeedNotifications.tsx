@@ -9,6 +9,14 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
 import { fr, es } from "date-fns/locale";
 
+interface NotificationMetadata {
+  child_id?: string;
+  child_name?: string;
+  photo_url?: string;
+  need_type?: string;
+  is_read?: boolean;
+}
+
 interface NeedNotification {
   id: string;
   title: string;
@@ -16,13 +24,8 @@ interface NeedNotification {
   type: string;
   is_read: boolean;
   created_at: string;
-  metadata?: {
-    child_id?: string;
-    child_name?: string;
-    photo_url?: string;
-    need_type?: string;
-    is_read?: boolean;
-  };
+  metadata: NotificationMetadata;
+  link?: string;
 }
 
 export const NeedNotifications = () => {

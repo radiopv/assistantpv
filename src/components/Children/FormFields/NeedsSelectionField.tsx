@@ -26,22 +26,31 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
         return;
       }
 
-      setNeeds(data || []);
+      const formattedNeeds: Need[] = (data || []).map(item => ({
+        id: item.id,
+        category: item.name,
+        description: item.description || '',
+        is_urgent: false
+      }));
+
+      setNeeds(formattedNeeds);
     };
 
     fetchNeeds();
   }, []);
 
-  const handleNeedsChange = async (newNeeds: Need[]) => {
+  const handleNeedsChange = async (selectedIds: string[]) => {
     try {
+      const selectedNeedsList = needs.filter(need => selectedIds.includes(need.id || ''));
+
       if (!childId) {
-        onNeedsChange(newNeeds);
+        onNeedsChange(selectedNeedsList);
         return;
       }
 
       const { error: updateError } = await supabase
         .from('children')
-        .update({ needs: newNeeds })
+        .update({ needs: selectedNeedsList })
         .eq('id', childId);
 
       if (updateError) throw updateError;
@@ -61,7 +70,11 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
             type: 'needs_update',
             title: translations.needsUpdateTitle || 'Mise à jour des besoins',
             content: translations.needsUpdateContent || 'Les besoins ont été mis à jour',
-            link: `/children/${childId}`
+            link: `/children/${childId}`,
+            metadata: {
+              child_id: childId,
+              child_name: sponsorship.children?.name
+            }
           });
 
         if (notifError) {
@@ -69,21 +82,7 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
         }
       }
 
-      const { error: auditError } = await supabase
-        .from('children_audit_logs')
-        .insert({
-          child_id: childId,
-          action: 'needs_updated',
-          changes: {
-            needs: newNeeds
-          }
-        });
-
-      if (auditError) {
-        console.error("Error creating audit log:", auditError);
-      }
-
-      onNeedsChange(newNeeds);
+      onNeedsChange(selectedNeedsList);
     } catch (error) {
       console.error("Error updating needs:", error);
       toast({
@@ -96,18 +95,16 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
 
   return (
     <Select
-      value={selectedNeeds}
-      onValueChange={(value) => {
-        handleNeedsChange(value as unknown as Need[]);
-      }}
+      value={selectedNeeds.map(need => need.id).filter(Boolean) as string[]}
+      onValueChange={handleNeedsChange}
     >
       <SelectTrigger>
         <SelectValue placeholder={translations.selectNeeds || "Sélectionner les besoins"} />
       </SelectTrigger>
       <SelectContent>
         {needs.map((need) => (
-          <SelectItem key={need.id} value={need.id}>
-            {need.name}
+          <SelectItem key={need.id} value={need.id || ''}>
+            {need.category}
           </SelectItem>
         ))}
       </SelectContent>

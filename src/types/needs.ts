@@ -1,10 +1,9 @@
-import { Json } from "@/integrations/supabase/types";
-
 export interface Need {
+  id?: string;
   category: string;
-  description: string;
+  description?: string;
   is_urgent: boolean;
-  [key: string]: string | boolean; // Ajout de l'index signature pour la compatibilité Json
+  [key: string]: string | boolean | undefined;
 }
 
 export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
@@ -26,6 +25,7 @@ export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
 
       const needObj = need as Record<string, unknown>;
       return {
+        id: String(needObj?.id || ''),
         category: String(needObj?.category || ''),
         description: String(needObj?.description || ''),
         is_urgent: Boolean(needObj?.is_urgent || false)
@@ -46,6 +46,7 @@ export const convertNeedsToJson = (needs: Need[] | null): Json => {
   try {
     console.log('Converting needs to JSON:', needs);
     const jsonNeeds = needs.map(need => ({
+      id: need.id,
       category: need.category,
       description: need.description,
       is_urgent: need.is_urgent
