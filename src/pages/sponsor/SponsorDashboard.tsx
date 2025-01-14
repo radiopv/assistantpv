@@ -1,13 +1,14 @@
+import { useAuth } from "@/components/Auth/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { Share2, ChevronDown, ChevronUp, Image, Calendar, Heart, ChartBar } from "lucide-react";
+import { Share2, ChevronDown, ChevronUp, Image, Calendar, Heart, ChartBar, Book, ListChecks } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
+import { ChildNeeds } from "@/components/Dashboard/ChildrenNeeds/ChildNeeds";
 import {
   Accordion,
   AccordionContent,
@@ -15,6 +16,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface SponsorDashboardTranslations {
   welcomeMessage: string;
@@ -34,6 +36,9 @@ interface SponsorDashboardTranslations {
   nextBirthday: string;
   daysLeft: string;
   viewProfile: string;
+  needs: string;
+  story: string;
+  description: string;
 }
 
 const SponsorDashboard = () => {
@@ -59,7 +64,10 @@ const SponsorDashboard = () => {
       addTestimonial: "Ajouter un témoignage",
       nextBirthday: "Prochain anniversaire",
       daysLeft: "jours restants",
-      viewProfile: "Voir le profil"
+      viewProfile: "Voir le profil",
+      needs: "Besoins",
+      story: "Histoire",
+      description: "Description"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -78,7 +86,10 @@ const SponsorDashboard = () => {
       addTestimonial: "Agregar testimonio",
       nextBirthday: "Próximo cumpleaños",
       daysLeft: "días restantes",
-      viewProfile: "Ver perfil"
+      viewProfile: "Ver perfil",
+      needs: "Necesidades",
+      story: "Historia",
+      description: "Descripción"
     }
   } as const;
 
@@ -212,7 +223,7 @@ const SponsorDashboard = () => {
                     
                     <AccordionContent className="px-6 pb-4">
                       <Tabs defaultValue="photos" className="w-full">
-                        <TabsList className="grid w-full grid-cols-4 mb-4">
+                        <TabsList className="grid w-full grid-cols-6 mb-4">
                           <TabsTrigger value="photos" className="flex items-center gap-2">
                             <Image className="w-4 h-4" />
                             {t.photos}
@@ -228,6 +239,14 @@ const SponsorDashboard = () => {
                           <TabsTrigger value="birthday" className="flex items-center gap-2">
                             <Calendar className="w-4 h-4" />
                             {t.birthday}
+                          </TabsTrigger>
+                          <TabsTrigger value="needs" className="flex items-center gap-2">
+                            <ListChecks className="w-4 h-4" />
+                            {t.needs}
+                          </TabsTrigger>
+                          <TabsTrigger value="story" className="flex items-center gap-2">
+                            <Book className="w-4 h-4" />
+                            {t.story}
                           </TabsTrigger>
                         </TabsList>
 
@@ -266,9 +285,34 @@ const SponsorDashboard = () => {
                           <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
                             <h4 className="font-medium mb-2">{t.nextBirthday}</h4>
                             <p className="text-2xl font-bold text-cuba-coral">
-                              {/* Add birthday countdown logic here */}
                               365 {t.daysLeft}
                             </p>
+                          </div>
+                        </TabsContent>
+
+                        <TabsContent value="needs" className="space-y-4">
+                          <div className="bg-white p-4 rounded-lg">
+                            <ChildNeeds 
+                              child={sponsorship.children}
+                              needs={convertJsonToNeeds(sponsorship.children?.needs)}
+                            />
+                          </div>
+                        </TabsContent>
+
+                        <TabsContent value="story" className="space-y-4">
+                          <div className="bg-white p-4 rounded-lg space-y-6">
+                            {sponsorship.children?.description && (
+                              <div>
+                                <h4 className="font-medium mb-2">{t.description}</h4>
+                                <p className="text-gray-600">{sponsorship.children.description}</p>
+                              </div>
+                            )}
+                            {sponsorship.children?.story && (
+                              <div>
+                                <h4 className="font-medium mb-2">{t.story}</h4>
+                                <p className="text-gray-600">{sponsorship.children.story}</p>
+                              </div>
+                            )}
                           </div>
                         </TabsContent>
                       </Tabs>
