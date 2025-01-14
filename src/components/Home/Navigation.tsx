@@ -12,6 +12,9 @@ export const Navigation = () => {
   const { user, signOut } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
+  const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
+  const isSponsor = user?.role === 'sponsor';
+
   const handleLogout = async () => {
     try {
       await signOut();
@@ -103,6 +106,20 @@ export const Navigation = () => {
         <HelpCircle className="h-4 w-4 mr-2" />
         FAQ
       </Button>
+
+      {isAssistant && (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/dashboard");
+            setIsOpen(false);
+          }}
+          className="justify-start md:justify-center text-primary w-full md:w-auto"
+        >
+          <LayoutDashboard className="h-4 w-4 mr-2" />
+          Tableau de bord
+        </Button>
+      )}
     </div>
   );
 
@@ -110,8 +127,8 @@ export const Navigation = () => {
     <nav className="bg-white shadow-sm sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          {/* Mobile Menu Button - Always visible on mobile */}
-          <div className="md:hidden">
+          {/* Mobile Menu Button */}
+          <div className="block md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="relative">
@@ -227,8 +244,8 @@ export const Navigation = () => {
             )}
           </div>
 
-          {/* Mobile Login/Profile Button - Always visible on mobile */}
-          <div className="md:hidden">
+          {/* Mobile Login/Profile Button */}
+          <div className="block md:hidden">
             {user ? (
               <UserProfileMenu />
             ) : (
