@@ -67,8 +67,8 @@ const BecomeSponsor = () => {
 
     if (formData.password !== formData.confirmPassword) {
       toast({
-        title: t("error"),
-        description: t("passwordsDoNotMatch"),
+        title: "Erreur",
+        description: "Les mots de passe ne correspondent pas",
         variant: "destructive",
       });
       setLoading(false);
@@ -92,8 +92,8 @@ const BecomeSponsor = () => {
       if (error) throw error;
 
       toast({
-        title: t("success"),
-        description: t("sponsorshipRequestSubmitted"),
+        title: "Succès",
+        description: "Votre demande de parrainage a été envoyée avec succès",
       });
       
       navigate('/');
@@ -101,8 +101,8 @@ const BecomeSponsor = () => {
       console.error('Error submitting request:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: error.message || t("errorSubmittingRequest"),
+        title: "Erreur",
+        description: error.message || "Une erreur est survenue lors de l'envoi de votre demande",
       });
     } finally {
       setLoading(false);
@@ -113,8 +113,8 @@ const BecomeSponsor = () => {
     <div className="container mx-auto py-8 px-4">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-3xl font-bold">{t("becomeSponsor")}</h1>
-          <p className="text-gray-600">{t("sponsorshipDescription")}</p>
+          <h1 className="text-3xl font-bold">Devenir Parrain</h1>
+          <p className="text-gray-600">Remplissez le formulaire ci-dessous pour commencer votre parcours de parrainage</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -140,7 +140,7 @@ const BecomeSponsor = () => {
             className="w-full"
             disabled={loading}
           >
-            {loading ? t("submitting") : t("submitRequest")}
+            {loading ? "Envoi en cours..." : "Envoyer la demande"}
           </Button>
         </form>
       </div>
