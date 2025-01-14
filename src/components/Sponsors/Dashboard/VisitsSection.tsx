@@ -1,7 +1,9 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
 import { fr, es } from "date-fns/locale";
-import { Hotel, Calendar, Gift, User } from "lucide-react";
+import { Hotel, Calendar, Gift, User, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useVisitDelete } from "./hooks/useVisitDelete";
 
 interface Visit {
   id: string;
@@ -15,10 +17,12 @@ interface Visit {
 
 interface VisitsSectionProps {
   visits: Visit[];
+  onVisitDeleted?: () => void;
 }
 
-export const VisitsSection = ({ visits }: VisitsSectionProps) => {
+export const VisitsSection = ({ visits, onVisitDeleted }: VisitsSectionProps) => {
   const { language } = useLanguage();
+  const { handleDelete } = useVisitDelete(onVisitDeleted);
 
   const translations = {
     fr: {
@@ -27,7 +31,8 @@ export const VisitsSection = ({ visits }: VisitsSectionProps) => {
       from: "Du",
       to: "au",
       willVisitChild: "Souhaite visiter son filleul",
-      hasDonations: "A des dons à remettre"
+      hasDonations: "A des dons à remettre",
+      deleteVisit: "Supprimer cette visite"
     },
     es: {
       noVisits: "No hay visitas programadas",
@@ -35,7 +40,8 @@ export const VisitsSection = ({ visits }: VisitsSectionProps) => {
       from: "Del",
       to: "al",
       willVisitChild: "Desea visitar a su ahijado",
-      hasDonations: "Tiene donaciones para entregar"
+      hasDonations: "Tiene donaciones para entregar",
+      deleteVisit: "Eliminar esta visita"
     }
   };
 
@@ -50,13 +56,24 @@ export const VisitsSection = ({ visits }: VisitsSectionProps) => {
     <div className="space-y-4">
       {visits.map((visit) => (
         <div key={visit.id} className="p-4 border rounded-lg space-y-3">
-          <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-cuba-turquoise" />
-            <p className="font-medium">
-              {t.from} {format(new Date(visit.start_date), 'PPP', { locale: dateLocale })}
-              {' '}{t.to}{' '}
-              {format(new Date(visit.end_date), 'PPP', { locale: dateLocale })}
-            </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-cuba-turquoise" />
+              <p className="font-medium">
+                {t.from} {format(new Date(visit.start_date), 'PPP', { locale: dateLocale })}
+                {' '}{t.to}{' '}
+                {format(new Date(visit.end_date), 'PPP', { locale: dateLocale })}
+              </p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+              onClick={() => handleDelete(visit.id)}
+              title={t.deleteVisit}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
           </div>
 
           {visit.hotel_name && (

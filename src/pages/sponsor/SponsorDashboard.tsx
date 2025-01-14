@@ -226,7 +226,10 @@ const SponsorDashboard = () => {
               sponsorId={user?.id || ''} 
               onVisitPlanned={refetchVisits}
             />
-            <VisitsSection visits={plannedVisits || []} />
+            <VisitsSection 
+              visits={plannedVisits || []} 
+              onVisitDeleted={refetchVisits}
+            />
           </div>
         </Card>
 
