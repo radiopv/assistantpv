@@ -1,22 +1,24 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Select } from "@/components/ui/select";
+import { Need } from "@/types/needs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface NeedsSelectionFieldProps {
-  childId: string;
-  onChange: (needs: any[]) => void;
+  childId?: string;
+  selectedNeeds?: Need[];
+  onNeedsChange: (needs: Need[]) => void;
+  translations: any;
 }
 
-export const NeedsSelectionField = ({ childId, onChange }: NeedsSelectionFieldProps) => {
+export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange, translations }: NeedsSelectionFieldProps) => {
   const [needs, setNeeds] = useState<any[]>([]);
-  const [selectedNeeds, setSelectedNeeds] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
     const fetchNeeds = async () => {
       const { data, error } = await supabase
-        .from('needs')
+        .from('need_categories')
         .select('*');
 
       if (error) {
@@ -30,8 +32,13 @@ export const NeedsSelectionField = ({ childId, onChange }: NeedsSelectionFieldPr
     fetchNeeds();
   }, []);
 
-  const handleNeedsChange = async (needs: any[]) => {
+  const handleNeedsChange = async (needs: Need[]) => {
     try {
+      if (!childId) {
+        onNeedsChange(needs);
+        return;
+      }
+
       // Update needs
       const { error: updateError } = await supabase
         .from('children')
@@ -55,8 +62,8 @@ export const NeedsSelectionField = ({ childId, onChange }: NeedsSelectionFieldPr
           .insert({
             recipient_id: sponsorship.sponsor_id,
             type: 'needs_update',
-            title: 'Mise à jour des besoins',
-            content: `Les besoins de ${sponsorship.children.name} ont été mis à jour`,
+            title: translations.needsUpdateTitle || 'Mise à jour des besoins',
+            content: translations.needsUpdateContent || 'Les besoins ont été mis à jour',
             link: `/children/${childId}`
           });
 
@@ -80,31 +87,34 @@ export const NeedsSelectionField = ({ childId, onChange }: NeedsSelectionFieldPr
         console.error("Error creating audit log:", auditError);
       }
 
-      onChange(needs);
+      onNeedsChange(needs);
     } catch (error) {
       console.error("Error updating needs:", error);
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour des besoins"
+        title: translations.error || "Erreur",
+        description: translations.errorUpdatingNeeds || "Une erreur est survenue lors de la mise à jour des besoins"
       });
     }
   };
 
   return (
     <Select
-      multiple
       value={selectedNeeds}
       onValueChange={(value) => {
-        setSelectedNeeds(value);
-        handleNeedsChange(value);
+        handleNeedsChange(value as Need[]);
       }}
     >
-      {needs.map((need) => (
-        <Select.Item key={need.id} value={need.id}>
-          {need.name}
-        </Select.Item>
-      ))}
+      <SelectTrigger>
+        <SelectValue placeholder={translations.selectNeeds || "Sélectionner les besoins"} />
+      </SelectTrigger>
+      <SelectContent>
+        {needs.map((need) => (
+          <SelectItem key={need.id} value={need.id}>
+            {need.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
     </Select>
   );
 };

@@ -41,15 +41,15 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
 
           onPhotoUpdate(publicUrl);
           toast({
-            title: t.success,
-            description: t.success,
+            title: t('successTitle'),
+            description: t('successMessage'),
           });
         } catch (error) {
           console.error("Error uploading photo:", error);
           toast({
             variant: "destructive",
-            title: t.error,
-            description: t.error,
+            title: t('errorTitle'),
+            description: t('errorMessage'),
           });
         }
       };
