@@ -111,9 +111,18 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
             .insert({
               recipient_id: activeSponsorship.sponsor_id,
               type: 'photo_upload',
-              title: 'Nouvelle photo ajoutée',
-              content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}`,
-              link: `/children/${childId}/album`
+              title: language === 'fr' ? 
+                'Nouvelle photo ajoutée' : 
+                'Nueva foto agregada',
+              content: language === 'fr' ? 
+                `Une nouvelle photo a été ajoutée à l'album de ${child.name}. Cliquez pour voir l'album.` :
+                `Se ha agregado una nueva foto al álbum de ${child.name}. Haga clic para ver el álbum.`,
+              link: `/children/${childId}/album`,
+              metadata: {
+                child_id: childId,
+                child_name: child.name,
+                photo_url: publicUrl
+              }
             });
 
           if (notifError) {
