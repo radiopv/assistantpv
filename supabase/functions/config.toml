@@ -1,0 +1,4 @@
+project_id = "pedwjkjpckjlwbxfsmth"
+
+[send-notification-email]
+verify_jwt = true
