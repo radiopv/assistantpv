@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface SponsorshipHistoryDialogProps {
   isOpen: boolean;
@@ -12,8 +13,8 @@ interface SponsorshipHistoryDialogProps {
 interface HistoryEntry {
   id: string;
   action: string;
-  reason: string;
   created_at: string;
+  reason?: string;
   performed_by: {
     name: string;
   };
@@ -24,35 +25,45 @@ export const SponsorshipHistoryDialog = ({
   onClose,
   sponsorshipId
 }: SponsorshipHistoryDialogProps) => {
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: history } = useQuery({
+    queryKey: ['sponsorship-history', sponsorshipId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sponsorship_history')
+        .select(`
+          id,
+          action,
+          created_at,
+          reason,
+          performed_by (
+            name
+          )
+        `)
+        .eq('sponsorship_id', sponsorshipId)
+        .order('created_at', { ascending: false });
 
-  useEffect(() => {
-    const fetchHistory = async () => {
-      if (!isOpen) return;
-      
-      setIsLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('sponsorship_history')
-          .select(`
-            *,
-            performed_by:sponsors(name)
-          `)
-          .eq('sponsorship_id', sponsorshipId)
-          .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as HistoryEntry[];
+    },
+    enabled: isOpen && !!sponsorshipId
+  });
 
-        if (error) throw error;
-        setHistory(data);
-      } catch (error) {
-        console.error('Error fetching history:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHistory();
-  }, [sponsorshipId, isOpen]);
+  const getActionLabel = (action: string) => {
+    switch (action) {
+      case 'created':
+        return 'Création';
+      case 'transferred':
+        return 'Transfert';
+      case 'paused':
+        return 'Mise en pause';
+      case 'resumed':
+        return 'Reprise';
+      case 'ended':
+        return 'Fin';
+      default:
+        return action;
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -60,37 +71,25 @@ export const SponsorshipHistoryDialog = ({
         <DialogHeader>
           <DialogTitle>Historique du parrainage</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto">
-          {isLoading ? (
-            <p>Chargement...</p>
-          ) : history.length === 0 ? (
-            <p>Aucun historique disponible</p>
-          ) : (
-            history.map((entry) => (
-              <div key={entry.id} className="border-b pb-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium">
-                      {entry.action === 'transferred' && 'Transfert'}
-                      {entry.action === 'pause' && 'Mise en pause'}
-                      {entry.action === 'resume' && 'Reprise'}
-                    </p>
-                    {entry.reason && (
-                      <p className="text-sm text-gray-600">{entry.reason}</p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">
-                      {format(new Date(entry.created_at), 'dd/MM/yyyy HH:mm')}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      par {entry.performed_by?.name || 'Système'}
-                    </p>
-                  </div>
-                </div>
+        <div className="space-y-4">
+          {history?.map((entry) => (
+            <div key={entry.id} className="border-l-2 border-gray-200 pl-4 py-2">
+              <div className="text-sm font-medium">
+                {getActionLabel(entry.action)}
               </div>
-            ))
-          )}
+              <div className="text-xs text-gray-500">
+                {format(new Date(entry.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
+              </div>
+              {entry.reason && (
+                <div className="text-sm text-gray-600 mt-1">
+                  Raison : {entry.reason}
+                </div>
+              )}
+              <div className="text-xs text-gray-500 mt-1">
+                Par : {entry.performed_by.name}
+              </div>
+            </div>
+          ))}
         </div>
       </DialogContent>
     </Dialog>
