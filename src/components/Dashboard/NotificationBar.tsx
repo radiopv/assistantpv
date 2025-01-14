@@ -5,34 +5,58 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export const NotificationBar = () => {
   const navigate = useNavigate();
 
-  const { data: notifications } = useQuery({
+  const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ['unread-notifications'],
     queryFn: async () => {
       try {
+        console.log("Fetching unread notifications...");
         const { count, error } = await supabase
           .from('notifications')
           .select('*', { count: 'exact', head: true })
           .eq('is_read', false);
         
         if (error) {
-          console.warn('Notifications table not accessible:', error.message);
+          console.error('Error fetching notifications:', error);
           return 0;
         }
         
+        console.log("Found unread notifications:", count);
         return count || 0;
       } catch (error) {
-        console.warn('Error fetching notifications:', error);
+        console.error('Error in notification query:', error);
         return 0;
       }
     },
-    meta: {
-      errorMessage: "Erreur lors du chargement des notifications"
-    }
+    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
   });
+
+  // Écouter les changements en temps réel sur la table notifications
+  useEffect(() => {
+    const channel = supabase
+      .channel('notification-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications'
+        },
+        () => {
+          console.log("Notification change detected, refetching...");
+          refetchNotifications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetchNotifications]);
 
   const { data: messages } = useQuery({
     queryKey: ['unread-messages'],
@@ -54,9 +78,7 @@ export const NotificationBar = () => {
         return 0;
       }
     },
-    meta: {
-      errorMessage: "Erreur lors du chargement des messages"
-    }
+    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
   });
 
   const handleNotificationsClick = () => {
