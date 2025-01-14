@@ -34,7 +34,6 @@ export const spanishTranslations = {
   noCategoryChildren: "No hay niños disponibles en esta categoría",
   sponsoredBy: "Apadrinado por",
   sponsorThisChild: "Apadrinar este niño",
-  // Traducciones de la página de inicio
   dashboard: "Panel de control",
   dashboardDescription: "Gestiona tus apadrinamientos y sigue el impacto de tu ayuda",
   howItWorks: "Cómo funciona",
@@ -54,7 +53,6 @@ export const spanishTranslations = {
   ourMissionDescription: "Ayudar a los niños cubanos a tener un mejor futuro",
   joinUs: "Únete a nosotros",
   joinUsDescription: "Juntos podemos hacer la diferencia",
-  // Nuevas traducciones
   changeLifeToday: "Cambia una vida hoy",
   supportMakesADifference: "Tu apoyo hace la diferencia",
   childrenWaitingForSponsorship: "Niños esperando apadrinamiento",
@@ -68,5 +66,14 @@ export const spanishTranslations = {
   completeProfile: "Completa tu perfil",
   fillRequiredInfo: "Completa la información requerida",
   startSponsorship: "Comienza el apadrinamiento",
-  startSponsorshipJourney: "Inicia tu aventura de apadrinamiento"
+  startSponsorshipJourney: "Inicia tu aventura de apadrinamiento",
+  photos: "Fotos",
+  testimonials: "Testimonios",
+  statistics: "Estadísticas",
+  birthday: "Cumpleaños",
+  viewAlbum: "Ver álbum",
+  addTestimonial: "Agregar testimonio",
+  nextBirthday: "Próximo cumpleaños",
+  daysLeft: "días restantes",
+  viewProfile: "Ver perfil"
 };

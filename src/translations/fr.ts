@@ -68,5 +68,14 @@ export const frenchTranslations = {
   completeProfile: "Complétez votre profil",
   fillRequiredInfo: "Remplissez les informations requises",
   startSponsorship: "Commencez le parrainage",
-  startSponsorshipJourney: "Démarrez votre aventure de parrainage"
+  startSponsorshipJourney: "Démarrez votre aventure de parrainage",
+  photos: "Photos",
+  testimonials: "Témoignages",
+  statistics: "Statistiques", 
+  birthday: "Anniversaire",
+  viewAlbum: "Voir l'album",
+  addTestimonial: "Ajouter un témoignage",
+  nextBirthday: "Prochain anniversaire",
+  daysLeft: "jours restants",
+  viewProfile: "Voir le profil"
 };
