@@ -48,7 +48,6 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
       const fileExt = file.name.split('.').pop();
       const filePath = `${childId}/${Math.random()}.${fileExt}`;
 
-      // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('album-media')
         .upload(filePath, file);
@@ -61,7 +60,6 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       console.log("File uploaded successfully, creating album media entry...");
 
-      // Create album media entry
       const { error: dbError } = await supabase
         .from('album_media')
         .insert({
