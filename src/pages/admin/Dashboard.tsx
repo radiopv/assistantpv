@@ -12,12 +12,15 @@ export const AdminDashboard = () => {
   const { data: unreadCount } = useQuery({
     queryKey: ['unread-validations'],
     queryFn: async () => {
+      console.log("Fetching unread counts...");
       const [sponsorshipCount, photoCount, testimonialCount, childRequestCount] = await Promise.all([
         supabase.from('sponsorship_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('album_media').select('*', { count: 'exact', head: true }).eq('is_approved', false),
         supabase.from('temoignage').select('*', { count: 'exact', head: true }).eq('is_approved', false),
         supabase.from('child_assignment_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending')
       ]);
+
+      console.log("Counts fetched:", { sponsorshipCount, photoCount, testimonialCount, childRequestCount });
 
       return {
         sponsorships: sponsorshipCount.count || 0,
