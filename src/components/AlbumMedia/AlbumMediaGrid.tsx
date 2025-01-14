@@ -19,6 +19,23 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
     queryKey: ['album-media', childId],
     queryFn: async () => {
       try {
+        console.log('Fetching photos for child:', childId);
+        
+        const { data: sponsorships, error: sponsorshipError } = await supabase
+          .from('sponsorships')
+          .select('id')
+          .eq('child_id', childId)
+          .eq('status', 'active')
+          .single();
+
+        if (sponsorshipError) {
+          console.error('Error fetching sponsorship:', sponsorshipError);
+          throw sponsorshipError;
+        }
+
+        const sponsorshipId = sponsorships?.id;
+        console.log('Found sponsorship:', sponsorshipId);
+
         const { data: mediaData, error: mediaError } = await supabase
           .from('album_media')
           .select(`
@@ -32,7 +49,8 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
             sponsor_id,
             sponsors (
               name,
-              role
+              role,
+              is_anonymous
             )
           `)
           .eq('child_id', childId)
@@ -40,6 +58,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
           .order('created_at', { ascending: false });
 
         if (mediaError) {
+          console.error('Error fetching media:', mediaError);
           toast({
             variant: "destructive",
             title: "Erreur",
