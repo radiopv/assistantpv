@@ -5,9 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { format, addYears, differenceInDays } from "date-fns";
 import { fr, es } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { DetailedStats } from "@/components/Dashboard/DetailedStats";
+import { AssistantStats } from "@/components/Dashboard/AdvancedStats/AssistantStats";
+import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
+import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 
 const Dashboard = () => {
   const { language } = useLanguage();
+  const { user, isAssistant } = useAuth();
   
   const translations = {
     fr: {
@@ -18,7 +24,9 @@ const Dashboard = () => {
       today: "Aujourd'hui !",
       days: "jours",
       willCelebrate: "Fêtera ses",
-      years: "ans"
+      years: "ans",
+      statistics: "Statistiques",
+      overview: "Vue d'ensemble"
     },
     es: {
       dashboard: "Panel de control",
@@ -28,11 +36,13 @@ const Dashboard = () => {
       today: "¡Hoy!",
       days: "días",
       willCelebrate: "Cumplirá",
-      years: "años"
+      years: "años",
+      statistics: "Estadísticas",
+      overview: "Vista general"
     }
   };
 
-  const t = translations[language];
+  const t = translations[language as keyof typeof translations];
   const dateLocale = language === 'fr' ? fr : es;
 
   const { data: upcomingBirthdays } = useQuery({
@@ -66,12 +76,13 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="container mx-auto p-6 space-y-8 animate-fade-in">
+    <div className="container mx-auto p-4 md:p-6 space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">{t.dashboard}</h1>
         <NotificationBar />
       </div>
       
+      {/* Messages récents */}
       <Card className="p-6">
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-800">{t.recentMessages}</h2>
@@ -81,6 +92,21 @@ const Dashboard = () => {
         </div>
       </Card>
 
+      {/* Statistiques avancées pour les assistants */}
+      {isAssistant && (
+        <div className="grid gap-6">
+          <Card className="p-6">
+            <h2 className="text-xl font-semibold mb-6">{t.statistics}</h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <AssistantStats />
+              <SponsorshipStats />
+              <UserEngagementStats />
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Anniversaires à venir */}
       {upcomingBirthdays && upcomingBirthdays.length > 0 && (
         <Card className="p-6">
           <div className="space-y-4">
@@ -106,6 +132,9 @@ const Dashboard = () => {
           </div>
         </Card>
       )}
+
+      {/* Statistiques détaillées */}
+      <DetailedStats />
     </div>
   );
 };
