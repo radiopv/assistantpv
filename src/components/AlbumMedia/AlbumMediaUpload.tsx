@@ -6,7 +6,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { notifyActiveSponsor } from "@/utils/sponsor-notifications";
 
 interface AlbumMediaUploadProps {
   childId: string;
@@ -49,6 +48,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
       const fileExt = file.name.split('.').pop();
       const filePath = `${childId}/${Math.random()}.${fileExt}`;
 
+      // Upload file to storage
       const { error: uploadError } = await supabase.storage
         .from('album-media')
         .upload(filePath, file);
@@ -61,6 +61,20 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       console.log("File uploaded successfully, saving to database...");
 
+      // Get child info for notifications
+      const { data: child } = await supabase
+        .from('children')
+        .select(`
+          name,
+          sponsorships (
+            sponsor_id,
+            status
+          )
+        `)
+        .eq('id', childId)
+        .single();
+
+      // Create album media entry
       const { error: dbError } = await supabase
         .from('album_media')
         .insert({
@@ -88,18 +102,25 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         console.error("Error creating audit log:", auditError);
       }
 
-      console.log("Database entry created, notifying sponsor...");
+      // Create notification for active sponsor
+      if (child?.sponsorships) {
+        const activeSponsorship = child.sponsorships.find(s => s.status === 'active');
+        if (activeSponsorship?.sponsor_id) {
+          const { error: notifError } = await supabase
+            .from('notifications')
+            .insert({
+              recipient_id: activeSponsorship.sponsor_id,
+              type: 'photo_upload',
+              title: 'Nouvelle photo ajoutée',
+              content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}`,
+              link: `/children/${childId}/album`
+            });
 
-      // Notify sponsor about new media
-      const notificationSent = await notifyActiveSponsor(
-        childId,
-        t.success,
-        file.type.startsWith('image/') 
-          ? "Une nouvelle photo a été ajoutée à l'album"
-          : "Une nouvelle vidéo a été ajoutée à l'album"
-      );
-
-      console.log("Notification status:", notificationSent ? "Sent successfully" : "No active sponsor found");
+          if (notifError) {
+            console.error("Error creating notification:", notifError);
+          }
+        }
+      }
 
       toast({
         title: t.success,
