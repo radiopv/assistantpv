@@ -19,7 +19,6 @@ interface AvailableChildrenGridProps {
 }
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
-  const { t } = useLanguage();
   const navigate = useNavigate();
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
@@ -57,7 +56,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   };
 
   const formatAge = (birthDate: string) => {
-    if (!birthDate) return t("ageNotAvailable");
+    if (!birthDate) return "Âge non disponible";
     
     try {
       const today = new Date();
@@ -66,17 +65,17 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       const months = differenceInMonths(today, birth) % 12;
       
       if (years === 0) {
-        return `${months} ${t("months")}`;
+        return `${months} mois`;
       }
       
       if (months === 0) {
-        return `${years} ${t("years")}`;
+        return `${years} ans`;
       }
       
-      return `${years} ${t("years")} ${months} ${t("months")}`;
+      return `${years} ans ${months} mois`;
     } catch (error) {
       console.error('Error calculating age:', error);
-      return t("ageNotAvailable");
+      return "Âge non disponible";
     }
   };
 
@@ -97,7 +96,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   if (!children.length) {
     return (
       <div className="text-center py-8 text-gray-500">
-        {t("noChildren")}
+        Aucun enfant disponible
       </div>
     );
   }
@@ -132,7 +131,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               </div>
               {child.is_sponsored && child.sponsor_name && (
                 <div className="mt-2 text-sm bg-orange-500/80 px-2 py-1 rounded-full inline-block">
-                  {t("sponsoredBy")}: {child.sponsor_name}
+                  Parrainé par : {child.sponsor_name}
                 </div>
               )}
             </div>
@@ -141,7 +140,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
           <div className="p-4 space-y-4">
             {child.description && (
               <div className="space-y-2 bg-white/80 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-600">{t("description")}:</h4>
+                <h4 className="text-sm font-medium text-gray-600">Description :</h4>
                 <ScrollArea className="h-20">
                   <p className="text-sm text-gray-600">{child.description}</p>
                 </ScrollArea>
@@ -150,7 +149,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
             {child.story && (
               <div className="space-y-2 bg-white/80 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-600">{t("story")}:</h4>
+                <h4 className="text-sm font-medium text-gray-600">Histoire :</h4>
                 <ScrollArea className="h-20">
                   <p className="text-sm text-gray-600">{child.story}</p>
                 </ScrollArea>
@@ -159,7 +158,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
             {Array.isArray(child.needs) && child.needs.length > 0 && (
               <div className="space-y-2 bg-white/80 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-600">{t("needs")}:</h4>
+                <h4 className="text-sm font-medium text-gray-600">Besoins :</h4>
                 <div className="space-y-2">
                   {child.needs.map((need: any, index: number) => (
                     <div
@@ -172,7 +171,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                     >
                       <div className="flex items-center justify-between">
                         <span className={`font-medium ${need.is_urgent ? "text-red-800" : "text-orange-800"}`}>
-                          {t(need.category)}
+                          {need.category}
                         </span>
                         {need.is_urgent && (
                           <span className="text-red-600 font-bold text-sm">
@@ -196,7 +195,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white group-hover:scale-105 transition-all duration-300"
             >
               <Info className="w-4 h-4 mr-2" />
-              {t("learnMore")}
+              En savoir plus
             </Button>
           </div>
         </Card>
