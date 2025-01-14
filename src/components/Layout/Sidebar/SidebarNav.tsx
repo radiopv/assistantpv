@@ -14,6 +14,7 @@ import {
   Link,
   Mail,
   Building2,
+  ClipboardList,
 } from "lucide-react";
 import { SidebarLink } from "./SidebarLink";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -78,6 +79,11 @@ const adminLinks = [
     href: "/admin/link-checker",
     label: "Vérification des liens",
     icon: Link,
+  },
+  {
+    href: "/admin/audit-logs",
+    label: "Historique des modifications",
+    icon: ClipboardList,
   },
   {
     href: "/messages",
