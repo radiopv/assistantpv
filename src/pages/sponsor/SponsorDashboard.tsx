@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Share2, ChevronDown, ChevronUp, Image, Calendar, Heart, ChartBar, Book, ListChecks } from "lucide-react";
+import { Share2, ChevronDown, ChevronUp, Image, Calendar, Heart, ChartBar, Book, ListChecks, ImagePlus, MessageSquarePlus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -18,29 +19,6 @@ import {
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { convertJsonToNeeds } from "@/types/needs";
-
-interface SponsorDashboardTranslations {
-  welcomeMessage: string;
-  inviteFriends: string;
-  loginRequired: string;
-  login: string;
-  loading: string;
-  sponsorDashboard: string;
-  shareError: string;
-  copySuccess: string;
-  copyError: string;
-  photos: string;
-  testimonials: string;
-  statistics: string;
-  birthday: string;
-  addTestimonial: string;
-  nextBirthday: string;
-  daysLeft: string;
-  needs: string;
-  story: string;
-  description: string;
-  noTestimonials: string;
-}
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -69,6 +47,7 @@ const SponsorDashboard = () => {
       story: "Histoire",
       description: "Description",
       noTestimonials: "Aucun témoignage pour le moment",
+      addPhoto: "Ajouter une photo",
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -91,10 +70,11 @@ const SponsorDashboard = () => {
       story: "Historia",
       description: "Descripción",
       noTestimonials: "No hay testimonios por el momento",
+      addPhoto: "Agregar una foto",
     }
   } as const;
 
-  const t = translations[language as keyof typeof translations] as SponsorDashboardTranslations;
+  const t = translations[language as keyof typeof translations];
 
   const { data: sponsoredChildren, isLoading } = useQuery({
     queryKey: ["sponsored-children", user?.id],
@@ -270,6 +250,25 @@ const SponsorDashboard = () => {
                     </AccordionTrigger>
                     
                     <AccordionContent className="px-6 pb-4">
+                      <div className="flex gap-2 mb-4">
+                        <Button
+                          variant="outline"
+                          className="flex items-center gap-2"
+                          onClick={() => handleAddPhoto(sponsorship.children?.id)}
+                        >
+                          <ImagePlus className="w-4 h-4" />
+                          {t.addPhoto}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="flex items-center gap-2"
+                          onClick={() => handleAddTestimonial(sponsorship.children?.id)}
+                        >
+                          <MessageSquarePlus className="w-4 h-4" />
+                          {t.addTestimonial}
+                        </Button>
+                      </div>
+
                       <Tabs defaultValue="photos" className="w-full">
                         <TabsList className="grid w-full grid-cols-6 mb-4">
                           <TabsTrigger value="photos" className="flex items-center gap-2">
