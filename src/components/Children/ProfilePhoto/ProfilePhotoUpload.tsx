@@ -65,16 +65,23 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         .from('children-photos')
         .getPublicUrl(filePath);
 
-      // Notify sponsors about the new photo
+      // Fetch child details and sponsorships
       const { data: child } = await supabase
         .from('children')
         .select('name, sponsorships(sponsor_id)')
         .eq('id', childId)
         .single();
 
+      console.log("Child data fetched:", child);
+
       if (child?.sponsorships) {
-        for (const sponsorship of child.sponsorships) {
-          await supabase
+        console.log("Creating notifications for sponsors...");
+        
+        // Create notifications for each sponsor
+        const notificationPromises = child.sponsorships.map(async (sponsorship: any) => {
+          console.log("Creating notification for sponsor:", sponsorship.sponsor_id);
+          
+          return supabase
             .from('notifications')
             .insert({
               recipient_id: sponsorship.sponsor_id,
@@ -83,7 +90,11 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
               content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
               link: `/children/${childId}/album`
             });
-        }
+        });
+
+        // Wait for all notifications to be created
+        const notificationResults = await Promise.all(notificationPromises);
+        console.log("Notification results:", notificationResults);
       }
 
       onUploadComplete(publicUrl);
@@ -93,6 +104,7 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         description: "La photo de profil a été mise à jour avec succès.",
       });
     } catch (error: any) {
+      console.error("Error during upload:", error);
       toast({
         variant: "destructive",
         title: "Erreur",
