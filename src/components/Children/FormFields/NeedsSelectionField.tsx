@@ -1,133 +1,110 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Need } from "@/types/needs";
-import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
+import { Select } from "@/components/ui/select";
 
 interface NeedsSelectionFieldProps {
-  selectedNeeds: Need[];
-  onNeedsChange: (needs: Need[]) => void;
-  translations: any;
+  childId: string;
+  onChange: (needs: any[]) => void;
 }
 
-export const NeedsSelectionField = ({ selectedNeeds, onNeedsChange, translations }: NeedsSelectionFieldProps) => {
-  const [availableNeeds, setAvailableNeeds] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+export const NeedsSelectionField = ({ childId, onChange }: NeedsSelectionFieldProps) => {
+  const [needs, setNeeds] = useState<any[]>([]);
+  const [selectedNeeds, setSelectedNeeds] = useState<any[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchNeeds = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('aid_categories')
-          .select('name');
+      const { data, error } = await supabase
+        .from('needs')
+        .select('*');
 
-        if (error) throw error;
-
-        setAvailableNeeds(data?.map(n => n.name) || [
-          "education",
-          "jouet",
-          "vetement",
-          "nourriture",
-          "medicament",
-          "hygiene",
-          "autre"
-        ]);
-      } catch (error) {
-        console.error('Error fetching needs:', error);
-        setAvailableNeeds([
-          "education",
-          "jouet",
-          "vetement",
-          "nourriture",
-          "medicament",
-          "hygiene",
-          "autre"
-        ]);
-      } finally {
-        setLoading(false);
+      if (error) {
+        console.error("Error fetching needs:", error);
+        return;
       }
+
+      setNeeds(data || []);
     };
 
     fetchNeeds();
   }, []);
 
-  const toggleNeed = (category: string) => {
-    const existingNeed = selectedNeeds.find(n => n.category === category);
-    if (existingNeed) {
-      onNeedsChange(selectedNeeds.filter(n => n.category !== category));
-    } else {
-      onNeedsChange([...selectedNeeds, { category, description: '', is_urgent: false }]);
+  const handleNeedsChange = async (needs: any[]) => {
+    try {
+      // Update needs
+      const { error: updateError } = await supabase
+        .from('children')
+        .update({ needs })
+        .eq('id', childId);
+
+      if (updateError) throw updateError;
+
+      // Get active sponsor
+      const { data: sponsorship } = await supabase
+        .from('sponsorships')
+        .select('sponsor_id, children (name)')
+        .eq('child_id', childId)
+        .eq('status', 'active')
+        .single();
+
+      if (sponsorship?.sponsor_id) {
+        // Create notification for needs update
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert({
+            recipient_id: sponsorship.sponsor_id,
+            type: 'needs_update',
+            title: 'Mise à jour des besoins',
+            content: `Les besoins de ${sponsorship.children.name} ont été mis à jour`,
+            link: `/children/${childId}`
+          });
+
+        if (notifError) {
+          console.error("Error creating notification:", notifError);
+        }
+      }
+
+      // Create audit log
+      const { error: auditError } = await supabase
+        .from('children_audit_logs')
+        .insert({
+          child_id: childId,
+          action: 'needs_updated',
+          changes: {
+            needs
+          }
+        });
+
+      if (auditError) {
+        console.error("Error creating audit log:", auditError);
+      }
+
+      onChange(needs);
+    } catch (error) {
+      console.error("Error updating needs:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la mise à jour des besoins"
+      });
     }
   };
 
-  const updateNeedDescription = (category: string, description: string) => {
-    onNeedsChange(
-      selectedNeeds.map(need => 
-        need.category === category 
-          ? { ...need, description } 
-          : need
-      )
-    );
-  };
-
-  const toggleUrgent = (category: string) => {
-    onNeedsChange(
-      selectedNeeds.map(need => 
-        need.category === category 
-          ? { ...need, is_urgent: !need.is_urgent } 
-          : need
-      )
-    );
-  };
-
-  if (loading) {
-    return <div>Chargement des besoins...</div>;
-  }
-
   return (
-    <div className="space-y-4">
-      <Label>{translations.childNeeds}</Label>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-        {availableNeeds.map((category) => (
-          <Button
-            key={category}
-            type="button"
-            variant={selectedNeeds.some(n => n.category === category) ? "default" : "outline"}
-            onClick={() => toggleNeed(category)}
-            className="w-full"
-          >
-            {category}
-          </Button>
-        ))}
-      </div>
-
-      {selectedNeeds.length > 0 && (
-        <div className="space-y-4 mt-4">
-          {selectedNeeds.map((need) => (
-            <div key={need.category} className="space-y-2 p-4 border rounded-lg">
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id={`urgent-${need.category}`}
-                  checked={need.is_urgent}
-                  onCheckedChange={() => toggleUrgent(need.category)}
-                />
-                <Label htmlFor={`urgent-${need.category}`}>
-                  {translations.urgentNeed} {need.category}
-                </Label>
-              </div>
-              
-              <Input
-                placeholder={translations.needDescription}
-                value={need.description}
-                onChange={(e) => updateNeedDescription(need.category, e.target.value)}
-              />
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+    <Select
+      multiple
+      value={selectedNeeds}
+      onValueChange={(value) => {
+        setSelectedNeeds(value);
+        handleNeedsChange(value);
+      }}
+    >
+      {needs.map((need) => (
+        <Select.Item key={need.id} value={need.id}>
+          {need.name}
+        </Select.Item>
+      ))}
+    </Select>
   );
 };

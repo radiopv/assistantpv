@@ -118,6 +118,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
           if (notifError) {
             console.error("Error creating notification:", notifError);
+            throw notifError;
           }
         }
       }
