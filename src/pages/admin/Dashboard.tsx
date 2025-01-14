@@ -7,6 +7,7 @@ import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignme
 import { MessageList } from "@/components/Messages/MessageList";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { AlertCircle, Calendar, Heart, Image, MessageSquare, User } from "lucide-react";
 
 export const AdminDashboard = () => {
   const { data: unreadCount } = useQuery({
@@ -50,33 +51,51 @@ export const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
-          <h3 className="font-semibold text-gray-700">Parrainages en attente</h3>
+          <div className="flex items-center gap-2">
+            <Heart className="h-5 w-5 text-cuba-coral" />
+            <h3 className="font-semibold text-gray-700">Parrainages en attente</h3>
+          </div>
           <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.sponsorships || 0}</p>
         </Card>
         <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
-          <h3 className="font-semibold text-gray-700">Photos à valider</h3>
+          <div className="flex items-center gap-2">
+            <Image className="h-5 w-5 text-cuba-coral" />
+            <h3 className="font-semibold text-gray-700">Photos à valider</h3>
+          </div>
           <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.photos || 0}</p>
         </Card>
         <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
-          <h3 className="font-semibold text-gray-700">Témoignages à valider</h3>
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5 text-cuba-coral" />
+            <h3 className="font-semibold text-gray-700">Témoignages à valider</h3>
+          </div>
           <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.testimonials || 0}</p>
         </Card>
         <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
-          <h3 className="font-semibold text-gray-700">Demandes d'enfants</h3>
+          <div className="flex items-center gap-2">
+            <User className="h-5 w-5 text-cuba-coral" />
+            <h3 className="font-semibold text-gray-700">Demandes d'enfants</h3>
+          </div>
           <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.childRequests || 0}</p>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card className="p-4">
-          <h3 className="text-xl font-semibold mb-4">Messages récents</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <MessageSquare className="h-5 w-5 text-cuba-coral" />
+            <h3 className="text-xl font-semibold">Messages récents</h3>
+          </div>
           <p className="text-gray-600">
             Consultez vos messages et notifications dans l'onglet Messages.
           </p>
         </Card>
 
         <Card className="p-4">
-          <h3 className="text-xl font-semibold mb-4">Anniversaires à venir</h3>
+          <div className="flex items-center gap-2 mb-4">
+            <Calendar className="h-5 w-5 text-cuba-coral" />
+            <h3 className="text-xl font-semibold">Anniversaires à venir</h3>
+          </div>
           {upcomingBirthdays && upcomingBirthdays.length > 0 ? (
             <ul className="space-y-2">
               {upcomingBirthdays.map((child) => {
@@ -108,39 +127,54 @@ export const AdminDashboard = () => {
       <Tabs defaultValue="sponsorships" className="space-y-4">
         <TabsList className="flex flex-wrap gap-2">
           <TabsTrigger value="sponsorships" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
-            Parrainages
-            {unreadCount?.sponsorships ? (
-              <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
-                {unreadCount.sponsorships}
-              </span>
-            ) : null}
+            <div className="flex items-center gap-2">
+              <Heart className="h-4 w-4" />
+              <span>Parrainages</span>
+              {unreadCount?.sponsorships ? (
+                <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
+                  {unreadCount.sponsorships}
+                </span>
+              ) : null}
+            </div>
           </TabsTrigger>
           <TabsTrigger value="photos" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
-            Photos
-            {unreadCount?.photos ? (
-              <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
-                {unreadCount.photos}
-              </span>
-            ) : null}
+            <div className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              <span>Photos</span>
+              {unreadCount?.photos ? (
+                <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
+                  {unreadCount.photos}
+                </span>
+              ) : null}
+            </div>
           </TabsTrigger>
           <TabsTrigger value="testimonials" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
-            Témoignages
-            {unreadCount?.testimonials ? (
-              <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
-                {unreadCount.testimonials}
-              </span>
-            ) : null}
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span>Témoignages</span>
+              {unreadCount?.testimonials ? (
+                <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
+                  {unreadCount.testimonials}
+                </span>
+              ) : null}
+            </div>
           </TabsTrigger>
           <TabsTrigger value="child-requests" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
-            Demandes d'enfants
-            {unreadCount?.childRequests ? (
-              <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
-                {unreadCount.childRequests}
-              </span>
-            ) : null}
+            <div className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              <span>Demandes d'enfants</span>
+              {unreadCount?.childRequests ? (
+                <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
+                  {unreadCount.childRequests}
+                </span>
+              ) : null}
+            </div>
           </TabsTrigger>
           <TabsTrigger value="messages" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
-            Messages
+            <div className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              <span>Messages</span>
+            </div>
           </TabsTrigger>
         </TabsList>
 
