@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { EmailForm } from "./EmailForm";
 import { sendEmail } from "@/api/email";
+import { supabase } from "@/integrations/supabase/client";
 
 const EmailManager = () => {
   const { t } = useLanguage();
