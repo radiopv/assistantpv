@@ -1,6 +1,5 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface PasswordFieldsProps {
   password: string;
@@ -9,12 +8,10 @@ interface PasswordFieldsProps {
 }
 
 export const PasswordFields = ({ password, confirmPassword, onChange }: PasswordFieldsProps) => {
-  const { t } = useLanguage();
-
   return (
     <div className="grid gap-4">
       <div className="space-y-2">
-        <Label htmlFor="password">{t("password")} *</Label>
+        <Label htmlFor="password">Mot de passe *</Label>
         <Input
           id="password"
           name="password"
@@ -26,7 +23,7 @@ export const PasswordFields = ({ password, confirmPassword, onChange }: Password
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">{t("confirmPassword")} *</Label>
+        <Label htmlFor="confirmPassword">Confirmer le mot de passe *</Label>
         <Input
           id="confirmPassword"
           name="confirmPassword"

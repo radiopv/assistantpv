@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { PersonalInfoFields } from "@/components/Sponsor/SponsorshipForm/PersonalInfoFields";
 import { SponsorshipTypeSelection } from "@/components/Sponsor/SponsorshipForm/SponsorshipTypeSelection";
 import { PasswordFields } from "@/components/Sponsor/SponsorshipForm/PasswordFields";
@@ -25,7 +24,6 @@ interface FormData {
 const BecomeSponsor = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     full_name: "",

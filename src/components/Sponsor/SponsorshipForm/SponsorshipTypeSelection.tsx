@@ -1,6 +1,5 @@
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsorshipTypeSelectionProps {
   isLongTerm: boolean;
@@ -13,8 +12,6 @@ export const SponsorshipTypeSelection = ({
   isOneTime,
   onCheckboxChange,
 }: SponsorshipTypeSelectionProps) => {
-  const { t } = useLanguage();
-
   return (
     <div className="space-y-4">
       <div className="flex items-center space-x-2">
@@ -23,7 +20,7 @@ export const SponsorshipTypeSelection = ({
           checked={isLongTerm}
           onCheckedChange={() => onCheckboxChange('is_long_term')}
         />
-        <Label htmlFor="is_long_term">{t("longTermSponsorship")}</Label>
+        <Label htmlFor="is_long_term">Parrainage à long terme</Label>
       </div>
 
       <div className="flex items-center space-x-2">
@@ -32,11 +29,11 @@ export const SponsorshipTypeSelection = ({
           checked={isOneTime}
           onCheckedChange={() => onCheckboxChange('is_one_time')}
         />
-        <Label htmlFor="is_one_time">{t("oneTimeSponsorship")}</Label>
+        <Label htmlFor="is_one_time">Parrainage ponctuel</Label>
       </div>
 
       <p className="text-sm text-gray-500">
-        {t("sponsorshipTerminationNote")}
+        Vous pourrez mettre fin à votre parrainage à tout moment si nécessaire
       </p>
     </div>
   );
