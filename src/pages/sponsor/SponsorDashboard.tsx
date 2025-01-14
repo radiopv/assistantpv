@@ -16,6 +16,26 @@ import {
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+interface SponsorDashboardTranslations {
+  welcomeMessage: string;
+  inviteFriends: string;
+  loginRequired: string;
+  login: string;
+  loading: string;
+  sponsorDashboard: string;
+  shareError: string;
+  copySuccess: string;
+  copyError: string;
+  photos: string;
+  testimonials: string;
+  statistics: string;
+  birthday: string;
+  addTestimonial: string;
+  nextBirthday: string;
+  daysLeft: string;
+  viewProfile: string;
+}
+
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
@@ -36,10 +56,9 @@ const SponsorDashboard = () => {
       testimonials: "Témoignages",
       statistics: "Statistiques",
       birthday: "Anniversaire",
-      needs: "Besoins",
+      addTestimonial: "Ajouter un témoignage",
       nextBirthday: "Prochain anniversaire",
       daysLeft: "jours restants",
-      addTestimonial: "Ajouter un témoignage",
       viewProfile: "Voir le profil"
     },
     es: {
@@ -51,11 +70,19 @@ const SponsorDashboard = () => {
       sponsorDashboard: "Mi Panel de Padrino",
       shareError: "El compartir no está disponible en su dispositivo",
       copySuccess: "¡Enlace copiado al portapapeles!",
-      copyError: "No se pudo copiar el enlace"
+      copyError: "No se pudo copiar el enlace",
+      photos: "Fotos",
+      testimonials: "Testimonios",
+      statistics: "Estadísticas",
+      birthday: "Cumpleaños",
+      addTestimonial: "Agregar testimonio",
+      nextBirthday: "Próximo cumpleaños",
+      daysLeft: "días restantes",
+      viewProfile: "Ver perfil"
     }
-  };
+  } as const;
 
-  const t = translations[language as keyof typeof translations];
+  const t = translations[language as keyof typeof translations] as SponsorDashboardTranslations;
 
   const { data: sponsoredChildren, isLoading } = useQuery({
     queryKey: ["sponsored-children", user?.id],
@@ -86,7 +113,6 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  // Query pour récupérer les photos des enfants
   const { data: childrenPhotos } = useQuery({
     queryKey: ["children-photos", sponsoredChildren?.map(s => s.child_id)],
     queryFn: async () => {
