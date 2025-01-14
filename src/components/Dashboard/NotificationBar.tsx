@@ -32,10 +32,10 @@ export const NotificationBar = () => {
         return 0;
       }
     },
-    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
-  // Écouter les changements en temps réel sur la table notifications
+  // Listen for real-time changes on the notifications table
   useEffect(() => {
     const channel = supabase
       .channel('notification-changes')
@@ -78,7 +78,7 @@ export const NotificationBar = () => {
         return 0;
       }
     },
-    refetchInterval: 30000, // Rafraîchir toutes les 30 secondes
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   const handleNotificationsClick = () => {
