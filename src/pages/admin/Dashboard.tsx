@@ -31,32 +31,83 @@ export const AdminDashboard = () => {
     }
   });
 
+  const { data: upcomingBirthdays } = useQuery({
+    queryKey: ['upcoming-birthdays'],
+    queryFn: async () => {
+      const { data: children } = await supabase
+        .from('children')
+        .select('name, birth_date')
+        .eq('status', 'sponsored')
+        .order('birth_date');
+      
+      return children || [];
+    }
+  });
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-bold mb-6">Tableau de bord administrateur</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <Card className="p-4">
-          <h3 className="font-semibold">Parrainages en attente</h3>
-          <p className="text-2xl">{unreadCount?.sponsorships || 0}</p>
+        <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
+          <h3 className="font-semibold text-gray-700">Parrainages en attente</h3>
+          <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.sponsorships || 0}</p>
         </Card>
-        <Card className="p-4">
-          <h3 className="font-semibold">Photos à valider</h3>
-          <p className="text-2xl">{unreadCount?.photos || 0}</p>
+        <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
+          <h3 className="font-semibold text-gray-700">Photos à valider</h3>
+          <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.photos || 0}</p>
         </Card>
-        <Card className="p-4">
-          <h3 className="font-semibold">Témoignages à valider</h3>
-          <p className="text-2xl">{unreadCount?.testimonials || 0}</p>
+        <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
+          <h3 className="font-semibold text-gray-700">Témoignages à valider</h3>
+          <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.testimonials || 0}</p>
         </Card>
+        <Card className="p-4 bg-white shadow hover:shadow-md transition-shadow">
+          <h3 className="font-semibold text-gray-700">Demandes d'enfants</h3>
+          <p className="text-2xl font-bold text-cuba-coral">{unreadCount?.childRequests || 0}</p>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card className="p-4">
-          <h3 className="font-semibold">Demandes d'enfants</h3>
-          <p className="text-2xl">{unreadCount?.childRequests || 0}</p>
+          <h3 className="text-xl font-semibold mb-4">Messages récents</h3>
+          <p className="text-gray-600">
+            Consultez vos messages et notifications dans l'onglet Messages.
+          </p>
+        </Card>
+
+        <Card className="p-4">
+          <h3 className="text-xl font-semibold mb-4">Anniversaires à venir</h3>
+          {upcomingBirthdays && upcomingBirthdays.length > 0 ? (
+            <ul className="space-y-2">
+              {upcomingBirthdays.map((child) => {
+                const birthDate = new Date(child.birth_date);
+                const today = new Date();
+                const nextBirthday = new Date(today.getFullYear(), birthDate.getMonth(), birthDate.getDate());
+                if (nextBirthday < today) {
+                  nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
+                }
+                const daysUntil = Math.ceil((nextBirthday.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+                const age = today.getFullYear() - birthDate.getFullYear();
+                
+                return (
+                  <li key={child.name} className="flex justify-between items-center">
+                    <span>{child.name} - {new Date(child.birth_date).toLocaleDateString('fr-FR')}</span>
+                    <span className="text-gray-600">
+                      Fêtera ses {age + 1} ans ({daysUntil} jours)
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p className="text-gray-600">Aucun anniversaire à venir</p>
+          )}
         </Card>
       </div>
 
       <Tabs defaultValue="sponsorships" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="sponsorships">
+        <TabsList className="flex flex-wrap gap-2">
+          <TabsTrigger value="sponsorships" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
             Parrainages
             {unreadCount?.sponsorships ? (
               <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
@@ -64,7 +115,7 @@ export const AdminDashboard = () => {
               </span>
             ) : null}
           </TabsTrigger>
-          <TabsTrigger value="photos">
+          <TabsTrigger value="photos" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
             Photos
             {unreadCount?.photos ? (
               <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
@@ -72,7 +123,7 @@ export const AdminDashboard = () => {
               </span>
             ) : null}
           </TabsTrigger>
-          <TabsTrigger value="testimonials">
+          <TabsTrigger value="testimonials" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
             Témoignages
             {unreadCount?.testimonials ? (
               <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
@@ -80,7 +131,7 @@ export const AdminDashboard = () => {
               </span>
             ) : null}
           </TabsTrigger>
-          <TabsTrigger value="child-requests">
+          <TabsTrigger value="child-requests" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
             Demandes d'enfants
             {unreadCount?.childRequests ? (
               <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-0.5 text-xs">
@@ -88,7 +139,9 @@ export const AdminDashboard = () => {
               </span>
             ) : null}
           </TabsTrigger>
-          <TabsTrigger value="messages">Messages</TabsTrigger>
+          <TabsTrigger value="messages" className="data-[state=active]:bg-cuba-coral data-[state=active]:text-white">
+            Messages
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sponsorships" className="space-y-4">
