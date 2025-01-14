@@ -39,6 +39,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         .from('album-media')
         .getPublicUrl(filePath);
 
+      console.log("Creating album media entry with URL:", publicUrl);
       const { error: dbError } = await supabase
         .from('album_media')
         .insert({
@@ -55,6 +56,19 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       console.log("Album media entry created successfully");
       
+      // Vérifier les notifications après l'ajout
+      const { data: notifications, error: notifError } = await supabase
+        .from('notifications')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (notifError) {
+        console.error("Error checking notifications:", notifError);
+      } else {
+        console.log("Latest notification:", notifications?.[0]);
+      }
+
       toast.success("Photo ajoutée avec succès");
       if (onUploadComplete) {
         onUploadComplete();
