@@ -4,9 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import { differenceInYears } from "date-fns";
+import { differenceInYears, differenceInDays } from "date-fns";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { toast } from "sonner";
+import { Card } from "@/components/ui/card";
 import {
   Tabs,
   TabsContent,
@@ -43,7 +44,9 @@ const SponsorDashboard = () => {
       uploadSuccess: "Photo ajoutée avec succès",
       uploadError: "Erreur lors de l'ajout de la photo",
       urgentNeeds: "Besoins urgents détectés !",
-      age: "ans"
+      age: "ans",
+      copySuccess: "Lien copié avec succès !",
+      copyError: "Erreur lors de la copie du lien"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -60,7 +63,9 @@ const SponsorDashboard = () => {
       uploadSuccess: "Foto agregada con éxito",
       uploadError: "Error al agregar la foto",
       urgentNeeds: "¡Necesidades urgentes detectadas!",
-      age: "años"
+      age: "años",
+      copySuccess: "¡Enlace copiado con éxito!",
+      copyError: "Error al copiar el enlace"
     }
   };
 
@@ -161,21 +166,11 @@ const SponsorDashboard = () => {
     }
   };
 
-  const handleUploadSuccess = () => {
-    toast.success(t.uploadSuccess);
-    refetchPhotos();
-  };
-
   const calculateSponsorshipDuration = (startDate: string) => {
     if (!startDate) return 0;
     const start = new Date(startDate);
     const now = new Date();
     return differenceInDays(now, start);
-  };
-
-  const calculateAge = (birthDate: string) => {
-    if (!birthDate) return null;
-    return differenceInYears(new Date(), new Date(birthDate));
   };
 
   const hasUrgentNeeds = (needs: any) => {
