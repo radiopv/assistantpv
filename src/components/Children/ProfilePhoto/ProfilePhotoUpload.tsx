@@ -65,6 +65,27 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         .from('children-photos')
         .getPublicUrl(filePath);
 
+      // Notify sponsors about the new photo
+      const { data: child } = await supabase
+        .from('children')
+        .select('name, sponsorships(sponsor_id)')
+        .eq('id', childId)
+        .single();
+
+      if (child?.sponsorships) {
+        for (const sponsorship of child.sponsorships) {
+          await supabase
+            .from('notifications')
+            .insert({
+              recipient_id: sponsorship.sponsor_id,
+              type: 'photo_added',
+              title: `Nouvelle photo de ${child.name}`,
+              content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
+              link: `/children/${childId}/album`
+            });
+        }
+      }
+
       onUploadComplete(publicUrl);
 
       toast({
