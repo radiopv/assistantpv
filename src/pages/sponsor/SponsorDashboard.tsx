@@ -178,18 +178,17 @@ const SponsorDashboard = () => {
     }
   };
 
-  const getBirthdayCountdown = (birthDate: string) => {
-    if (!birthDate) return null;
-    
-    const today = new Date();
-    const birth = new Date(birthDate);
-    const nextBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
-    
-    if (nextBirthday < today) {
-      nextBirthday.setFullYear(today.getFullYear() + 1);
-    }
-    
-    return differenceInDays(nextBirthday, today);
+  const calculateSponsorshipDuration = (startDate: string) => {
+    if (!startDate) return 0;
+    const start = new Date(startDate);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - start.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  };
+
+  const countUrgentNeeds = (needs: any[]) => {
+    if (!Array.isArray(needs)) return 0;
+    return needs.filter(need => need.is_urgent).length;
   };
 
   if (!user) {
@@ -234,7 +233,7 @@ const SponsorDashboard = () => {
               testimonial.child_id === sponsorship.children?.id
             ) || [];
 
-            const daysUntilBirthday = getBirthdayCountdown(sponsorship.children?.birth_date);
+            const daysUntilBirthday = calculateSponsorshipDuration(sponsorship.start_date);
 
             return (
               <Card 
@@ -330,7 +329,84 @@ const SponsorDashboard = () => {
                         </TabsContent>
 
                         <TabsContent value="statistics" className="space-y-4">
-                          {/* Add statistics content here */}
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
+                              <h4 className="font-medium mb-2">Photos</h4>
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span>Total photos :</span>
+                                  <span className="font-bold">{childPhotos.length}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Dernière photo :</span>
+                                  <span className="font-bold">
+                                    {childPhotos[0]?.created_at 
+                                      ? new Date(childPhotos[0].created_at).toLocaleDateString()
+                                      : 'Aucune'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
+                              <h4 className="font-medium mb-2">Besoins</h4>
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span>Total besoins :</span>
+                                  <span className="font-bold">
+                                    {sponsorship.children?.needs ? convertJsonToNeeds(sponsorship.children.needs).length : 0}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Besoins urgents :</span>
+                                  <span className="font-bold text-cuba-coral">
+                                    {sponsorship.children?.needs ? 
+                                      countUrgentNeeds(convertJsonToNeeds(sponsorship.children.needs)) : 0}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
+                              <h4 className="font-medium mb-2">Témoignages</h4>
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span>Total témoignages :</span>
+                                  <span className="font-bold">
+                                    {childTestimonials.length}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Dernier témoignage :</span>
+                                  <span className="font-bold">
+                                    {childTestimonials[0]?.created_at 
+                                      ? new Date(childTestimonials[0].created_at).toLocaleDateString()
+                                      : 'Aucun'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="bg-cuba-warmBeige/20 p-4 rounded-lg">
+                              <h4 className="font-medium mb-2">Durée du parrainage</h4>
+                              <div className="space-y-2">
+                                <div className="flex justify-between">
+                                  <span>Jours écoulés :</span>
+                                  <span className="font-bold">
+                                    {calculateSponsorshipDuration(sponsorship.start_date)} jours
+                                  </span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span>Date de début :</span>
+                                  <span className="font-bold">
+                                    {sponsorship.start_date 
+                                      ? new Date(sponsorship.start_date).toLocaleDateString()
+                                      : 'Non disponible'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </TabsContent>
 
                         <TabsContent value="birthday" className="space-y-4">
