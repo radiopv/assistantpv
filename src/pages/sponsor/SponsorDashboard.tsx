@@ -25,6 +25,9 @@ import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
+import { BirthdayCountdown } from "@/components/Sponsors/Dashboard/BirthdayCountdown";
+import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
+import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -209,13 +212,47 @@ const SponsorDashboard = () => {
           <NeedNotifications />
         </div>
 
-        {/* Important Dates Card */}
-        <ImportantDatesCard 
-          birthDates={sponsoredChildren?.map(s => ({
-            childName: s.children?.name || '',
-            birthDate: s.children?.birth_date || ''
-          })) || []}
-          plannedVisits={plannedVisits || []}
+        {/* New Stats and Birthday Section */}
+        <div className="grid md:grid-cols-2 gap-4">
+          <BirthdayCountdown 
+            children={sponsoredChildren?.map(s => ({
+              name: s.children?.name || '',
+              birth_date: s.children?.birth_date || '',
+              age: s.children?.age || 0
+            })) || []}
+          />
+          <ContributionStats
+            totalPhotos={childrenPhotos?.length || 0}
+            totalTestimonials={testimonials?.length || 0}
+            totalNeeds={sponsoredChildren?.reduce((acc, s) => 
+              acc + (convertJsonToNeeds(s.children?.needs)?.length || 0), 0
+            ) || 0}
+            sponsorshipDays={sponsoredChildren?.reduce((acc, s) => 
+              acc + calculateSponsorshipDuration(s.start_date), 0
+            ) || 0}
+          />
+        </div>
+
+        {/* Timeline Section */}
+        <SponsorshipTimeline
+          events={[
+            ...(sponsoredChildren?.map(s => ({
+              date: s.start_date,
+              type: 'sponsorship_start' as const,
+              title: `Début du parrainage de ${s.children?.name}`,
+            })) || []),
+            ...(childrenPhotos?.map(p => ({
+              date: p.created_at,
+              type: 'photo' as const,
+              title: 'Nouvelle photo ajoutée',
+              description: p.title
+            })) || []),
+            ...(testimonials?.map(t => ({
+              date: t.created_at,
+              type: 'testimonial' as const,
+              title: 'Nouveau témoignage',
+            })) || [])
+          ]}
         />
 
         {/* Planned Visits Section */}
@@ -233,6 +270,7 @@ const SponsorDashboard = () => {
           </div>
         </Card>
 
+        {/* Rest of the existing dashboard content */}
         <div className="grid gap-4 md:gap-6">
           {sponsoredChildren?.map((sponsorship) => {
             const childPhotos = childrenPhotos?.filter(photo => 
