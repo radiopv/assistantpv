@@ -73,6 +73,18 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
+  const handleAddPhoto = (childId?: string) => {
+    if (childId) {
+      navigate(`/children/${childId}/album`);
+    }
+  };
+
+  const handleAddTestimonial = (childId?: string) => {
+    if (childId) {
+      navigate('/testimonials/new', { state: { childId } });
+    }
+  };
+
   const { data: sponsoredChildren, isLoading } = useQuery({
     queryKey: ["sponsored-children", user?.id],
     queryFn: async () => {
