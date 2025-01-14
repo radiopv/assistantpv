@@ -90,11 +90,6 @@ const sponsorLinks = [
     icon: MessageSquare,
   },
   {
-    href: "/tasks",
-    label: "Tâches",
-    icon: CheckSquare,
-  },
-  {
     href: "/faq",
     label: "FAQ",
     icon: FileText,
