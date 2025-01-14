@@ -158,17 +158,6 @@ export const Navigation = () => {
                         <Button
                           variant="ghost"
                           onClick={() => {
-                            navigate("/messages");
-                            setIsOpen(false);
-                          }}
-                          className="justify-start text-primary w-full"
-                        >
-                          <MessageSquare className="h-4 w-4 mr-2" />
-                          Messages
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
                             handleLogout();
                             setIsOpen(false);
                           }}
@@ -213,14 +202,6 @@ export const Navigation = () => {
                 >
                   <User className="h-4 w-4 mr-2" />
                   Espace parrain
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/messages")}
-                  className="text-primary"
-                >
-                  <MessageSquare className="h-4 w-4 mr-2" />
-                  Messages
                 </Button>
                 <UserProfileMenu />
                 <Button
