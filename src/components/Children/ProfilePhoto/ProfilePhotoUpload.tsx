@@ -55,17 +55,22 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         }
       }
 
+      console.log("Début de l'upload de la photo...");
       const { error: uploadError } = await supabase.storage
         .from('children-photos')
         .upload(filePath, croppedImageBlob);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error("Erreur lors de l'upload:", uploadError);
+        throw uploadError;
+      }
 
+      console.log("Photo uploadée avec succès, récupération de l'URL publique...");
       const { data: { publicUrl } } = supabase.storage
         .from('children-photos')
         .getPublicUrl(filePath);
 
-      // Récupérer les détails de l'enfant avec ses parrainages actifs
+      console.log("Récupération des données de l'enfant et des parrainages...");
       const { data: child, error: childError } = await supabase
         .from('children')
         .select(`
@@ -89,8 +94,7 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
       if (child?.sponsorships && child.sponsorships.length > 0) {
         console.log("Création des notifications pour les parrains...");
         
-        // Créer les notifications pour chaque parrain
-        const notificationPromises = child.sponsorships.map(async (sponsorship: any) => {
+        for (const sponsorship of child.sponsorships) {
           console.log("Création d'une notification pour le parrain:", sponsorship.sponsor_id);
           
           const { data: notification, error: notifError } = await supabase
@@ -100,26 +104,26 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
               type: 'photo_added',
               title: `Nouvelle photo de ${child.name}`,
               content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
-              link: `/children/${childId}/album`
+              link: `/children/${childId}/album`,
+              is_read: false
             })
             .select()
             .single();
 
           if (notifError) {
             console.error("Erreur lors de la création de la notification:", notifError);
+            console.error("Détails de l'erreur:", {
+              sponsorId: sponsorship.sponsor_id,
+              childName: child.name,
+              error: notifError
+            });
             throw notifError;
           }
 
-          return notification;
-        });
-
-        try {
-          const notificationResults = await Promise.all(notificationPromises);
-          console.log("Résultats des notifications:", notificationResults);
-        } catch (notifError) {
-          console.error("Erreur lors de la création des notifications:", notifError);
-          throw notifError;
+          console.log("Notification créée avec succès:", notification);
         }
+      } else {
+        console.log("Aucun parrainage actif trouvé pour cet enfant");
       }
 
       onUploadComplete(publicUrl);
