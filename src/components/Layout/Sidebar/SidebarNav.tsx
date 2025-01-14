@@ -7,8 +7,6 @@ import {
   Image,
   MessageSquare,
   FileText,
-  CheckSquare,
-  Globe,
   Bell,
   Link,
   Mail,
@@ -27,11 +25,6 @@ const adminLinks = [
     href: "/admin/donations-management",
     label: "Donations",
     icon: Gift,
-  },
-  {
-    href: "/admin/validation",
-    label: "Validation",
-    icon: CheckSquare,
   },
   {
     href: "/admin/home-content",
