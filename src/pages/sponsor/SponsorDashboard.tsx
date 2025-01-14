@@ -186,7 +186,7 @@ const SponsorDashboard = () => {
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
-        {/* Notifications Section - Now visible and properly spaced */}
+        {/* Notifications Section */}
         <div className="mb-4 w-full">
           <NeedNotifications />
         </div>
@@ -240,12 +240,12 @@ const SponsorDashboard = () => {
                 )}
 
                 <Tabs defaultValue="photos" className="mt-4 md:mt-6">
-                  <TabsList className="w-full grid grid-cols-2 md:grid-cols-5 gap-1">
-                    <TabsTrigger value="photos" className="text-xs md:text-sm">{t.photos}</TabsTrigger>
-                    <TabsTrigger value="testimonials" className="text-xs md:text-sm">{t.testimonials}</TabsTrigger>
-                    <TabsTrigger value="statistics" className="text-xs md:text-sm hidden md:block">{t.statistics}</TabsTrigger>
-                    <TabsTrigger value="needs" className="text-xs md:text-sm hidden md:block">{t.needs}</TabsTrigger>
-                    <TabsTrigger value="story" className="text-xs md:text-sm hidden md:block">{t.story}</TabsTrigger>
+                  <TabsList className="w-full grid grid-cols-3 md:grid-cols-5 gap-1">
+                    <TabsTrigger value="photos" className="text-xs md:text-sm px-1 py-2 md:px-2">{t.photos}</TabsTrigger>
+                    <TabsTrigger value="testimonials" className="text-xs md:text-sm px-1 py-2 md:px-2">{t.testimonials}</TabsTrigger>
+                    <TabsTrigger value="statistics" className="text-xs md:text-sm px-1 py-2 md:px-2">{t.statistics}</TabsTrigger>
+                    <TabsTrigger value="needs" className="text-xs md:text-sm px-1 py-2 md:px-2 hidden md:block">{t.needs}</TabsTrigger>
+                    <TabsTrigger value="story" className="text-xs md:text-sm px-1 py-2 md:px-2 hidden md:block">{t.story}</TabsTrigger>
                   </TabsList>
 
                   <div className="mt-4 space-y-4">
