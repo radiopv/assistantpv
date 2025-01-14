@@ -101,26 +101,42 @@ export const SponsorshipValidation = () => {
         throw new Error('No admin ID found');
       }
 
-      // First check if user is authenticated
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !session) {
-        throw new Error('User not authenticated');
+      // Get the sponsor_id from the request before rejecting it
+      const { data: request } = await supabase
+        .from('sponsorship_requests')
+        .select('sponsor_id')
+        .eq('id', requestId)
+        .single();
+
+      if (!request?.sponsor_id) {
+        throw new Error('No sponsor found for this request');
       }
 
-      console.log("Calling reject_sponsorship_request with:", { requestId, adminId: user.id });
-      const { error } = await supabase.rpc('reject_sponsorship_request', {
+      const { error: rejectionError } = await supabase.rpc('reject_sponsorship_request', {
         request_id: requestId,
         admin_id: user.id,
         rejection_reason: "Rejected by admin"
-      }, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
       });
 
-      if (error) {
-        console.error('RPC Error:', error);
-        throw error;
+      if (rejectionError) {
+        console.error('RPC Error:', rejectionError);
+        throw rejectionError;
+      }
+
+      // Create notification for the sponsor
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .insert({
+          recipient_id: request.sponsor_id,
+          type: 'sponsorship_rejected',
+          title: 'Demande de parrainage refusée',
+          content: 'Votre demande de parrainage a été refusée.',
+          created_at: new Date().toISOString()
+        });
+
+      if (notificationError) {
+        console.error('Notification Error:', notificationError);
+        throw notificationError;
       }
 
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
