@@ -107,7 +107,9 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {sponsoredChildren?.map((sponsorship) => {
         const child = sponsorship.children;
-        const childPhotos = allChildPhotos?.filter(photo => photo.child_id === child.id) || [];
+        if (!child) return null; // Skip if child data is undefined
+        
+        const photos = allChildPhotos?.filter(photo => photo.child_id === child.id) || [];
 
         return (
           <div key={child.id} className="space-y-4">
@@ -131,9 +133,9 @@ export const SponsoredChildrenGrid = ({ userId }: SponsoredChildrenGridProps) =>
             {/* Photos de l'album */}
             <div className="space-y-2">
               <h4 className="font-medium text-lg">Album photos</h4>
-              {childPhotos.length > 0 ? (
+              {photos.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2">
-                  {childPhotos.map((photo) => (
+                  {photos.map((photo) => (
                     <div key={photo.id} className="aspect-square">
                       <img
                         src={photo.url}
