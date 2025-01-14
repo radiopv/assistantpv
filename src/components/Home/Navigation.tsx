@@ -129,30 +129,17 @@ export const Navigation = () => {
                   </div>
                   <div className="border-t py-4 space-y-4">
                     {user ? (
-                      <>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            navigate("/sponsor-dashboard");
-                            setIsOpen(false);
-                          }}
-                          className="justify-start text-primary w-full"
-                        >
-                          <User className="h-4 w-4 mr-2" />
-                          Espace parrain
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            handleLogout();
-                            setIsOpen(false);
-                          }}
-                          className="justify-start text-primary w-full"
-                        >
-                          <LogOut className="h-4 w-4 mr-2" />
-                          Déconnexion
-                        </Button>
-                      </>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          navigate("/sponsor-dashboard");
+                          setIsOpen(false);
+                        }}
+                        className="justify-start text-primary w-full"
+                      >
+                        <User className="h-4 w-4 mr-2" />
+                        Espace parrain
+                      </Button>
                     ) : (
                       <Button
                         variant="ghost"
@@ -190,14 +177,6 @@ export const Navigation = () => {
                   Espace parrain
                 </Button>
                 <UserProfileMenu />
-                <Button
-                  variant="ghost"
-                  onClick={handleLogout}
-                  className="text-primary"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Déconnexion
-                </Button>
               </>
             ) : (
               <Button
