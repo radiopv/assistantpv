@@ -78,7 +78,7 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
         .from('sponsors')
         .select('id')
         .eq('email', 'vitia@passionvaradero.ca')
-        .maybeSingle();
+        .single();
 
       if (assistantError) {
         console.error("Error finding assistant:", assistantError);
