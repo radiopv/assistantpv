@@ -8,14 +8,7 @@ import { Bell, Image } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
 import { fr, es } from "date-fns/locale";
-
-interface NotificationMetadata {
-  child_id?: string;
-  child_name?: string;
-  photo_url?: string;
-  need_type?: string;
-  is_read?: boolean;
-}
+import { NotificationMetadata } from "@/types/needs";
 
 interface NeedNotification {
   id: string;
@@ -80,10 +73,7 @@ export const NeedNotifications = () => {
       }
 
       console.log("Fetched notifications:", data);
-      setNotifications(data.map(notification => ({
-        ...notification,
-        metadata: notification.metadata as NotificationMetadata
-      })));
+      setNotifications(data as NeedNotification[]);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       toast({

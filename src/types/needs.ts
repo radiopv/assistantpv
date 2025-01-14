@@ -5,7 +5,14 @@ export interface Need {
   category: string;
   description?: string;
   is_urgent: boolean;
-  [key: string]: string | boolean | undefined;
+}
+
+export interface NotificationMetadata {
+  child_id?: string;
+  child_name?: string;
+  photo_url?: string;
+  need_type?: string;
+  is_read?: boolean;
 }
 
 export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
@@ -49,7 +56,7 @@ export const convertNeedsToJson = (needs: Need[]): Json => {
       category: need.category,
       description: need.description,
       is_urgent: need.is_urgent
-    })) as Json;
+    }));
   } catch (error) {
     console.error('Error converting needs to JSON:', error);
     return [];
