@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
 import { ChildNeeds } from "@/components/Dashboard/ChildrenNeeds/ChildNeeds";
+import { differenceInDays } from "date-fns";
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +18,6 @@ import {
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { convertJsonToNeeds } from "@/types/needs";
-import { differenceInDays } from "date-fns";
 
 interface SponsorDashboardTranslations {
   welcomeMessage: string;
@@ -158,6 +158,20 @@ const SponsorDashboard = () => {
     },
     enabled: !!user?.id
   });
+
+  const getBirthdayCountdown = (birthDate: string) => {
+    if (!birthDate) return null;
+    
+    const today = new Date();
+    const birth = new Date(birthDate);
+    const nextBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+    
+    if (nextBirthday < today) {
+      nextBirthday.setFullYear(today.getFullYear() + 1);
+    }
+    
+    return differenceInDays(nextBirthday, today);
+  };
 
   const handleShare = async () => {
     const shareData = {
