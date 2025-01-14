@@ -6,13 +6,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 interface NeedsSelectionFieldProps {
   childId?: string;
-  selectedNeeds?: Need[];
+  selectedNeeds: Need[];
   onNeedsChange: (needs: Need[]) => void;
   translations: any;
 }
 
 export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange, translations }: NeedsSelectionFieldProps) => {
-  const [needs, setNeeds] = useState<any[]>([]);
+  const [needs, setNeeds] = useState<Need[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -32,22 +32,20 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
     fetchNeeds();
   }, []);
 
-  const handleNeedsChange = async (needs: Need[]) => {
+  const handleNeedsChange = async (newNeeds: Need[]) => {
     try {
       if (!childId) {
-        onNeedsChange(needs);
+        onNeedsChange(newNeeds);
         return;
       }
 
-      // Update needs
       const { error: updateError } = await supabase
         .from('children')
-        .update({ needs })
+        .update({ needs: newNeeds })
         .eq('id', childId);
 
       if (updateError) throw updateError;
 
-      // Get active sponsor
       const { data: sponsorship } = await supabase
         .from('sponsorships')
         .select('sponsor_id, children (name)')
@@ -56,7 +54,6 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
         .single();
 
       if (sponsorship?.sponsor_id) {
-        // Create notification for needs update
         const { error: notifError } = await supabase
           .from('notifications')
           .insert({
@@ -72,14 +69,13 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
         }
       }
 
-      // Create audit log
       const { error: auditError } = await supabase
         .from('children_audit_logs')
         .insert({
           child_id: childId,
           action: 'needs_updated',
           changes: {
-            needs
+            needs: newNeeds
           }
         });
 
@@ -87,7 +83,7 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
         console.error("Error creating audit log:", auditError);
       }
 
-      onNeedsChange(needs);
+      onNeedsChange(newNeeds);
     } catch (error) {
       console.error("Error updating needs:", error);
       toast({
@@ -102,7 +98,7 @@ export const NeedsSelectionField = ({ childId, selectedNeeds = [], onNeedsChange
     <Select
       value={selectedNeeds}
       onValueChange={(value) => {
-        handleNeedsChange(value as Need[]);
+        handleNeedsChange(value as unknown as Need[]);
       }}
     >
       <SelectTrigger>
