@@ -53,5 +53,20 @@ export const spanishTranslations = {
   ourMission: "Nuestra misión",
   ourMissionDescription: "Ayudar a los niños cubanos a tener un mejor futuro",
   joinUs: "Únete a nosotros",
-  joinUsDescription: "Juntos podemos hacer la diferencia"
+  joinUsDescription: "Juntos podemos hacer la diferencia",
+  // Nuevas traducciones
+  changeLifeToday: "Cambia una vida hoy",
+  supportMakesADifference: "Tu apoyo hace la diferencia",
+  childrenWaitingForSponsorship: "Niños esperando apadrinamiento",
+  becomeSponsor: "Conviértete en padrino",
+  testimonialTitle: "Lo que dicen nuestros padrinos",
+  noTestimonials: "No hay testimonios por el momento",
+  anonymousSponsor: "Padrino anónimo",
+  sponsorOf: "Padrino de",
+  chooseChild: "Elige un niño",
+  browseChildrenProfiles: "Explora los perfiles de los niños",
+  completeProfile: "Completa tu perfil",
+  fillRequiredInfo: "Completa la información requerida",
+  startSponsorship: "Comienza el apadrinamiento",
+  startSponsorshipJourney: "Inicia tu aventura de apadrinamiento"
 };
