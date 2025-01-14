@@ -7,7 +7,7 @@ import { Share2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, differenceInYears } from "date-fns";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import {
   Tabs,
@@ -45,7 +45,9 @@ const SponsorDashboard = () => {
       needs: "Besoins",
       story: "Histoire",
       uploadSuccess: "Photo ajoutée avec succès",
-      uploadError: "Erreur lors de l'ajout de la photo"
+      uploadError: "Erreur lors de l'ajout de la photo",
+      urgentNeeds: "Besoins urgents détectés !",
+      age: "ans"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -63,23 +65,13 @@ const SponsorDashboard = () => {
       needs: "Necesidades",
       story: "Historia",
       uploadSuccess: "Foto agregada con éxito",
-      uploadError: "Error al agregar la foto"
+      uploadError: "Error al agregar la foto",
+      urgentNeeds: "¡Necesidades urgentes detectadas!",
+      age: "años"
     }
   };
 
   const t = translations[language as keyof typeof translations];
-
-  const handleAddPhoto = (childId?: string) => {
-    if (childId) {
-      navigate(`/children/${childId}/album`);
-    }
-  };
-
-  const handleAddTestimonial = (childId?: string) => {
-    if (childId) {
-      navigate('/testimonials/new', { state: { childId } });
-    }
-  };
 
   const { data: sponsoredChildren, isLoading } = useQuery({
     queryKey: ["sponsored-children", user?.id],
@@ -176,6 +168,16 @@ const SponsorDashboard = () => {
     return differenceInDays(now, start);
   };
 
+  const calculateAge = (birthDate: string) => {
+    if (!birthDate) return null;
+    return differenceInYears(new Date(), new Date(birthDate));
+  };
+
+  const hasUrgentNeeds = (needs: any) => {
+    const needsArray = convertJsonToNeeds(needs);
+    return needsArray.some(need => need.is_urgent);
+  };
+
   if (!user) {
     return (
       <div className="container mx-auto p-4">
@@ -217,6 +219,7 @@ const SponsorDashboard = () => {
             ) || [];
 
             const childNeeds = sponsorship.children?.needs ? convertJsonToNeeds(sponsorship.children.needs) : [];
+            const childAge = calculateAge(sponsorship.children?.birth_date);
 
             return (
               <Card 
@@ -224,11 +227,23 @@ const SponsorDashboard = () => {
                 className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="p-6">
-                  <SponsoredChildCard
-                    child={sponsorship.children}
-                    onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
-                    onAddTestimonial={() => handleAddTestimonial(sponsorship.children?.id)}
-                  />
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                      <SponsoredChildCard
+                        child={{
+                          ...sponsorship.children,
+                          age: childAge
+                        }}
+                        onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
+                        onAddTestimonial={() => handleAddTestimonial(sponsorship.children?.id)}
+                      />
+                      {hasUrgentNeeds(sponsorship.children?.needs) && (
+                        <span className="text-red-500 font-medium animate-pulse">
+                          {t.urgentNeeds}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
                   <Tabs defaultValue="photos" className="mt-6">
                     <TabsList className="grid w-full grid-cols-5">
