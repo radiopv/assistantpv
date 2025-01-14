@@ -4,7 +4,6 @@ import {
   Settings,
   Gift,
   Home,
-  UserPlus,
   Image,
   MessageSquare,
   FileText,
@@ -21,24 +20,14 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 
 const adminLinks = [
   {
-    href: "/children",
-    label: "Enfants",
+    href: "/admin/children-management",
+    label: "Parrainage/Enfant",
     icon: Users,
   },
   {
     href: "/donations",
     label: "Dons",
     icon: Gift,
-  },
-  {
-    href: "/assistant-photos",
-    label: "Photos",
-    icon: Image,
-  },
-  {
-    href: "/admin/sponsorship-management",
-    label: "Gestion des parrainages",
-    icon: UserPlus,
   },
   {
     href: "/admin/translations",

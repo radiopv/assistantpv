@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
+import ChildrenManagement from "@/pages/admin/ChildrenManagement";
 
 // Public pages
 import Home from "@/pages/Home";
@@ -76,7 +77,7 @@ export const AppRoutes = () => {
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}
-        <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
+        <Route path="/admin/children-management" element={<ChildrenManagement />} />
         <Route path="/admin/translations" element={<Translations />} />
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/emails" element={<Emails />} />
@@ -86,10 +87,10 @@ export const AppRoutes = () => {
         <Route path="/admin/link-checker" element={<LinkChecker />} />
         <Route path="/admin/home-content" element={<HomeContentManagement />} />
         <Route path="/admin/audit-logs" element={<AuditLogs />} />
+        
+        {/* Catch all redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
-
-      {/* Catch all redirect to home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
