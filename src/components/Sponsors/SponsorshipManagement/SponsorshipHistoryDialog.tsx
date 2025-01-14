@@ -35,7 +35,7 @@ export const SponsorshipHistoryDialog = ({
           action,
           created_at,
           reason,
-          performed_by (
+          performed_by:performed_by_id (
             name
           )
         `)
@@ -43,7 +43,7 @@ export const SponsorshipHistoryDialog = ({
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as HistoryEntry[];
+      return data as unknown as HistoryEntry[];
     },
     enabled: isOpen && !!sponsorshipId
   });

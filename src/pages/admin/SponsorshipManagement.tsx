@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { SponsorListItem } from "@/components/Sponsors/SponsorListItem";
@@ -144,6 +145,9 @@ export default function SponsorshipManagement() {
                 sponsor={sponsor}
                 onSelect={handleSponsorSelect}
                 isSelected={selectedSponsors.includes(sponsor.id)}
+                onAddChild={() => {}}
+                onStatusChange={() => {}}
+                onVerificationChange={() => {}}
               />
             ))}
           </div>
@@ -157,6 +161,9 @@ export default function SponsorshipManagement() {
                 sponsor={sponsor}
                 onSelect={handleSponsorSelect}
                 isSelected={selectedSponsors.includes(sponsor.id)}
+                onAddChild={() => {}}
+                onStatusChange={() => {}}
+                onVerificationChange={() => {}}
               />
             ))}
           </div>

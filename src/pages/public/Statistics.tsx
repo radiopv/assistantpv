@@ -7,10 +7,20 @@ import {
   PieChart, Pie, Cell, AreaChart, Area, Legend
 } from "recharts";
 
-const COLORS = ['#0072BB', '#40C057', '#FA5252', '#7950F2', '#FD7E14'];
+interface SponsorshipStats {
+  conversion_rate: number;
+  avg_duration_days: number;
+  active_sponsorships: number;
+}
+
+interface EngagementStats {
+  activity_rate: number;
+  active_sponsors: number;
+  total_assistants: number;
+}
 
 const Statistics = () => {
-  const { data: sponsorshipStats } = useQuery({
+  const { data: sponsorshipStats } = useQuery<SponsorshipStats>({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
@@ -19,7 +29,7 @@ const Statistics = () => {
     }
   });
 
-  const { data: engagementStats } = useQuery({
+  const { data: engagementStats } = useQuery<EngagementStats>({
     queryKey: ['engagement-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');
