@@ -3,7 +3,6 @@ export const spanishTranslations = {
   testimonials: "Testimonios",
   statistics: "Estadísticas",
   birthday: "Cumpleaños",
-  viewAlbum: "Ver álbum",
   addTestimonial: "Agregar testimonio",
   nextBirthday: "Próximo cumpleaños",
   daysLeft: "días restantes",
