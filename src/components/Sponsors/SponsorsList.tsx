@@ -243,7 +243,6 @@ export const SponsorsList = ({
         isOpen={showBulkOperations}
         onClose={() => setShowBulkOperations(false)}
         selectedSponsors={selectedSponsors}
-        selectedChildren={[]}
         onOperationComplete={() => {
           setSelectedSponsors([]);
           window.location.reload();
