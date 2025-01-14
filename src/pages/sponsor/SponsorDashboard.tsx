@@ -22,6 +22,9 @@ import { NeedsSection } from "@/components/Sponsors/Dashboard/Sections/NeedsSect
 import { StorySection } from "@/components/Sponsors/Dashboard/Sections/StorySection";
 import { convertJsonToNeeds } from "@/types/needs";
 import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
+import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
+import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
+import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -147,6 +150,21 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
+  const { data: plannedVisits, refetch: refetchVisits } = useQuery({
+    queryKey: ['planned-visits', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('planned_visits')
+        .select('*')
+        .eq('sponsor_id', user?.id)
+        .order('start_date', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id
+  });
+
   const handleShare = async () => {
     const shareData = {
       title: translations[language].inviteFriends,
@@ -190,6 +208,27 @@ const SponsorDashboard = () => {
         <div className="mb-4 w-full">
           <NeedNotifications />
         </div>
+
+        {/* Important Dates Card */}
+        <ImportantDatesCard 
+          birthDates={sponsoredChildren?.map(s => ({
+            childName: s.children?.name || '',
+            birthDate: s.children?.birth_date || ''
+          })) || []}
+          plannedVisits={plannedVisits || []}
+        />
+
+        {/* Planned Visits Section */}
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Visites planifiées</h3>
+          <div className="space-y-6">
+            <PlannedVisitForm 
+              sponsorId={user?.id || ''} 
+              onVisitPlanned={refetchVisits}
+            />
+            <VisitsSection visits={plannedVisits || []} />
+          </div>
+        </Card>
 
         <div className="grid gap-4 md:gap-6">
           {sponsoredChildren?.map((sponsorship) => {
