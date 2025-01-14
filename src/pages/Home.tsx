@@ -1,3 +1,9 @@
+import { CallToAction } from "@/components/Home/CallToAction";
+import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
+import { HowItWorks } from "@/components/Home/HowItWorks";
+import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
+import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
+
 const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
