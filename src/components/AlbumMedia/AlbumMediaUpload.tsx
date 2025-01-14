@@ -71,6 +71,23 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       if (dbError) throw dbError;
 
+      // Create audit log entry
+      const { error: auditError } = await supabase
+        .from('children_audit_logs')
+        .insert({
+          child_id: childId,
+          action: 'media_added',
+          changes: {
+            url: publicUrl,
+            file_name: file.name,
+            file_type: file.type
+          }
+        });
+
+      if (auditError) {
+        console.error("Error creating audit log:", auditError);
+      }
+
       console.log("Database entry created, notifying sponsor...");
 
       // Notify sponsor about new media
