@@ -59,14 +59,15 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         .from('album-media')
         .getPublicUrl(filePath);
 
-      console.log("File uploaded successfully, saving to database...");
+      console.log("File uploaded successfully, getting child info...");
 
       // Get child info and active sponsorship
-      const { data: child } = await supabase
+      const { data: child, error: childError } = await supabase
         .from('children')
         .select(`
+          id,
           name,
-          sponsorships!inner(
+          sponsorships (
             sponsor_id,
             status
           )
@@ -74,7 +75,13 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         .eq('id', childId)
         .single();
 
+      if (childError) {
+        console.error("Error fetching child:", childError);
+        throw childError;
+      }
+
       if (!child) {
+        console.error("Child not found");
         throw new Error("Child not found");
       }
 
@@ -90,7 +97,10 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
           is_approved: true
         });
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error("Error creating album media:", dbError);
+        throw dbError;
+      }
 
       // Create audit log entry
       const { error: auditError } = await supabase
@@ -110,34 +120,44 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
       }
 
       // Find active sponsorship and create notification
-      const activeSponsorship = child.sponsorships.find(s => s.status === 'active');
+      const activeSponsorship = child.sponsorships?.find(s => s.status === 'active');
+      
+      console.log("Active sponsorship found:", activeSponsorship);
+
       if (activeSponsorship?.sponsor_id) {
         console.log("Creating notification for sponsor:", activeSponsorship.sponsor_id);
         
+        const notificationData = {
+          recipient_id: activeSponsorship.sponsor_id,
+          type: 'photo_upload',
+          title: language === 'fr' ? 
+            'Nouvelle photo ajoutée' : 
+            'Nueva foto agregada',
+          content: language === 'fr' ? 
+            `Une nouvelle photo a été ajoutée à l'album de ${child.name}. Cliquez pour voir l'album.` :
+            `Se ha agregado una nueva foto al álbum de ${child.name}. Haga clic para ver el álbum.`,
+          link: `/children/${childId}/album`,
+          metadata: {
+            child_id: childId,
+            child_name: child.name,
+            photo_url: publicUrl
+          }
+        };
+
+        console.log("Sending notification with data:", notificationData);
+
         const { error: notifError } = await supabase
           .from('notifications')
-          .insert({
-            recipient_id: activeSponsorship.sponsor_id,
-            type: 'photo_upload',
-            title: language === 'fr' ? 
-              'Nouvelle photo ajoutée' : 
-              'Nueva foto agregada',
-            content: language === 'fr' ? 
-              `Une nouvelle photo a été ajoutée à l'album de ${child.name}. Cliquez pour voir l'album.` :
-              `Se ha agregado una nueva foto al álbum de ${child.name}. Haga clic para ver el álbum.`,
-            link: `/children/${childId}/album`,
-            metadata: {
-              child_id: childId,
-              child_name: child.name,
-              photo_url: publicUrl
-            }
-          });
+          .insert(notificationData);
 
         if (notifError) {
           console.error("Error creating notification:", notifError);
           throw notifError;
         }
+
         console.log("Notification created successfully");
+      } else {
+        console.log("No active sponsorship found for child");
       }
 
       toast({
@@ -147,7 +167,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       onUploadComplete?.();
     } catch (error: any) {
-      console.error("Upload error:", error);
+      console.error("Complete upload error:", error);
       toast({
         variant: "destructive",
         title: t.error,
