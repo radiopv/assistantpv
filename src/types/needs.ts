@@ -1,6 +1,7 @@
 import { Json } from "@/integrations/supabase/types/json";
 
 export interface Need {
+  [key: string]: Json | undefined;
   id?: string;
   category: string;
   description?: string;
