@@ -182,12 +182,12 @@ const SponsorDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige p-2 md:p-6">
       <div className="container mx-auto space-y-4 md:space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
-        {/* Notifications Section */}
-        <div className="mb-4">
+        {/* Notifications Section - Now visible and properly spaced */}
+        <div className="mb-4 w-full">
           <NeedNotifications />
         </div>
 
@@ -210,7 +210,7 @@ const SponsorDashboard = () => {
             return (
               <Card 
                 key={sponsorship.id} 
-                className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 p-4 md:p-6"
+                className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 p-3 md:p-6"
               >
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -223,7 +223,7 @@ const SponsorDashboard = () => {
                       onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                     />
                     {hasUrgentNeeds && (
-                      <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0">
+                      <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
                         {t.urgentNeeds}
                       </span>
                     )}
@@ -240,27 +240,27 @@ const SponsorDashboard = () => {
                 )}
 
                 <Tabs defaultValue="photos" className="mt-4 md:mt-6">
-                  <TabsList className="w-full grid grid-cols-3 md:grid-cols-5 gap-1">
+                  <TabsList className="w-full grid grid-cols-2 md:grid-cols-5 gap-1">
                     <TabsTrigger value="photos" className="text-xs md:text-sm">{t.photos}</TabsTrigger>
                     <TabsTrigger value="testimonials" className="text-xs md:text-sm">{t.testimonials}</TabsTrigger>
-                    <TabsTrigger value="statistics" className="text-xs md:text-sm">{t.statistics}</TabsTrigger>
+                    <TabsTrigger value="statistics" className="text-xs md:text-sm hidden md:block">{t.statistics}</TabsTrigger>
                     <TabsTrigger value="needs" className="text-xs md:text-sm hidden md:block">{t.needs}</TabsTrigger>
                     <TabsTrigger value="story" className="text-xs md:text-sm hidden md:block">{t.story}</TabsTrigger>
                   </TabsList>
 
                   <div className="mt-4 space-y-4">
-                    <TabsContent value="photos">
+                    <TabsContent value="photos" className="focus:outline-none">
                       <PhotoGallery 
                         photos={childPhotos} 
                         childName={sponsorship.children?.name} 
                       />
                     </TabsContent>
 
-                    <TabsContent value="testimonials">
+                    <TabsContent value="testimonials" className="focus:outline-none">
                       <TestimonialSection testimonials={childTestimonials} />
                     </TabsContent>
 
-                    <TabsContent value="statistics">
+                    <TabsContent value="statistics" className="focus:outline-none">
                       <StatisticsSection
                         photos={childPhotos}
                         needs={childNeeds}
@@ -269,11 +269,11 @@ const SponsorDashboard = () => {
                       />
                     </TabsContent>
 
-                    <TabsContent value="needs">
+                    <TabsContent value="needs" className="focus:outline-none">
                       <NeedsSection needs={childNeeds} />
                     </TabsContent>
 
-                    <TabsContent value="story">
+                    <TabsContent value="story" className="focus:outline-none">
                       <StorySection
                         description={sponsorship.children?.description}
                         story={sponsorship.children?.story}
