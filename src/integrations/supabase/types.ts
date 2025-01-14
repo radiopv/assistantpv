@@ -389,6 +389,55 @@ export type Database = {
         }
         Relationships: []
       }
+      children_audit_logs: {
+        Row: {
+          action: string
+          changes: Json | null
+          child_id: string | null
+          created_at: string | null
+          id: string
+          performed_by: string | null
+        }
+        Insert: {
+          action: string
+          changes?: Json | null
+          child_id?: string | null
+          created_at?: string | null
+          id?: string
+          performed_by?: string | null
+        }
+        Update: {
+          action?: string
+          changes?: Json | null
+          child_id?: string | null
+          created_at?: string | null
+          id?: string
+          performed_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "children_audit_logs_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "children_audit_logs_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "children_audit_logs_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       donation_items: {
         Row: {
           category_id: string | null
