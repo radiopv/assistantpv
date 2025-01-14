@@ -17,7 +17,6 @@ import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
 import Tasks from "@/pages/Tasks";
 import TranslationsPage from "@/pages/admin/Translations";
 import TranslationAdmin from "@/pages/admin/TranslationAdmin";
-import SponsoredChildren from "@/pages/public/SponsoredChildren";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const AppRoutes = () => {
@@ -43,7 +42,6 @@ export const AppRoutes = () => {
       <Route path="/tasks" element={<Tasks />} />
       <Route path="/admin/translations" element={<TranslationsPage />} />
       <Route path="/admin/translation-admin" element={<TranslationAdmin />} />
-      <Route path="/sponsored-children" element={<SponsoredChildren />} />
     </Routes>
   );
 };
