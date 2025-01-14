@@ -128,15 +128,15 @@ export const Navigation = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Mobile Menu Button */}
-          <div className="block md:hidden">
+          <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
+                <Button variant="ghost" size="icon">
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[80%] sm:w-[385px]">
+              <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
                 <div className="flex flex-col h-full">
                   <div className="flex-1 py-6 space-y-4">
                     <MenuItems />
@@ -198,7 +198,7 @@ export const Navigation = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex flex-1 items-center space-x-4">
+          <div className="hidden md:flex flex-1 space-x-4">
             <MenuItems />
           </div>
 
@@ -232,22 +232,6 @@ export const Navigation = () => {
                   Déconnexion
                 </Button>
               </>
-            ) : (
-              <Button
-                variant="ghost"
-                onClick={() => navigate("/login")}
-                className="text-primary"
-              >
-                <LogIn className="h-4 w-4 mr-2" />
-                Connexion
-              </Button>
-            )}
-          </div>
-
-          {/* Mobile Login/Profile Button */}
-          <div className="block md:hidden">
-            {user ? (
-              <UserProfileMenu />
             ) : (
               <Button
                 variant="ghost"
