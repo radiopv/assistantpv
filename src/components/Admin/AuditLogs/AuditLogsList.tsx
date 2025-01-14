@@ -58,6 +58,10 @@ export const AuditLogsList = () => {
               ? "Parrainage refusé"
               : action === "UPDATE"
               ? "Modification"
+              : action === "photo_added"
+              ? "Photo ajoutée"
+              : action === "media_added"
+              ? "Photo ajoutée à l'album"
               : action}
           </span>
         );
@@ -72,6 +76,21 @@ export const AuditLogsList = () => {
       cell: ({ row }) => {
         const changes = row.original.changes;
         if (!changes) return null;
+
+        if (row.original.action === "photo_added" || row.original.action === "media_added") {
+          return (
+            <div className="max-w-md">
+              <p>Une nouvelle photo a été ajoutée à l'album</p>
+              {changes.url && (
+                <img 
+                  src={changes.url} 
+                  alt="Photo ajoutée" 
+                  className="w-20 h-20 object-cover mt-2 rounded"
+                />
+              )}
+            </div>
+          );
+        }
 
         return (
           <div className="max-w-md">
@@ -102,4 +121,4 @@ export const AuditLogsList = () => {
       <DataTable columns={columns} data={logs || []} />
     </div>
   );
-}
+};
