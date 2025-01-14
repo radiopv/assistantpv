@@ -8,6 +8,7 @@ export const NotificationBadge = () => {
   const { data: unreadCount = 0, refetch } = useQuery({
     queryKey: ['unread-notifications-count'],
     queryFn: async () => {
+      console.log('Fetching unread notifications count...');
       const { count, error } = await supabase
         .from('notifications')
         .select('*', { count: 'exact', head: true })
@@ -18,12 +19,13 @@ export const NotificationBadge = () => {
         return 0;
       }
       
+      console.log('Unread notifications count:', count);
       return count || 0;
     }
   });
 
   useEffect(() => {
-    // Subscribe to changes
+    console.log('Setting up notification subscription...');
     const channel = supabase
       .channel('notification-changes')
       .on(
@@ -33,13 +35,15 @@ export const NotificationBadge = () => {
           schema: 'public',
           table: 'notifications'
         },
-        () => {
+        (payload) => {
+          console.log('Notification change detected:', payload);
           refetch();
         }
       )
       .subscribe();
 
     return () => {
+      console.log('Cleaning up notification subscription...');
       supabase.removeChannel(channel);
     };
   }, [refetch]);

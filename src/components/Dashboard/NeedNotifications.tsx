@@ -26,12 +26,14 @@ export const NeedNotifications = () => {
 
   useEffect(() => {
     if (user) {
+      console.log("User authenticated, fetching notifications...");
       fetchNotifications();
       subscribeToNotifications();
     }
   }, [user]);
 
   const subscribeToNotifications = () => {
+    console.log("Setting up notifications subscription for user:", user?.id);
     const channel = supabase
       .channel('notification-changes')
       .on(
@@ -50,6 +52,7 @@ export const NeedNotifications = () => {
       .subscribe();
 
     return () => {
+      console.log("Cleaning up notifications subscription");
       supabase.removeChannel(channel);
     };
   };
@@ -83,6 +86,7 @@ export const NeedNotifications = () => {
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
+      console.log("Marking notification as read:", notificationId);
       const { error } = await supabase
         .from("notifications")
         .update({ is_read: true })
