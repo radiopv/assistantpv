@@ -50,10 +50,11 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Submitting planned visit form...");
 
     try {
       // Create planned visit record
-      const { error: visitError } = await supabase
+      const { data: visitData, error: visitError } = await supabase
         .from('planned_visits')
         .insert({
           sponsor_id: sponsorId,
@@ -62,9 +63,54 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
           hotel_name: hotelName,
           wants_to_visit_child: wantsToVisitChild,
           wants_donation_pickup: wantsDonationPickup
-        });
+        })
+        .select()
+        .single();
 
       if (visitError) throw visitError;
+
+      console.log("Visit planned successfully:", visitData);
+
+      // Get Vitia's ID (assuming she has the role 'assistant' and name 'Vitia')
+      const { data: vitiaData, error: vitiaError } = await supabase
+        .from('sponsors')
+        .select('id')
+        .eq('name', 'Vitia')
+        .eq('role', 'assistant')
+        .single();
+
+      if (vitiaError) {
+        console.error("Error finding Vitia:", vitiaError);
+        throw vitiaError;
+      }
+
+      console.log("Found Vitia:", vitiaData);
+
+      // Create notification for Vitia
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .insert({
+          recipient_id: vitiaData.id,
+          sender_id: sponsorId,
+          type: 'planned_visit',
+          title: 'Nouveau voyage planifié',
+          content: 'Un parrain a planifié un voyage à Cuba',
+          metadata: {
+            start_date: startDate,
+            end_date: endDate,
+            hotel_name: hotelName,
+            wants_to_visit_child: wantsToVisitChild,
+            wants_donation_pickup: wantsDonationPickup
+          },
+          is_read: false
+        });
+
+      if (notificationError) {
+        console.error("Error creating notification:", notificationError);
+        throw notificationError;
+      }
+
+      console.log("Notification sent to Vitia successfully");
 
       // Update sponsor's visit information
       const { error: sponsorError } = await supabase
