@@ -6,35 +6,24 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area, Legend
 } from "recharts";
-
-interface SponsorshipStats {
-  conversion_rate: number;
-  avg_duration_days: number;
-  active_sponsorships: number;
-}
-
-interface EngagementStats {
-  activity_rate: number;
-  active_sponsors: number;
-  total_assistants: number;
-}
+import { SponsorshipConversionStats, TopCityStats, UserEngagementStats } from "@/types/statistics";
 
 const Statistics = () => {
-  const { data: sponsorshipStats } = useQuery<SponsorshipStats>({
+  const { data: sponsorshipStats } = useQuery<SponsorshipConversionStats>({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
       if (error) throw error;
-      return data as SponsorshipStats;
+      return data as SponsorshipConversionStats;
     }
   });
 
-  const { data: engagementStats } = useQuery<EngagementStats>({
+  const { data: engagementStats } = useQuery<UserEngagementStats>({
     queryKey: ['engagement-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');
       if (error) throw error;
-      return data as EngagementStats;
+      return data as UserEngagementStats;
     }
   });
 
