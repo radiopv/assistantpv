@@ -1,6 +1,7 @@
 import { PhotoGrid } from "./Media/PhotoGrid";
 import { VideoGrid } from "./Media/VideoGrid";
 import { useDonationMedia } from "./hooks/useDonationMedia";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface DonationCardMediaProps {
   donationId: string;
@@ -20,16 +21,18 @@ export const DonationCardMedia = ({
   isPublicView = false,
 }: DonationCardMediaProps) => {
   const { photos: donationPhotos } = useDonationMedia(donationId);
+  const { user } = useAuth();
+
+  const canManagePhotos = user?.role === 'admin' || user?.role === 'assistant';
 
   return (
     <div className="space-y-4">
       <PhotoGrid 
         photos={donationPhotos || []} 
-        onPhotoDelete={isPublicView ? undefined : () => onPhotosUpdate()}
-        onToggleFavorite={isPublicView ? undefined : (id, status) => {
-          // Handle favorite toggle
+        onPhotoDelete={!isPublicView && canManagePhotos ? () => onPhotosUpdate() : undefined}
+        onToggleFavorite={!isPublicView && canManagePhotos ? (id, status) => {
           onPhotosUpdate();
-        }}
+        } : undefined}
       />
       <VideoGrid videos={videos} />
     </div>
