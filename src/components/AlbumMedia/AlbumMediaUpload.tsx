@@ -61,18 +61,24 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       console.log("File uploaded successfully, saving to database...");
 
-      // Get child info for notifications
+      // Get child info and active sponsorship
       const { data: child } = await supabase
         .from('children')
         .select(`
           name,
-          sponsorships (
+          sponsorships!inner(
             sponsor_id,
             status
           )
         `)
         .eq('id', childId)
         .single();
+
+      if (!child) {
+        throw new Error("Child not found");
+      }
+
+      console.log("Child data retrieved:", child);
 
       // Create album media entry
       const { error: dbError } = await supabase
@@ -81,6 +87,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
           child_id: childId,
           url: publicUrl,
           type: file.type.startsWith('image/') ? 'image' : 'video',
+          is_approved: true
         });
 
       if (dbError) throw dbError;
@@ -102,36 +109,35 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         console.error("Error creating audit log:", auditError);
       }
 
-      // Create notification for active sponsor
-      if (child?.sponsorships) {
-        const activeSponsorship = child.sponsorships.find(s => s.status === 'active');
-        if (activeSponsorship?.sponsor_id) {
-          console.log("Creating notification for sponsor:", activeSponsorship.sponsor_id);
-          const { error: notifError } = await supabase
-            .from('notifications')
-            .insert({
-              recipient_id: activeSponsorship.sponsor_id,
-              type: 'photo_upload',
-              title: language === 'fr' ? 
-                'Nouvelle photo ajoutée' : 
-                'Nueva foto agregada',
-              content: language === 'fr' ? 
-                `Une nouvelle photo a été ajoutée à l'album de ${child.name}. Cliquez pour voir l'album.` :
-                `Se ha agregado una nueva foto al álbum de ${child.name}. Haga clic para ver el álbum.`,
-              link: `/children/${childId}/album`,
-              metadata: {
-                child_id: childId,
-                child_name: child.name,
-                photo_url: publicUrl
-              }
-            });
+      // Find active sponsorship and create notification
+      const activeSponsorship = child.sponsorships.find(s => s.status === 'active');
+      if (activeSponsorship?.sponsor_id) {
+        console.log("Creating notification for sponsor:", activeSponsorship.sponsor_id);
+        
+        const { error: notifError } = await supabase
+          .from('notifications')
+          .insert({
+            recipient_id: activeSponsorship.sponsor_id,
+            type: 'photo_upload',
+            title: language === 'fr' ? 
+              'Nouvelle photo ajoutée' : 
+              'Nueva foto agregada',
+            content: language === 'fr' ? 
+              `Une nouvelle photo a été ajoutée à l'album de ${child.name}. Cliquez pour voir l'album.` :
+              `Se ha agregado una nueva foto al álbum de ${child.name}. Haga clic para ver el álbum.`,
+            link: `/children/${childId}/album`,
+            metadata: {
+              child_id: childId,
+              child_name: child.name,
+              photo_url: publicUrl
+            }
+          });
 
-          if (notifError) {
-            console.error("Error creating notification:", notifError);
-            throw notifError;
-          }
-          console.log("Notification created successfully");
+        if (notifError) {
+          console.error("Error creating notification:", notifError);
+          throw notifError;
         }
+        console.log("Notification created successfully");
       }
 
       toast({
