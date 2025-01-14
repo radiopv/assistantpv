@@ -29,6 +29,7 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
         const filePath = `${child.id}/profile.${fileExt}`;
 
         try {
+          console.log("Uploading photo...");
           const { error: uploadError } = await supabase.storage
             .from('children-photos')
             .upload(filePath, file);
@@ -39,6 +40,7 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
             .from('children-photos')
             .getPublicUrl(filePath);
 
+          console.log("Photo uploaded successfully, updating child record...");
           onPhotoUpdate(publicUrl);
           toast({
             title: t('successTitle'),
@@ -59,6 +61,8 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
 
   const handleChange = async (field: string, value: any) => {
     try {
+      console.log(`Updating child field: ${field} with value:`, value);
+      
       // Update child data
       const { error: updateError } = await supabase
         .from('children')
@@ -66,6 +70,8 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
         .eq('id', child.id);
 
       if (updateError) throw updateError;
+
+      console.log("Child data updated successfully");
 
       // Get active sponsor
       const { data: sponsorship } = await supabase
@@ -76,6 +82,8 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
         .single();
 
       if (sponsorship?.sponsor_id) {
+        console.log("Creating notification for sponsor:", sponsorship.sponsor_id);
+        
         // Create notification for field update
         const { error: notifError } = await supabase
           .from('notifications')
@@ -89,6 +97,8 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
 
         if (notifError) {
           console.error("Error creating notification:", notifError);
+        } else {
+          console.log("Notification created successfully");
         }
       }
 
@@ -107,6 +117,8 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
 
       if (auditError) {
         console.error("Error creating audit log:", auditError);
+      } else {
+        console.log("Audit log created successfully");
       }
 
       onChange(field, value);
