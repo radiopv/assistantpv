@@ -1,14 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { useAuth } from "@/components/Auth/AuthProvider";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Share2 } from "lucide-react";
+import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { differenceInDays, differenceInYears } from "date-fns";
+import { differenceInYears } from "date-fns";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
+import { toast } from "sonner";
 import {
   Tabs,
   TabsContent,
@@ -27,6 +25,7 @@ const SponsorDashboard = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const [selectedChild, setSelectedChild] = useState<string | null>(null);
 
   const translations = {
     fr: {
@@ -36,9 +35,6 @@ const SponsorDashboard = () => {
       login: "Se connecter",
       loading: "Chargement...",
       sponsorDashboard: "Mon Espace Parrain",
-      shareError: "Le partage n'est pas disponible sur votre appareil",
-      copySuccess: "Lien copié dans le presse-papiers !",
-      copyError: "Impossible de copier le lien",
       photos: "Photos",
       testimonials: "Témoignages",
       statistics: "Statistiques",
@@ -56,9 +52,6 @@ const SponsorDashboard = () => {
       login: "Iniciar sesión",
       loading: "Cargando...",
       sponsorDashboard: "Mi Panel de Padrino",
-      shareError: "El compartir no está disponible en su dispositivo",
-      copySuccess: "¡Enlace copiado al portapapeles!",
-      copyError: "No se pudo copiar el enlace",
       photos: "Fotos",
       testimonials: "Testimonios",
       statistics: "Estadísticas",
@@ -73,15 +66,15 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
-  const handleAddPhoto = (childId?: string) => {
-    if (childId) {
-      navigate(`/children/${childId}/album`);
-    }
+  const handleAddPhoto = (childId: string) => {
+    setSelectedChild(childId);
   };
 
-  const handleAddTestimonial = (childId?: string) => {
-    if (childId) {
-      navigate('/testimonials/new', { state: { childId } });
+  const handleUploadSuccess = async () => {
+    if (selectedChild) {
+      toast.success(t.uploadSuccess);
+      setSelectedChild(null);
+      refetchPhotos();
     }
   };
 
@@ -190,34 +183,11 @@ const SponsorDashboard = () => {
     return needsArray.some(need => need.is_urgent);
   };
 
-  if (!user) {
-    return (
-      <div className="container mx-auto p-4">
-        <Card className="p-6 bg-white/80 backdrop-blur-sm border-none rounded-lg shadow-lg">
-          <p className="text-center text-gray-700">{t.loginRequired}</p>
-          <Button 
-            onClick={() => navigate("/login")}
-            className="mt-4 mx-auto block bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white"
-          >
-            {t.login}
-          </Button>
-        </Card>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige p-4 md:p-6">
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
-          <Button 
-            onClick={handleShare}
-            className="bg-cuba-turquoise hover:bg-cuba-turquoise/90 text-white flex items-center gap-2"
-          >
-            <Share2 className="w-4 h-4" />
-            {t.inviteFriends}
-          </Button>
         </div>
 
         <div className="grid gap-6">
@@ -231,7 +201,10 @@ const SponsorDashboard = () => {
             ) || [];
 
             const childNeeds = sponsorship.children?.needs ? convertJsonToNeeds(sponsorship.children.needs) : [];
-            const childAge = calculateAge(sponsorship.children?.birth_date);
+            const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
+            const childAge = sponsorship.children?.birth_date ? 
+              differenceInYears(new Date(), new Date(sponsorship.children.birth_date)) : 
+              null;
 
             return (
               <Card 
@@ -247,15 +220,24 @@ const SponsorDashboard = () => {
                           age: childAge
                         }}
                         onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
-                        onAddTestimonial={() => handleAddTestimonial(sponsorship.children?.id)}
+                        onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                       />
-                      {hasUrgentNeeds(sponsorship.children?.needs) && (
+                      {hasUrgentNeeds && (
                         <span className="text-red-500 font-medium animate-pulse">
                           {t.urgentNeeds}
                         </span>
                       )}
                     </div>
                   </div>
+
+                  {selectedChild === sponsorship.children?.id && (
+                    <div className="mt-4">
+                      <PhotoUploader
+                        childId={selectedChild}
+                        onUploadSuccess={handleUploadSuccess}
+                      />
+                    </div>
+                  )}
 
                   <Tabs defaultValue="photos" className="mt-6">
                     <TabsList className="grid w-full grid-cols-5">
@@ -267,16 +249,10 @@ const SponsorDashboard = () => {
                     </TabsList>
 
                     <TabsContent value="photos">
-                      <div className="space-y-4">
-                        <PhotoUploader
-                          childId={sponsorship.children?.id}
-                          onUploadSuccess={handleUploadSuccess}
-                        />
-                        <PhotoGallery 
-                          photos={childPhotos} 
-                          childName={sponsorship.children?.name} 
-                        />
-                      </div>
+                      <PhotoGallery 
+                        photos={childPhotos} 
+                        childName={sponsorship.children?.name} 
+                      />
                     </TabsContent>
 
                     <TabsContent value="testimonials">

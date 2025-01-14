@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ImagePlus, MessageSquarePlus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 
 interface SponsoredChildCardProps {
   child: any;
@@ -16,6 +17,7 @@ export const SponsoredChildCard = ({
   onAddTestimonial 
 }: SponsoredChildCardProps) => {
   const { language } = useLanguage();
+  const navigate = useNavigate();
 
   const translations = {
     fr: {
@@ -29,6 +31,10 @@ export const SponsoredChildCard = ({
   };
 
   const t = translations[language as keyof typeof translations];
+
+  const handleAddTestimonial = () => {
+    navigate('/testimonials/new', { state: { childId: child.id } });
+  };
 
   return (
     <Card className="p-6 hover:shadow-lg transition-shadow duration-300">
@@ -58,7 +64,7 @@ export const SponsoredChildCard = ({
           <Button
             variant="outline"
             className="flex items-center gap-2"
-            onClick={onAddTestimonial}
+            onClick={handleAddTestimonial}
           >
             <MessageSquarePlus className="w-4 h-4" />
             {t.addTestimonial}
