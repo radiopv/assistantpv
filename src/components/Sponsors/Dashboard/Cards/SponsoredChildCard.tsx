@@ -58,7 +58,7 @@ export const SponsoredChildCard = ({
           </div>
         </div>
 
-        <div className="flex flex-col w-full gap-3">
+        <div className="flex flex-col w-full gap-2">
           <Button
             variant="outline"
             className="w-full flex items-center justify-center gap-2 py-3 bg-white hover:bg-gray-50"

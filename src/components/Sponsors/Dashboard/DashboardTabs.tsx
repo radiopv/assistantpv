@@ -19,19 +19,34 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
   };
 
   return (
-    <Tabs defaultValue="actions" value={activeTab} className="w-full" onValueChange={handleTabChange}>
-      <TabsList className="grid w-full grid-cols-3">
-        <TabsTrigger value="actions">Actions</TabsTrigger>
-        <TabsTrigger value="gallery">Album Photos</TabsTrigger>
-        <TabsTrigger value="statistics">Statistiques</TabsTrigger>
+    <Tabs defaultValue="actions" value={activeTab} className="w-full space-y-4" onValueChange={handleTabChange}>
+      <TabsList className="flex flex-col sm:grid sm:grid-cols-3 gap-2 bg-transparent h-auto p-0">
+        <TabsTrigger 
+          value="actions" 
+          className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-4 py-2 rounded-md"
+        >
+          Actions
+        </TabsTrigger>
+        <TabsTrigger 
+          value="gallery" 
+          className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-4 py-2 rounded-md"
+        >
+          Album Photos
+        </TabsTrigger>
+        <TabsTrigger 
+          value="statistics" 
+          className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-4 py-2 rounded-md"
+        >
+          Statistiques
+        </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="actions">
+      <TabsContent value="actions" className="mt-4">
         <DashboardActions onTabChange={handleTabChange} />
       </TabsContent>
 
-      <TabsContent value="gallery">
-        <Card className="p-6">
+      <TabsContent value="gallery" className="mt-4">
+        <Card className="p-4">
           {sponsorships.map((sponsorship) => (
             <PhotoAlbumSection
               key={sponsorship.children.id}
@@ -43,7 +58,7 @@ export const DashboardTabs = ({ sponsorships, userId, plannedVisits }: Dashboard
         </Card>
       </TabsContent>
 
-      <TabsContent value="statistics">
+      <TabsContent value="statistics" className="mt-4">
         <StatisticsSection />
       </TabsContent>
     </Tabs>
