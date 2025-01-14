@@ -73,30 +73,29 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
 
       console.log("Visit planned successfully:", visitData);
 
-      // Get Vitia's ID (assuming she has the role 'assistant' and name 'Vitia')
-      const { data: vitiaData, error: vitiaError } = await supabase
+      // Get assistant's ID (looking for role 'assistant')
+      const { data: assistantData, error: assistantError } = await supabase
         .from('sponsors')
         .select('id')
-        .eq('name', 'Vitia')
         .eq('role', 'assistant')
         .maybeSingle();
 
-      if (vitiaError) {
-        console.error("Error finding Vitia:", vitiaError);
-        throw vitiaError;
+      if (assistantError) {
+        console.error("Error finding assistant:", assistantError);
+        throw assistantError;
       }
 
-      if (!vitiaData) {
-        console.warn("Vitia not found in database");
+      if (!assistantData) {
+        console.warn("Assistant not found in database");
         toast.warning(t.vitiaNotFound);
       } else {
-        console.log("Found Vitia:", vitiaData);
+        console.log("Found assistant:", assistantData);
 
-        // Create notification for Vitia
+        // Create notification for the assistant
         const { error: notificationError } = await supabase
           .from('notifications')
           .insert({
-            recipient_id: vitiaData.id,
+            recipient_id: assistantData.id,
             sender_id: sponsorId,
             type: 'planned_visit',
             title: 'Nouveau voyage planifié',
@@ -116,7 +115,7 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
           throw notificationError;
         }
 
-        console.log("Notification sent to Vitia successfully");
+        console.log("Notification sent to assistant successfully");
       }
 
       // Update sponsor's visit information
