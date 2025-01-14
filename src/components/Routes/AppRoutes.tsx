@@ -3,8 +3,7 @@ import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
 import ChildrenManagement from "@/pages/admin/ChildrenManagement";
 import DonationsManagement from "@/pages/admin/DonationsManagement";
-
-// Public pages
+import Notifications from "@/pages/Notifications";
 import Home from "@/pages/Home";
 import Login from "@/pages/auth/Login";
 import FAQ from "@/pages/public/FAQ";
@@ -14,8 +13,6 @@ import BecomeSponsor from "@/pages/BecomeSponsor";
 import ChildDetails from "@/pages/ChildDetails";
 import Statistics from "@/pages/public/Statistics";
 import PublicDonations from "@/pages/public/PublicDonations";
-
-// Protected pages
 import Dashboard from "@/pages/Dashboard";
 import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
@@ -33,11 +30,9 @@ import Validation from "@/pages/admin/Validation";
 import Emails from "@/pages/admin/Emails";
 import AdminFAQ from "@/pages/admin/FAQ";
 import CitiesManagement from "@/pages/admin/CitiesManagement";
-import Notifications from "@/pages/admin/Notifications";
 import LinkChecker from "@/pages/admin/LinkChecker";
 import Messages from "@/pages/Messages";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
-import SponsorAlbum from "@/pages/sponsor/SponsorAlbum";
 import AuditLogs from "@/pages/admin/AuditLogs";
 
 export const AppRoutes = () => {
@@ -62,12 +57,13 @@ export const AppRoutes = () => {
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
         <Route path="/children/:id" element={<ChildProfile />} />
-        <Route path="/sponsor-album" element={<SponsorAlbum />} />
+        <Route path="/sponsor-album" element={<SponsorDashboard />} />
         <Route path="/donations" element={<Donations />} />
         <Route path="/donations/add" element={<AddDonation />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/messages" element={<Messages />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
 
@@ -82,10 +78,7 @@ export const AppRoutes = () => {
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<AdminFAQ />} />
-        <Route path="/admin/notifications" element={<Notifications />} />
-        <Route path="/admin/link-checker" element={<LinkChecker />} />
         <Route path="/admin/home-content" element={<HomeContentManagement />} />
-        <Route path="/admin/audit-logs" element={<AuditLogs />} />
         
         {/* Catch all redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />

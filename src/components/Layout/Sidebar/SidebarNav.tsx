@@ -4,11 +4,9 @@ import {
   Settings,
   Gift,
   Home,
-  Image,
   MessageSquare,
   FileText,
   Bell,
-  Link,
   Mail,
   ClipboardList,
 } from "lucide-react";
@@ -42,19 +40,9 @@ const adminLinks = [
     icon: FileText,
   },
   {
-    href: "/admin/notifications",
+    href: "/notifications",
     label: "Notifications",
     icon: Bell,
-  },
-  {
-    href: "/admin/link-checker",
-    label: "Vérification des liens",
-    icon: Link,
-  },
-  {
-    href: "/admin/audit-logs",
-    label: "Historique des modifications",
-    icon: ClipboardList,
   },
   {
     href: "/messages",
@@ -83,6 +71,11 @@ const sponsorLinks = [
     href: "/public-donations",
     label: "Dons",
     icon: Gift,
+  },
+  {
+    href: "/notifications",
+    label: "Notifications",
+    icon: Bell,
   },
   {
     href: "/messages",
