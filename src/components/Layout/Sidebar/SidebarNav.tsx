@@ -46,6 +46,11 @@ const adminLinks = [
     icon: Globe,
   },
   {
+    href: "/admin/translation-admin",
+    label: "Traduction des profils",
+    icon: Globe,
+  },
+  {
     href: "/admin/validation",
     label: "Validation",
     icon: CheckSquare,
