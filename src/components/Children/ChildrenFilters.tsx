@@ -1,8 +1,6 @@
-import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { SearchInput } from "@/components/ui/search-input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChildrenFiltersProps {
   searchTerm: string;
@@ -33,27 +31,24 @@ export const ChildrenFilters = ({
   cities,
   ages,
 }: ChildrenFiltersProps) => {
-  const { t } = useLanguage();
-  const isMobile = useIsMobile();
-
   return (
     <div className="flex flex-col gap-4">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-        <Input
-          placeholder={t("searchChild")}
+        <SearchInput
+          placeholder="Rechercher un enfant..."
           value={searchTerm}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-10 bg-white min-h-[44px]"
         />
       </div>
-      <div className={`grid gap-2 ${isMobile ? 'grid-cols-2' : 'sm:flex sm:flex-wrap sm:gap-4'}`}>
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-4">
         <Select value={selectedCity} onValueChange={onCityChange}>
           <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
-            <SelectValue placeholder={t("city")} />
+            <SelectValue placeholder="Ville" />
           </SelectTrigger>
           <SelectContent className="bg-white max-h-[300px]">
-            <SelectItem value="all">{t("allCities")}</SelectItem>
+            <SelectItem value="all">Toutes les villes</SelectItem>
             {cities.map((city) => (
               <SelectItem key={city} value={city}>
                 {city}
@@ -64,24 +59,24 @@ export const ChildrenFilters = ({
 
         <Select value={selectedGender} onValueChange={onGenderChange}>
           <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
-            <SelectValue placeholder={t("allGenders")} />
+            <SelectValue placeholder="Genre" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="all">{t("allGenders")}</SelectItem>
-            <SelectItem value="male">{t("masculine")}</SelectItem>
-            <SelectItem value="female">{t("feminine")}</SelectItem>
+            <SelectItem value="all">Tous les genres</SelectItem>
+            <SelectItem value="male">Garçon</SelectItem>
+            <SelectItem value="female">Fille</SelectItem>
           </SelectContent>
         </Select>
 
         <Select value={selectedAge} onValueChange={onAgeChange}>
           <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
-            <SelectValue placeholder={t("age")} />
+            <SelectValue placeholder="Âge" />
           </SelectTrigger>
           <SelectContent className="bg-white max-h-[300px]">
-            <SelectItem value="all">{t("allAges")}</SelectItem>
+            <SelectItem value="all">Tous les âges</SelectItem>
             {ages.map((ageRange) => (
               <SelectItem key={ageRange} value={ageRange}>
-                {ageRange} {t("years")}
+                {ageRange === "13+" ? "13 ans et plus" : `${ageRange} ans`}
               </SelectItem>
             ))}
           </SelectContent>
@@ -89,13 +84,12 @@ export const ChildrenFilters = ({
 
         <Select value={selectedStatus} onValueChange={onStatusChange}>
           <SelectTrigger className="w-full sm:w-[180px] bg-white min-h-[44px]">
-            <SelectValue placeholder={t("status")} />
+            <SelectValue placeholder="Statut" />
           </SelectTrigger>
           <SelectContent className="bg-white">
-            <SelectItem value="all">{t("allStatus")}</SelectItem>
-            <SelectItem value="available">{t("available")}</SelectItem>
-            <SelectItem value="sponsored">{t("sponsored")}</SelectItem>
-            <SelectItem value="urgent">{t("urgent")}</SelectItem>
+            <SelectItem value="all">Tous les statuts</SelectItem>
+            <SelectItem value="available">Disponible</SelectItem>
+            <SelectItem value="urgent">Besoins urgents</SelectItem>
           </SelectContent>
         </Select>
       </div>
