@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Bell } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NeedNotification {
   id: string;
@@ -25,32 +26,58 @@ export const NeedNotifications = () => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<NeedNotification[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (user) {
       fetchNotifications();
+      subscribeToNotifications();
     }
   }, [user]);
 
+  const subscribeToNotifications = () => {
+    const channel = supabase
+      .channel('notification-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'notifications',
+          filter: `recipient_id=eq.${user?.id}`
+        },
+        () => {
+          console.log("Notification change detected, refetching...");
+          fetchNotifications();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
   const fetchNotifications = async () => {
     try {
+      console.log("Fetching notifications for user:", user?.id);
       const { data, error } = await supabase
         .from("notifications")
         .select("*")
         .eq("recipient_id", user?.id)
-        .eq("type", "need_update")
         .order("created_at", { ascending: false });
 
       if (error) {
         throw error;
       }
 
+      console.log("Fetched notifications:", data);
       setNotifications(data || []);
     } catch (error) {
       console.error("Error fetching notifications:", error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les notifications",
+        title: t("error"),
+        description: t("errorFetchingNotifications"),
         variant: "destructive",
       });
     } finally {
@@ -62,9 +89,7 @@ export const NeedNotifications = () => {
     try {
       const { error } = await supabase
         .from("notifications")
-        .update({ 
-          is_read: true 
-        })
+        .update({ is_read: true })
         .eq("id", notificationId);
 
       if (error) {
@@ -80,21 +105,27 @@ export const NeedNotifications = () => {
       );
 
       toast({
-        title: "Succès",
-        description: "Notification marquée comme lue",
+        title: t("success"),
+        description: t("notificationMarkedAsRead"),
       });
     } catch (error) {
       console.error("Error marking notification as read:", error);
       toast({
-        title: "Erreur",
-        description: "Impossible de marquer la notification comme lue",
+        title: t("error"),
+        description: t("errorMarkingNotificationAsRead"),
         variant: "destructive",
       });
     }
   };
 
   if (loading) {
-    return <div>Chargement des notifications...</div>;
+    return (
+      <Card className="p-6">
+        <div className="flex items-center justify-center">
+          <span className="text-gray-500">{t("loading")}</span>
+        </div>
+      </Card>
+    );
   }
 
   if (notifications.length === 0) {
@@ -102,7 +133,7 @@ export const NeedNotifications = () => {
       <Card className="p-6">
         <div className="flex items-center justify-center text-gray-500">
           <Bell className="w-5 h-5 mr-2" />
-          <span>Aucune notification</span>
+          <span>{t("noNotifications")}</span>
         </div>
       </Card>
     );
@@ -137,7 +168,7 @@ export const NeedNotifications = () => {
                 size="sm"
                 onClick={() => handleMarkAsRead(notification.id)}
               >
-                Marquer comme lu
+                {t("markAsRead")}
               </Button>
             )}
           </div>
