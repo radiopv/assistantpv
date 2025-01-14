@@ -2,6 +2,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
 import { AuditLogsList } from "@/components/Admin/AuditLogs/AuditLogsList";
+import { MessageList } from "@/components/Messages/MessageList";
+import { ComposeMessage } from "@/components/Messages/ComposeMessage";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Notifications = () => {
@@ -11,11 +13,15 @@ const Notifications = () => {
     fr: {
       notifications: "Notifications",
       history: "Historique",
+      messages: "Messages",
+      newMessage: "Nouveau message",
       title: "Centre de notifications"
     },
     es: {
       notifications: "Notificaciones",
       history: "Historial",
+      messages: "Mensajes",
+      newMessage: "Nuevo mensaje",
       title: "Centro de notificaciones"
     }
   };
@@ -30,6 +36,8 @@ const Notifications = () => {
         <TabsList>
           <TabsTrigger value="notifications">{t.notifications}</TabsTrigger>
           <TabsTrigger value="history">{t.history}</TabsTrigger>
+          <TabsTrigger value="messages">{t.messages}</TabsTrigger>
+          <TabsTrigger value="new-message">{t.newMessage}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="notifications">
@@ -41,6 +49,18 @@ const Notifications = () => {
         <TabsContent value="history">
           <Card className="p-6">
             <AuditLogsList />
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="messages">
+          <Card className="p-6">
+            <MessageList />
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="new-message">
+          <Card className="p-6">
+            <ComposeMessage />
           </Card>
         </TabsContent>
       </Tabs>

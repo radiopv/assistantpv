@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, HelpCircle, BarChart, LogIn, LogOut, Home, Menu, Heart } from "lucide-react";
+import { User, Gift, Users, HelpCircle, BarChart, LogIn, LogOut, Home, Menu, Heart } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";

@@ -4,7 +4,6 @@ import {
   Settings,
   Gift,
   Home,
-  MessageSquare,
   FileText,
   Bell,
   Mail,
@@ -44,16 +43,6 @@ const adminLinks = [
     label: "Notifications",
     icon: Bell,
   },
-  {
-    href: "/messages",
-    label: "Messages",
-    icon: MessageSquare,
-  },
-  {
-    href: "/settings",
-    label: "Paramètres",
-    icon: Settings,
-  },
 ];
 
 const sponsorLinks = [
@@ -78,19 +67,9 @@ const sponsorLinks = [
     icon: Bell,
   },
   {
-    href: "/messages",
-    label: "Messages",
-    icon: MessageSquare,
-  },
-  {
     href: "/faq",
     label: "FAQ",
     icon: FileText,
-  },
-  {
-    href: "/settings",
-    label: "Paramètres",
-    icon: Settings,
   },
 ];
 
