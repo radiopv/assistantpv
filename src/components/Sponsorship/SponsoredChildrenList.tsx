@@ -79,25 +79,32 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
           key={child.id} 
           className="overflow-hidden bg-gradient-to-br from-white to-cuba-warmBeige border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-all duration-300"
         >
-          {/* Photo principale centrée */}
-          <div className="aspect-square relative h-48 flex items-center justify-center bg-white/50">
-            <img
-              src={child.photo_url || "/placeholder.svg"}
-              alt={child.name}
-              className="h-full w-auto object-contain rounded-lg"
-            />
+          <div className="flex flex-col md:flex-row gap-4 p-4">
+            {/* Photo principale */}
+            <div className="w-full md:w-1/2 aspect-square flex items-center justify-center bg-white/50 rounded-lg overflow-hidden">
+              <img
+                src={child.photo_url || "/placeholder.svg"}
+                alt={child.name}
+                className="h-full w-auto object-contain"
+              />
+            </div>
+
+            {/* Informations à droite de la photo */}
+            <div className="w-full md:w-1/2 space-y-2">
+              <h3 className="font-title text-xl text-cuba-deepOrange">{child.name}</h3>
+              <p className="text-sm text-gray-600">{formatAge(child.birth_date)}</p>
+              <p className="text-sm text-gray-600">{child.city}</p>
+              {child.sponsor_name && (
+                <div className="mt-2 pt-2 border-t border-cuba-softOrange/20">
+                  <p className="text-sm text-gray-600">
+                    Parrainé par: <span className="font-medium">{child.sponsor_name}</span>
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="p-4 space-y-4">
-            {/* Basic Info avec fond doux */}
-            <div className="bg-white/80 rounded-lg p-3 shadow-sm">
-              <h3 className="font-title text-xl text-cuba-deepOrange mb-2">{child.name}</h3>
-              <div className="mt-2 space-y-1 text-sm text-gray-600">
-                <p>{formatAge(child.birth_date)}</p>
-                <p>{child.city}</p>
-              </div>
-            </div>
-
             {/* Album Photos Grid */}
             {albumPhotos && albumPhotos[child.id] && albumPhotos[child.id].length > 0 && (
               <div className="bg-white/60 rounded-lg p-3">
@@ -129,15 +136,6 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
               <div className="bg-white/60 rounded-lg p-3">
                 <h4 className="font-medium text-sm mb-1 text-cuba-warmGray">Histoire</h4>
                 <p className="text-sm text-gray-700 italic">{child.story}</p>
-              </div>
-            )}
-
-            {/* Sponsorship Info */}
-            {child.sponsor_name && (
-              <div className="pt-2 border-t border-cuba-softOrange/20">
-                <p className="text-sm text-gray-600">
-                  Parrainé par: <span className="font-medium">{child.sponsor_name}</span>
-                </p>
               </div>
             )}
 
