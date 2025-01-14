@@ -87,7 +87,16 @@ export const translations = {
     sponsorshipRequestRejected: "Demande de parrainage rejetée",
     sponsorshipRequestApproved: "Demande de parrainage approuvée",
     errorApprovingRequest: "Erreur lors de l'approbation de la demande",
-    sponsoredBy: "Parrainé par"
+    sponsoredBy: "Parrainé par",
+    // Adding missing translations
+    photos: "Photos",
+    testimonials: "Témoignages",
+    statistics: "Statistiques",
+    birthday: "Anniversaire",
+    addTestimonial: "Ajouter un témoignage",
+    nextBirthday: "Prochain anniversaire",
+    daysLeft: "jours restants",
+    viewProfile: "Voir le profil"
   },
   es: {
     addChild: "Agregar niño",
@@ -163,6 +172,15 @@ export const translations = {
     sponsorshipRequestRejected: "Solicitud de patrocinio rechazada",
     sponsorshipRequestApproved: "Solicitud de patrocinio aprobada",
     errorApprovingRequest: "Error al aprobar la solicitud",
-    sponsoredBy: "Patrocinado por"
+    sponsoredBy: "Patrocinado por",
+    // Adding missing translations
+    photos: "Fotos",
+    testimonials: "Testimonios",
+    statistics: "Estadísticas",
+    birthday: "Cumpleaños",
+    addTestimonial: "Agregar testimonio",
+    nextBirthday: "Próximo cumpleaños",
+    daysLeft: "días restantes",
+    viewProfile: "Ver perfil"
   }
 };
