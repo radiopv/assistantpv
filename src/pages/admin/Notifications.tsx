@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Bell, Check, Trash2, Image, AlertCircle, FileText } from "lucide-react";
+import { Bell, Check, Trash2, Image, AlertCircle } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { NotificationService } from "@/services/NotificationService";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
+import { NotificationMetadata } from "@/types/needs";
 
 interface Notification {
   id: string;
@@ -18,7 +18,7 @@ interface Notification {
   link?: string;
   is_read: boolean;
   created_at: string;
-  metadata: any;
+  metadata: NotificationMetadata;
 }
 
 const Notifications = () => {
@@ -68,12 +68,12 @@ const Notifications = () => {
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'photo_update':
+      case 'photo_added':
         return <Image className="w-5 h-5 text-blue-500" />;
       case 'needs_update':
         return <AlertCircle className="w-5 h-5 text-orange-500" />;
       case 'child_update':
-        return <FileText className="w-5 h-5 text-purple-500" />;
+        return <Bell className="w-5 h-5 text-purple-500" />;
       default:
         return <Bell className="w-5 h-5 text-gray-500" />;
     }
@@ -102,31 +102,47 @@ const Notifications = () => {
             </Card>
           ) : (
             notifications.map((notification: Notification) => (
-              <div key={notification.id} className="relative">
-                <DetailedNotification notification={notification} />
-                <div className="absolute top-2 right-2 flex gap-2">
-                  {!notification.is_read && (
+              <Card 
+                key={notification.id} 
+                className={`p-4 ${!notification.is_read ? 'bg-blue-50' : ''}`}
+              >
+                <div className="flex justify-between items-start gap-4">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 mt-1">
+                      {getNotificationIcon(notification.type)}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{notification.title}</h3>
+                      <p className="text-sm text-gray-600 mt-1">{notification.content}</p>
+                      <p className="text-xs text-gray-400 mt-2">
+                        {format(new Date(notification.created_at), "dd/MM/yyyy HH:mm", { locale: fr })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {!notification.is_read && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleMarkAsRead(notification)}
+                        className="gap-2"
+                      >
+                        <Check className="w-4 h-4" />
+                        {t.markAsRead}
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleMarkAsRead(notification)}
-                      className="gap-2"
+                      onClick={() => handleDelete(notification)}
+                      className="text-red-600 hover:text-red-700 gap-2"
                     >
-                      <Check className="w-4 h-4" />
-                      {t.markAsRead}
+                      <Trash2 className="w-4 h-4" />
+                      {t.delete}
                     </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(notification)}
-                    className="text-red-600 hover:text-red-700 gap-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    {t.delete}
-                  </Button>
+                  </div>
                 </div>
-              </div>
+              </Card>
             ))
           )}
         </div>
