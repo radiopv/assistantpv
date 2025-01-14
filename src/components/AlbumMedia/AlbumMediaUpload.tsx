@@ -43,6 +43,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         return;
       }
       setUploading(true);
+      console.log("Starting upload process for child:", childId);
 
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
@@ -58,6 +59,8 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
         .from('album-media')
         .getPublicUrl(filePath);
 
+      console.log("File uploaded successfully, saving to database...");
+
       const { error: dbError } = await supabase
         .from('album_media')
         .insert({
@@ -68,14 +71,18 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       if (dbError) throw dbError;
 
+      console.log("Database entry created, notifying sponsor...");
+
       // Notify sponsor about new media
-      await notifyActiveSponsor(
+      const notificationSent = await notifyActiveSponsor(
         childId,
         t.success,
         file.type.startsWith('image/') 
           ? "Une nouvelle photo a été ajoutée à l'album"
           : "Une nouvelle vidéo a été ajoutée à l'album"
       );
+
+      console.log("Notification status:", notificationSent ? "Sent successfully" : "No active sponsor found");
 
       toast({
         title: t.success,
@@ -84,6 +91,7 @@ export const AlbumMediaUpload = ({ childId, onUploadComplete }: AlbumMediaUpload
 
       onUploadComplete?.();
     } catch (error: any) {
+      console.error("Upload error:", error);
       toast({
         variant: "destructive",
         title: t.error,
