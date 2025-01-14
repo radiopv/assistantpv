@@ -31,7 +31,8 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
       donationPickup: "J'ai des dons à remettre",
       submit: "Enregistrer",
       success: "Visite planifiée avec succès",
-      error: "Erreur lors de l'enregistrement de la visite"
+      error: "Erreur lors de l'enregistrement de la visite",
+      vitiaNotFound: "Impossible de notifier l'assistant. La visite a été enregistrée mais l'assistant devra être notifié manuellement."
     },
     es: {
       planVisit: "Planificar una visita",
@@ -42,7 +43,8 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
       donationPickup: "Tengo donaciones para entregar",
       submit: "Guardar",
       success: "Visita planificada con éxito",
-      error: "Error al registrar la visita"
+      error: "Error al registrar la visita",
+      vitiaNotFound: "No se pudo notificar al asistente. La visita se registró pero el asistente deberá ser notificado manualmente."
     }
   };
 
@@ -77,40 +79,45 @@ export const PlannedVisitForm = ({ sponsorId, onVisitPlanned }: PlannedVisitForm
         .select('id')
         .eq('name', 'Vitia')
         .eq('role', 'assistant')
-        .single();
+        .maybeSingle();
 
       if (vitiaError) {
         console.error("Error finding Vitia:", vitiaError);
         throw vitiaError;
       }
 
-      console.log("Found Vitia:", vitiaData);
+      if (!vitiaData) {
+        console.warn("Vitia not found in database");
+        toast.warning(t.vitiaNotFound);
+      } else {
+        console.log("Found Vitia:", vitiaData);
 
-      // Create notification for Vitia
-      const { error: notificationError } = await supabase
-        .from('notifications')
-        .insert({
-          recipient_id: vitiaData.id,
-          sender_id: sponsorId,
-          type: 'planned_visit',
-          title: 'Nouveau voyage planifié',
-          content: 'Un parrain a planifié un voyage à Cuba',
-          metadata: {
-            start_date: startDate,
-            end_date: endDate,
-            hotel_name: hotelName,
-            wants_to_visit_child: wantsToVisitChild,
-            wants_donation_pickup: wantsDonationPickup
-          },
-          is_read: false
-        });
+        // Create notification for Vitia
+        const { error: notificationError } = await supabase
+          .from('notifications')
+          .insert({
+            recipient_id: vitiaData.id,
+            sender_id: sponsorId,
+            type: 'planned_visit',
+            title: 'Nouveau voyage planifié',
+            content: 'Un parrain a planifié un voyage à Cuba',
+            metadata: {
+              start_date: startDate,
+              end_date: endDate,
+              hotel_name: hotelName,
+              wants_to_visit_child: wantsToVisitChild,
+              wants_donation_pickup: wantsDonationPickup
+            },
+            is_read: false
+          });
 
-      if (notificationError) {
-        console.error("Error creating notification:", notificationError);
-        throw notificationError;
+        if (notificationError) {
+          console.error("Error creating notification:", notificationError);
+          throw notificationError;
+        }
+
+        console.log("Notification sent to Vitia successfully");
       }
-
-      console.log("Notification sent to Vitia successfully");
 
       // Update sponsor's visit information
       const { error: sponsorError } = await supabase
