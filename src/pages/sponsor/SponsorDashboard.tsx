@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,10 +7,6 @@ import { Share2, ChevronDown, ChevronUp, Image, Calendar, Heart, ChartBar, Book,
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
-import { ChildNeeds } from "@/components/Dashboard/ChildrenNeeds/ChildNeeds";
 import { differenceInDays } from "date-fns";
 import {
   Accordion,
@@ -29,7 +26,7 @@ const SponsorDashboard = () => {
     fr: {
       welcomeMessage: "Bienvenue",
       inviteFriends: "Inviter des amis",
-      loginRequired: "Veuillez vous connecter pour accéder à votre tableau de bord.",
+      loginRequired: "Veuillez vous connecter pour accéder à votre tableau de bord",
       login: "Se connecter",
       loading: "Chargement...",
       sponsorDashboard: "Mon Espace Parrain",
@@ -52,7 +49,7 @@ const SponsorDashboard = () => {
     es: {
       welcomeMessage: "Bienvenido",
       inviteFriends: "Invitar amigos",
-      loginRequired: "Por favor, inicie sesión para acceder a su panel.",
+      loginRequired: "Por favor, inicie sesión para acceder a su panel",
       login: "Iniciar sesión",
       loading: "Cargando...",
       sponsorDashboard: "Mi Panel de Padrino",
@@ -73,6 +70,8 @@ const SponsorDashboard = () => {
       addPhoto: "Agregar una foto",
     }
   } as const;
+
+  const t = translations[language as keyof typeof translations];
 
   const handleAddPhoto = (childId?: string) => {
     if (childId) {
@@ -225,8 +224,6 @@ const SponsorDashboard = () => {
             {t.inviteFriends}
           </Button>
         </div>
-
-        <NeedNotifications />
 
         <div className="grid gap-6">
           {sponsoredChildren?.map((sponsorship) => {
