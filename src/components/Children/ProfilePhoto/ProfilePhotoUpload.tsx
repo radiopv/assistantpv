@@ -65,23 +65,35 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         .from('children-photos')
         .getPublicUrl(filePath);
 
-      // Fetch child details and sponsorships
-      const { data: child } = await supabase
+      // Récupérer les détails de l'enfant avec ses parrainages actifs
+      const { data: child, error: childError } = await supabase
         .from('children')
-        .select('name, sponsorships(sponsor_id)')
+        .select(`
+          name,
+          sponsorships!inner(
+            sponsor_id,
+            status
+          )
+        `)
         .eq('id', childId)
+        .eq('sponsorships.status', 'active')
         .single();
 
-      console.log("Child data fetched:", child);
+      if (childError) {
+        console.error("Erreur lors de la récupération des données de l'enfant:", childError);
+        throw childError;
+      }
 
-      if (child?.sponsorships) {
-        console.log("Creating notifications for sponsors...");
+      console.log("Données de l'enfant récupérées:", child);
+
+      if (child?.sponsorships && child.sponsorships.length > 0) {
+        console.log("Création des notifications pour les parrains...");
         
-        // Create notifications for each sponsor
+        // Créer les notifications pour chaque parrain
         const notificationPromises = child.sponsorships.map(async (sponsorship: any) => {
-          console.log("Creating notification for sponsor:", sponsorship.sponsor_id);
+          console.log("Création d'une notification pour le parrain:", sponsorship.sponsor_id);
           
-          return supabase
+          const { data: notification, error: notifError } = await supabase
             .from('notifications')
             .insert({
               recipient_id: sponsorship.sponsor_id,
@@ -89,12 +101,25 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
               title: `Nouvelle photo de ${child.name}`,
               content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
               link: `/children/${childId}/album`
-            });
+            })
+            .select()
+            .single();
+
+          if (notifError) {
+            console.error("Erreur lors de la création de la notification:", notifError);
+            throw notifError;
+          }
+
+          return notification;
         });
 
-        // Wait for all notifications to be created
-        const notificationResults = await Promise.all(notificationPromises);
-        console.log("Notification results:", notificationResults);
+        try {
+          const notificationResults = await Promise.all(notificationPromises);
+          console.log("Résultats des notifications:", notificationResults);
+        } catch (notifError) {
+          console.error("Erreur lors de la création des notifications:", notifError);
+          throw notifError;
+        }
       }
 
       onUploadComplete(publicUrl);
@@ -104,7 +129,7 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         description: "La photo de profil a été mise à jour avec succès.",
       });
     } catch (error: any) {
-      console.error("Error during upload:", error);
+      console.error("Erreur complète:", error);
       toast({
         variant: "destructive",
         title: "Erreur",
