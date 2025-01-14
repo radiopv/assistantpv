@@ -9,21 +9,21 @@ import {
 import { SponsorshipConversionStats, TopCityStats, UserEngagementStats } from "@/types/statistics";
 
 const Statistics = () => {
-  const { data: sponsorshipStats } = useQuery<SponsorshipConversionStats>({
+  const { data: sponsorshipStats, isLoading: isLoadingSponsorship } = useQuery<SponsorshipConversionStats>({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
       if (error) throw error;
-      return data as SponsorshipConversionStats;
+      return data as unknown as SponsorshipConversionStats;
     }
   });
 
-  const { data: engagementStats } = useQuery<UserEngagementStats>({
+  const { data: engagementStats, isLoading: isLoadingEngagement } = useQuery<UserEngagementStats>({
     queryKey: ['engagement-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_engagement_stats');
       if (error) throw error;
-      return data as UserEngagementStats;
+      return data as unknown as UserEngagementStats;
     }
   });
 
