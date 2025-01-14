@@ -1000,9 +1000,11 @@ export type Database = {
           is_archived: boolean | null
           is_read: boolean | null
           message_type: string | null
+          read_at: string | null
           recipient_id: string | null
           related_entity_id: string | null
           related_entity_type: string | null
+          reply_to_id: string | null
           sender_id: string | null
           subject: string
           updated_at: string | null
@@ -1014,9 +1016,11 @@ export type Database = {
           is_archived?: boolean | null
           is_read?: boolean | null
           message_type?: string | null
+          read_at?: string | null
           recipient_id?: string | null
           related_entity_id?: string | null
           related_entity_type?: string | null
+          reply_to_id?: string | null
           sender_id?: string | null
           subject: string
           updated_at?: string | null
@@ -1028,9 +1032,11 @@ export type Database = {
           is_archived?: boolean | null
           is_read?: boolean | null
           message_type?: string | null
+          read_at?: string | null
           recipient_id?: string | null
           related_entity_id?: string | null
           related_entity_type?: string | null
+          reply_to_id?: string | null
           sender_id?: string | null
           subject?: string
           updated_at?: string | null
@@ -1041,6 +1047,13 @@ export type Database = {
             columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
           {
