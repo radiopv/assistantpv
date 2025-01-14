@@ -1564,6 +1564,137 @@ export type Database = {
           },
         ]
       }
+      sponsorship_history: {
+        Row: {
+          action: string
+          child_id: string | null
+          created_at: string | null
+          id: string
+          new_sponsor_id: string | null
+          performed_by: string | null
+          previous_sponsor_id: string | null
+          reason: string | null
+          sponsor_id: string | null
+          sponsorship_id: string | null
+        }
+        Insert: {
+          action: string
+          child_id?: string | null
+          created_at?: string | null
+          id?: string
+          new_sponsor_id?: string | null
+          performed_by?: string | null
+          previous_sponsor_id?: string | null
+          reason?: string | null
+          sponsor_id?: string | null
+          sponsorship_id?: string | null
+        }
+        Update: {
+          action?: string
+          child_id?: string | null
+          created_at?: string | null
+          id?: string
+          new_sponsor_id?: string | null
+          performed_by?: string | null
+          previous_sponsor_id?: string | null
+          reason?: string | null
+          sponsor_id?: string | null
+          sponsorship_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_history_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_history_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_history_new_sponsor_id_fkey"
+            columns: ["new_sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_history_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_history_previous_sponsor_id_fkey"
+            columns: ["previous_sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_history_sponsor_id_fkey"
+            columns: ["sponsor_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_history_sponsorship_id_fkey"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsorship_notes: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          id: string
+          note: string | null
+          sponsorship_id: string | null
+          tags: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          sponsorship_id?: string | null
+          tags?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          sponsorship_id?: string | null
+          tags?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_notes_sponsorship_id_fkey"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1647,7 +1778,13 @@ export type Database = {
           child_id: string
           created_at: string | null
           end_date: string | null
+          end_planned_date: string | null
           id: string
+          is_paused: boolean | null
+          is_temporary: boolean | null
+          pause_date: string | null
+          pause_reason: string | null
+          resume_date: string | null
           sponsor_id: string | null
           start_date: string | null
           status: string
@@ -1660,7 +1797,13 @@ export type Database = {
           child_id: string
           created_at?: string | null
           end_date?: string | null
+          end_planned_date?: string | null
           id?: string
+          is_paused?: boolean | null
+          is_temporary?: boolean | null
+          pause_date?: string | null
+          pause_reason?: string | null
+          resume_date?: string | null
           sponsor_id?: string | null
           start_date?: string | null
           status?: string
@@ -1673,7 +1816,13 @@ export type Database = {
           child_id?: string
           created_at?: string | null
           end_date?: string | null
+          end_planned_date?: string | null
           id?: string
+          is_paused?: boolean | null
+          is_temporary?: boolean | null
+          pause_date?: string | null
+          pause_reason?: string | null
+          resume_date?: string | null
           sponsor_id?: string | null
           start_date?: string | null
           status?: string
@@ -2345,6 +2494,24 @@ export type Database = {
           user_role: string
         }
         Returns: Json
+      }
+      handle_sponsorship_pause: {
+        Args: {
+          sponsorship_id: string
+          action: string
+          reason: string
+          performed_by: string
+        }
+        Returns: undefined
+      }
+      handle_sponsorship_transfer: {
+        Args: {
+          sponsorship_id: string
+          new_sponsor_id: string
+          reason: string
+          performed_by: string
+        }
+        Returns: undefined
       }
       has_permission: {
         Args: {

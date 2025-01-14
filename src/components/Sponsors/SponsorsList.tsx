@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SponsorFilters } from "./SponsorFilters";
 import { SponsorListItem } from "./SponsorListItem";
 import { SponsorshipAssociationDialog } from "./SponsorshipAssociationDialog";
+import { BulkOperationsDialog } from "./SponsorshipManagement/BulkOperationsDialog";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,6 +27,8 @@ export const SponsorsList = ({
   const [sortOrder, setSortOrder] = useState("recent");
   const [selectedSponsor, setSelectedSponsor] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedSponsors, setSelectedSponsors] = useState<string[]>([]);
+  const [showBulkOperations, setShowBulkOperations] = useState(false);
 
   const handleVerificationChange = async (sponsorId: string, checked: boolean) => {
     try {
@@ -83,6 +86,52 @@ export const SponsorsList = ({
     setIsDialogOpen(false);
   };
 
+  const handleSponsorSelect = (sponsorId: string, selected: boolean) => {
+    setSelectedSponsors(prev => 
+      selected 
+        ? [...prev, sponsorId]
+        : prev.filter(id => id !== sponsorId)
+    );
+  };
+
+  const handlePauseSponsorship = async (sponsorshipId: string) => {
+    try {
+      const { error } = await supabase.rpc('handle_sponsorship_pause', {
+        sponsorship_id: sponsorshipId,
+        action: 'pause',
+        reason: 'Pause manuelle',
+        performed_by: (await supabase.auth.getUser()).data.user?.id
+      });
+
+      if (error) throw error;
+      
+      toast.success("Parrainage mis en pause");
+      window.location.reload();
+    } catch (error) {
+      console.error('Error pausing sponsorship:', error);
+      toast.error("Erreur lors de la mise en pause");
+    }
+  };
+
+  const handleResumeSponsorship = async (sponsorshipId: string) => {
+    try {
+      const { error } = await supabase.rpc('handle_sponsorship_pause', {
+        sponsorship_id: sponsorshipId,
+        action: 'resume',
+        reason: 'Reprise manuelle',
+        performed_by: (await supabase.auth.getUser()).data.user?.id
+      });
+
+      if (error) throw error;
+      
+      toast.success("Parrainage repris");
+      window.location.reload();
+    } catch (error) {
+      console.error('Error resuming sponsorship:', error);
+      toast.error("Erreur lors de la reprise");
+    }
+  };
+
   const filterAndSortSponsors = (sponsors: any[], isActive: boolean) => {
     let filtered = sponsors.filter(sponsor => {
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
@@ -131,12 +180,22 @@ export const SponsorsList = ({
         <TabsTrigger value="inactive">Parrains inactifs</TabsTrigger>
       </TabsList>
 
-      <SponsorFilters
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        sortOrder={sortOrder}
-        onSortChange={setSortOrder}
-      />
+      <div className="mb-4 flex justify-between items-center">
+        <SponsorFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          sortOrder={sortOrder}
+          onSortChange={setSortOrder}
+        />
+        {selectedSponsors.length > 0 && (
+          <Button
+            variant="outline"
+            onClick={() => setShowBulkOperations(true)}
+          >
+            Actions en masse ({selectedSponsors.length})
+          </Button>
+        )}
+      </div>
 
       <TabsContent value="active">
         <div className="space-y-6">
@@ -147,6 +206,10 @@ export const SponsorsList = ({
               onAddChild={handleAddChildClick}
               onStatusChange={handleStatusChange}
               onVerificationChange={handleVerificationChange}
+              onPauseSponsorship={handlePauseSponsorship}
+              onResumeSponsorship={handleResumeSponsorship}
+              onSelect={handleSponsorSelect}
+              isSelected={selectedSponsors.includes(sponsor.id)}
             />
           ))}
         </div>
@@ -161,6 +224,8 @@ export const SponsorsList = ({
               onAddChild={handleAddChildClick}
               onStatusChange={handleStatusChange}
               onVerificationChange={handleVerificationChange}
+              onSelect={handleSponsorSelect}
+              isSelected={selectedSponsors.includes(sponsor.id)}
             />
           ))}
         </div>
@@ -173,6 +238,17 @@ export const SponsorsList = ({
           onClose={handleDialogClose}
         />
       )}
+
+      <BulkOperationsDialog
+        isOpen={showBulkOperations}
+        onClose={() => setShowBulkOperations(false)}
+        selectedSponsors={selectedSponsors}
+        selectedChildren={[]}
+        onOperationComplete={() => {
+          setSelectedSponsors([]);
+          window.location.reload();
+        }}
+      />
     </Tabs>
   );
 };
