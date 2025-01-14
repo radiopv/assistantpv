@@ -39,6 +39,7 @@ interface SponsorDashboardTranslations {
   needs: string;
   story: string;
   description: string;
+  noTestimonials: string;
 }
 
 const SponsorDashboard = () => {
@@ -67,7 +68,8 @@ const SponsorDashboard = () => {
       viewProfile: "Voir le profil",
       needs: "Besoins",
       story: "Histoire",
-      description: "Description"
+      description: "Description",
+      noTestimonials: "Aucun témoignage pour le moment",
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -89,7 +91,8 @@ const SponsorDashboard = () => {
       viewProfile: "Ver perfil",
       needs: "Necesidades",
       story: "Historia",
-      description: "Descripción"
+      description: "Descripción",
+      noTestimonials: "No hay testimonios por el momento",
     }
   } as const;
 
@@ -140,6 +143,21 @@ const SponsorDashboard = () => {
       return data || [];
     },
     enabled: !!sponsoredChildren?.length
+  });
+
+  const { data: testimonials } = useQuery({
+    queryKey: ['testimonials', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('temoignage')
+        .select('*')
+        .eq('sponsor_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id
   });
 
   const handleShare = async () => {
@@ -268,13 +286,29 @@ const SponsorDashboard = () => {
                         </TabsContent>
 
                         <TabsContent value="testimonials" className="space-y-4">
-                          <Button 
-                            variant="outline" 
-                            className="w-full"
-                            onClick={() => navigate('/testimonials/new')}
-                          >
-                            {t.addTestimonial}
-                          </Button>
+                          <div className="bg-white p-4 rounded-lg">
+                            {testimonials?.length === 0 ? (
+                              <p className="text-center text-gray-500">{t.noTestimonials}</p>
+                            ) : (
+                              <div className="space-y-4">
+                                {testimonials?.map((testimonial) => (
+                                  <div 
+                                    key={testimonial.id} 
+                                    className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                                  >
+                                    <p className="text-gray-600">{testimonial.content}</p>
+                                    <div className="mt-2 text-sm">
+                                      {testimonial.is_approved ? (
+                                        <span className="text-green-600">Approuvé</span>
+                                      ) : (
+                                        <span className="text-yellow-600">En attente d'approbation</span>
+                                      )}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </TabsContent>
 
                         <TabsContent value="statistics" className="space-y-4">
@@ -292,10 +326,30 @@ const SponsorDashboard = () => {
 
                         <TabsContent value="needs" className="space-y-4">
                           <div className="bg-white p-4 rounded-lg">
-                            <ChildNeeds 
-                              child={sponsorship.children}
-                              needs={convertJsonToNeeds(sponsorship.children?.needs)}
-                            />
+                            <div className="grid gap-3">
+                              {sponsorship.children?.needs && convertJsonToNeeds(sponsorship.children.needs).map((need, index) => (
+                                <div
+                                  key={`${need.category}-${index}`}
+                                  className={`p-4 rounded-lg ${
+                                    need.is_urgent
+                                      ? "bg-red-50 border border-red-200"
+                                      : "bg-gray-50 border border-gray-200"
+                                  }`}
+                                >
+                                  <div className="font-medium text-gray-900">
+                                    {need.category}
+                                    {need.is_urgent && (
+                                      <span className="ml-2 text-red-600 font-bold">(!)</span>
+                                    )}
+                                  </div>
+                                  {need.description && (
+                                    <p className="mt-1 text-sm text-gray-600">
+                                      {need.description}
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </TabsContent>
 
