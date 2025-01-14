@@ -82,14 +82,14 @@ const ChildDetails = () => {
     const months = differenceInMonths(today, birth) % 12;
 
     if (years === 0) {
-      return `${months} ${t('months')}`;
+      return `${months} mois`;
     }
     
     if (months === 0) {
-      return `${years} ${t('years')}`;
+      return `${years} ans`;
     }
 
-    return `${years} ${t('years')} ${t('and')} ${months} ${t('months')}`;
+    return `${years} ans et ${months} mois`;
   };
 
   const handleSponsorshipRequest = async () => {
@@ -113,15 +113,15 @@ const ChildDetails = () => {
       if (error) throw error;
 
       toast({
-        title: t("sponsorshipRequestSent"),
-        description: t("sponsorshipRequestPending"),
+        title: "Demande envoyée",
+        description: "Votre demande de parrainage est en cours d'examen",
       });
     } catch (error) {
-      console.error('Error requesting sponsorship:', error);
+      console.error('Erreur lors de la demande de parrainage:', error);
       toast({
         variant: "destructive",
-        title: t("error"),
-        description: t("errorRequestingSponsorship"),
+        title: "Erreur",
+        description: "Une erreur est survenue lors de la demande de parrainage",
       });
     }
   };
@@ -131,10 +131,10 @@ const ChildDetails = () => {
       <div className="container mx-auto p-4">
         <Button onClick={() => navigate(-1)} variant="ghost" className="mb-4">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          {t("back")}
+          Retour
         </Button>
         <Card className="p-6 text-center">
-          <p className="text-red-500">{t("errorLoadingChildDetails")}</p>
+          <p className="text-red-500">Erreur lors du chargement des détails de l'enfant</p>
         </Card>
       </div>
     );
@@ -159,7 +159,7 @@ const ChildDetails = () => {
     <div className="container mx-auto p-4 space-y-6 animate-fade-in bg-gradient-to-br from-orange-50 to-orange-100 min-h-screen">
       <Button onClick={() => navigate(-1)} variant="ghost" className="mb-4">
         <ArrowLeft className="w-4 h-4 mr-2" />
-        {t("back")}
+        Retour
       </Button>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -185,7 +185,7 @@ const ChildDetails = () => {
               size="lg"
             >
               <Heart className="w-5 h-5" />
-              {t("sponsorThisChild")}
+              Parrainer cet enfant
             </Button>
           )}
         </div>
@@ -195,20 +195,20 @@ const ChildDetails = () => {
             <h1 className="text-3xl font-bold mb-2 text-orange-800">{child?.name}</h1>
             <div className="flex items-center gap-2 text-orange-600">
               <MapPin className="w-4 h-4" />
-              <span>{child?.city || t("cityNotAvailable")}</span>
+              <span>{child?.city || "Ville non renseignée"}</span>
             </div>
           </div>
 
           <Card className="p-6 space-y-4 bg-white/80 backdrop-blur-sm border-orange-200">
-            <h2 className="text-xl font-semibold text-orange-800">{t("generalInfo")}</h2>
+            <h2 className="text-xl font-semibold text-orange-800">Informations générales</h2>
             
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-orange-500" />
                 <div>
-                  <p className="text-sm text-orange-600">{t("age")}</p>
+                  <p className="text-sm text-orange-600">Âge</p>
                   <p className="font-medium">
-                    {child?.birth_date ? formatAge(child.birth_date) : t("ageNotAvailable")}
+                    {child?.birth_date ? formatAge(child.birth_date) : "Âge non renseigné"}
                   </p>
                 </div>
               </div>
@@ -216,9 +216,9 @@ const ChildDetails = () => {
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-orange-500" />
                 <div>
-                  <p className="text-sm text-orange-600">{t("genderLabel")}</p>
+                  <p className="text-sm text-orange-600">Genre</p>
                   <p className="font-medium">
-                    {child?.gender === "male" ? t("genderMale") : t("genderFemale")}
+                    {child?.gender === "male" ? "Masculin" : "Féminin"}
                   </p>
                 </div>
               </div>
@@ -227,21 +227,21 @@ const ChildDetails = () => {
 
           {child?.description && (
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-orange-200">
-              <h2 className="text-xl font-semibold mb-4 text-orange-800">{t("description")}</h2>
+              <h2 className="text-xl font-semibold mb-4 text-orange-800">Description</h2>
               <p className="text-gray-600 whitespace-pre-line">{child.description}</p>
             </Card>
           )}
 
           {child?.story && (
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-orange-200">
-              <h2 className="text-xl font-semibold mb-4 text-orange-800">{t("story")}</h2>
+              <h2 className="text-xl font-semibold mb-4 text-orange-800">Histoire</h2>
               <p className="text-gray-600 whitespace-pre-line">{child.story}</p>
             </Card>
           )}
 
           {needs.length > 0 && (
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-orange-200">
-              <h2 className="text-xl font-semibold mb-4 text-orange-800">{t("needs")}</h2>
+              <h2 className="text-xl font-semibold mb-4 text-orange-800">Besoins</h2>
               <div className="grid gap-2">
                 {needs.map((need, index) => {
                   const NeedIcon = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]?.icon || Info;
@@ -258,7 +258,7 @@ const ChildDetails = () => {
                     >
                       <NeedIcon className={`w-4 h-4 ${iconColor}`} />
                       <div>
-                        <span className="font-medium">{t(need.category)}</span>
+                        <span className="font-medium">{need.category}</span>
                         {need.description && (
                           <p className="text-sm mt-1">{need.description}</p>
                         )}
