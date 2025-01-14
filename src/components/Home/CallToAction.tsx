@@ -1,11 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 export const CallToAction = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   return (
     <motion.section 
@@ -22,7 +20,7 @@ export const CallToAction = () => {
           viewport={{ once: true }}
           className="text-4xl md:text-5xl font-title font-bold mb-6"
         >
-          {t('changeLifeToday')}
+          Changez une vie aujourd'hui
         </motion.h2>
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
@@ -31,7 +29,7 @@ export const CallToAction = () => {
           transition={{ delay: 0.1 }}
           className="text-xl mb-8 max-w-2xl mx-auto"
         >
-          {t('supportMakesADifference')}
+          Votre soutien fait une réelle différence dans la vie des enfants cubains
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -44,7 +42,7 @@ export const CallToAction = () => {
             size="lg"
             className="bg-white text-primary hover:bg-white/90 transform transition-all duration-300 hover:scale-105"
           >
-            {t('sponsorAChild')}
+            Parrainer un enfant
           </Button>
         </motion.div>
       </div>

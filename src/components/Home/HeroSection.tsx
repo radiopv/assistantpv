@@ -1,7 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "@/contexts/LanguageContext";
-import { FeaturedTestimonials } from "./FeaturedTestimonials";
 import { motion } from "framer-motion";
 import {
   Carousel,
@@ -21,7 +19,6 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   return (
     <section className="relative min-h-[90vh] bg-cuba-gradient overflow-hidden">
@@ -50,14 +47,14 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="text-4xl lg:text-5xl font-bold text-white font-title"
               >
-                {heroSection?.title || t('heroTitle')}
+                {heroSection?.title || "Parrainez un enfant cubain"}
               </motion.h1>
             </div>
 
             <div className="relative h-full w-full max-w-md mx-auto">
               <img 
                 src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
-                alt="Hero background"
+                alt="Image d'arrière-plan"
                 className="absolute inset-0 w-full h-full object-cover cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
                 style={{ objectPosition: 'center' }}
                 onClick={onImageClick}
@@ -80,7 +77,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                   transition={{ duration: 0.5, delay: 0.6 }}
                   className="text-xl text-white/90 mb-8"
                 >
-                  {heroSection?.subtitle || t('heroSubtitle')}
+                  {heroSection?.subtitle || "Aidez-nous à changer des vies en parrainant un enfant cubain dans le besoin"}
                 </motion.p>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -92,7 +89,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                     size="lg"
                     className="bg-cuba-gold text-black hover:bg-cuba-gold/90 transform transition-all duration-300 hover:scale-105"
                   >
-                    {t('becomeSponsor')}
+                    Devenir parrain
                   </Button>
                 </motion.div>
 
@@ -103,7 +100,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                   className="mt-12 bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-lg"
                 >
                   <h3 className="text-xl font-semibold text-white mb-4">
-                    {t('testimonialTitle')}
+                    Témoignages de nos parrains
                   </h3>
                   <Carousel
                     opts={{

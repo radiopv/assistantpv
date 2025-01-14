@@ -11,7 +11,7 @@ export const FeaturedTestimonials = () => {
   const { data: testimonials, isLoading } = useQuery({
     queryKey: ['featured-testimonials'],
     queryFn: async () => {
-      console.log("Fetching testimonials...");
+      console.log("Récupération des témoignages...");
       const { data, error } = await supabase
         .from('temoignage')
         .select(`
@@ -25,11 +25,11 @@ export const FeaturedTestimonials = () => {
         .limit(3);
 
       if (error) {
-        console.error("Error fetching testimonials:", error);
+        console.error("Erreur lors de la récupération des témoignages:", error);
         throw error;
       }
       
-      console.log("Testimonials fetched:", data);
+      console.log("Témoignages récupérés:", data);
       return data;
     }
   });
@@ -45,7 +45,7 @@ export const FeaturedTestimonials = () => {
   }
 
   if (!testimonials?.length) {
-    return <p className="text-gray-500">{t('noTestimonials')}</p>;
+    return <p className="text-gray-500">Aucun témoignage pour le moment</p>;
   }
 
   return (
@@ -57,8 +57,8 @@ export const FeaturedTestimonials = () => {
           </blockquote>
           <footer className="mt-2 text-sm text-gray-500">
             <p>
-              {testimonial.sponsors?.is_anonymous ? t('anonymousSponsor') : testimonial.sponsors?.name}
-              {testimonial.children?.name && ` - ${t('sponsorOf')} ${testimonial.children.name}`}
+              {testimonial.sponsors?.is_anonymous ? "Parrain anonyme" : testimonial.sponsors?.name}
+              {testimonial.children?.name && ` - Parrain de ${testimonial.children.name}`}
             </p>
             <time className="text-xs">
               {format(new Date(testimonial.created_at), 'dd/MM/yyyy')}

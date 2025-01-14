@@ -33,7 +33,7 @@ export const FeaturedChildren = () => {
         .limit(6);
 
       if (error) {
-        console.error("Error fetching children:", error);
+        console.error("Erreur lors de la récupération des enfants:", error);
         return;
       }
 
@@ -50,7 +50,7 @@ export const FeaturedChildren = () => {
   return (
     <section className="py-12 bg-white">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-8">{t("childrenWaitingForSponsorship")}</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">Enfants en attente de parrainage</h2>
         
         <Carousel className="w-full max-w-5xl mx-auto">
           <CarouselContent>
@@ -67,7 +67,7 @@ export const FeaturedChildren = () => {
                   <div className="p-4">
                     <h3 className="font-semibold text-lg">{child.name}</h3>
                     <div className="mt-2 space-y-1 text-sm text-gray-600">
-                      <p>{calculateAge(child.birth_date)} {t("years")}</p>
+                      <p>{calculateAge(child.birth_date)} ans</p>
                       <p>{child.city}</p>
                     </div>
                     {Array.isArray(child.needs) && child.needs.length > 0 && (
