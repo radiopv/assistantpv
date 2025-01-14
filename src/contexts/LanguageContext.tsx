@@ -22,19 +22,10 @@ const translations: Record<Language, TranslationType> = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('fr');
-
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem('preferredLanguage') as Language;
-    
-    if (storedLanguage && (storedLanguage === 'fr' || storedLanguage === 'es')) {
-      setLanguage(storedLanguage);
-    } else {
-      // Set French as default language
-      setLanguage('fr');
-      localStorage.setItem('preferredLanguage', 'fr');
-    }
-  }, []);
+  const [language, setLanguage] = useState<Language>(() => {
+    const savedLanguage = localStorage.getItem('preferredLanguage') as Language;
+    return (savedLanguage && (savedLanguage === 'fr' || savedLanguage === 'es')) ? savedLanguage : 'fr';
+  });
 
   useEffect(() => {
     localStorage.setItem('preferredLanguage', language);
