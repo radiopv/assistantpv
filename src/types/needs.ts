@@ -1,3 +1,5 @@
+import { Json } from "@/integrations/supabase/types/json";
+
 export interface Need {
   id?: string;
   category: string;
@@ -7,22 +9,19 @@ export interface Need {
 }
 
 export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
-  if (!jsonNeeds) return [];
-  
+  if (!jsonNeeds) {
+    console.log('No needs provided');
+    return [];
+  }
+
+  if (!Array.isArray(jsonNeeds)) {
+    console.log('Invalid needs format:', jsonNeeds);
+    return [];
+  }
+
   try {
-    const needsArray = typeof jsonNeeds === 'string' ? JSON.parse(jsonNeeds) : jsonNeeds;
-    
-    if (!Array.isArray(needsArray)) return [];
-
-    return needsArray.map(need => {
-      if (typeof need !== 'object' || !need) {
-        return {
-          category: '',
-          description: '',
-          is_urgent: false
-        };
-      }
-
+    console.log('Converting JSON needs:', jsonNeeds);
+    return jsonNeeds.map(need => {
       const needObj = need as Record<string, unknown>;
       return {
         id: String(needObj?.id || ''),
@@ -32,29 +31,27 @@ export const convertJsonToNeeds = (jsonNeeds: Json | null): Need[] => {
       };
     });
   } catch (error) {
-    console.error('Error parsing needs JSON:', error);
+    console.error('Error converting needs:', error);
     return [];
   }
 };
 
-export const convertNeedsToJson = (needs: Need[] | null): Json => {
-  if (!needs || !Array.isArray(needs)) {
-    console.log('Needs is not an array:', needs);
+export const convertNeedsToJson = (needs: Need[]): Json => {
+  if (!Array.isArray(needs)) {
+    console.log('Invalid needs format:', needs);
     return [];
   }
 
   try {
     console.log('Converting needs to JSON:', needs);
-    const jsonNeeds = needs.map(need => ({
+    return needs.map(need => ({
       id: need.id,
       category: need.category,
       description: need.description,
       is_urgent: need.is_urgent
-    }));
-    console.log('Converted needs:', jsonNeeds);
-    return jsonNeeds as Json;
+    })) as Json;
   } catch (error) {
     console.error('Error converting needs to JSON:', error);
-    return [] as Json;
+    return [];
   }
 };

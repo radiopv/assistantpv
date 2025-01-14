@@ -80,7 +80,10 @@ export const NeedNotifications = () => {
       }
 
       console.log("Fetched notifications:", data);
-      setNotifications(data || []);
+      setNotifications(data.map(notification => ({
+        ...notification,
+        metadata: notification.metadata as NotificationMetadata
+      })));
     } catch (error) {
       console.error("Error fetching notifications:", error);
       toast({
@@ -168,7 +171,11 @@ export const NeedNotifications = () => {
           <div className="flex justify-between items-start">
             <div className="flex gap-3">
               <div className="flex-shrink-0 mt-1">
-                {renderNotificationIcon(notification.type)}
+                {notification.type === 'photo_upload' ? (
+                  <Image className="w-5 h-5 text-blue-500" />
+                ) : (
+                  <Bell className="w-5 h-5 text-gray-500" />
+                )}
               </div>
               <div>
                 <h3 className="font-semibold">{notification.title}</h3>
