@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { Bell } from "lucide-react";
+import { Bell, Image } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface NeedNotification {
   id: string;
@@ -17,6 +19,7 @@ interface NeedNotification {
   metadata?: {
     child_id?: string;
     child_name?: string;
+    photo_url?: string;
     need_type?: string;
     is_read?: boolean;
   };
@@ -46,8 +49,8 @@ export const NeedNotifications = () => {
           table: 'notifications',
           filter: `recipient_id=eq.${user?.id}`
         },
-        () => {
-          console.log("Notification change detected, refetching...");
+        (payload) => {
+          console.log("Notification change detected:", payload);
           fetchNotifications();
         }
       )
@@ -118,6 +121,15 @@ export const NeedNotifications = () => {
     }
   };
 
+  const renderNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'photo_upload':
+        return <Image className="w-5 h-5 text-blue-500" />;
+      default:
+        return <Bell className="w-5 h-5 text-gray-500" />;
+    }
+  };
+
   if (loading) {
     return (
       <Card className="p-6">
@@ -149,17 +161,20 @@ export const NeedNotifications = () => {
           }`}
         >
           <div className="flex justify-between items-start">
-            <div>
-              <h3 className="font-semibold">{notification.title}</h3>
-              <p className="text-sm text-gray-600 mt-1">
-                {notification.content}
-              </p>
-              <div className="text-xs text-gray-400 mt-2">
-                {new Date(notification.created_at).toLocaleDateString("fr-FR", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+            <div className="flex gap-3">
+              <div className="flex-shrink-0 mt-1">
+                {renderNotificationIcon(notification.type)}
+              </div>
+              <div>
+                <h3 className="font-semibold">{notification.title}</h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  {notification.content}
+                </p>
+                <div className="text-xs text-gray-400 mt-2">
+                  {format(new Date(notification.created_at), "dd/MM/yyyy HH:mm", {
+                    locale: fr,
+                  })}
+                </div>
               </div>
             </div>
             {!notification.is_read && (
