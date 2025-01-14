@@ -179,13 +179,13 @@ const SponsorDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige p-4 md:p-6">
-      <div className="container mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige p-2 md:p-6">
+      <div className="container mx-auto space-y-4 md:space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
+          <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
-        <div className="grid gap-6">
+        <div className="grid gap-4 md:gap-6">
           {sponsoredChildren?.map((sponsorship) => {
             const childPhotos = childrenPhotos?.filter(photo => 
               photo.child_id === sponsorship.children?.id
@@ -206,9 +206,9 @@ const SponsorDashboard = () => {
                 key={sponsorship.id} 
                 className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="p-6">
+                <div className="p-3 md:p-6">
                   <div className="flex flex-col gap-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between">
                       <SponsoredChildCard
                         child={{
                           ...sponsorship.children,
@@ -218,7 +218,7 @@ const SponsorDashboard = () => {
                         onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                       />
                       {hasUrgentNeeds && (
-                        <span className="text-red-500 font-medium animate-pulse">
+                        <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0">
                           {t.urgentNeeds}
                         </span>
                       )}
@@ -234,45 +234,47 @@ const SponsorDashboard = () => {
                     </div>
                   )}
 
-                  <Tabs defaultValue="photos" className="mt-6">
-                    <TabsList className="grid w-full grid-cols-5">
-                      <TabsTrigger value="photos">{t.photos}</TabsTrigger>
-                      <TabsTrigger value="testimonials">{t.testimonials}</TabsTrigger>
-                      <TabsTrigger value="statistics">{t.statistics}</TabsTrigger>
-                      <TabsTrigger value="needs">{t.needs}</TabsTrigger>
-                      <TabsTrigger value="story">{t.story}</TabsTrigger>
+                  <Tabs defaultValue="photos" className="mt-4 md:mt-6">
+                    <TabsList className="w-full grid grid-cols-3 md:grid-cols-5 gap-1">
+                      <TabsTrigger value="photos" className="text-xs md:text-sm">{t.photos}</TabsTrigger>
+                      <TabsTrigger value="testimonials" className="text-xs md:text-sm">{t.testimonials}</TabsTrigger>
+                      <TabsTrigger value="statistics" className="text-xs md:text-sm">{t.statistics}</TabsTrigger>
+                      <TabsTrigger value="needs" className="text-xs md:text-sm hidden md:block">{t.needs}</TabsTrigger>
+                      <TabsTrigger value="story" className="text-xs md:text-sm hidden md:block">{t.story}</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="photos">
-                      <PhotoGallery 
-                        photos={childPhotos} 
-                        childName={sponsorship.children?.name} 
-                      />
-                    </TabsContent>
+                    <div className="mt-4 space-y-4">
+                      <TabsContent value="photos">
+                        <PhotoGallery 
+                          photos={childPhotos} 
+                          childName={sponsorship.children?.name} 
+                        />
+                      </TabsContent>
 
-                    <TabsContent value="testimonials">
-                      <TestimonialSection testimonials={childTestimonials} />
-                    </TabsContent>
+                      <TabsContent value="testimonials">
+                        <TestimonialSection testimonials={childTestimonials} />
+                      </TabsContent>
 
-                    <TabsContent value="statistics">
-                      <StatisticsSection
-                        photos={childPhotos}
-                        needs={childNeeds}
-                        sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
-                        sponsorshipStartDate={sponsorship.start_date}
-                      />
-                    </TabsContent>
+                      <TabsContent value="statistics">
+                        <StatisticsSection
+                          photos={childPhotos}
+                          needs={childNeeds}
+                          sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
+                          sponsorshipStartDate={sponsorship.start_date}
+                        />
+                      </TabsContent>
 
-                    <TabsContent value="needs">
-                      <NeedsSection needs={childNeeds} />
-                    </TabsContent>
+                      <TabsContent value="needs">
+                        <NeedsSection needs={childNeeds} />
+                      </TabsContent>
 
-                    <TabsContent value="story">
-                      <StorySection
-                        description={sponsorship.children?.description}
-                        story={sponsorship.children?.story}
-                      />
-                    </TabsContent>
+                      <TabsContent value="story">
+                        <StorySection
+                          description={sponsorship.children?.description}
+                          story={sponsorship.children?.story}
+                        />
+                      </TabsContent>
+                    </div>
                   </Tabs>
                 </div>
               </Card>
