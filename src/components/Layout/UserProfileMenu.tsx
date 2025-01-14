@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User, LogOut, MessageSquare } from "lucide-react";
+import { User, LogOut, MessageSquare, LayoutDashboard } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ProfileForm } from "@/components/Profile/ProfileForm";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -89,6 +89,7 @@ export const UserProfileMenu = () => {
     return null;
   }
 
+  const isAssistant = user.role === 'assistant' || user.role === 'admin';
   const isSponsor = user.role === 'sponsor';
 
   return (
@@ -145,6 +146,13 @@ export const UserProfileMenu = () => {
           
           <DropdownMenuSeparator />
           
+          {isAssistant && (
+            <DropdownMenuItem onSelect={() => navigate("/dashboard")}>
+              <LayoutDashboard className="mr-2 h-4 w-4" />
+              <span>Tableau de bord</span>
+            </DropdownMenuItem>
+          )}
+
           <Dialog open={isProfileOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>

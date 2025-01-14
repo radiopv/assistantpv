@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, MessageSquare, LayoutDashboard, HelpCircle, BarChart, LogIn, LogOut, Home, Menu, Heart } from "lucide-react";
+import { User, Gift, Users, MessageSquare, HelpCircle, BarChart, LogIn, LogOut, Home, Menu, Heart } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
@@ -106,20 +106,6 @@ export const Navigation = () => {
         <HelpCircle className="h-4 w-4 mr-2" />
         FAQ
       </Button>
-
-      {isAssistant && (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            navigate("/dashboard");
-            setIsOpen(false);
-          }}
-          className="justify-start md:justify-center text-primary w-full md:w-auto"
-        >
-          <LayoutDashboard className="h-4 w-4 mr-2" />
-          Tableau de bord
-        </Button>
-      )}
     </div>
   );
 
