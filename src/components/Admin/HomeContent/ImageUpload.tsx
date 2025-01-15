@@ -3,6 +3,7 @@ import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
 import { ImagePreview } from "./Image/ImagePreview";
 import { ImageUploadInput } from "./Image/ImageUploadInput";
 import { useImageUpload } from "./Image/useImageUpload";
+import { toast } from "sonner";
 
 interface HomeImage {
   id: string;
@@ -26,7 +27,7 @@ export const ImageUpload = ({ heroImage, isLoading }: ImageUploadProps) => {
   } = useImageUpload({
     position: 'hero',
     onUploadComplete: () => {
-      console.log("Upload completed successfully");
+      toast.success("Image mise à jour avec succès");
     }
   });
 

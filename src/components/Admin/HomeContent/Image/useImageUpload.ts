@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 interface UseImageUploadProps {
@@ -8,7 +8,6 @@ interface UseImageUploadProps {
 }
 
 export const useImageUpload = ({ position, onUploadComplete }: UseImageUploadProps) => {
-  const { toast } = useToast();
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -17,11 +16,7 @@ export const useImageUpload = ({ position, onUploadComplete }: UseImageUploadPro
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        toast({
-          variant: "destructive",
-          title: "Fichier trop volumineux",
-          description: "L'image ne doit pas dépasser 5MB",
-        });
+        toast.error("L'image ne doit pas dépasser 5MB");
         return;
       }
       setSelectedImage(file);
@@ -75,21 +70,14 @@ export const useImageUpload = ({ position, onUploadComplete }: UseImageUploadPro
         if (insertError) throw insertError;
       }
 
-      toast({
-        title: "Image mise à jour",
-        description: "L'image a été mise à jour avec succès",
-      });
-
+      toast.success("Image mise à jour avec succès");
       onUploadComplete?.();
     } catch (error) {
       console.error('Error uploading image:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour de l'image",
-      });
+      toast.error("Une erreur est survenue lors de la mise à jour de l'image");
     } finally {
       setUploadingImage(false);
+      setSelectedImage(null);
     }
   };
 
