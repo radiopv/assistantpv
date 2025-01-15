@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
-import { differenceInYears, parseISO } from "date-fns";
+import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -17,9 +17,19 @@ import { Info, Heart } from "lucide-react";
 
 type Child = Database["public"]["Tables"]["children"]["Row"];
 
-const calculateAge = (birthDate: string | null) => {
+const formatAge = (birthDate: string | null) => {
   if (!birthDate) return null;
-  return differenceInYears(new Date(), parseISO(birthDate));
+  
+  const today = new Date();
+  const birth = parseISO(birthDate);
+  const years = differenceInYears(today, birth);
+  
+  if (years === 0) {
+    const months = differenceInMonths(today, birth);
+    return `${months} mois`;
+  }
+  
+  return `${years} ans`;
 };
 
 export const FeaturedChildren = () => {
@@ -48,11 +58,11 @@ export const FeaturedChildren = () => {
   }, []);
 
   const handleSponsor = (childId: string) => {
-    navigate(`/become-sponsor/${childId}`);
+    navigate(`/child/${childId}`);
   };
 
   const handleLearnMore = (childId: string) => {
-    navigate(`/child-details/${childId}`);
+    navigate(`/child/${childId}`);
   };
 
   if (children.length === 0) {
@@ -79,7 +89,7 @@ export const FeaturedChildren = () => {
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                       <h3 className="font-semibold text-lg">{child.name}</h3>
                       <div className="mt-2 space-y-1 text-sm">
-                        <p>{calculateAge(child.birth_date)} ans</p>
+                        <p>{formatAge(child.birth_date)}</p>
                         <p>{child.city}</p>
                       </div>
                     </div>
@@ -100,7 +110,7 @@ export const FeaturedChildren = () => {
                     <div className="flex gap-2">
                       <Button 
                         onClick={() => handleSponsor(child.id)}
-                        className="flex-1"
+                        className="flex-1 bg-primary hover:bg-primary/90"
                         variant="default"
                       >
                         <Heart className="w-4 h-4 mr-2" />
