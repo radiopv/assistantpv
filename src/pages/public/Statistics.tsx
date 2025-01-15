@@ -101,17 +101,17 @@ const Statistics = () => {
           <div className="grid gap-4 md:gap-6 md:grid-cols-3 mb-12">
             <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Dons</h3>
-              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_donations || 0}</p>
+              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_donations.toLocaleString('fr-FR') || 0}</p>
             </Card>
 
             <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Enfants Parrainés</h3>
-              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_children || 0}</p>
+              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_children.toLocaleString('fr-FR') || 0}</p>
             </Card>
 
             <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Parrains Actifs</h3>
-              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_sponsors || 0}</p>
+              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_sponsors.toLocaleString('fr-FR') || 0}</p>
             </Card>
           </div>
 
@@ -179,11 +179,11 @@ const Statistics = () => {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-none sm:rounded-lg">
                 <p className="text-lg font-semibold text-cuba-coral">Parrainages Actifs</p>
-                <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.active_sponsorships || 0}</p>
+                <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.active_sponsorships.toLocaleString('fr-FR') || 0}</p>
               </div>
               <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-none sm:rounded-lg">
                 <p className="text-lg font-semibold text-cuba-coral">Demandes en Attente</p>
-                <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.pending_sponsorships || 0}</p>
+                <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.pending_sponsorships.toLocaleString('fr-FR') || 0}</p>
               </div>
             </div>
           </Card>
