@@ -16,6 +16,11 @@ interface SponsorshipTimelineProps {
 
 export const SponsorshipTimeline = ({ events }: SponsorshipTimelineProps) => {
   const sortedEvents = [...events]
+    .filter(event => {
+      // Validate date before sorting
+      const date = new Date(event.date);
+      return !isNaN(date.getTime()); // Filter out invalid dates
+    })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5); // Limit to 5 most recent events
 
@@ -27,6 +32,20 @@ export const SponsorshipTimeline = ({ events }: SponsorshipTimelineProps) => {
         return <MessageSquare className="w-4 h-4" />;
       default:
         return <Clock className="w-4 h-4" />;
+    }
+  };
+
+  const formatEventDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        console.warn("Invalid date:", dateString);
+        return "Date invalide";
+      }
+      return format(date, "d MMMM yyyy", { locale: fr });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Date invalide";
     }
   };
 
@@ -44,7 +63,7 @@ export const SponsorshipTimeline = ({ events }: SponsorshipTimelineProps) => {
             </div>
             <div>
               <p className="text-sm text-gray-600">
-                {format(new Date(event.date), "d MMMM yyyy", { locale: fr })}
+                {formatEventDate(event.date)}
               </p>
               <p className="font-medium">{event.title}</p>
               {event.description && (
@@ -53,6 +72,9 @@ export const SponsorshipTimeline = ({ events }: SponsorshipTimelineProps) => {
             </div>
           </div>
         ))}
+        {sortedEvents.length === 0 && (
+          <p className="text-gray-500 text-center">Aucun événement à afficher</p>
+        )}
       </div>
     </Card>
   );
