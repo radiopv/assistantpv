@@ -7,8 +7,7 @@ import Notifications from "@/pages/Notifications";
 import Home from "@/pages/Home";
 import Login from "@/pages/auth/Login";
 import FAQ from "@/pages/public/FAQ";
-import AvailableChildren from "@/pages/public/AvailableChildren";
-import SponsoredChildren from "@/pages/public/SponsoredChildren";
+import ChildrenOverview from "@/pages/public/ChildrenOverview";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import ChildDetails from "@/pages/ChildDetails";
 import Statistics from "@/pages/public/Statistics";
@@ -43,8 +42,7 @@ export const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/available-children" element={<AvailableChildren />} />
-        <Route path="/sponsored-children" element={<SponsoredChildren />} />
+        <Route path="/children" element={<ChildrenOverview />} />
         <Route path="/public-donations" element={<PublicDonations />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
