@@ -42,32 +42,34 @@ export const SponsoredChildCard = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="flex flex-col space-y-3">
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            variant="outline"
+            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
+            onClick={onAddPhoto}
+          >
+            <Camera className="h-4 w-4" />
+            <span>Ajouter une photo</span>
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
+            onClick={onAddTestimonial}
+          >
+            <FileEdit className="h-4 w-4" />
+            <span>Ajouter un témoignage</span>
+          </Button>
+        </div>
+
         <Button
           variant="outline"
-          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors h-auto py-2"
-          onClick={onAddPhoto}
-        >
-          <Camera className="h-4 w-4" />
-          <span className="whitespace-nowrap">Ajouter une photo</span>
-        </Button>
-        
-        <Button
-          variant="outline"
-          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors h-auto py-2"
-          onClick={onAddTestimonial}
-        >
-          <FileEdit className="h-4 w-4" />
-          <span className="whitespace-nowrap">Ajouter un témoignage</span>
-        </Button>
-        
-        <Button
-          variant="outline"
-          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors h-auto py-2 sm:col-span-2"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors w-full"
           onClick={() => setShowTermination(true)}
         >
           <Clock className="h-4 w-4" />
-          <span className="whitespace-nowrap">Mettre fin au parrainage</span>
+          <span>Mettre fin au parrainage</span>
         </Button>
       </div>
 

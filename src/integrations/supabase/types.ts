@@ -1273,6 +1273,7 @@ export type Database = {
           link: string | null
           metadata: Json | null
           recipient_id: string | null
+          sender_id: string | null
           title: string
           type: string
           updated_at: string | null
@@ -1285,6 +1286,7 @@ export type Database = {
           link?: string | null
           metadata?: Json | null
           recipient_id?: string | null
+          sender_id?: string | null
           title: string
           type: string
           updated_at?: string | null
@@ -1297,6 +1299,7 @@ export type Database = {
           link?: string | null
           metadata?: Json | null
           recipient_id?: string | null
+          sender_id?: string | null
           title?: string
           type?: string
           updated_at?: string | null
@@ -1305,6 +1308,13 @@ export type Database = {
           {
             foreignKeyName: "notifications_recipient_id_fkey"
             columns: ["recipient_id"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_sender_id_fkey"
+            columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
