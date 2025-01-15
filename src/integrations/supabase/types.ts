@@ -73,8 +73,6 @@ export type Database = {
       }
       album_media: {
         Row: {
-          caption: string | null
-          category: string | null
           child_id: string | null
           created_at: string | null
           description: string | null
@@ -90,8 +88,6 @@ export type Database = {
           url: string
         }
         Insert: {
-          caption?: string | null
-          category?: string | null
           child_id?: string | null
           created_at?: string | null
           description?: string | null
@@ -107,8 +103,6 @@ export type Database = {
           url: string
         }
         Update: {
-          caption?: string | null
-          category?: string | null
           child_id?: string | null
           created_at?: string | null
           description?: string | null
@@ -167,6 +161,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      album_media_backup: {
+        Row: {
+          badge_id: string | null
+          child_id: string | null
+          created_at: string | null
+          description: string | null
+          featured_until: string | null
+          id: string | null
+          is_approved: boolean | null
+          is_featured: boolean | null
+          is_public: boolean | null
+          sponsor_id: string | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          url: string | null
+        }
+        Insert: {
+          badge_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured_until?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          sponsor_id?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url?: string | null
+        }
+        Update: {
+          badge_id?: string | null
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured_until?: string | null
+          id?: string | null
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          is_public?: boolean | null
+          sponsor_id?: string | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          url?: string | null
+        }
+        Relationships: []
       }
       birthday_reminders: {
         Row: {
@@ -642,6 +687,42 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          created_at: string
+          date: string
+          description: string
+          id: string
+          image_url: string | null
+          is_published: boolean | null
+          location: string
+          time: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          description: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          location: string
+          time: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          location?: string
+          time?: string
+          title?: string
+        }
+        Relationships: []
+      }
       faq: {
         Row: {
           answer: string
@@ -699,6 +780,30 @@ export type Database = {
           position?: string
           updated_at?: string | null
           url?: string
+        }
+        Relationships: []
+      }
+      homepage_content: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: number
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: number
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: number
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -816,6 +921,36 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempt_count: number | null
+          created_at: string | null
+          email: string
+          id: string
+          is_locked: boolean | null
+          last_attempt: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attempt_count?: number | null
+          created_at?: string | null
+          email: string
+          id?: string
+          is_locked?: boolean | null
+          last_attempt?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attempt_count?: number | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_locked?: boolean | null
+          last_attempt?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       media_items: {
         Row: {
           created_at: string | null
@@ -901,11 +1036,9 @@ export type Database = {
           is_archived: boolean | null
           is_read: boolean | null
           message_type: string | null
-          read_at: string | null
           recipient_id: string | null
           related_entity_id: string | null
           related_entity_type: string | null
-          reply_to_id: string | null
           sender_id: string | null
           subject: string
           updated_at: string | null
@@ -917,11 +1050,9 @@ export type Database = {
           is_archived?: boolean | null
           is_read?: boolean | null
           message_type?: string | null
-          read_at?: string | null
           recipient_id?: string | null
           related_entity_id?: string | null
           related_entity_type?: string | null
-          reply_to_id?: string | null
           sender_id?: string | null
           subject: string
           updated_at?: string | null
@@ -933,11 +1064,9 @@ export type Database = {
           is_archived?: boolean | null
           is_read?: boolean | null
           message_type?: string | null
-          read_at?: string | null
           recipient_id?: string | null
           related_entity_id?: string | null
           related_entity_type?: string | null
-          reply_to_id?: string | null
           sender_id?: string | null
           subject?: string
           updated_at?: string | null
@@ -948,13 +1077,6 @@ export type Database = {
             columns: ["recipient_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_reply_to_id_fkey"
-            columns: ["reply_to_id"]
-            isOneToOne: false
-            referencedRelation: "messages"
             referencedColumns: ["id"]
           },
           {
@@ -987,6 +1109,33 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      news: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_published: boolean | null
+          title: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          title: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_published?: boolean | null
+          title?: string
         }
         Relationships: []
       }
@@ -1023,7 +1172,6 @@ export type Database = {
           link: string | null
           metadata: Json | null
           recipient_id: string | null
-          sender_id: string | null
           title: string
           type: string
           updated_at: string | null
@@ -1036,7 +1184,6 @@ export type Database = {
           link?: string | null
           metadata?: Json | null
           recipient_id?: string | null
-          sender_id?: string | null
           title: string
           type: string
           updated_at?: string | null
@@ -1049,7 +1196,6 @@ export type Database = {
           link?: string | null
           metadata?: Json | null
           recipient_id?: string | null
-          sender_id?: string | null
           title?: string
           type?: string
           updated_at?: string | null
@@ -1058,13 +1204,6 @@ export type Database = {
           {
             foreignKeyName: "notifications_recipient_id_fkey"
             columns: ["recipient_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "notifications_sender_id_fkey"
-            columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
             referencedColumns: ["id"]
@@ -1488,137 +1627,6 @@ export type Database = {
           },
         ]
       }
-      sponsorship_history: {
-        Row: {
-          action: string
-          child_id: string | null
-          created_at: string | null
-          id: string
-          new_sponsor_id: string | null
-          performed_by: string | null
-          previous_sponsor_id: string | null
-          reason: string | null
-          sponsor_id: string | null
-          sponsorship_id: string | null
-        }
-        Insert: {
-          action: string
-          child_id?: string | null
-          created_at?: string | null
-          id?: string
-          new_sponsor_id?: string | null
-          performed_by?: string | null
-          previous_sponsor_id?: string | null
-          reason?: string | null
-          sponsor_id?: string | null
-          sponsorship_id?: string | null
-        }
-        Update: {
-          action?: string
-          child_id?: string | null
-          created_at?: string | null
-          id?: string
-          new_sponsor_id?: string | null
-          performed_by?: string | null
-          previous_sponsor_id?: string | null
-          reason?: string | null
-          sponsor_id?: string | null
-          sponsorship_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsorship_history_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_history_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "sponsored_children_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_history_new_sponsor_id_fkey"
-            columns: ["new_sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_history_performed_by_fkey"
-            columns: ["performed_by"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_history_previous_sponsor_id_fkey"
-            columns: ["previous_sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_history_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_history_sponsorship_id_fkey"
-            columns: ["sponsorship_id"]
-            isOneToOne: false
-            referencedRelation: "sponsorships"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sponsorship_notes: {
-        Row: {
-          created_at: string | null
-          created_by: string | null
-          id: string
-          note: string | null
-          sponsorship_id: string | null
-          tags: string[] | null
-        }
-        Insert: {
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          note?: string | null
-          sponsorship_id?: string | null
-          tags?: string[] | null
-        }
-        Update: {
-          created_at?: string | null
-          created_by?: string | null
-          id?: string
-          note?: string | null
-          sponsorship_id?: string | null
-          tags?: string[] | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sponsorship_notes_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sponsorship_notes_sponsorship_id_fkey"
-            columns: ["sponsorship_id"]
-            isOneToOne: false
-            referencedRelation: "sponsorships"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1702,13 +1710,7 @@ export type Database = {
           child_id: string
           created_at: string | null
           end_date: string | null
-          end_planned_date: string | null
           id: string
-          is_paused: boolean | null
-          is_temporary: boolean | null
-          pause_date: string | null
-          pause_reason: string | null
-          resume_date: string | null
           sponsor_id: string | null
           start_date: string | null
           status: string
@@ -1721,13 +1723,7 @@ export type Database = {
           child_id: string
           created_at?: string | null
           end_date?: string | null
-          end_planned_date?: string | null
           id?: string
-          is_paused?: boolean | null
-          is_temporary?: boolean | null
-          pause_date?: string | null
-          pause_reason?: string | null
-          resume_date?: string | null
           sponsor_id?: string | null
           start_date?: string | null
           status?: string
@@ -1740,13 +1736,7 @@ export type Database = {
           child_id?: string
           created_at?: string | null
           end_date?: string | null
-          end_planned_date?: string | null
           id?: string
-          is_paused?: boolean | null
-          is_temporary?: boolean | null
-          pause_date?: string | null
-          pause_reason?: string | null
-          resume_date?: string | null
           sponsor_id?: string | null
           start_date?: string | null
           status?: string
@@ -1778,6 +1768,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      tasks: {
+        Row: {
+          child_id: string | null
+          created_at: string | null
+          description: string | null
+          id: number
+          is_completed: boolean | null
+          title: string
+        }
+        Insert: {
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          is_completed?: boolean | null
+          title: string
+        }
+        Update: {
+          child_id?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          is_completed?: boolean | null
+          title?: string
+        }
+        Relationships: []
       }
       temoignage: {
         Row: {
@@ -1846,6 +1863,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      translation_reports: {
+        Row: {
+          created_at: string | null
+          id: string
+          report: Json
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          report: Json
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          report?: Json
+        }
+        Relationships: []
       }
       translations: {
         Row: {
@@ -2222,7 +2257,11 @@ export type Database = {
       }
       get_current_statistics: {
         Args: Record<PropertyKey, never>
-        Returns: Json
+        Returns: {
+          total_donations: number
+          total_children: number
+          total_sponsors: number
+        }[]
       }
       get_daily_donation_trends: {
         Args: Record<PropertyKey, never>
@@ -2332,12 +2371,6 @@ export type Database = {
         }
         Returns: Json
       }
-      get_sponsor_statistics: {
-        Args: {
-          sponsor_uuid: string
-        }
-        Returns: Json
-      }
       get_sponsorship_conversion_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
@@ -2373,24 +2406,6 @@ export type Database = {
           user_role: string
         }
         Returns: Json
-      }
-      handle_sponsorship_pause: {
-        Args: {
-          sponsorship_id: string
-          action: string
-          reason: string
-          performed_by: string
-        }
-        Returns: undefined
-      }
-      handle_sponsorship_transfer: {
-        Args: {
-          sponsorship_id: string
-          new_sponsor_id: string
-          reason: string
-          performed_by: string
-        }
-        Returns: undefined
       }
       has_permission: {
         Args: {

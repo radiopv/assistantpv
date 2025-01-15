@@ -15,5 +15,6 @@ export const frenchTranslations = {
   sponsorDashboard: "Mon Espace Parrain",
   shareError: "Le partage n'est pas disponible sur votre appareil",
   copySuccess: "Lien copié dans le presse-papiers !",
-  copyError: "Impossible de copier le lien"
+  copyError: "Impossible de copier le lien",
+  welcome: "Bienvenue"
 };

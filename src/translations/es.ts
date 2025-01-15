@@ -15,5 +15,6 @@ export const spanishTranslations = {
   sponsorDashboard: "Mi Panel de Padrino",
   shareError: "El compartir no está disponible en su dispositivo",
   copySuccess: "¡Enlace copiado al portapapeles!",
-  copyError: "No se pudo copiar el enlace"
+  copyError: "No se pudo copiar el enlace",
+  welcome: "Bienvenido"
 };
