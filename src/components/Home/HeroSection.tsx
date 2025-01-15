@@ -1,14 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 interface HeroSectionProps {
   heroSection?: {
@@ -92,32 +84,6 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                   >
                     Devenir parrain
                   </Button>
-                </motion.div>
-
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.5, delay: 1 }}
-                  className="mt-12 bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-lg"
-                >
-                  <h3 className="text-xl font-semibold text-white mb-4">
-                    Témoignages de nos parrains
-                  </h3>
-                  <Carousel
-                    opts={{
-                      align: "start",
-                      loop: true,
-                    }}
-                    className="w-full"
-                  >
-                    <CarouselContent>
-                      <CarouselItem className="md:basis-full">
-                        <FeaturedTestimonials />
-                      </CarouselItem>
-                    </CarouselContent>
-                    <CarouselPrevious className="hidden md:flex" />
-                    <CarouselNext className="hidden md:flex" />
-                  </Carousel>
                 </motion.div>
               </div>
             </div>
