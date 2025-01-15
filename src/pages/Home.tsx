@@ -141,7 +141,7 @@ export default function Home() {
     }
 
     const moduleWrapper = (content: JSX.Element) => (
-      <div key={module.id} className="w-full py-16 bg-cuba-offwhite">
+      <div key={module.id} className="w-full py-8 sm:py-16 bg-cuba-offwhite">
         <div className="container mx-auto px-0 sm:px-4">
           {content}
         </div>
@@ -189,8 +189,8 @@ export default function Home() {
         );
       case 'testimonials':
         return moduleWrapper(
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-center mb-12 text-cuba-coral font-title">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+            <h2 className="text-3xl font-bold text-center mb-8 sm:mb-12 text-cuba-coral font-title">
               {module.settings?.title || "Témoignages de nos parrains"}
             </h2>
             <FeaturedTestimonials />
@@ -214,7 +214,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-white">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-white space-y-4 sm:space-y-8">
       {modules.map(renderModule)}
       <CallToAction />
     </div>
