@@ -35,37 +35,34 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#FFB347", // Cuban Golden Orange
+          DEFAULT: "#FF6B6B", // Updated to warm orange-red
           foreground: "#FFFFFF",
-          hover: "#FFA533",
+          hover: "#ff5252",
         },
         secondary: {
-          DEFAULT: "#40E0D0", // Light Turquoise
+          DEFAULT: "#FEC6A1", // Soft orange
           foreground: "#000000",
-          hover: "#2CCBBB",
+          hover: "#fdb88a",
         },
         accent: {
-          DEFAULT: "#F5F5DC", // Cream
+          DEFAULT: "#FFD700", // Cuban Gold
           foreground: "#000000",
-          hover: "#EBEBE2",
+          hover: "#ccac00",
         },
         cuba: {
-          golden: "#FFB347",     // Main Golden Orange
-          turquoise: "#40E0D0",  // Light Turquoise
-          cream: "#F5F5DC",      // Cream
-          wood: "#8B4513",       // Natural Wood Brown
-          text: "#333333",       // Main Text Color
-          textLight: "#666666",  // Secondary Text Color
-          coral: "#FF6B6B",      // Warm Coral
-          sand: "#F4D03F",       // Warm Sand
-          ocean: "#2E86C1",      // Ocean Blue
-          palm: "#27AE60",       // Palm Green
-          havana: "#CD853F",     // Havana Brown
-          sunset: "#FF7F50",     // Sunset Orange
-          warmBeige: "#FDE1D3",  // Warm Beige
-          softYellow: "#FEF7CD", // Soft Yellow
-          softOrange: "#FEC6A1", // Soft Orange
-          offwhite: "#F8F8F8",   // Off White Color
+          turquoise: "#0072BB",     // Ocean Blue
+          red: "#FF6B6B",           // Warm Red
+          gold: "#FFD700",          // Warm Gold
+          coral: "#FF6B6B",         // Coral Red
+          emerald: "#50C878",       // Emerald Green
+          pink: "#FFB6C1",          // Soft Pink
+          sand: "#F4D03F",          // Sand Yellow
+          offwhite: "#FFF9F5",      // Warm Off-white
+          warmBeige: "#FDE1D3",     // Warm Beige
+          softYellow: "#FEF7CD",    // Soft Yellow
+          softOrange: "#FEC6A1",    // Soft Orange
+          deepOrange: "#FF5733",    // Deep Orange
+          warmGray: "#8B7355",      // Warm Gray
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -86,9 +83,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ['Open Sans', 'system-ui', 'sans-serif'],
-        title: ['Lora', 'serif'],
-        body: ['Poppins', 'sans-serif'],
+        sans: ['Montserrat', 'system-ui', 'sans-serif'],
+        title: ['Playfair Display', 'serif'],
       },
       fontSize: {
         'fluid-sm': 'clamp(0.8rem, 0.17vw + 0.76rem, 0.89rem)',
@@ -99,12 +95,14 @@ export default {
         'fluid-3xl': 'clamp(2.44rem, 2.38vw + 1.85rem, 3.75rem)',
       },
       backgroundImage: {
-        'cuba-gradient': 'linear-gradient(135deg, #FFB347 0%, #40E0D0 100%)',
-        'sunset-gradient': 'linear-gradient(to right, #FFB347, #FF7F50)',
-        'beach-gradient': 'linear-gradient(to bottom, #40E0D0, #F5F5DC)',
+        'cuba-gradient': 'linear-gradient(135deg, #FF6B6B 0%, #FEC6A1 100%)',
+        'sunset-gradient': 'linear-gradient(to right, #FF6B6B, #FFD700)',
+        'beach-gradient': 'linear-gradient(to bottom, #0072BB, #FFF9F5)',
         'warm-gradient': 'linear-gradient(to right, #FDE1D3, #FEC6A1)',
-        'golden-shimmer': 'linear-gradient(90deg, transparent, rgba(255,179,71,0.2), transparent)',
-        'havana-pattern': 'repeating-linear-gradient(45deg, #FFB34710 0px, #FFB34710 2px, transparent 2px, transparent 10px)',
+        'golden-shimmer': 'linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent)',
+        'admin-gradient': 'linear-gradient(135deg, #FEC6A1 0%, #FF6B6B 100%)',
+        'card-gradient': 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5))',
+        'hover-gradient': 'linear-gradient(to bottom right, rgba(254, 198, 161, 0.1), rgba(255, 107, 107, 0.1))',
       },
       keyframes: {
         "fade-in": {
