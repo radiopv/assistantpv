@@ -34,9 +34,7 @@ const MainLayout = () => {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="p-0 w-[80%] sm:w-[350px]">
-                  <div className="flex flex-col h-full">
-                    <Navigation />
-                  </div>
+                  <Navigation />
                 </SheetContent>
               </Sheet>
             </div>
