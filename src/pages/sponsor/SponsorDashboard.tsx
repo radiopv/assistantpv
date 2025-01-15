@@ -126,12 +126,12 @@ const SponsorDashboard = () => {
         .eq('status', 'active');
 
       if (error) throw error;
-      return sponsorships;
+      return sponsorships || [];
     },
     enabled: !!user?.id
   });
 
-  const { data: childrenPhotos, refetch: refetchPhotos } = useQuery({
+  const { data: childrenPhotos = [], refetch: refetchPhotos } = useQuery({
     queryKey: ["children-photos", sponsoredChildren?.map(s => s.child_id)],
     queryFn: async () => {
       if (!sponsoredChildren?.length) return [];
@@ -149,7 +149,7 @@ const SponsorDashboard = () => {
     enabled: !!sponsoredChildren?.length
   });
 
-  const { data: testimonials } = useQuery({
+  const { data: testimonials = [] } = useQuery({
     queryKey: ['testimonials', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -159,7 +159,7 @@ const SponsorDashboard = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data || [];
     },
     enabled: !!user?.id
   });
@@ -358,18 +358,18 @@ const SponsorDashboard = () => {
                 <div className="mt-6 space-y-6">
                   <TabsContent value="photos" className="focus:outline-none">
                     <PhotoGallery 
-                      photos={childrenPhotos.filter(photo => photo.child_id === sponsorship.children?.id)} 
+                      photos={(childrenPhotos || []).filter(photo => photo.child_id === sponsorship.children?.id)} 
                       childName={sponsorship.children?.name} 
                     />
                   </TabsContent>
 
                   <TabsContent value="testimonials" className="focus:outline-none">
-                    <TestimonialSection testimonials={testimonials.filter(testimonial => testimonial.child_id === sponsorship.children?.id)} />
+                    <TestimonialSection testimonials={(testimonials || []).filter(testimonial => testimonial.child_id === sponsorship.children?.id)} />
                   </TabsContent>
 
                   <TabsContent value="statistics" className="focus:outline-none">
                     <StatisticsSection
-                      photos={childrenPhotos.filter(photo => photo.child_id === sponsorship.children?.id)}
+                      photos={(childrenPhotos || []).filter(photo => photo.child_id === sponsorship.children?.id)}
                       needs={convertJsonToNeeds(sponsorship.children?.needs)}
                       sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
                       sponsorshipStartDate={sponsorship.start_date}
