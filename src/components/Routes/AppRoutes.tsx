@@ -66,10 +66,7 @@ export const AppRoutes = () => {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
-
-        {/* Sponsor Dashboard Route */}
         <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
-        
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}
@@ -79,10 +76,14 @@ export const AppRoutes = () => {
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<AdminFAQ />} />
         <Route path="/admin/home-content" element={<HomeContentManagement />} />
-        
-        {/* Catch all redirect to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
+        <Route path="/admin/cities-management" element={<CitiesManagement />} />
+        <Route path="/admin/link-checker" element={<LinkChecker />} />
+        <Route path="/admin/audit-logs" element={<AuditLogs />} />
       </Route>
+
+      {/* Catch all redirect to home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
