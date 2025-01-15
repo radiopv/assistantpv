@@ -9,8 +9,12 @@ import AutoplayPlugin from "embla-carousel-autoplay";
 import type { Database } from "@/integrations/supabase/types";
 
 type AlbumMedia = Database["public"]["Tables"]["album_media"]["Row"] & {
-  children: { name: string } | null;
-  sponsors: { name: string } | null;
+  children?: {
+    name: string;
+  } | null;
+  sponsors?: {
+    name: string;
+  } | null;
 };
 
 export const FeaturedAlbum = () => {
@@ -23,7 +27,7 @@ export const FeaturedAlbum = () => {
         .select(`
           *,
           children (name),
-          sponsors (name)
+          sponsors!album_media_new_sponsor_id_fkey (name)
         `)
         .eq('is_featured', true)
         .eq('is_approved', true)
@@ -34,7 +38,7 @@ export const FeaturedAlbum = () => {
         return;
       }
 
-      setPhotos(data as AlbumMedia[] || []);
+      setPhotos(data || []);
     };
 
     fetchFeaturedPhotos();
