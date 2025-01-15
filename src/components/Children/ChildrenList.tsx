@@ -30,7 +30,6 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? "grid" : "table");
 
-  // Dédupliquer les enfants basé sur leur ID
   const uniqueChildren = children.reduce((acc, current) => {
     const x = acc.find(item => item.id === current.id);
     if (!x) {
@@ -68,13 +67,13 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-2 sm:px-0">
         {[1, 2, 3].map((i) => (
           <Card key={i} className="overflow-hidden">
             <div className="relative pb-[75%]">
               <Skeleton className="absolute inset-0" />
             </div>
-            <div className="p-4 space-y-3">
+            <div className="p-3 space-y-2">
               <Skeleton className="h-6 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
               <Skeleton className="h-4 w-1/3" />
@@ -87,10 +86,10 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   }
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-2 sm:px-0">
         {!isMobile && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="icon" className="min-h-[44px] min-w-[44px]">
@@ -136,7 +135,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       </div>
 
       {window.location.search.includes('status=incomplete') && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4 rounded">
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3 rounded mx-2 sm:mx-0">
           <div className="flex">
             <div className="flex-shrink-0">
               <AlertTriangle className="h-5 w-5 text-yellow-400" />
@@ -151,7 +150,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       )}
 
       {(viewMode === "grid" || isMobile) ? (
-        <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-2 sm:px-0">
           {uniqueChildren.map((child) => (
             <div key={child.id} className="space-y-2">
               <ChildCard
@@ -160,7 +159,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
                 onSponsorClick={setSelectedChild}
               />
               {window.location.search.includes('status=incomplete') && (
-                <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm font-medium text-gray-700 mb-2">Informations manquantes :</p>
                   <ul className="list-disc list-inside text-sm text-gray-600">
                     {getMissingFields(child).map((field) => (
