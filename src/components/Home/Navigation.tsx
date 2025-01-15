@@ -25,6 +25,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const publicLinks = [
   {
+    href: "/",
+    label: "Index",
+    icon: Home,
+  },
+  {
     href: "/children",
     label: "Les Enfants",
     icon: Users,
