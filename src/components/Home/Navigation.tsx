@@ -200,15 +200,18 @@ export const Navigation = () => {
 
   return (
     <nav className="bg-white shadow-sm w-full">
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center">
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - Updated styling */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Menu</span>
+                <Button 
+                  variant="ghost" 
+                  className="flex items-center gap-2 py-1 px-2 h-auto"
+                >
+                  <Menu className="h-7 w-7" />
+                  <span className="text-sm font-medium">MENU</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[80%] sm:w-[385px] p-0">
