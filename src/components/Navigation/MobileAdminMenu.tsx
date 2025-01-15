@@ -14,7 +14,7 @@ export const MobileAdminMenu = ({ isAssistant }: MobileAdminMenuProps) => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-cuba-coral/90 backdrop-blur-sm border-t border-cuba-coral/20 px-2 py-1 md:hidden z-50">
-      <ScrollArea className="w-full" orientation="horizontal">
+      <ScrollArea className="w-full">
         <div className="flex items-center gap-2 px-4 min-w-max">
           <Button
             variant="ghost"
