@@ -58,7 +58,7 @@ const PublicDonations = () => {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-0 sm:px-4 py-8">
         <ErrorAlert 
           message="Une erreur est survenue lors du chargement des dons"
           retry={() => refetch()}
@@ -69,7 +69,7 @@ const PublicDonations = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 space-y-8">
+      <div className="container mx-auto px-0 sm:px-4 py-8 space-y-8">
         <div className="animate-pulse">
           <Skeleton className="h-12 w-2/3 mb-4" />
           <Skeleton className="h-6 w-1/2" />
@@ -87,13 +87,13 @@ const PublicDonations = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
-      <div className="container mx-auto px-4 py-12 space-y-12">
+      <div className="container mx-auto px-0 sm:px-4 py-12 space-y-12">
         <AnimatePresence>
           <DonationsHeader />
           
           {donations && <ImpactSection donations={donations} />}
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-cuba-turquoise/20">
+          <div className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-8 border-0 sm:border sm:border-cuba-turquoise/20">
             <div className="space-y-6">
               <DonationFilters
                 searchTerm={searchTerm}
