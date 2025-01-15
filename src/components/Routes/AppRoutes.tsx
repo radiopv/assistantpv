@@ -35,17 +35,6 @@ import Messages from "@/pages/Messages";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import AllChildren from "@/pages/public/AllChildren";
-import { useAuth } from "@/components/Auth/AuthProvider";
-
-const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAssistant } = useAuth();
-  
-  if (!isAssistant) {
-    return <Navigate to="/" replace />;
-  }
-  
-  return <>{children}</>;
-};
 
 export const AppRoutes = () => {
   return (
@@ -81,56 +70,16 @@ export const AppRoutes = () => {
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}
-        <Route path="/admin/children-management" element={
-          <ProtectedAdminRoute>
-            <ChildrenManagement />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/donations-management" element={
-          <ProtectedAdminRoute>
-            <DonationsManagement />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/validation" element={
-          <ProtectedAdminRoute>
-            <Validation />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/emails" element={
-          <ProtectedAdminRoute>
-            <Emails />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/faq" element={
-          <ProtectedAdminRoute>
-            <AdminFAQ />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/home-content" element={
-          <ProtectedAdminRoute>
-            <HomeContentManagement />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/sponsorship-management" element={
-          <ProtectedAdminRoute>
-            <SponsorshipManagement />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/cities-management" element={
-          <ProtectedAdminRoute>
-            <CitiesManagement />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/link-checker" element={
-          <ProtectedAdminRoute>
-            <LinkChecker />
-          </ProtectedAdminRoute>
-        } />
-        <Route path="/admin/audit-logs" element={
-          <ProtectedAdminRoute>
-            <AuditLogs />
-          </ProtectedAdminRoute>
-        } />
+        <Route path="/admin/children-management" element={<ChildrenManagement />} />
+        <Route path="/admin/donations-management" element={<DonationsManagement />} />
+        <Route path="/admin/validation" element={<Validation />} />
+        <Route path="/admin/emails" element={<Emails />} />
+        <Route path="/admin/faq" element={<AdminFAQ />} />
+        <Route path="/admin/home-content" element={<HomeContentManagement />} />
+        <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
+        <Route path="/admin/cities-management" element={<CitiesManagement />} />
+        <Route path="/admin/link-checker" element={<LinkChecker />} />
+        <Route path="/admin/audit-logs" element={<AuditLogs />} />
       </Route>
 
       {/* Catch all redirect to home */}
