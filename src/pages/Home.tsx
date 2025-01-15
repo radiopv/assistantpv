@@ -2,6 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/components/Home/HeroSection";
 import { ImpactStats } from "@/components/Home/ImpactStats";
+import { HowItWorks } from "@/components/Home/HowItWorks";
+import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
+import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
+import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { toast } from "sonner";
 
 interface HomepageModule {
@@ -33,7 +37,7 @@ export default function Home() {
         .from('homepage_modules')
         .select('*')
         .eq('is_active', true)
-        .order('order_index', { ascending: true });
+        .order('order_index');
 
       if (error) {
         console.error('Error fetching modules:', error);
@@ -48,7 +52,6 @@ export default function Home() {
         return [];
       }
 
-      // Transform the data to match our interface
       const transformedModules = data.map(module => {
         console.log('Processing module:', module);
         return {
@@ -105,37 +108,66 @@ export default function Home() {
 
   console.log('Modules to render:', modules);
 
+  const renderModule = (module: HomepageModule) => {
+    console.log('Rendering module:', module);
+    
+    if (!module.module_type) {
+      console.warn('Module without type:', module);
+      return null;
+    }
+
+    switch (module.module_type) {
+      case 'hero':
+        return (
+          <HeroSection 
+            key={module.id} 
+            heroSection={module.content}
+            onImageClick={() => console.log("Image clicked")}
+          />
+        );
+      case 'impact_stats':
+        return (
+          <ImpactStats 
+            key={module.id}
+            settings={module.settings}
+          />
+        );
+      case 'how_it_works':
+        return (
+          <HowItWorks 
+            key={module.id}
+          />
+        );
+      case 'featured_children':
+        return (
+          <FeaturedChildren 
+            key={module.id}
+          />
+        );
+      case 'featured_album':
+        return (
+          <FeaturedAlbum 
+            key={module.id}
+          />
+        );
+      case 'testimonials':
+        return (
+          <div key={module.id} className="py-12 bg-white">
+            <div className="container mx-auto px-4">
+              <h2 className="text-3xl font-bold text-center mb-8">Témoignages de nos parrains</h2>
+              <FeaturedTestimonials />
+            </div>
+          </div>
+        );
+      default:
+        console.warn('Unknown module type:', module.module_type);
+        return null;
+    }
+  };
+
   return (
     <div className="min-h-screen">
-      {modules.map((module) => {
-        console.log('Rendering module:', module);
-        
-        if (!module.module_type) {
-          console.warn('Module without type:', module);
-          return null;
-        }
-
-        switch (module.module_type) {
-          case 'hero':
-            return (
-              <HeroSection 
-                key={module.id} 
-                heroSection={module.content}
-                onImageClick={() => console.log("Image clicked")}
-              />
-            );
-          case 'impact_stats':
-            return (
-              <ImpactStats 
-                key={module.id}
-                settings={module.settings}
-              />
-            );
-          default:
-            console.warn('Unknown module type:', module.module_type);
-            return null;
-        }
-      })}
+      {modules.map(renderModule)}
     </div>
   );
 }
