@@ -5,7 +5,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
+import AutoplayPlugin from "embla-carousel-autoplay";
 
 export const FeaturedAlbum = () => {
   const [photos, setPhotos] = useState<any[]>([]);
@@ -45,7 +45,7 @@ export const FeaturedAlbum = () => {
         loop: true,
       }}
       plugins={[
-        Autoplay({
+        AutoplayPlugin({
           delay: 3000,
         }),
       ]}
