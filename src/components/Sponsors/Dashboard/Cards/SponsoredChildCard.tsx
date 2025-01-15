@@ -2,6 +2,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Camera, FileEdit, Clock } from "lucide-react";
+import { useState } from "react";
+import { TerminationDialog } from "../TerminationDialog";
 
 interface SponsoredChildCardProps {
   child: {
@@ -21,6 +23,8 @@ export const SponsoredChildCard = ({
   onAddPhoto,
   onAddTestimonial,
 }: SponsoredChildCardProps) => {
+  const [showTermination, setShowTermination] = useState(false);
+
   return (
     <Card className="p-4 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
       <div className="flex items-center justify-between mb-4">
@@ -71,6 +75,14 @@ export const SponsoredChildCard = ({
           Mettre fin au parrainage
         </Button>
       </div>
+
+      <TerminationDialog
+        isOpen={showTermination}
+        onClose={() => setShowTermination(false)}
+        sponsorshipId={sponsorshipId}
+        childName={child.name}
+        onTerminationComplete={() => window.location.reload()}
+      />
     </Card>
   );
 };
