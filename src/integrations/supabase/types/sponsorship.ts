@@ -32,3 +32,11 @@ export interface SponsoredChildCardProps {
   onAddPhoto: () => void;
   onAddTestimonial: () => void;
 }
+
+export interface SponsorshipTables {
+  sponsorships: {
+    Row: Sponsorship;
+    Insert: Omit<Sponsorship, 'id' | 'created_at' | 'updated_at'>;
+    Update: Partial<Omit<Sponsorship, 'id'>>;
+  };
+}
