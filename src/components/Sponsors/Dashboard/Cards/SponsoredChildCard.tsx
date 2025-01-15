@@ -1,83 +1,84 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ImagePlus, MessageSquarePlus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useNavigate } from "react-router-dom";
+import { Camera, Clock, FileEdit } from "lucide-react";
+import { useState } from "react";
+import { TerminationDialog } from "../TerminationDialog";
 
 interface SponsoredChildCardProps {
   child: {
+    id: string;
     name: string;
-    photo_url: string | null;
-    city: string | null;
-    age?: number;
+    photo_url?: string;
+    age?: number | null;
   };
+  sponsorshipId: string;
   onAddPhoto: () => void;
   onAddTestimonial: () => void;
 }
 
-export const SponsoredChildCard = ({ 
-  child, 
+export const SponsoredChildCard = ({
+  child,
+  sponsorshipId,
   onAddPhoto,
-  onAddTestimonial 
+  onAddTestimonial,
 }: SponsoredChildCardProps) => {
-  const { language } = useLanguage();
-  const navigate = useNavigate();
-
-  const translations = {
-    fr: {
-      addPhoto: "Ajouter une photo",
-      addTestimonial: "Ajouter un témoignage",
-      years: "ans"
-    },
-    es: {
-      addPhoto: "Agregar una foto",
-      addTestimonial: "Agregar testimonio",
-      years: "años"
-    }
-  };
-
-  const t = translations[language as keyof typeof translations];
+  const { t } = useLanguage();
+  const [showTermination, setShowTermination] = useState(false);
 
   return (
-    <Card className="p-4 bg-white shadow-sm w-full">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-start gap-4">
-          <Avatar className="w-16 h-16 rounded-full border-2 border-cuba-warmBeige">
-            <AvatarImage src={child.photo_url || undefined} alt={child.name} />
+    <Card className="p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Avatar className="h-16 w-16">
+            <AvatarImage src={child.photo_url} alt={child.name} />
             <AvatarFallback>{child.name[0]}</AvatarFallback>
           </Avatar>
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold text-gray-900">{child.name}</h3>
+          <div>
+            <h3 className="text-lg font-semibold">{child.name}</h3>
             {child.age && (
-              <p className="text-gray-600">{child.age} {t.years}</p>
-            )}
-            {child.city && (
-              <p className="text-gray-600 text-sm">{child.city}</p>
+              <p className="text-sm text-gray-500">
+                {child.age} {t("years")}
+              </p>
             )}
           </div>
         </div>
-
-        <div className="flex flex-col w-full gap-2">
+        <div className="flex space-x-2">
           <Button
             variant="outline"
-            className="w-full flex items-center justify-center gap-2 py-3 bg-white hover:bg-gray-50"
+            size="sm"
             onClick={onAddPhoto}
           >
-            <ImagePlus className="w-4 h-4" />
-            {t.addPhoto}
+            <Camera className="h-4 w-4 mr-2" />
+            {t("addPhoto")}
           </Button>
-          
           <Button
             variant="outline"
-            className="w-full flex items-center justify-center gap-2 py-3 bg-white hover:bg-gray-50"
+            size="sm"
             onClick={onAddTestimonial}
           >
-            <MessageSquarePlus className="w-4 h-4" />
-            {t.addTestimonial}
+            <FileEdit className="h-4 w-4 mr-2" />
+            {t("addTestimonial")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowTermination(true)}
+          >
+            <Clock className="h-4 w-4 mr-2" />
+            {t("endSponsorship")}
           </Button>
         </div>
       </div>
+
+      <TerminationDialog
+        isOpen={showTermination}
+        onClose={() => setShowTermination(false)}
+        sponsorshipId={sponsorshipId}
+        childName={child.name}
+        onTerminationComplete={() => window.location.reload()}
+      />
     </Card>
   );
 };
