@@ -29,13 +29,14 @@ import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDat
 import { BirthdayCountdown } from "@/components/Sponsors/Dashboard/BirthdayCountdown";
 import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
 import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
-import { Camera, FileEdit } from "lucide-react";
+import { Camera, FileEdit, Clock } from "lucide-react";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
+  const [showTermination, setShowTermination] = useState(false);
 
   const translations = {
     fr: {
@@ -58,7 +59,8 @@ const SponsorDashboard = () => {
       copyError: "Erreur lors de la copie du lien",
       noNotifications: "Aucune notification pour le moment",
       addPhoto: "Ajouter une photo",
-      addTestimonial: "Ajouter un témoignage"
+      addTestimonial: "Ajouter un témoignage",
+      endSponsorship: "Mettre fin au parrainage"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -80,7 +82,8 @@ const SponsorDashboard = () => {
       copyError: "Error al copiar el enlace",
       noNotifications: "No hay notificaciones por el momento",
       addPhoto: "Agregar foto",
-      addTestimonial: "Agregar testimonio"
+      addTestimonial: "Agregar testimonio",
+      endSponsorship: "Finalizar apadrinamiento"
     }
   };
 
@@ -215,12 +218,10 @@ const SponsorDashboard = () => {
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
-        {/* Notifications Section */}
         <div className="mb-4 w-full">
           <NeedNotifications />
         </div>
 
-        {/* New Stats and Birthday Section */}
         <div className="grid md:grid-cols-2 gap-4">
           <BirthdayCountdown 
             children={sponsoredChildren?.map(s => ({
@@ -241,7 +242,6 @@ const SponsorDashboard = () => {
           />
         </div>
 
-        {/* Timeline Section */}
         <SponsorshipTimeline
           events={[
             ...(sponsoredChildren?.map(s => ({
@@ -263,7 +263,6 @@ const SponsorDashboard = () => {
           ]}
         />
 
-        {/* Planned Visits Section */}
         <Card className="p-6">
           <h3 className="text-lg font-semibold mb-4">Visites planifiées</h3>
           <div className="space-y-6">
@@ -278,7 +277,6 @@ const SponsorDashboard = () => {
           </div>
         </Card>
 
-        {/* Rest of the dashboard content */}
         <div className="grid gap-4 md:gap-6">
           {sponsoredChildren?.map((sponsorship) => {
             const childPhotos = childrenPhotos?.filter(photo => 
@@ -313,12 +311,11 @@ const SponsorDashboard = () => {
                         onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                       />
                     </div>
-                    <div className="flex flex-col gap-2 mt-4 md:mt-0">
+                    <div className="flex items-center space-x-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleAddPhoto(sponsorship.children?.id)}
-                        className="w-full"
                       >
                         <Camera className="h-4 w-4 mr-2" />
                         {translations[language].addPhoto}
@@ -327,10 +324,17 @@ const SponsorDashboard = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
-                        className="w-full"
                       >
                         <FileEdit className="h-4 w-4 mr-2" />
                         {translations[language].addTestimonial}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowTermination(true)}
+                      >
+                        <Clock className="h-4 w-4 mr-2" />
+                        {translations[language].endSponsorship}
                       </Button>
                     </div>
                   </div>
