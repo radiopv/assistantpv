@@ -13,6 +13,7 @@ export const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
+  const isAdmin = user?.role === 'admin';
   const isSponsor = user?.role === 'sponsor';
 
   const handleLogout = async () => {
@@ -106,6 +107,20 @@ export const Navigation = () => {
         <HelpCircle className="h-4 w-4 mr-2" />
         FAQ
       </Button>
+
+      {isAdmin && (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/admin/home-content");
+            setIsOpen(false);
+          }}
+          className="justify-start md:justify-center text-primary w-full md:w-auto"
+        >
+          <User className="h-4 w-4 mr-2" />
+          Admin Page d'accueil
+        </Button>
+      )}
     </div>
   );
 
@@ -129,17 +144,29 @@ export const Navigation = () => {
                   </div>
                   <div className="border-t py-4 space-y-4">
                     {user ? (
-                      <Button
-                        variant="ghost"
-                        onClick={() => {
-                          navigate("/sponsor-dashboard");
-                          setIsOpen(false);
-                        }}
-                        className="justify-start text-primary w-full"
-                      >
-                        <User className="h-4 w-4 mr-2" />
-                        Espace parrain
-                      </Button>
+                      <>
+                        {(isSponsor || isAssistant || isAdmin) && (
+                          <Button
+                            variant="ghost"
+                            onClick={() => {
+                              navigate("/sponsor-dashboard");
+                              setIsOpen(false);
+                            }}
+                            className="justify-start text-primary w-full"
+                          >
+                            <User className="h-4 w-4 mr-2" />
+                            Espace parrain
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          onClick={handleLogout}
+                          className="justify-start text-primary w-full"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Déconnexion
+                        </Button>
+                      </>
                     ) : (
                       <Button
                         variant="ghost"
@@ -168,14 +195,16 @@ export const Navigation = () => {
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/sponsor-dashboard")}
-                  className="text-primary"
-                >
-                  <User className="h-4 w-4 mr-2" />
-                  Espace parrain
-                </Button>
+                {(isSponsor || isAssistant || isAdmin) && (
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate("/sponsor-dashboard")}
+                    className="text-primary"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    Espace parrain
+                  </Button>
+                )}
                 <UserProfileMenu />
               </>
             ) : (
