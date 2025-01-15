@@ -18,8 +18,40 @@ interface SectionListProps {
   sections: Section[];
 }
 
-export const SectionList = ({ sections }: SectionListProps) => {
+const defaultSections = [
+  {
+    id: "hero",
+    section_key: "hero",
+    title: "Parrainez un enfant cubain",
+    subtitle: "Aidez-nous à changer des vies en parrainant un enfant cubain dans le besoin",
+    order_index: 0
+  },
+  {
+    id: "featured-children",
+    section_key: "featured-children",
+    title: "Enfants en attente de parrainage",
+    subtitle: "Découvrez les enfants qui attendent votre soutien",
+    order_index: 1
+  },
+  {
+    id: "how-it-works",
+    section_key: "how-it-works",
+    title: "Comment ça marche",
+    subtitle: "Découvrez le processus simple pour devenir parrain",
+    order_index: 2
+  },
+  {
+    id: "testimonials",
+    section_key: "testimonials",
+    title: "Témoignages",
+    subtitle: "Ce que disent nos parrains",
+    order_index: 3
+  }
+];
+
+export const SectionList = ({ sections = [] }: SectionListProps) => {
   const queryClient = useQueryClient();
+  const displaySections = sections.length > 0 ? sections : defaultSections;
 
   const updateSection = useMutation({
     mutationFn: async ({ id, updates }: { id: string; updates: any }) => {
@@ -48,7 +80,7 @@ export const SectionList = ({ sections }: SectionListProps) => {
   const handleDragEnd = async (result: any) => {
     if (!result.destination) return;
 
-    const items = Array.from(sections);
+    const items = Array.from(displaySections);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
@@ -81,7 +113,7 @@ export const SectionList = ({ sections }: SectionListProps) => {
       <Droppable droppableId="sections">
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-            {sections.map((section, index) => (
+            {displaySections.map((section, index) => (
               <Draggable key={section.id} draggableId={section.id} index={index}>
                 {(provided) => (
                   <Card
