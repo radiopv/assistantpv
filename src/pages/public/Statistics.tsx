@@ -46,23 +46,27 @@ const Statistics = () => {
       const { data: trendsData, error: trendsError } = await supabase.rpc("get_monthly_donation_stats");
       if (trendsError) throw trendsError;
 
-      const { data: cityData, error: cityError } = await supabase.from('children')
+      const { data: cityData, error: cityError } = await supabase
+        .from('children')
         .select('city')
-        .not('city', 'is', null)
-        .then(({ data }) => {
-          if (!data) return [];
-          const cities = data.reduce((acc, curr) => {
-            acc[curr.city] = (acc[curr.city] || 0) + 1;
-            return acc;
-          }, {} as Record<string, number>);
-          return Object.entries(cities).map(([city, count]) => ({ city, count }));
-        });
+        .not('city', 'is', null);
+      
       if (cityError) throw cityError;
+
+      const cityDistribution = cityData.reduce((acc: Record<string, number>, curr) => {
+        acc[curr.city] = (acc[curr.city] || 0) + 1;
+        return acc;
+      }, {});
+
+      const cityStats = Object.entries(cityDistribution).map(([city, count]) => ({
+        city,
+        count
+      }));
 
       return {
         ...statsData[0],
         monthly_trends: trendsData,
-        city_distribution: cityData
+        city_distribution: cityStats
       } as StatisticsData;
     }
   });
