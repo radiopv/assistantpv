@@ -15,9 +15,10 @@ interface ImageCropDialogProps {
   onClose: () => void;
   imageSrc: string;
   onCropComplete: (croppedImageBlob: Blob) => void;
+  aspectRatio?: number;
 }
 
-export const ImageCropDialog = ({ open, onClose, imageSrc, onCropComplete }: ImageCropDialogProps) => {
+export const ImageCropDialog = ({ open, onClose, imageSrc, onCropComplete, aspectRatio }: ImageCropDialogProps) => {
   const [crop, setCrop] = useState<Crop>({
     unit: '%',
     width: 90,
@@ -76,7 +77,7 @@ export const ImageCropDialog = ({ open, onClose, imageSrc, onCropComplete }: Ima
           <ReactCrop
             crop={crop}
             onChange={(c) => setCrop(c)}
-            aspect={1}
+            aspect={aspectRatio}
             className="max-h-[600px]"
           >
             <img
