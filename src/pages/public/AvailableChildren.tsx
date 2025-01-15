@@ -86,17 +86,8 @@ export default function AvailableChildren() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-100 to-white">
-      <div className="container mx-auto p-4 space-y-6">
-        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
-            Enfants disponibles pour le parrainage
-          </h1>
-          <p className="text-white/90 max-w-2xl mx-auto text-lg">
-            Découvrez les enfants qui attendent votre soutien et votre amour
-          </p>
-        </div>
-
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-orange-200">
+      <div className="container mx-auto p-0 sm:p-4 space-y-6">
+        <div className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-6 border border-orange-200">
           <ChildrenFilters
             searchTerm={searchTerm}
             selectedCity={selectedCity}
@@ -124,7 +115,7 @@ export default function AvailableChildren() {
         )}
 
         {!children?.length && (
-          <div className="text-center py-8 text-gray-500 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-orange-200">
+          <div className="text-center py-8 text-gray-500 bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-6 border border-orange-200">
             {selectedStatus === "urgent" ? 
               "Aucun enfant n'a de besoins urgents pour le moment" : 
               "Aucun enfant disponible ne correspond à vos critères"}

@@ -9,8 +9,8 @@ export default function AllChildren() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
-      <div className="container mx-auto py-8 space-y-8">
-        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-6 rounded-xl shadow-lg text-center mb-6 mx-2 sm:mx-4">
+      <div className="container mx-auto py-8 space-y-8 px-0 sm:px-4">
+        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-6 rounded-none sm:rounded-xl shadow-lg text-center mb-6 mx-0 sm:mx-4">
           <h1 className="text-2xl md:text-3xl font-bold font-title mb-3">
             Les Enfants
           </h1>
@@ -19,7 +19,7 @@ export default function AllChildren() {
           </p>
         </div>
 
-        <Card className="mx-2 sm:mx-4">
+        <Card className="mx-0 sm:mx-4 rounded-none sm:rounded-xl">
           <Tabs defaultValue="available" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger 
