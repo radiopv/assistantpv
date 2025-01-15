@@ -1,71 +1,41 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeroSectionProps {
   heroSection?: {
     title?: string;
     subtitle?: string;
   };
-  onImageClick: () => void;
+  onImageClick?: () => void;
 }
 
 export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
-    <section className="relative min-h-[80vh] bg-cuba-gradient overflow-hidden">
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="absolute inset-0 bg-golden-shimmer animate-golden-light"
-      />
-      <div className="container mx-auto h-full relative z-10 py-16">
-        <div className="flex flex-col items-center justify-center h-full gap-12 px-4">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-2xl"
+    <div className="relative w-full">
+      <div className="text-center py-2 bg-cuba-warmBeige/10">
+        <p className="text-cuba-coral font-semibold">#TousPourCuba</p>
+      </div>
+      <div className="w-full py-8 sm:py-16 bg-cuba-coral text-white text-center">
+        <div className="container mx-auto px-4">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4 font-title">
+            {heroSection?.title || t("sponsorCubanChild")}
+          </h1>
+          <p className="text-lg sm:text-xl mb-8 max-w-2xl mx-auto">
+            {heroSection?.subtitle || t("helpChangeLife")}
+          </p>
+          <Button
+            onClick={() => navigate("/become-sponsor")}
+            size="lg"
+            className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold"
           >
-            <h1 className="text-4xl lg:text-5xl font-bold text-white font-title mb-6">
-              {heroSection?.title || "Parrainez un enfant cubain"}
-            </h1>
-            <p className="text-xl text-white/90 mb-8">
-              {heroSection?.subtitle || "Aidez-nous à changer des vies en parrainant un enfant cubain dans le besoin"}
-            </p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Button 
-                onClick={() => navigate("/become-sponsor")}
-                size="lg"
-                className="bg-cuba-gold text-black hover:bg-cuba-gold/90 transform transition-all duration-300 hover:scale-105 shadow-lg"
-              >
-                Devenir parrain
-              </Button>
-            </motion.div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="w-full max-w-2xl mx-auto relative"
-          >
-            <img 
-              src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
-              alt="Enfant cubain"
-              className="w-full h-[500px] object-cover cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
-              style={{ objectPosition: 'center' }}
-              onClick={onImageClick}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 rounded-lg" />
-          </motion.div>
+            {t("becomeSponsor")}
+          </Button>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
