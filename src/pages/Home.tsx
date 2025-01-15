@@ -24,6 +24,7 @@ interface HomepageModule {
     showTotalDonations: boolean;
     animateNumbers: boolean;
     backgroundStyle: string;
+    steps?: Array<{ title: string; description: string }>;
   };
   is_active: boolean;
   order_index: number;
@@ -67,6 +68,20 @@ export default function Home() {
             showTotalDonations: true,
             animateNumbers: true,
             backgroundStyle: "gradient",
+            steps: module.module_type === 'journey' ? [
+              {
+                title: "Choisissez un enfant",
+                description: "Parcourez les profils des enfants disponibles et choisissez celui que vous souhaitez parrainer."
+              },
+              {
+                title: "Complétez votre profil",
+                description: "Remplissez les informations nécessaires pour devenir parrain ou marraine."
+              },
+              {
+                title: "Commencez votre parrainage",
+                description: "Une fois approuvé, vous pourrez suivre l'évolution de votre filleul et communiquer avec lui."
+              }
+            ] : undefined,
             ...(typeof module.settings === 'object' ? module.settings : {})
           },
           is_active: module.is_active || false,
