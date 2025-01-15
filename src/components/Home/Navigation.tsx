@@ -49,14 +49,14 @@ export const Navigation = () => {
 
   // Public menu items
   const PublicMenuItems = () => (
-    <div className="flex flex-col space-y-2">
+    <div className="flex space-x-4">
       <Button
         variant="ghost"
         onClick={() => {
           navigate("/children");
           setIsOpen(false);
         }}
-        className="justify-start text-primary w-full"
+        className="text-primary"
       >
         <Users className="h-4 w-4 mr-2" />
         Les Enfants
@@ -68,7 +68,7 @@ export const Navigation = () => {
           navigate("/public-donations");
           setIsOpen(false);
         }}
-        className="justify-start text-primary w-full"
+        className="text-primary"
       >
         <Gift className="h-4 w-4 mr-2" />
         Donations
@@ -80,7 +80,7 @@ export const Navigation = () => {
           navigate("/statistics");
           setIsOpen(false);
         }}
-        className="justify-start text-primary w-full"
+        className="text-primary"
       >
         <BarChart className="h-4 w-4 mr-2" />
         Statistiques
@@ -92,7 +92,7 @@ export const Navigation = () => {
           navigate("/faq");
           setIsOpen(false);
         }}
-        className="justify-start text-primary w-full"
+        className="text-primary"
       >
         <HelpCircle className="h-4 w-4 mr-2" />
         FAQ
@@ -149,7 +149,7 @@ export const Navigation = () => {
     <nav className="bg-white/80 backdrop-blur-sm shadow-sm sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
-          {/* Hamburger Menu (Public Links) */}
+          {/* Hamburger Menu (Mobile Only) */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -168,7 +168,9 @@ export const Navigation = () => {
               >
                 <div className="flex flex-col h-full">
                   <div className="flex-1 py-6">
-                    <PublicMenuItems />
+                    <div className="flex flex-col space-y-2">
+                      <PublicMenuItems />
+                    </div>
                   </div>
                   <div className="border-t border-cuba-coral/10 py-4">
                     {user ? (
@@ -216,7 +218,7 @@ export const Navigation = () => {
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex flex-1 space-x-4">
+          <div className="hidden md:flex flex-1 items-center justify-center">
             <PublicMenuItems />
           </div>
 
