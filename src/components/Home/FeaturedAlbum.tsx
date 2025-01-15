@@ -34,7 +34,7 @@ export const FeaturedAlbum = () => {
         return;
       }
 
-      setPhotos(data || []);
+      setPhotos(data as AlbumMedia[] || []);
     };
 
     fetchFeaturedPhotos();
