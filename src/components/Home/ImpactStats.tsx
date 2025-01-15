@@ -30,15 +30,17 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
         .eq('is_sponsored', true)
         .throwOnError();
 
-      const { count: donationsCount } = await supabase
+      const { data: donations } = await supabase
         .from('donations')
-        .select('*', { count: 'exact', head: true })
+        .select('people_helped')
         .throwOnError();
+
+      const totalPeopleHelped = donations?.reduce((sum, donation) => sum + (donation.people_helped || 0), 0) || 0;
 
       return {
         totalSponsors: sponsorCount || 0,
         totalChildren: childrenCount || 0,
-        totalDonations: donationsCount || 0
+        totalPeopleHelped: totalPeopleHelped
       };
     }
   });
@@ -87,9 +89,9 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
               className="text-center p-6 bg-white/10 backdrop-blur-md rounded-lg"
             >
               <p className="text-5xl font-bold text-white mb-2">
-                {stats?.totalDonations || 0}
+                {stats?.totalPeopleHelped || 0}
               </p>
-              <p className="text-xl text-white/90">Dons Réalisés</p>
+              <p className="text-xl text-white/90">Personnes Aidées</p>
             </motion.div>
           )}
         </div>

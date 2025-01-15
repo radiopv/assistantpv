@@ -10,6 +10,11 @@ import { CallToAction } from "@/components/Home/CallToAction";
 import { JourneySection } from "@/components/Home/JourneySection";
 import { toast } from "sonner";
 
+interface JourneyStep {
+  title: string;
+  description: string;
+}
+
 interface HomepageModule {
   id: string;
   module_type: string;
@@ -19,12 +24,13 @@ interface HomepageModule {
   };
   settings: {
     title: string;
-    showTotalSponsors: boolean;
-    showTotalChildren: boolean;
-    showTotalDonations: boolean;
-    animateNumbers: boolean;
-    backgroundStyle: string;
-    steps?: Array<{ title: string; description: string }>;
+    showTotalSponsors?: boolean;
+    showTotalChildren?: boolean;
+    showTotalDonations?: boolean;
+    animateNumbers?: boolean;
+    backgroundStyle?: string;
+    steps?: JourneyStep[];
+    showProgressBar?: boolean;
   };
   is_active: boolean;
   order_index: number;
@@ -82,6 +88,7 @@ export default function Home() {
                 description: "Une fois approuvé, vous pourrez suivre l'évolution de votre filleul et communiquer avec lui."
               }
             ] : undefined,
+            showProgressBar: module.module_type === 'journey' ? true : undefined,
             ...(typeof module.settings === 'object' ? module.settings : {})
           },
           is_active: module.is_active || false,
@@ -154,7 +161,14 @@ export default function Home() {
       case 'impact-stats':
         return moduleWrapper(
           <ImpactStats 
-            settings={module.settings}
+            settings={{
+              title: module.settings.title || "Notre Impact",
+              showTotalSponsors: module.settings.showTotalSponsors || false,
+              showTotalChildren: module.settings.showTotalChildren || false,
+              showTotalDonations: module.settings.showTotalDonations || false,
+              animateNumbers: module.settings.animateNumbers || false,
+              backgroundStyle: module.settings.backgroundStyle || "gradient"
+            }}
           />
         );
       case 'how_it_works':
@@ -183,8 +197,15 @@ export default function Home() {
           </div>
         );
       case 'journey':
+        if (!module.settings.steps) return null;
         return moduleWrapper(
-          <JourneySection settings={module.settings} />
+          <JourneySection 
+            settings={{
+              title: module.settings.title,
+              steps: module.settings.steps,
+              showProgressBar: module.settings.showProgressBar
+            }} 
+          />
         );
       default:
         console.warn('Unknown module type:', module.module_type);
