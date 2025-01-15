@@ -14,6 +14,7 @@ import {
   HelpCircle,
   BarChart,
   Menu,
+  Shield,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -22,6 +23,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Separator } from "@/components/ui/separator";
 
 export const Navigation = () => {
   const navigate = useNavigate();
@@ -101,7 +103,11 @@ export const Navigation = () => {
 
   const AdminLinks = () => (
     isAssistant && (
-      <div className="flex flex-col space-y-2 border-t md:border-none pt-2 md:pt-0 mt-2 md:mt-0">
+      <div className="flex flex-col space-y-2">
+        <div className="flex items-center space-x-2 px-2 py-1 bg-muted rounded-lg">
+          <Shield className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium">Section Admin</span>
+        </div>
         <Button
           variant="ghost"
           onClick={() => {
@@ -143,11 +149,25 @@ export const Navigation = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
                 <div className="flex flex-col h-full">
-                  <div className="flex-1 py-6 space-y-4">
-                    <PublicLinks />
-                    <AdminLinks />
+                  <div className="flex-1 py-6 space-y-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2 px-2 py-1 bg-muted rounded-lg">
+                        <Home className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">Navigation Principale</span>
+                      </div>
+                      <PublicLinks />
+                    </div>
+                    
+                    {isAssistant && (
+                      <>
+                        <Separator />
+                        <AdminLinks />
+                      </>
+                    )}
                   </div>
-                  <div className="border-t py-4 space-y-4">
+                  
+                  <Separator />
+                  <div className="py-4 space-y-4">
                     {user ? (
                       <>
                         <Button
