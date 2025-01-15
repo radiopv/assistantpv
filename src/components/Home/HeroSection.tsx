@@ -28,7 +28,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
             transition={{ duration: 0.5 }}
             className="w-full lg:w-1/2 relative"
           >
-            <div className="flex items-center gap-8 mb-8">
+            <div className="flex flex-col items-center text-center lg:text-left lg:items-start gap-8 mb-8">
               <img 
                 src="/lovable-uploads/12731338-4f41-46ca-ad4a-79242dd36658.png"
                 alt="Enfant cubain avec un ours en peluche"
