@@ -7,6 +7,7 @@ import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
 import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { CallToAction } from "@/components/Home/CallToAction";
+import { JourneySection } from "@/components/Home/JourneySection";
 import { toast } from "sonner";
 
 interface HomepageModule {
@@ -165,6 +166,10 @@ export default function Home() {
             </h2>
             <FeaturedTestimonials />
           </div>
+        );
+      case 'journey':
+        return moduleWrapper(
+          <JourneySection settings={module.settings} />
         );
       default:
         console.warn('Unknown module type:', module.module_type);
