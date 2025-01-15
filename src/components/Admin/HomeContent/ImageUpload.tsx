@@ -24,7 +24,10 @@ export const ImageUpload = ({ heroImage, isLoading }: ImageUploadProps) => {
     handleImageSelect,
     handleCropComplete,
   } = useImageUpload({
-    position: 'hero'
+    position: 'hero',
+    onUploadComplete: () => {
+      console.log("Upload completed successfully");
+    }
   });
 
   return (
@@ -47,6 +50,7 @@ export const ImageUpload = ({ heroImage, isLoading }: ImageUploadProps) => {
           onClose={() => setCropDialogOpen(false)}
           imageSrc={URL.createObjectURL(selectedImage)}
           onCropComplete={handleCropComplete}
+          aspectRatio={16/9}
         />
       )}
     </Card>
