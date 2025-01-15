@@ -3,8 +3,11 @@ import { Outlet } from "react-router-dom";
 import { Navigation } from "@/components/Home/Navigation";
 import { Button } from "@/components/ui/button";
 import { UserCircle2 } from "lucide-react";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 const PublicLayout = () => {
+  const { user } = useAuth();
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
       {/* Navigation */}
@@ -13,14 +16,16 @@ const PublicLayout = () => {
           <div className="flex items-center justify-between py-4">
             <Navigation />
             
-            {/* Login Button - Always visible */}
-            <Link 
-              to="/login" 
-              className="flex items-center gap-2 text-cuba-coral hover:text-cuba-coral/80 transition-colors"
-            >
-              <UserCircle2 className="h-5 w-5" />
-              <span className="hidden sm:inline">Connexion</span>
-            </Link>
+            {/* Login Button - Always visible when not logged in */}
+            {!user && (
+              <Link 
+                to="/login" 
+                className="flex items-center gap-2 text-cuba-coral hover:text-cuba-coral/80 transition-colors"
+              >
+                <UserCircle2 className="h-5 w-5" />
+                <span className="hidden sm:inline">Connexion</span>
+              </Link>
+            )}
           </div>
         </div>
       </div>

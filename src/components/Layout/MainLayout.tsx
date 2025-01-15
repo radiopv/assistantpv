@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/sheet";
 
 const MainLayout = () => {
-  const { user } = useAuth();
-  const showSidebar = user?.role === 'admin' || user?.role === 'assistant';
+  const { user, isAssistant } = useAuth();
+  const showSidebar = isAssistant;
 
   return (
     <div className="min-h-screen bg-cuba-offwhite flex flex-col">

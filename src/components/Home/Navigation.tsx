@@ -35,17 +35,19 @@ export const Navigation = () => {
 
   const MenuItems = () => (
     <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0">
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <Home className="h-4 w-4 mr-2" />
-        Accueil
-      </Button>
+      {isAssistant && (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/");
+            setIsOpen(false);
+          }}
+          className="justify-start md:justify-center text-primary w-full md:w-auto"
+        >
+          <Home className="h-4 w-4 mr-2" />
+          Accueil
+        </Button>
+      )}
 
       <Button
         variant="ghost"
@@ -129,17 +131,30 @@ export const Navigation = () => {
                   </div>
                   <div className="border-t py-4 space-y-4">
                     {user ? (
-                      <Button
-                        variant="ghost"
-                        onClick={() => {
-                          navigate("/sponsor-dashboard");
-                          setIsOpen(false);
-                        }}
-                        className="justify-start text-primary w-full"
-                      >
-                        <User className="h-4 w-4 mr-2" />
-                        Espace parrain
-                      </Button>
+                      <>
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            navigate("/sponsor-dashboard");
+                            setIsOpen(false);
+                          }}
+                          className="justify-start text-primary w-full"
+                        >
+                          <User className="h-4 w-4 mr-2" />
+                          Espace parrain
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            handleLogout();
+                            setIsOpen(false);
+                          }}
+                          className="justify-start text-primary w-full"
+                        >
+                          <LogOut className="h-4 w-4 mr-2" />
+                          Déconnexion
+                        </Button>
+                      </>
                     ) : (
                       <Button
                         variant="ghost"
