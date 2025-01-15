@@ -47,12 +47,21 @@ const SponsoredChildren = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-cuba-warm mb-2">Enfants Parrainés</h1>
-        <p className="text-gray-600">Découvrez les enfants qui ont trouvé un parrain</p>
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
+      <div className="container mx-auto px-4 py-12 space-y-12">
+        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
+          <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
+            Enfants Parrainés
+          </h1>
+          <p className="text-white/90 max-w-2xl mx-auto text-lg">
+            Découvrez les enfants qui ont trouvé une famille de cœur
+          </p>
+        </div>
+
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-orange-200">
+          <SponsoredChildrenList children={children} />
+        </div>
       </div>
-      <SponsoredChildrenList children={children} />
     </div>
   );
 };
