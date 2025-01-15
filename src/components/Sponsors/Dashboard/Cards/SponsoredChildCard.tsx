@@ -45,29 +45,29 @@ export const SponsoredChildCard = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Button
           variant="outline"
-          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors h-auto py-2"
           onClick={onAddPhoto}
         >
           <Camera className="h-4 w-4" />
-          Ajouter une photo
+          <span className="whitespace-nowrap">Ajouter une photo</span>
         </Button>
         
         <Button
           variant="outline"
-          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors h-auto py-2"
           onClick={onAddTestimonial}
         >
           <FileEdit className="h-4 w-4" />
-          Ajouter un témoignage
+          <span className="whitespace-nowrap">Ajouter un témoignage</span>
         </Button>
         
         <Button
           variant="outline"
-          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors sm:col-span-2"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors h-auto py-2 sm:col-span-2"
           onClick={() => setShowTermination(true)}
         >
           <Clock className="h-4 w-4" />
-          Mettre fin au parrainage
+          <span className="whitespace-nowrap">Mettre fin au parrainage</span>
         </Button>
       </div>
 
