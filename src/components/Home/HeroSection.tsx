@@ -14,24 +14,24 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-[80vh] bg-cuba-gradient overflow-hidden">
+    <section className="relative min-h-[70vh] bg-cuba-gradient overflow-hidden">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="absolute inset-0 bg-golden-shimmer animate-golden-light"
       />
-      <div className="container mx-auto h-full relative z-10 py-16">
-        <div className="flex flex-col items-center justify-center h-full gap-12 px-4">
+      <div className="container mx-auto h-full relative z-10 py-8">
+        <div className="flex flex-col items-center justify-center h-full gap-8 px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="text-center max-w-2xl"
           >
-            <h1 className="text-4xl lg:text-5xl font-bold text-white font-title mb-6">
+            <h1 className="text-4xl lg:text-5xl font-bold text-white font-title mb-4">
               {heroSection?.title || "Parrainez un enfant cubain"}
             </h1>
-            <p className="text-xl text-white/90 mb-8">
+            <p className="text-xl text-white/90 mb-6">
               {heroSection?.subtitle || "Aidez-nous à changer des vies en parrainant un enfant cubain dans le besoin"}
             </p>
             <motion.div
@@ -61,7 +61,6 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
               className="w-full h-auto object-contain cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
               onClick={onImageClick}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 rounded-lg pointer-events-none" />
           </motion.div>
         </div>
       </div>

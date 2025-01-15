@@ -41,46 +41,19 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
   }
-}
 
-@layer components {
-  .cuba-card {
-    @apply relative overflow-hidden rounded-xl bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-all duration-300;
+  /* Reduce vertical spacing between cards */
+  .grid {
+    @apply gap-4;
   }
 
-  .cuba-button {
-    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-cuba-gradient text-white hover:opacity-90;
+  /* Optimize vertical spacing in sections */
+  section {
+    @apply py-8;
   }
 
-  .cuba-input {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
-  }
-
-  .cuba-badge {
-    @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-cuba-warmBeige text-cuba-deepOrange border-cuba-softOrange/20;
-  }
-
-  .cuba-link {
-    @apply text-cuba-deepOrange hover:text-cuba-red transition-colors duration-200;
-  }
-
-  .cuba-header {
-    @apply bg-cuba-gradient text-white shadow-lg;
-  }
-
-  .cuba-section {
-    @apply py-12 px-4 sm:px-6 lg:px-8;
-  }
-
-  .cuba-container {
-    @apply max-w-7xl mx-auto;
-  }
-
-  .cuba-title {
-    @apply text-3xl font-bold font-title text-cuba-deepOrange mb-6;
-  }
-
-  .cuba-subtitle {
-    @apply text-xl font-semibold text-cuba-warmGray mb-4;
+  /* Reduce spacing between elements */
+  .space-y-4 {
+    @apply space-y-3;
   }
 }
