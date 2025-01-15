@@ -40,22 +40,22 @@ const FAQ = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-turquoise/10 to-cuba-warmBeige/20">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-title text-center mb-8 text-cuba-turquoise">
+          <h1 className="text-4xl md:text-5xl font-title text-center mb-8 text-cuba-coral">
             {t("faq")}
           </h1>
           
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 md:p-8 border border-cuba-softOrange/20">
             <Accordion type="single" collapsible className="space-y-4">
               {faqItems?.map((item) => (
                 <AccordionItem 
                   key={item.id} 
                   value={item.id}
-                  className="border border-cuba-turquoise/20 rounded-lg overflow-hidden transition-all duration-200 hover:border-cuba-turquoise/40 bg-white/50"
+                  className="border border-cuba-coral/20 rounded-lg overflow-hidden transition-all duration-200 hover:border-cuba-coral/40 bg-white/50"
                 >
-                  <AccordionTrigger className="px-4 py-3 text-lg font-title hover:no-underline hover:text-cuba-turquoise">
+                  <AccordionTrigger className="px-4 py-3 text-lg font-title hover:no-underline hover:text-cuba-coral">
                     {item.question}
                   </AccordionTrigger>
                   <AccordionContent className="px-4 py-3 text-gray-600 prose max-w-none">

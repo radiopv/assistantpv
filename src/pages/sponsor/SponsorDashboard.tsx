@@ -212,7 +212,7 @@ const SponsorDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-cuba-warmBeige p-2 md:p-6">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-2 md:p-6">
       <div className="container mx-auto space-y-4 md:space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
@@ -263,8 +263,8 @@ const SponsorDashboard = () => {
           ]}
         />
 
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Visites planifiées</h3>
+        <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+          <h3 className="text-lg font-semibold mb-4 text-cuba-coral">Visites planifiées</h3>
           <div className="space-y-6">
             <PlannedVisitForm 
               sponsorId={user?.id || ''} 
@@ -278,137 +278,118 @@ const SponsorDashboard = () => {
         </Card>
 
         <div className="grid gap-4 md:gap-6">
-          {sponsoredChildren?.map((sponsorship) => {
-            const childPhotos = childrenPhotos?.filter(photo => 
-              photo.child_id === sponsorship.children?.id
-            ) || [];
-
-            const childTestimonials = testimonials?.filter(testimonial =>
-              testimonial.child_id === sponsorship.children?.id
-            ) || [];
-
-            const childNeeds = sponsorship.children?.needs ? convertJsonToNeeds(sponsorship.children.needs) : [];
-            const hasUrgentNeeds = childNeeds.some(need => need.is_urgent);
-            const childAge = sponsorship.children?.birth_date ? 
-              differenceInYears(new Date(), new Date(sponsorship.children.birth_date)) : 
-              null;
-
-            return (
-              <Card 
-                key={sponsorship.id} 
-                className="overflow-hidden bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 p-3 md:p-6"
-              >
-                <div className="flex flex-col gap-4">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between">
-                    <div className="flex-1">
-                      <SponsoredChildCard
-                        child={{
-                          ...sponsorship.children,
-                          age: childAge
-                        }}
-                        sponsorshipId={sponsorship.id}
-                        onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
-                        onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
-                      />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleAddPhoto(sponsorship.children?.id)}
-                      >
-                        <Camera className="h-4 w-4 mr-2" />
-                        {translations[language].addPhoto}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
-                      >
-                        <FileEdit className="h-4 w-4 mr-2" />
-                        {translations[language].addTestimonial}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setShowTermination(true)}
-                      >
-                        <Clock className="h-4 w-4 mr-2" />
-                        {translations[language].endSponsorship}
-                      </Button>
-                    </div>
-                  </div>
-                  {hasUrgentNeeds && (
-                    <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
-                      {translations[language].urgentNeeds}
-                    </span>
-                  )}
-                </div>
-
-                {selectedChild === sponsorship.children?.id && (
-                  <div className="mt-4">
-                    <PhotoUploader
-                      childId={selectedChild}
-                      onUploadSuccess={handleUploadSuccess}
+          {sponsoredChildren?.map((sponsorship) => (
+            <Card 
+              key={sponsorship.id} 
+              className="overflow-hidden bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-shadow duration-300 p-3 md:p-6"
+            >
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between">
+                  <div className="flex-1">
+                    <SponsoredChildCard
+                      child={sponsorship.children}
+                      sponsorshipId={sponsorship.id}
+                      onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
+                      onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                     />
                   </div>
-                )}
-
-                <Tabs defaultValue="photos" className="mt-4 md:mt-6">
-                  <TabsList className="flex flex-col w-full md:grid md:grid-cols-5 gap-2">
-                    {[
-                      { value: "photos", label: t.photos },
-                      { value: "testimonials", label: t.testimonials },
-                      { value: "statistics", label: t.statistics },
-                      { value: "needs", label: t.needs },
-                      { value: "story", label: t.story }
-                    ].map((tab) => (
-                      <TabsTrigger
-                        key={tab.value}
-                        value={tab.value}
-                        className="w-full text-sm px-3 py-3 mb-1 md:mb-0 bg-white hover:bg-gray-50"
-                      >
-                        {tab.label}
-                      </TabsTrigger>
-                    ))}
-                  </TabsList>
-
-                  <div className="mt-6 space-y-6">
-                    <TabsContent value="photos" className="focus:outline-none">
-                      <PhotoGallery 
-                        photos={childPhotos} 
-                        childName={sponsorship.children?.name} 
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="testimonials" className="focus:outline-none">
-                      <TestimonialSection testimonials={childTestimonials} />
-                    </TabsContent>
-
-                    <TabsContent value="statistics" className="focus:outline-none">
-                      <StatisticsSection
-                        photos={childPhotos}
-                        needs={childNeeds}
-                        sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
-                        sponsorshipStartDate={sponsorship.start_date}
-                      />
-                    </TabsContent>
-
-                    <TabsContent value="needs" className="focus:outline-none">
-                      <NeedsSection needs={childNeeds} />
-                    </TabsContent>
-
-                    <TabsContent value="story" className="focus:outline-none">
-                      <StorySection
-                        description={sponsorship.children?.description}
-                        story={sponsorship.children?.story}
-                      />
-                    </TabsContent>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAddPhoto(sponsorship.children?.id)}
+                    >
+                      <Camera className="h-4 w-4 mr-2" />
+                      {translations[language].addPhoto}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
+                    >
+                      <FileEdit className="h-4 w-4 mr-2" />
+                      {translations[language].addTestimonial}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowTermination(true)}
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      {translations[language].endSponsorship}
+                    </Button>
                   </div>
-                </Tabs>
-              </Card>
-            );
-          })}
+                </div>
+                {hasUrgentNeeds(sponsorship.children?.needs) && (
+                  <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
+                    {translations[language].urgentNeeds}
+                  </span>
+                )}
+              </div>
+
+              {selectedChild === sponsorship.children?.id && (
+                <div className="mt-4">
+                  <PhotoUploader
+                    childId={selectedChild}
+                    onUploadSuccess={handleUploadSuccess}
+                  />
+                </div>
+              )}
+
+              <Tabs defaultValue="photos" className="mt-4 md:mt-6">
+                <TabsList className="flex flex-col w-full md:grid md:grid-cols-5 gap-2">
+                  {[
+                    { value: "photos", label: t.photos },
+                    { value: "testimonials", label: t.testimonials },
+                    { value: "statistics", label: t.statistics },
+                    { value: "needs", label: t.needs },
+                    { value: "story", label: t.story }
+                  ].map((tab) => (
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="w-full text-sm px-3 py-3 mb-1 md:mb-0 bg-white hover:bg-gray-50"
+                    >
+                      {tab.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+
+                <div className="mt-6 space-y-6">
+                  <TabsContent value="photos" className="focus:outline-none">
+                    <PhotoGallery 
+                      photos={childrenPhotos.filter(photo => photo.child_id === sponsorship.children?.id)} 
+                      childName={sponsorship.children?.name} 
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="testimonials" className="focus:outline-none">
+                    <TestimonialSection testimonials={testimonials.filter(testimonial => testimonial.child_id === sponsorship.children?.id)} />
+                  </TabsContent>
+
+                  <TabsContent value="statistics" className="focus:outline-none">
+                    <StatisticsSection
+                      photos={childrenPhotos.filter(photo => photo.child_id === sponsorship.children?.id)}
+                      needs={convertJsonToNeeds(sponsorship.children?.needs)}
+                      sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
+                      sponsorshipStartDate={sponsorship.start_date}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="needs" className="focus:outline-none">
+                    <NeedsSection needs={convertJsonToNeeds(sponsorship.children?.needs)} />
+                  </TabsContent>
+
+                  <TabsContent value="story" className="focus:outline-none">
+                    <StorySection
+                      description={sponsorship.children?.description}
+                      story={sponsorship.children?.story}
+                    />
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </Card>
+          ))}
         </div>
       </div>
     </div>
