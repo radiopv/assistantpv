@@ -117,6 +117,14 @@ export default function Home() {
       return null;
     }
 
+    const moduleWrapper = (content: JSX.Element) => (
+      <div key={module.id} className="w-full py-16 bg-cuba-offwhite">
+        <div className="container mx-auto px-4">
+          {content}
+        </div>
+      </div>
+    );
+
     switch (module.module_type) {
       case 'hero':
         return (
@@ -128,43 +136,34 @@ export default function Home() {
         );
       case 'impact_stats':
       case 'impact-stats':
-        return (
+        return moduleWrapper(
           <ImpactStats 
-            key={module.id}
             settings={module.settings}
           />
         );
       case 'how_it_works':
       case 'how-it-works':
-        return (
-          <HowItWorks 
-            key={module.id}
-          />
+        return moduleWrapper(
+          <HowItWorks />
         );
       case 'featured_children':
       case 'featured-children':
       case 'children-grid':
-        return (
-          <FeaturedChildren 
-            key={module.id}
-          />
+        return moduleWrapper(
+          <FeaturedChildren />
         );
       case 'featured_album':
       case 'featured-album':
-        return (
-          <FeaturedAlbum 
-            key={module.id}
-          />
+        return moduleWrapper(
+          <FeaturedAlbum />
         );
       case 'testimonials':
-        return (
-          <div key={module.id} className="py-12 bg-white">
-            <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-8">
-                {module.settings?.title || "Témoignages de nos parrains"}
-              </h2>
-              <FeaturedTestimonials />
-            </div>
+        return moduleWrapper(
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-center mb-12 text-cuba-coral font-title">
+              {module.settings?.title || "Témoignages de nos parrains"}
+            </h2>
+            <FeaturedTestimonials />
           </div>
         );
       default:
@@ -174,7 +173,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-white">
       {modules.map(renderModule)}
       <CallToAction />
     </div>

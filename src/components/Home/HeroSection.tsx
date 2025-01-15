@@ -14,19 +14,19 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-[90vh] bg-cuba-gradient overflow-hidden">
+    <section className="relative min-h-[70vh] bg-cuba-gradient overflow-hidden">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="absolute inset-0 bg-golden-shimmer animate-golden-light"
       />
-      <div className="container mx-auto h-full relative z-10">
-        <div className="flex flex-col lg:flex-row h-full items-center">
+      <div className="container mx-auto h-full relative z-10 py-12">
+        <div className="flex flex-col lg:flex-row h-full items-center gap-8">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full lg:w-1/2 h-[80vh] lg:h-full relative"
+            className="w-full lg:w-1/2 relative"
           >
             <div className="flex items-center gap-8 mb-8">
               <img 
@@ -44,11 +44,11 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
               </motion.h1>
             </div>
 
-            <div className="relative h-full w-full max-w-md mx-auto">
+            <div className="relative w-full max-w-md mx-auto">
               <img 
                 src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
                 alt="Image d'arrière-plan"
-                className="absolute inset-0 w-full h-full object-cover cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
+                className="w-full h-[400px] object-cover cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
                 style={{ objectPosition: 'center' }}
                 onClick={onImageClick}
               />
@@ -80,7 +80,7 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
                   <Button 
                     onClick={() => navigate("/become-sponsor")}
                     size="lg"
-                    className="bg-cuba-gold text-black hover:bg-cuba-gold/90 transform transition-all duration-300 hover:scale-105"
+                    className="bg-cuba-gold text-black hover:bg-cuba-gold/90 transform transition-all duration-300 hover:scale-105 shadow-lg"
                   >
                     Devenir parrain
                   </Button>
