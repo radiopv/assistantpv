@@ -23,6 +23,62 @@ import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const publicLinks = [
+  {
+    href: "/children",
+    label: "Les Enfants",
+    icon: Users,
+  },
+  {
+    href: "/public-donations",
+    label: "Donations",
+    icon: Gift,
+  },
+  {
+    href: "/statistics",
+    label: "Statistiques",
+    icon: BarChart,
+  },
+  {
+    href: "/faq",
+    label: "FAQ",
+    icon: HelpCircle,
+  },
+];
+
+const adminLinks = [
+  {
+    href: "/admin/children-management",
+    label: "Gestion Enfants",
+    icon: Users,
+  },
+  {
+    href: "/admin/donations-management",
+    label: "Gestion Donations",
+    icon: Gift,
+  },
+  {
+    href: "/admin/home-content",
+    label: "Page d'accueil",
+    icon: Home,
+  },
+  {
+    href: "/admin/emails",
+    label: "Emails",
+    icon: Mail,
+  },
+  {
+    href: "/admin/faq",
+    label: "FAQ Admin",
+    icon: FileText,
+  },
+  {
+    href: "/notifications",
+    label: "Notifications",
+    icon: Bell,
+  },
+];
+
 export const Navigation = () => {
   const navigate = useNavigate();
   const { user, signOut, isAssistant } = useAuth();
@@ -49,67 +105,42 @@ export const Navigation = () => {
 
   const MenuItems = () => (
     <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0">
-      {isAssistant && (
+      {publicLinks.map((link) => (
         <Button
+          key={link.href}
           variant="ghost"
           onClick={() => {
-            navigate("/");
+            navigate(link.href);
             setIsOpen(false);
           }}
           className="justify-start md:justify-center text-primary w-full md:w-auto"
         >
-          <Home className="h-4 w-4 mr-2" />
-          Accueil
+          <link.icon className="h-4 w-4 mr-2" />
+          {link.label}
         </Button>
-      )}
+      ))}
+    </div>
+  );
 
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/children");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <Users className="h-4 w-4 mr-2" />
-        Les Enfants
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/public-donations");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <Gift className="h-4 w-4 mr-2" />
-        Donations
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/statistics");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <BarChart className="h-4 w-4 mr-2" />
-        Statistiques
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/faq");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <HelpCircle className="h-4 w-4 mr-2" />
-        FAQ
-      </Button>
+  const AdminMenuItems = () => (
+    <div className="md:hidden border-t mt-4 pt-4">
+      <p className="text-sm font-semibold text-gray-500 mb-2 px-2">Menu Administrateur</p>
+      <div className="flex flex-col space-y-2">
+        {adminLinks.map((link) => (
+          <Button
+            key={link.href}
+            variant="ghost"
+            onClick={() => {
+              navigate(link.href);
+              setIsOpen(false);
+            }}
+            className="justify-start text-primary w-full"
+          >
+            <link.icon className="h-4 w-4 mr-2" />
+            {link.label}
+          </Button>
+        ))}
+      </div>
     </div>
   );
 
@@ -128,8 +159,9 @@ export const Navigation = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
                 <div className="flex flex-col h-full">
-                  <div className="flex-1 py-6 space-y-4">
+                  <div className="flex-1 py-6">
                     <MenuItems />
+                    {isAssistant && <AdminMenuItems />}
                   </div>
                   <div className="border-t py-4 space-y-4">
                     {user ? (
