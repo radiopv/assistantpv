@@ -1,4 +1,4 @@
-import { differenceInDays, format } from "date-fns";
+import { differenceInDays, format, isValid, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Card } from "@/components/ui/card";
 import { Gift } from "lucide-react";
@@ -14,7 +14,12 @@ interface BirthdayCountdownProps {
 export const BirthdayCountdown = ({ children }: BirthdayCountdownProps) => {
   const getNextBirthday = (birthDate: string) => {
     const today = new Date();
-    const birth = new Date(birthDate);
+    const birth = parseISO(birthDate);
+    
+    if (!isValid(birth)) {
+      return null;
+    }
+    
     const nextBirthday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
     
     if (nextBirthday < today) {
@@ -27,11 +32,14 @@ export const BirthdayCountdown = ({ children }: BirthdayCountdownProps) => {
     };
   };
 
-  const sortedChildren = [...children].sort((a, b) => {
-    const aNext = getNextBirthday(a.birth_date);
-    const bNext = getNextBirthday(b.birth_date);
-    return aNext.daysUntil - bNext.daysUntil;
-  });
+  const sortedChildren = [...children]
+    .filter(child => child.birth_date && isValid(parseISO(child.birth_date)))
+    .sort((a, b) => {
+      const aNext = getNextBirthday(a.birth_date);
+      const bNext = getNextBirthday(b.birth_date);
+      if (!aNext || !bNext) return 0;
+      return aNext.daysUntil - bNext.daysUntil;
+    });
 
   return (
     <Card className="p-4">
@@ -42,6 +50,8 @@ export const BirthdayCountdown = ({ children }: BirthdayCountdownProps) => {
       <div className="space-y-3">
         {sortedChildren.map((child) => {
           const nextBirthday = getNextBirthday(child.birth_date);
+          if (!nextBirthday) return null;
+          
           return (
             <div key={child.name} className="flex justify-between items-center">
               <div>
