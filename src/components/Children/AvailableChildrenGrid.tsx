@@ -81,9 +81,9 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 sm:px-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
         {[1, 2, 3].map((n) => (
-          <Card key={n} className="p-3">
+          <Card key={n} className="p-2">
             <Skeleton className="h-48 w-full" />
             <Skeleton className="h-4 w-2/3 mt-3" />
             <Skeleton className="h-4 w-1/2 mt-2" />
@@ -106,7 +106,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 sm:px-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
       {children.map((child) => (
         <Card 
           key={child.id} 
@@ -121,18 +121,18 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               crossOrigin="anonymous"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
-            <div className="absolute bottom-0 left-0 right-0 p-3">
+            <div className="absolute bottom-0 left-0 right-0 p-2">
               <h3 className="text-lg font-title font-bold text-white truncate">{child.name}</h3>
-              <div className="flex items-center gap-2 text-sm text-white/90">
+              <div className="flex items-center gap-1 text-sm text-white/90">
                 <Calendar className="w-4 h-4 flex-shrink-0" />
                 <span className="truncate">{formatAge(child.birth_date)}</span>
-                <MapPin className="w-4 h-4 flex-shrink-0 ml-2" />
+                <MapPin className="w-4 h-4 flex-shrink-0 ml-1" />
                 <span className="truncate">{child.city}</span>
               </div>
             </div>
           </div>
 
-          <div className="p-3 space-y-2">
+          <div className="p-2 space-y-2">
             {child.description && (
               <div className="bg-white/80 rounded-lg p-2">
                 <p className="text-sm text-gray-700 line-clamp-2">{child.description}</p>
@@ -140,7 +140,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
             )}
 
             {Array.isArray(child.needs) && child.needs.length > 0 && (
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 {child.needs.slice(0, 2).map((need: any, index: number) => (
                   <div
                     key={`${need.category}-${index}`}
