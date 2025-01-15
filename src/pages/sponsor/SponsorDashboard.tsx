@@ -299,6 +299,7 @@ const SponsorDashboard = () => {
                         ...sponsorship.children,
                         age: childAge
                       }}
+                      sponsorshipId={sponsorship.id}
                       onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
                       onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                     />

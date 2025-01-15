@@ -1,4 +1,4 @@
-export const es = {
+export const spanishTranslations = {
   dashboard: "Panel de control",
   recentMessages: "Mensajes recientes",
   checkMessages: "Consulte sus mensajes y notificaciones en la pestaña Mensajes.",

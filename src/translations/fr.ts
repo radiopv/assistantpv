@@ -1,4 +1,4 @@
-export const fr = {
+export const frenchTranslations = {
   dashboard: "Tableau de bord",
   recentMessages: "Messages récents",
   checkMessages: "Consultez vos messages et notifications dans l'onglet Messages.",
