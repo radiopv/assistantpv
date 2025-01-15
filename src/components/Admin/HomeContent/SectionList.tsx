@@ -20,28 +20,28 @@ interface SectionListProps {
 
 const defaultSections = [
   {
-    id: "hero",
+    id: crypto.randomUUID(),
     section_key: "hero",
     title: "Parrainez un enfant cubain",
     subtitle: "Aidez-nous à changer des vies en parrainant un enfant cubain dans le besoin",
     order_index: 0
   },
   {
-    id: "featured-children",
+    id: crypto.randomUUID(),
     section_key: "featured-children",
     title: "Enfants en attente de parrainage",
     subtitle: "Découvrez les enfants qui attendent votre soutien",
     order_index: 1
   },
   {
-    id: "how-it-works",
+    id: crypto.randomUUID(),
     section_key: "how-it-works",
     title: "Comment ça marche",
     subtitle: "Découvrez le processus simple pour devenir parrain",
     order_index: 2
   },
   {
-    id: "testimonials",
+    id: crypto.randomUUID(),
     section_key: "testimonials",
     title: "Témoignages",
     subtitle: "Ce que disent nos parrains",
