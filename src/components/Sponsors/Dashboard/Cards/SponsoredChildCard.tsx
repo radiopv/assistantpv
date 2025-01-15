@@ -26,30 +26,27 @@ export const SponsoredChildCard = ({
   const [showTermination, setShowTermination] = useState(false);
 
   return (
-    <Card className="p-4 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center space-x-4">
-          <Avatar className="h-16 w-16">
-            <AvatarImage src={child.photo_url} alt={child.name} />
-            <AvatarFallback>{child.name[0]}</AvatarFallback>
-          </Avatar>
-          <div>
-            <h3 className="text-lg font-semibold">{child.name}</h3>
-            {child.age && (
-              <p className="text-sm text-gray-500">
-                {child.age} ans
-              </p>
-            )}
-          </div>
+    <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+      <div className="flex items-center space-x-4 mb-6">
+        <Avatar className="h-16 w-16">
+          <AvatarImage src={child.photo_url} alt={child.name} />
+          <AvatarFallback>{child.name[0]}</AvatarFallback>
+        </Avatar>
+        <div>
+          <h3 className="text-lg font-semibold">{child.name}</h3>
+          {child.age && (
+            <p className="text-sm text-gray-500">
+              {child.age} ans
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Button
           variant="outline"
-          size="sm"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
           onClick={onAddPhoto}
-          className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50"
         >
           <Camera className="h-4 w-4" />
           Ajouter une photo
@@ -57,9 +54,8 @@ export const SponsoredChildCard = ({
         
         <Button
           variant="outline"
-          size="sm"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
           onClick={onAddTestimonial}
-          className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50"
         >
           <FileEdit className="h-4 w-4" />
           Ajouter un témoignage
@@ -67,9 +63,8 @@ export const SponsoredChildCard = ({
         
         <Button
           variant="outline"
-          size="sm"
+          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors sm:col-span-2"
           onClick={() => setShowTermination(true)}
-          className="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 sm:col-span-2"
         >
           <Clock className="h-4 w-4" />
           Mettre fin au parrainage
