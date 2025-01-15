@@ -32,7 +32,6 @@ interface StatisticsData {
   }>;
 }
 
-// Utilisation des couleurs du thème cubain
 const COLORS = [
   '#FF6B6B',  // cuba-coral
   '#FEC6A1',  // cuba-softOrange
@@ -80,7 +79,7 @@ const Statistics = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-8 space-y-8">
+      <div className="container mx-auto px-0 sm:px-8 space-y-8">
         <Skeleton className="h-8 w-64 mx-auto" />
         <div className="grid gap-6 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
@@ -93,31 +92,31 @@ const Statistics = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="container mx-auto px-0 sm:px-4 py-12 md:py-16">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-title text-center mb-12 text-cuba-coral">
             Nos Statistiques
           </h1>
           
-          <div className="grid gap-6 md:grid-cols-3 mb-12">
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 hover:shadow-lg transition-shadow duration-300">
+          <div className="grid gap-4 md:gap-6 md:grid-cols-3 mb-12">
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Dons</h3>
               <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_donations || 0}</p>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 hover:shadow-lg transition-shadow duration-300">
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Enfants Parrainés</h3>
               <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_children || 0}</p>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 hover:shadow-lg transition-shadow duration-300">
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Parrains Actifs</h3>
               <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_sponsors || 0}</p>
             </Card>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 mb-12">
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+          <div className="grid gap-4 md:gap-6 md:grid-cols-2 mb-12">
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg">
               <h3 className="text-xl font-semibold mb-6 text-cuba-coral">Tendance des Dons Mensuels</h3>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -141,7 +140,7 @@ const Statistics = () => {
               </div>
             </Card>
 
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+            <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg">
               <h3 className="text-xl font-semibold mb-6 text-cuba-coral">Distribution par Ville</h3>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -175,14 +174,14 @@ const Statistics = () => {
             </Card>
           </div>
 
-          <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+          <Card className="p-4 sm:p-6 bg-white/80 backdrop-blur-sm border-0 sm:border sm:border-cuba-softOrange/20 rounded-none sm:rounded-lg">
             <h3 className="text-xl font-semibold mb-6 text-cuba-coral">État des Parrainages</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-lg">
+              <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-none sm:rounded-lg">
                 <p className="text-lg font-semibold text-cuba-coral">Parrainages Actifs</p>
                 <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.active_sponsorships || 0}</p>
               </div>
-              <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-lg">
+              <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-none sm:rounded-lg">
                 <p className="text-lg font-semibold text-cuba-coral">Demandes en Attente</p>
                 <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.pending_sponsorships || 0}</p>
               </div>
