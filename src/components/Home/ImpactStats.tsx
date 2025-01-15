@@ -17,25 +17,28 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
   const { data: stats } = useQuery({
     queryKey: ['impact-stats'],
     queryFn: async () => {
-      const { data: sponsorCount } = await supabase
+      const { count: sponsorCount } = await supabase
         .from('sponsors')
         .select('*', { count: 'exact', head: true })
         .eq('role', 'sponsor')
-        .eq('is_active', true);
+        .eq('is_active', true)
+        .throwOnError();
 
-      const { data: childrenCount } = await supabase
+      const { count: childrenCount } = await supabase
         .from('children')
         .select('*', { count: 'exact', head: true })
-        .eq('is_sponsored', true);
+        .eq('is_sponsored', true)
+        .throwOnError();
 
-      const { data: donationsCount } = await supabase
+      const { count: donationsCount } = await supabase
         .from('donations')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .throwOnError();
 
       return {
-        totalSponsors: sponsorCount?.count || 0,
-        totalChildren: childrenCount?.count || 0,
-        totalDonations: donationsCount?.count || 0
+        totalSponsors: sponsorCount || 0,
+        totalChildren: childrenCount || 0,
+        totalDonations: donationsCount || 0
       };
     }
   });
