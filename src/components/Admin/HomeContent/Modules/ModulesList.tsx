@@ -61,22 +61,7 @@ const moduleExamples: Module[] = [
     order_index: 2
   },
   {
-    id: "impact-stats",
-    name: "Statistiques d'Impact",
-    module_type: "impact-stats",
-    is_active: false,
-    settings: {
-      title: "Notre Impact",
-      showTotalSponsors: true,
-      showTotalChildren: true,
-      showTotalDonations: true,
-      animateNumbers: true,
-      backgroundStyle: "gradient"
-    },
-    order_index: 3
-  },
-  {
-    id: "upcoming-events",
+    id: "events-section",
     name: "Événements à Venir",
     module_type: "events",
     is_active: false,
@@ -85,7 +70,8 @@ const moduleExamples: Module[] = [
       displayCount: 3,
       showLocation: true,
       showDateTime: true,
-      enableRegistration: true
+      enableRegistration: true,
+      layout: "cards"
     },
     order_index: 4
   },
@@ -104,36 +90,6 @@ const moduleExamples: Module[] = [
     order_index: 5
   },
   {
-    id: "sponsor-journey",
-    name: "Parcours du Parrain",
-    module_type: "journey",
-    is_active: false,
-    settings: {
-      title: "Comment devenir parrain ?",
-      steps: [
-        { title: "Choisissez un enfant", description: "Parcourez les profils des enfants en attente" },
-        { title: "Remplissez le formulaire", description: "Complétez vos informations" },
-        { title: "Commencez l'aventure", description: "Démarrez votre parrainage" }
-      ],
-      showProgressBar: true
-    },
-    order_index: 6
-  },
-  {
-    id: "success-stories",
-    name: "Histoires de Réussite",
-    module_type: "stories",
-    is_active: false,
-    settings: {
-      title: "Histoires qui Inspirent",
-      storiesCount: 3,
-      showThumbnails: true,
-      enableVideo: true,
-      layout: "masonry"
-    },
-    order_index: 7
-  },
-  {
     id: "newsletter-signup",
     name: "Newsletter",
     module_type: "newsletter",
@@ -145,26 +101,10 @@ const moduleExamples: Module[] = [
       showSocialLinks: true,
       backgroundColor: "light"
     },
-    order_index: 8
+    order_index: 6
   },
   {
-    id: "featured-children",
-    name: "Enfants en Attente",
-    module_type: "children-grid",
-    is_active: false,
-    settings: {
-      title: "Ils Attendent un Parrain",
-      childrenCount: 6,
-      showAge: true,
-      showLocation: true,
-      showNeeds: true,
-      enableFilters: true,
-      layout: "grid"
-    },
-    order_index: 9
-  },
-  {
-    id: "donation-progress",
+    id: "donation-goals",
     name: "Objectifs de Dons",
     module_type: "donation-goals",
     is_active: false,
@@ -175,7 +115,7 @@ const moduleExamples: Module[] = [
       showTargetAmount: true,
       categories: ["Éducation", "Santé", "Alimentation"]
     },
-    order_index: 10
+    order_index: 7
   },
   {
     id: "sponsor-community",
@@ -189,7 +129,7 @@ const moduleExamples: Module[] = [
       enableJoinButton: true,
       layout: "modern"
     },
-    order_index: 11
+    order_index: 8
   }
 ];
 

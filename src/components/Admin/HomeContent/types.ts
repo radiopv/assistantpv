@@ -6,3 +6,17 @@ export interface Module {
   settings: any;
   order_index: number;
 }
+
+export type ModuleType = 
+  | "hero"
+  | "featured-children"
+  | "how-it-works"
+  | "testimonials"
+  | "featured-album"
+  | "impact-stats"
+  | "journey"
+  | "events"
+  | "needs"
+  | "newsletter"
+  | "donation-goals"
+  | "community";
