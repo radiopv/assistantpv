@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import {
   Users,
   Settings,
@@ -14,6 +13,11 @@ import {
   HelpCircle,
   BarChart,
   Menu,
+  Cog,
+  UserPlus,
+  FileSpreadsheet,
+  MessageSquare,
+  Camera,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -47,69 +51,108 @@ export const Navigation = () => {
     }
   };
 
+  const adminLinks = [
+    {
+      to: "/admin/children-management",
+      icon: Users,
+      label: "Gestion Enfants",
+    },
+    {
+      to: "/admin/donations-management",
+      icon: Gift,
+      label: "Gestion Dons",
+    },
+    {
+      to: "/admin/home-content",
+      icon: Settings,
+      label: "Page d'accueil",
+    },
+    {
+      to: "/admin/emails",
+      icon: Mail,
+      label: "Emails",
+    },
+    {
+      to: "/admin/validation",
+      icon: FileSpreadsheet,
+      label: "Validation",
+    },
+    {
+      to: "/admin/faq",
+      icon: HelpCircle,
+      label: "FAQ",
+    },
+  ];
+
+  const publicLinks = [
+    {
+      to: "/children",
+      icon: Users,
+      label: "Les Enfants",
+    },
+    {
+      to: "/public-donations",
+      icon: Gift,
+      label: "Donations",
+    },
+    {
+      to: "/statistics",
+      icon: BarChart,
+      label: "Statistiques",
+    },
+    {
+      to: "/faq",
+      icon: HelpCircle,
+      label: "FAQ",
+    },
+  ];
+
   const MenuItems = () => (
     <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0">
       {isAssistant && (
+        <>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              navigate("/");
+              setIsOpen(false);
+            }}
+            className="justify-start md:justify-center text-primary w-full md:w-auto"
+          >
+            <Home className="h-4 w-4 mr-2" />
+            Accueil
+          </Button>
+          {adminLinks.map((link) => (
+            <Button
+              key={link.to}
+              variant="ghost"
+              onClick={() => {
+                navigate(link.to);
+                setIsOpen(false);
+              }}
+              className="justify-start md:justify-center text-primary w-full md:w-auto"
+            >
+              <link.icon className="h-4 w-4 mr-2" />
+              {link.label}
+            </Button>
+          ))}
+        </>
+      )}
+
+      {publicLinks.map((link) => (
         <Button
+          key={link.to}
           variant="ghost"
           onClick={() => {
-            navigate("/");
+            navigate(link.to);
             setIsOpen(false);
           }}
           className="justify-start md:justify-center text-primary w-full md:w-auto"
         >
-          <Home className="h-4 w-4 mr-2" />
-          Accueil
+          <link.icon className="h-4 w-4 mr-2" />
+          {link.label}
         </Button>
-      )}
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/children");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <Users className="h-4 w-4 mr-2" />
-        Les Enfants
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/public-donations");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <Gift className="h-4 w-4 mr-2" />
-        Donations
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/statistics");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <BarChart className="h-4 w-4 mr-2" />
-        Statistiques
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/faq");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <HelpCircle className="h-4 w-4 mr-2" />
-        FAQ
-      </Button>
+      ))}
     </div>
   );
 
