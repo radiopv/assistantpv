@@ -12,10 +12,10 @@ export default function AllChildren() {
       <div className="container mx-auto px-4 py-12 space-y-12">
         <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
-            {t("children")}
+            Les Enfants
           </h1>
           <p className="text-white/90 max-w-2xl mx-auto text-lg">
-            {t("discoverChildren")}
+            Découvrez les enfants qui attendent votre soutien et ceux qui ont déjà trouvé une famille de cœur
           </p>
         </div>
 
@@ -26,13 +26,13 @@ export default function AllChildren() {
                 value="available" 
                 className="text-lg py-4 data-[state=active]:bg-orange-100"
               >
-                {t("availableChildren")}
+                Enfants disponibles
               </TabsTrigger>
               <TabsTrigger 
                 value="sponsored" 
                 className="text-lg py-4 data-[state=active]:bg-orange-100"
               >
-                {t("sponsoredChildren")}
+                Enfants parrainés
               </TabsTrigger>
             </TabsList>
 

@@ -110,7 +110,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       {children.map((child) => (
         <Card 
           key={child.id} 
-          className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
+          className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige transform hover:scale-[1.02]"
         >
           <div className="aspect-video relative">
             <img
@@ -122,71 +122,40 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
             />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
             <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-              <h3 className="text-2xl font-title font-bold">{child.name}</h3>
+              <h3 className="text-xl font-title font-bold">{child.name}</h3>
               <div className="flex items-center gap-2 text-sm mt-1">
                 <Calendar className="w-4 h-4" />
                 <span>{formatAge(child.birth_date)}</span>
                 <MapPin className="w-4 h-4 ml-2" />
                 <span>{child.city}</span>
               </div>
-              {child.is_sponsored && child.sponsor_name && (
-                <div className="mt-2 text-sm bg-orange-500/80 px-2 py-1 rounded-full inline-block">
-                  Parrainé par : {child.sponsor_name}
-                </div>
-              )}
             </div>
           </div>
 
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-3">
             {child.description && (
-              <div className="space-y-2 bg-white/80 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-600">Description :</h4>
-                <ScrollArea className="h-20">
-                  <p className="text-sm text-gray-600">{child.description}</p>
-                </ScrollArea>
-              </div>
-            )}
-
-            {child.story && (
-              <div className="space-y-2 bg-white/80 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-600">Histoire :</h4>
-                <ScrollArea className="h-20">
-                  <p className="text-sm text-gray-600">{child.story}</p>
-                </ScrollArea>
+              <div className="bg-white/80 rounded-lg p-3">
+                <p className="text-sm text-gray-700 line-clamp-3">{child.description}</p>
               </div>
             )}
 
             {Array.isArray(child.needs) && child.needs.length > 0 && (
-              <div className="space-y-2 bg-white/80 rounded-lg p-3">
-                <h4 className="text-sm font-medium text-gray-600">Besoins :</h4>
-                <div className="space-y-2">
-                  {child.needs.map((need: any, index: number) => (
-                    <div
-                      key={`${need.category}-${index}`}
-                      className={`p-3 rounded-lg ${
-                        need.is_urgent
-                          ? "bg-red-50 border border-red-200"
-                          : "bg-orange-50 border border-orange-200"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className={`font-medium ${need.is_urgent ? "text-red-800" : "text-orange-800"}`}>
-                          {need.category}
-                        </span>
-                        {need.is_urgent && (
-                          <span className="text-red-600 font-bold text-sm">
-                            URGENT
-                          </span>
-                        )}
-                      </div>
-                      {need.description && (
-                        <p className={`mt-1 text-sm ${need.is_urgent ? "text-red-700" : "text-orange-700"}`}>
-                          {need.description}
-                        </p>
-                      )}
+              <div className="space-y-2">
+                {child.needs.slice(0, 2).map((need: any, index: number) => (
+                  <div
+                    key={`${need.category}-${index}`}
+                    className={`p-2 rounded-lg ${
+                      need.is_urgent
+                        ? "bg-red-50 border border-red-200 text-red-700"
+                        : "bg-orange-50 border border-orange-200 text-orange-700"
+                    }`}
+                  >
+                    <div className="text-sm font-medium">
+                      {need.category}
+                      {need.is_urgent && " (!)"} 
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             )}
 
