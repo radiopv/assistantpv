@@ -1627,6 +1627,93 @@ export type Database = {
           },
         ]
       }
+      sponsorship_history: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          performed_by: string | null
+          reason: string | null
+          sponsorship_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          performed_by?: string | null
+          reason?: string | null
+          sponsorship_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          performed_by?: string | null
+          reason?: string | null
+          sponsorship_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_history_performed_by_fkey"
+            columns: ["performed_by"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_history_sponsorship_id_fkey"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsorship_notes: {
+        Row: {
+          content: string
+          created_at: string | null
+          created_by: string | null
+          id: string
+          note_type: string | null
+          sponsorship_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note_type?: string | null
+          sponsorship_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          note_type?: string | null
+          sponsorship_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorship_notes_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "sponsors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sponsorship_notes_sponsorship_id_fkey"
+            columns: ["sponsorship_id"]
+            isOneToOne: false
+            referencedRelation: "sponsorships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sponsorship_requests: {
         Row: {
           child_id: string | null
@@ -1710,7 +1797,9 @@ export type Database = {
           child_id: string
           created_at: string | null
           end_date: string | null
+          end_planned_date: string | null
           id: string
+          is_temporary: boolean | null
           sponsor_id: string | null
           start_date: string | null
           status: string
@@ -1723,7 +1812,9 @@ export type Database = {
           child_id: string
           created_at?: string | null
           end_date?: string | null
+          end_planned_date?: string | null
           id?: string
+          is_temporary?: boolean | null
           sponsor_id?: string | null
           start_date?: string | null
           status?: string
@@ -1736,7 +1827,9 @@ export type Database = {
           child_id?: string
           created_at?: string | null
           end_date?: string | null
+          end_planned_date?: string | null
           id?: string
+          is_temporary?: boolean | null
           sponsor_id?: string | null
           start_date?: string | null
           status?: string
@@ -2406,6 +2499,15 @@ export type Database = {
           user_role: string
         }
         Returns: Json
+      }
+      handle_sponsorship_pause: {
+        Args: {
+          sponsorship_id: string
+          action: string
+          reason: string
+          performed_by: string
+        }
+        Returns: undefined
       }
       has_permission: {
         Args: {

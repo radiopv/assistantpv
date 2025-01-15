@@ -10,6 +10,27 @@ export interface Sponsorship {
   termination_date: string | null;
   termination_reason: string | null;
   termination_comment: string | null;
+  is_temporary: boolean | null;
+  end_planned_date: string | null;
+}
+
+export interface SponsorshipNote {
+  id: string;
+  sponsorship_id: string;
+  content: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  note_type: string | null;
+}
+
+export interface SponsorshipHistory {
+  id: string;
+  sponsorship_id: string;
+  action: string;
+  created_at: string;
+  reason: string | null;
+  performed_by: string | null;
 }
 
 export type SponsorshipTables = {
@@ -26,5 +47,15 @@ export type SponsorshipTables = {
         isOneToOne: false;
       }
     ];
+  };
+  sponsorship_notes: {
+    Row: SponsorshipNote;
+    Insert: Omit<SponsorshipNote, 'id' | 'created_at' | 'updated_at'>;
+    Update: Partial<SponsorshipNote>;
+  };
+  sponsorship_history: {
+    Row: SponsorshipHistory;
+    Insert: Omit<SponsorshipHistory, 'id' | 'created_at'>;
+    Update: Partial<SponsorshipHistory>;
   };
 };
