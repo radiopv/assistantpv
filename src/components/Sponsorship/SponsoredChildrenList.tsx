@@ -66,7 +66,6 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
         return {};
       }
 
-      // Group photos by child_id
       return data.reduce((acc: Record<string, any[]>, photo) => {
         if (!acc[photo.child_id]) {
           acc[photo.child_id] = [];
