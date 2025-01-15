@@ -109,9 +109,10 @@ export const Navigation = () => {
   };
 
   const MenuItems = () => (
-    <div className="flex flex-col space-y-2">
-      {/* Public Links Section */}
+    <div className="flex flex-col space-y-2 p-4">
+      {/* Public Links Section - Always visible */}
       <div className="space-y-2">
+        <p className="text-sm font-semibold text-gray-500 px-2 mb-2">Menu Principal</p>
         {publicLinks.map((link) => (
           <Button
             key={link.href}
@@ -120,7 +121,7 @@ export const Navigation = () => {
               navigate(link.href);
               setIsOpen(false);
             }}
-            className="justify-start w-full text-primary"
+            className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
           >
             <link.icon className="h-4 w-4 mr-2" />
             {link.label}
@@ -132,7 +133,7 @@ export const Navigation = () => {
       {isAssistant && (
         <>
           <div className="border-t my-4" />
-          <p className="text-sm font-semibold text-gray-500 px-2">Menu Administrateur</p>
+          <p className="text-sm font-semibold text-gray-500 px-2 mb-2">Menu Administrateur</p>
           <div className="space-y-2">
             {adminLinks.map((link) => (
               <Button
@@ -142,7 +143,7 @@ export const Navigation = () => {
                   navigate(link.href);
                   setIsOpen(false);
                 }}
-                className="justify-start w-full text-primary"
+                className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
               >
                 <link.icon className="h-4 w-4 mr-2" />
                 {link.label}
@@ -152,51 +153,53 @@ export const Navigation = () => {
         </>
       )}
 
-      {/* User Actions Section */}
+      {/* User Actions Section - Always at the bottom */}
       <div className="border-t my-4" />
-      {user ? (
-        <div className="space-y-2">
+      <div className="space-y-2">
+        {user ? (
+          <>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                navigate("/sponsor-dashboard");
+                setIsOpen(false);
+              }}
+              className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
+            >
+              <User className="h-4 w-4 mr-2" />
+              Espace parrain
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                handleLogout();
+                setIsOpen(false);
+              }}
+              className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Déconnexion
+            </Button>
+          </>
+        ) : (
           <Button
             variant="ghost"
             onClick={() => {
-              navigate("/sponsor-dashboard");
+              navigate("/login");
               setIsOpen(false);
             }}
-            className="justify-start w-full text-primary"
+            className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
           >
-            <User className="h-4 w-4 mr-2" />
-            Espace parrain
+            <LogIn className="h-4 w-4 mr-2" />
+            Connexion
           </Button>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              handleLogout();
-              setIsOpen(false);
-            }}
-            className="justify-start w-full text-primary"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Déconnexion
-          </Button>
-        </div>
-      ) : (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            navigate("/login");
-            setIsOpen(false);
-          }}
-          className="justify-start w-full text-primary"
-        >
-          <LogIn className="h-4 w-4 mr-2" />
-          Connexion
-        </Button>
-      )}
+        )}
+      </div>
     </div>
   );
 
   return (
-    <nav className="bg-white shadow-sm sticky top-0 z-50 w-full">
+    <nav className="bg-white shadow-sm w-full">
       <div className="container mx-auto px-4 py-3">
         <div className="flex justify-between items-center">
           {/* Mobile Menu Button */}
@@ -208,7 +211,7 @@ export const Navigation = () => {
                   <span className="sr-only">Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
+              <SheetContent side="left" className="w-[80%] sm:w-[385px] p-0">
                 <MenuItems />
               </SheetContent>
             </Sheet>
