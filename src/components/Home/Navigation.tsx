@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
@@ -89,12 +89,6 @@ export const Navigation = () => {
   const { user, signOut, isAssistant } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useLanguage();
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
-
-  // Mettre à jour le chemin courant quand la navigation change
-  useEffect(() => {
-    setCurrentPath(window.location.pathname);
-  }, [window.location.pathname]);
 
   const handleLogout = async () => {
     try {
