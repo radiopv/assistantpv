@@ -32,7 +32,14 @@ interface StatisticsData {
   }>;
 }
 
-const COLORS = ['#FF6B6B', '#FEC6A1', '#FFD700', '#50C878', '#0072BB'];
+// Utilisation des couleurs du thème cubain
+const COLORS = [
+  '#FF6B6B',  // cuba-coral
+  '#FEC6A1',  // cuba-softOrange
+  '#FFD700',  // cuba-gold
+  '#50C878',  // cuba-emerald
+  '#0072BB'   // cuba-turquoise
+];
 
 const Statistics = () => {
   const { t } = useLanguage();
@@ -95,17 +102,17 @@ const Statistics = () => {
           <div className="grid gap-6 md:grid-cols-3 mb-12">
             <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Dons</h3>
-              <p className="text-3xl font-bold">{stats?.total_donations || 0}</p>
+              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_donations || 0}</p>
             </Card>
 
             <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Enfants Parrainés</h3>
-              <p className="text-3xl font-bold">{stats?.total_children || 0}</p>
+              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_children || 0}</p>
             </Card>
 
             <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 hover:shadow-lg transition-shadow duration-300">
               <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Parrains Actifs</h3>
-              <p className="text-3xl font-bold">{stats?.total_sponsors || 0}</p>
+              <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.total_sponsors || 0}</p>
             </Card>
           </div>
 
@@ -115,11 +122,20 @@ const Statistics = () => {
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={stats?.monthly_trends || []}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="donations" fill="#FF6B6B" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#FEC6A1" />
+                    <XAxis dataKey="month" stroke="#FF6B6B" />
+                    <YAxis stroke="#FF6B6B" />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#FFF9F5',
+                        border: '1px solid #FEC6A1' 
+                      }}
+                    />
+                    <Bar 
+                      dataKey="donations" 
+                      fill="#FF6B6B"
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -138,12 +154,21 @@ const Statistics = () => {
                       cy="50%"
                       outerRadius={100}
                       fill="#FF6B6B"
+                      label
                     >
                       {stats?.city_distribution?.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={COLORS[index % COLORS.length]}
+                        />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#FFF9F5',
+                        border: '1px solid #FEC6A1' 
+                      }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -153,13 +178,13 @@ const Statistics = () => {
           <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
             <h3 className="text-xl font-semibold mb-6 text-cuba-coral">État des Parrainages</h3>
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="text-center p-4 bg-cuba-warmBeige/10 rounded-lg">
+              <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-lg">
                 <p className="text-lg font-semibold text-cuba-coral">Parrainages Actifs</p>
-                <p className="text-3xl font-bold">{stats?.active_sponsorships || 0}</p>
+                <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.active_sponsorships || 0}</p>
               </div>
-              <div className="text-center p-4 bg-cuba-warmBeige/10 rounded-lg">
+              <div className="text-center p-4 bg-gradient-to-r from-cuba-warmBeige to-cuba-softOrange/20 rounded-lg">
                 <p className="text-lg font-semibold text-cuba-coral">Demandes en Attente</p>
-                <p className="text-3xl font-bold">{stats?.pending_sponsorships || 0}</p>
+                <p className="text-3xl font-bold text-cuba-deepOrange">{stats?.pending_sponsorships || 0}</p>
               </div>
             </div>
           </Card>
