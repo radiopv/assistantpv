@@ -38,9 +38,9 @@ export default function Home() {
       }
 
       // Transform the data to match our interface
-      return (data || []).map(module => ({
+      return data.map(module => ({
         ...module,
-        content: module.content as HomepageModule['content'],
+        content: module.content || {},
         settings: {
           title: "Notre Impact",
           showTotalSponsors: true,
@@ -84,11 +84,14 @@ export default function Home() {
     );
   }
 
+  console.log('Modules to render:', modules); // Debug log
+
   return (
     <div className="min-h-screen">
       {modules
         .sort((a, b) => a.order_index - b.order_index)
         .map((module) => {
+          console.log('Rendering module:', module); // Debug log for each module
           switch (module.module_type) {
             case 'hero':
               return (
