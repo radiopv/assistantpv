@@ -13,15 +13,32 @@ import {
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface StatisticsData {
+  total_donations: number;
+  total_children: number;
+  total_sponsors: number;
+  monthly_trends?: Array<{
+    month: string;
+    donations: number;
+  }>;
+}
+
 const Statistics = () => {
   const { t } = useLanguage();
 
   const { data: stats, isLoading } = useQuery({
     queryKey: ["statistics"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_current_statistics");
-      if (error) throw error;
-      return data;
+      const { data: statsData, error: statsError } = await supabase.rpc("get_current_statistics");
+      if (statsError) throw statsError;
+
+      const { data: trendsData, error: trendsError } = await supabase.rpc("get_monthly_donation_stats");
+      if (trendsError) throw trendsError;
+
+      return {
+        ...statsData[0],
+        monthly_trends: trendsData
+      } as StatisticsData;
     }
   });
 
