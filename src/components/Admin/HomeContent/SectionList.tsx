@@ -61,6 +61,7 @@ export const SectionList = ({ sections = [] }: SectionListProps) => {
         .eq('id', id);
 
       if (error) throw error;
+      return { id, updates };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homepage-sections'] });
@@ -85,27 +86,25 @@ export const SectionList = ({ sections = [] }: SectionListProps) => {
     items.splice(result.destination.index, 0, reorderedItem);
 
     // Update all affected sections with new order_index values
-    const updates = items.map((item, index) => ({
-      id: item.id,
-      updates: { order_index: index }
-    }));
-
-    try {
-      // Execute all updates in sequence
-      for (const update of updates) {
-        await updateSection.mutateAsync(update);
+    for (let i = 0; i < items.length; i++) {
+      try {
+        await updateSection.mutateAsync({
+          id: items[i].id,
+          updates: { order_index: i }
+        });
+      } catch (error) {
+        console.error('Error updating section order:', error);
+        toast("Erreur", {
+          description: "Une erreur est survenue lors de la réorganisation",
+          style: { backgroundColor: 'red', color: 'white' }
+        });
+        return;
       }
-
-      toast("Ordre mis à jour", {
-        description: "L'ordre des sections a été mis à jour avec succès"
-      });
-    } catch (error) {
-      console.error('Error reordering sections:', error);
-      toast("Erreur", {
-        description: "Une erreur est survenue lors de la réorganisation des sections",
-        style: { backgroundColor: 'red', color: 'white' }
-      });
     }
+
+    toast("Ordre mis à jour", {
+      description: "L'ordre des sections a été mis à jour avec succès"
+    });
   };
 
   return (
