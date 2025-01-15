@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 import { differenceInYears, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useNavigate } from "react-router-dom";
 import {
   Carousel,
   CarouselContent,
@@ -11,6 +13,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Info, Heart } from "lucide-react";
 
 type Child = Database["public"]["Tables"]["children"]["Row"];
 
@@ -22,6 +25,7 @@ const calculateAge = (birthDate: string | null) => {
 export const FeaturedChildren = () => {
   const [children, setChildren] = useState<Child[]>([]);
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAvailableChildren = async () => {
@@ -43,6 +47,14 @@ export const FeaturedChildren = () => {
     fetchAvailableChildren();
   }, []);
 
+  const handleSponsor = (childId: string) => {
+    navigate(`/become-sponsor/${childId}`);
+  };
+
+  const handleLearnMore = (childId: string) => {
+    navigate(`/child-details/${childId}`);
+  };
+
   if (children.length === 0) {
     return null;
   }
@@ -56,22 +68,25 @@ export const FeaturedChildren = () => {
           <CarouselContent>
             {children.map((child) => (
               <CarouselItem key={child.id} className="md:basis-1/2 lg:basis-1/3">
-                <Card className="overflow-hidden mx-2">
+                <Card className="overflow-hidden mx-2 h-full">
                   <div className="aspect-square relative">
                     <img
                       src={child.photo_url || "/placeholder.svg"}
                       alt={child.name}
                       className="w-full h-full object-cover"
                     />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-lg">{child.name}</h3>
-                    <div className="mt-2 space-y-1 text-sm text-gray-600">
-                      <p>{calculateAge(child.birth_date)} ans</p>
-                      <p>{child.city}</p>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                      <h3 className="font-semibold text-lg">{child.name}</h3>
+                      <div className="mt-2 space-y-1 text-sm">
+                        <p>{calculateAge(child.birth_date)} ans</p>
+                        <p>{child.city}</p>
+                      </div>
                     </div>
+                  </div>
+                  <div className="p-4 space-y-3">
                     {Array.isArray(child.needs) && child.needs.length > 0 && (
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {child.needs.slice(0, 2).map((need: any, index: number) => (
                           <span
                             key={index}
@@ -82,6 +97,22 @@ export const FeaturedChildren = () => {
                         ))}
                       </div>
                     )}
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={() => handleSponsor(child.id)}
+                        className="flex-1"
+                        variant="default"
+                      >
+                        <Heart className="w-4 h-4 mr-2" />
+                        Parrainer
+                      </Button>
+                      <Button 
+                        onClick={() => handleLearnMore(child.id)}
+                        variant="outline"
+                      >
+                        <Info className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               </CarouselItem>
