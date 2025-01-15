@@ -65,6 +65,7 @@ export default {
           warmBeige: "#FDE1D3",  // Warm Beige
           softYellow: "#FEF7CD", // Soft Yellow
           softOrange: "#FEC6A1", // Soft Orange
+          offwhite: "#F8F8F8",   // Off White Color
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
