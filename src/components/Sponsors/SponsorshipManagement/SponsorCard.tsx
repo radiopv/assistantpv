@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { TerminationDialog } from "./TerminationDialog";
 
 interface SponsorCardProps {
   sponsor: any;
@@ -23,6 +24,10 @@ export const SponsorCard = ({
 }: SponsorCardProps) => {
   const [showAvailableChildren, setShowAvailableChildren] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [selectedSponsorship, setSelectedSponsorship] = useState<{
+    id: string;
+    childName: string;
+  } | null>(null);
 
   const handleRemoveChild = async (sponsorId: string, childId: string) => {
     try {
@@ -73,15 +78,28 @@ export const SponsorCard = ({
                 <p className="text-xs text-gray-500">{sponsorship.children.city}</p>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => handleRemoveChild(sponsor.id, sponsorship.children.id)}
-              disabled={isRemoving}
-              className="text-red-500 hover:text-red-600 hover:bg-red-50"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedSponsorship({
+                  id: sponsorship.id,
+                  childName: sponsorship.children.name
+                })}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+              >
+                Terminer
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleRemoveChild(sponsor.id, sponsorship.children.id)}
+                disabled={isRemoving}
+                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </Card>
       ))}
@@ -125,6 +143,16 @@ export const SponsorCard = ({
             </Card>
           ))}
         </div>
+      )}
+
+      {selectedSponsorship && (
+        <TerminationDialog
+          isOpen={!!selectedSponsorship}
+          onClose={() => setSelectedSponsorship(null)}
+          sponsorshipId={selectedSponsorship.id}
+          childName={selectedSponsorship.childName}
+          onTerminationComplete={() => window.location.reload()}
+        />
       )}
     </Card>
   );
