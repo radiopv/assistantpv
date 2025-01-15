@@ -34,6 +34,7 @@ import LinkChecker from "@/pages/admin/LinkChecker";
 import Messages from "@/pages/Messages";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import AuditLogs from "@/pages/admin/AuditLogs";
+import AllChildren from "@/pages/public/AllChildren";
 
 export const AppRoutes = () => {
   return (
@@ -43,8 +44,7 @@ export const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/available-children" element={<AvailableChildren />} />
-        <Route path="/sponsored-children" element={<SponsoredChildren />} />
+        <Route path="/children" element={<AllChildren />} />
         <Route path="/public-donations" element={<PublicDonations />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />

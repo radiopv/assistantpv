@@ -1,19 +1,32 @@
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import {
+  Users,
+  Settings,
+  Gift,
+  Home,
+  FileText,
+  Bell,
+  Mail,
+  User,
+  LogIn,
+  LogOut,
+  HelpCircle,
+  BarChart,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { User, Gift, Users, HelpCircle, BarChart, LogIn, LogOut, Home, Menu, Heart } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Navigation = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAssistant } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-
-  const isAssistant = user?.role === 'assistant' || user?.role === 'admin';
-  const isSponsor = user?.role === 'sponsor';
+  const { t } = useLanguage();
 
   const handleLogout = async () => {
     try {
@@ -52,25 +65,13 @@ export const Navigation = () => {
       <Button
         variant="ghost"
         onClick={() => {
-          navigate("/available-children");
+          navigate("/children");
           setIsOpen(false);
         }}
         className="justify-start md:justify-center text-primary w-full md:w-auto"
       >
         <Users className="h-4 w-4 mr-2" />
-        Enfants disponibles
-      </Button>
-
-      <Button
-        variant="ghost"
-        onClick={() => {
-          navigate("/sponsored-children");
-          setIsOpen(false);
-        }}
-        className="justify-start md:justify-center text-primary w-full md:w-auto"
-      >
-        <Heart className="h-4 w-4 mr-2" />
-        Enfants parrainés
+        Les Enfants
       </Button>
 
       <Button
