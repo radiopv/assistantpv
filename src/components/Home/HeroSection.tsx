@@ -53,16 +53,15 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="w-full max-w-2xl mx-auto relative"
+            className="w-full max-w-4xl mx-auto relative"
           >
             <img 
               src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
               alt="Enfant cubain"
-              className="w-full h-[500px] object-cover cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
-              style={{ objectPosition: 'center' }}
+              className="w-full h-auto object-contain cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
               onClick={onImageClick}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 rounded-lg" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/20 rounded-lg pointer-events-none" />
           </motion.div>
         </div>
       </div>
