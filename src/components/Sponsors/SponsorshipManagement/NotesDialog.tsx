@@ -42,7 +42,7 @@ export const NotesDialog = ({
         .from('sponsorship_notes')
         .insert({
           sponsorship_id: sponsorshipId,
-          note: note.trim(),
+          content: note.trim(),
           tags,
           created_by: (await supabase.auth.getUser()).data.user?.id
         });
