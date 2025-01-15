@@ -24,19 +24,13 @@ const HomeContentManagement = () => {
   const { data: heroImage, isLoading: isHeroLoading } = useQuery({
     queryKey: ['home-hero-image'],
     queryFn: async () => {
-      console.log("Fetching hero image...");
       const { data, error } = await supabase
         .from('home_images')
         .select('*')
         .eq('position', 'hero')
         .maybeSingle();
 
-      if (error) {
-        console.error("Error fetching hero image:", error);
-        throw error;
-      }
-      
-      console.log("Hero image data:", data);
+      if (error) throw error;
       return data;
     }
   });
@@ -44,18 +38,12 @@ const HomeContentManagement = () => {
   const { data: sections, isLoading: isSectionsLoading } = useQuery({
     queryKey: ['homepage-sections'],
     queryFn: async () => {
-      console.log("Fetching homepage sections...");
       const { data, error } = await supabase
         .from('homepage_sections')
         .select('*')
         .order('order_index');
 
-      if (error) {
-        console.error("Error fetching sections:", error);
-        throw error;
-      }
-
-      console.log("Homepage sections:", data);
+      if (error) throw error;
       return data;
     }
   });
@@ -81,6 +69,7 @@ const HomeContentManagement = () => {
 
   const updateModule = useMutation({
     mutationFn: async ({ id, updates }: { id: string, updates: any }) => {
+      console.log("Updating module:", id, updates);
       const { error } = await supabase
         .from('homepage_modules')
         .update(updates)
@@ -181,11 +170,15 @@ const HomeContentManagement = () => {
     }
   };
 
-  const handleModuleToggle = (moduleId: string, currentState: boolean) => {
-    updateModule.mutate({
-      id: moduleId,
-      updates: { is_active: !currentState }
-    });
+  const handleModuleToggle = async (moduleId: string, currentState: boolean) => {
+    try {
+      await updateModule.mutateAsync({
+        id: moduleId,
+        updates: { is_active: !currentState }
+      });
+    } catch (error) {
+      console.error('Error toggling module:', error);
+    }
   };
 
   const handleSettingsSave = () => {

@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ModuleCard } from "./ModuleCard";
 import { Module } from "../types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface ModulesListProps {
   modules: Module[];
@@ -198,6 +201,38 @@ export const ModulesList = ({
   onDeleteClick,
   onNewModuleClick
 }: ModulesListProps) => {
+  const queryClient = useQueryClient();
+
+  const updateModuleStatus = useMutation({
+    mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
+      const { error } = await supabase
+        .from('homepage_modules')
+        .update({ is_active: isActive })
+        .eq('id', id);
+
+      if (error) throw error;
+      return { id, isActive };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['homepage-modules'] });
+      toast("Module mis à jour", {
+        description: "Le statut du module a été mis à jour avec succès"
+      });
+    },
+    onError: (error) => {
+      console.error('Error updating module status:', error);
+      toast("Erreur", {
+        description: "Une erreur est survenue lors de la mise à jour du statut",
+        style: { backgroundColor: 'red', color: 'white' }
+      });
+    }
+  });
+
+  const handleToggle = (moduleId: string, currentState: boolean) => {
+    updateModuleStatus.mutate({ id: moduleId, isActive: !currentState });
+    onToggle(moduleId, currentState);
+  };
+
   if (!modules || modules.length === 0) {
     return (
       <Card className="p-6">
@@ -263,7 +298,7 @@ export const ModulesList = ({
                     >
                       <ModuleCard
                         module={module}
-                        onToggle={onToggle}
+                        onToggle={handleToggle}
                         onSettingsClick={onSettingsClick}
                         onDeleteClick={onDeleteClick}
                         dragHandleProps={provided.dragHandleProps}
