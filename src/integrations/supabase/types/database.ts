@@ -1,4 +1,6 @@
 import { Json } from './json';
+import { AuthTables } from './auth';
+import { MediaTables } from './media';
 import { SponsorshipTables } from './sponsorship';
 
 export interface Database {
@@ -1806,7 +1808,7 @@ export interface Database {
         }
         Relationships: [];
       }
-    } & SponsorshipTables;
+    } & AuthTables & MediaTables & SponsorshipTables;
     Functions: {
       add_assistant: {
         Args: {
@@ -2153,7 +2155,24 @@ export interface Database {
           sponsor_id: string
         }[]
       }
+      handle_sponsorship_pause: {
+        Args: {
+          sponsorship_id: string
+          action: string
+          reason: string
+          performed_by: string
+        }
+        Returns: void
+      }
+    }
+    Enums: {
+      user_role: 'admin' | 'assistant' | 'sponsor' | 'visitor' | 'future_sponsor'
+    }
+    CompositeTypes: {
+      email_template: {
+        subject: string | null
+        html: string | null
+      }
     }
   }
 }
-
