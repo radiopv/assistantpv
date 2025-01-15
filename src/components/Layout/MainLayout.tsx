@@ -33,8 +33,10 @@ const MainLayout = () => {
                     <span className="sr-only">Menu</span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-[80%] sm:w-[350px] bg-cuba-offwhite">
-                  <Navigation />
+                <SheetContent side="left" className="p-0 w-[80%] sm:w-[350px]">
+                  <div className="flex flex-col h-full">
+                    <Navigation />
+                  </div>
                 </SheetContent>
               </Sheet>
             </div>
