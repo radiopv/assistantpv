@@ -8,6 +8,7 @@ import { differenceInYears, differenceInDays } from "date-fns";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Tabs,
   TabsContent,
@@ -28,6 +29,7 @@ import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDat
 import { BirthdayCountdown } from "@/components/Sponsors/Dashboard/BirthdayCountdown";
 import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
 import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
+import { Camera, FileEdit } from "lucide-react";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -53,7 +55,10 @@ const SponsorDashboard = () => {
       urgentNeeds: "Besoins urgents détectés !",
       age: "ans",
       copySuccess: "Lien copié avec succès !",
-      copyError: "Erreur lors de la copie du lien"
+      copyError: "Erreur lors de la copie du lien",
+      noNotifications: "Aucune notification pour le moment",
+      addPhoto: "Ajouter une photo",
+      addTestimonial: "Ajouter un témoignage"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -72,7 +77,10 @@ const SponsorDashboard = () => {
       urgentNeeds: "¡Necesidades urgentes detectadas!",
       age: "años",
       copySuccess: "¡Enlace copiado con éxito!",
-      copyError: "Error al copiar el enlace"
+      copyError: "Error al copiar el enlace",
+      noNotifications: "No hay notificaciones por el momento",
+      addPhoto: "Agregar foto",
+      addTestimonial: "Agregar testimonio"
     }
   };
 
@@ -270,7 +278,7 @@ const SponsorDashboard = () => {
           </div>
         </Card>
 
-        {/* Rest of the existing dashboard content */}
+        {/* Rest of the dashboard content */}
         <div className="grid gap-4 md:gap-6">
           {sponsoredChildren?.map((sponsorship) => {
             const childPhotos = childrenPhotos?.filter(photo => 
@@ -294,21 +302,43 @@ const SponsorDashboard = () => {
               >
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col md:flex-row md:items-center justify-between">
-                    <SponsoredChildCard
-                      child={{
-                        ...sponsorship.children,
-                        age: childAge
-                      }}
-                      sponsorshipId={sponsorship.id}
-                      onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
-                      onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
-                    />
-                    {hasUrgentNeeds && (
-                      <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
-                        {t.urgentNeeds}
-                      </span>
-                    )}
+                    <div className="flex-1">
+                      <SponsoredChildCard
+                        child={{
+                          ...sponsorship.children,
+                          age: childAge
+                        }}
+                        sponsorshipId={sponsorship.id}
+                        onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
+                        onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2 mt-4 md:mt-0">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleAddPhoto(sponsorship.children?.id)}
+                        className="w-full"
+                      >
+                        <Camera className="h-4 w-4 mr-2" />
+                        {translations[language].addPhoto}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
+                        className="w-full"
+                      >
+                        <FileEdit className="h-4 w-4 mr-2" />
+                        {translations[language].addTestimonial}
+                      </Button>
+                    </div>
                   </div>
+                  {hasUrgentNeeds && (
+                    <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
+                      {translations[language].urgentNeeds}
+                    </span>
+                  )}
                 </div>
 
                 {selectedChild === sponsorship.children?.id && (
