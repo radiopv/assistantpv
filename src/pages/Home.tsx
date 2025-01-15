@@ -23,7 +23,7 @@ interface HomepageModule {
 }
 
 export default function Home() {
-  const { data: modules } = useQuery({
+  const { data: modules, isLoading, error } = useQuery({
     queryKey: ['homepage-modules'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -48,7 +48,7 @@ export default function Home() {
           showTotalDonations: true,
           animateNumbers: true,
           backgroundStyle: "gradient",
-          ...(module.settings as Partial<HomepageModule['settings']>)
+          ...(typeof module.settings === 'object' ? module.settings : {})
         },
         order_index: module.order_index || 0
       })) as HomepageModule[];
@@ -59,8 +59,29 @@ export default function Home() {
     console.log("Image clicked");
   };
 
-  if (!modules) {
-    return <div>Chargement...</div>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl text-gray-600">Chargement...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Error loading modules:', error);
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl text-red-600">Une erreur est survenue lors du chargement de la page</div>
+      </div>
+    );
+  }
+
+  if (!modules || modules.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl text-gray-600">Aucun module actif</div>
+      </div>
+    );
   }
 
   return (
@@ -85,6 +106,7 @@ export default function Home() {
                 />
               );
             default:
+              console.log('Unknown module type:', module.module_type);
               return null;
           }
         })}
