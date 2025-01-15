@@ -59,5 +59,22 @@
     .touch-feedback:active {
       @apply bg-cuba-warmBeige/50 transition-colors duration-200;
     }
+
+    /* Améliorations pour la navigation mobile */
+    nav button {
+      @apply w-full text-left justify-start;
+    }
+
+    .sheet-content {
+      @apply p-6;
+    }
+
+    .mobile-menu-group {
+      @apply space-y-2 border-b border-gray-200 pb-4 mb-4;
+    }
+
+    .mobile-menu-item {
+      @apply flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100;
+    }
   }
 }

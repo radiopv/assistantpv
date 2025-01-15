@@ -47,22 +47,8 @@ export const Navigation = () => {
     }
   };
 
-  const MenuItems = () => (
+  const PublicLinks = () => (
     <div className="flex flex-col md:flex-row md:space-x-4 space-y-2 md:space-y-0">
-      {isAssistant && (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            navigate("/");
-            setIsOpen(false);
-          }}
-          className="justify-start md:justify-center text-primary w-full md:w-auto"
-        >
-          <Home className="h-4 w-4 mr-2" />
-          Accueil
-        </Button>
-      )}
-
       <Button
         variant="ghost"
         onClick={() => {
@@ -113,6 +99,35 @@ export const Navigation = () => {
     </div>
   );
 
+  const AdminLinks = () => (
+    isAssistant && (
+      <div className="flex flex-col space-y-2 border-t md:border-none pt-2 md:pt-0 mt-2 md:mt-0">
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/admin/children-management");
+            setIsOpen(false);
+          }}
+          className="justify-start text-primary w-full"
+        >
+          <Users className="h-4 w-4 mr-2" />
+          Gestion des enfants
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/admin/donations-management");
+            setIsOpen(false);
+          }}
+          className="justify-start text-primary w-full"
+        >
+          <Gift className="h-4 w-4 mr-2" />
+          Gestion des donations
+        </Button>
+      </div>
+    )
+  );
+
   return (
     <nav className="bg-white shadow-sm sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4 py-3">
@@ -129,7 +144,8 @@ export const Navigation = () => {
               <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
                 <div className="flex flex-col h-full">
                   <div className="flex-1 py-6 space-y-4">
-                    <MenuItems />
+                    <PublicLinks />
+                    <AdminLinks />
                   </div>
                   <div className="border-t py-4 space-y-4">
                     {user ? (
@@ -178,7 +194,8 @@ export const Navigation = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex flex-1 space-x-4">
-            <MenuItems />
+            <PublicLinks />
+            <AdminLinks />
           </div>
 
           {/* Right side menu items - Desktop */}
