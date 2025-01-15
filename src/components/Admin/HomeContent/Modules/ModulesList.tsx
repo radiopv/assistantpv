@@ -22,6 +22,23 @@ export const ModulesList = ({
   onDeleteClick,
   onNewModuleClick
 }: ModulesListProps) => {
+  if (!modules || modules.length === 0) {
+    return (
+      <Card className="p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Modules de la page d'accueil</h2>
+          <Button variant="outline" onClick={onNewModuleClick} className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Ajouter un module
+          </Button>
+        </div>
+        <div className="text-center py-8 text-gray-500">
+          Aucun module n'a été créé. Cliquez sur "Ajouter un module" pour commencer.
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="p-6">
       <div className="flex justify-between items-center mb-4">
@@ -36,7 +53,7 @@ export const ModulesList = ({
         <Droppable droppableId="modules">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-              {modules?.map((module, index) => (
+              {modules.map((module, index) => (
                 <Draggable key={module.id} draggableId={module.id} index={index}>
                   {(provided) => (
                     <div
