@@ -6,9 +6,15 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import AutoplayPlugin from "embla-carousel-autoplay";
+import type { Database } from "@/integrations/supabase/types";
+
+type AlbumMedia = Database["public"]["Tables"]["album_media"]["Row"] & {
+  children: { name: string } | null;
+  sponsors: { name: string } | null;
+};
 
 export const FeaturedAlbum = () => {
-  const [photos, setPhotos] = useState<any[]>([]);
+  const [photos, setPhotos] = useState<AlbumMedia[]>([]);
 
   useEffect(() => {
     const fetchFeaturedPhotos = async () => {
