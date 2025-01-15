@@ -47,15 +47,6 @@ export const SponsoredChildCard = ({
           <Button
             variant="outline"
             className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors whitespace-nowrap"
-            onClick={onAddPhoto}
-          >
-            <Camera className="h-4 w-4" />
-            <span>Ajouter une photo</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors whitespace-nowrap"
             onClick={onAddTestimonial}
           >
             <FileEdit className="h-4 w-4" />
