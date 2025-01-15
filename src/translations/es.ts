@@ -1,5 +1,7 @@
 export const spanishTranslations = {
   dashboard: "Panel de control",
+  bonjour: "Hola",
+  utilisateur: "usuario",
   recentMessages: "Mensajes recientes",
   checkMessages: "Consulte sus mensajes y notificaciones en la pestaña Mensajes.",
   upcomingBirthdays: "Próximos cumpleaños",

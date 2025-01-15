@@ -14,6 +14,8 @@ export const frenchTranslations = {
   testimonials: "Témoignages",
   childRequests: "Demandes d'enfants",
   endSponsorship: "Mettre fin au parrainage",
+  bonjour: "Bonjour",
+  utilisateur: "utilisateur",
   endingSponsorshipFor: "Vous êtes sur le point de mettre fin au parrainage de",
   selectEndDate: "Veuillez sélectionner une date de fin",
   provideReason: "Veuillez indiquer une raison",

@@ -121,7 +121,7 @@ export const UserProfileMenu = () => {
       </Button>
 
       <span className="text-sm text-gray-600">
-        {t("welcome")}, {formData.name || t("user")}
+        {t("bonjour")}, {formData.name || t("utilisateur")}
       </span>
       
       <DropdownMenu>
