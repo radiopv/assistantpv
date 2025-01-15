@@ -19,17 +19,18 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
     queryFn: async () => {
       const { data: sponsorCount } = await supabase
         .from('sponsors')
-        .select('id', { count: 'exact', head: true })
-        .eq('role', 'sponsor');
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'sponsor')
+        .eq('is_active', true);
 
       const { data: childrenCount } = await supabase
         .from('children')
-        .select('id', { count: 'exact', head: true })
+        .select('*', { count: 'exact', head: true })
         .eq('is_sponsored', true);
 
       const { data: donationsCount } = await supabase
         .from('donations')
-        .select('id', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true });
 
       return {
         totalSponsors: sponsorCount?.count || 0,
@@ -40,7 +41,7 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
   });
 
   return (
-    <section className="py-16 bg-gradient-to-r from-cuba-blue to-cuba-gold">
+    <section className="py-16 bg-gradient-to-r from-[#0072BB] to-[#F9B612]">
       <div className="container mx-auto px-4">
         <h2 className="text-4xl font-bold text-center text-white mb-12">
           {settings.title || "Notre Impact"}
