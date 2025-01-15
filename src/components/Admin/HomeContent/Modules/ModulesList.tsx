@@ -14,6 +14,49 @@ interface ModulesListProps {
   onNewModuleClick: () => void;
 }
 
+const moduleExamples: Module[] = [
+  {
+    id: "example-1",
+    name: "Section Héros",
+    module_type: "hero",
+    is_active: true,
+    settings: {
+      title: "Parrainez un enfant cubain",
+      subtitle: "Aidez-nous à changer des vies",
+      buttonText: "Devenir parrain",
+      buttonLink: "/become-sponsor",
+      backgroundImage: "/path/to/image.jpg"
+    },
+    order_index: 0
+  },
+  {
+    id: "example-2",
+    name: "Témoignages",
+    module_type: "testimonials",
+    is_active: true,
+    settings: {
+      title: "Ce que disent nos parrains",
+      displayCount: 3,
+      autoplay: true,
+      showRatings: true
+    },
+    order_index: 1
+  },
+  {
+    id: "example-3",
+    name: "Album Photos",
+    module_type: "featured-album",
+    is_active: true,
+    settings: {
+      title: "Moments partagés",
+      photosCount: 6,
+      showCaptions: true,
+      autoSlide: true
+    },
+    order_index: 2
+  }
+];
+
 export const ModulesList = ({
   modules,
   onDragEnd,
@@ -32,8 +75,33 @@ export const ModulesList = ({
             Ajouter un module
           </Button>
         </div>
-        <div className="text-center py-8 text-gray-500">
-          Aucun module n'a été créé. Cliquez sur "Ajouter un module" pour commencer.
+        
+        <div className="space-y-6">
+          <div className="text-center py-4 text-gray-500 mb-8">
+            Aucun module n'a été créé. Voici quelques exemples de modules que vous pouvez créer :
+          </div>
+
+          <div className="space-y-4">
+            {moduleExamples.map((example) => (
+              <div key={example.id} className="p-4 border rounded-lg bg-gray-50">
+                <h3 className="font-medium text-lg mb-2">{example.name}</h3>
+                <p className="text-sm text-gray-600 mb-2">Type: {example.module_type}</p>
+                <div className="bg-white p-3 rounded-md">
+                  <p className="text-sm font-medium mb-2">Exemple de paramètres :</p>
+                  <pre className="text-xs bg-gray-50 p-2 rounded overflow-x-auto">
+                    {JSON.stringify(example.settings, null, 2)}
+                  </pre>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <Button onClick={onNewModuleClick} className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Créer mon premier module
+            </Button>
+          </div>
         </div>
       </Card>
     );
