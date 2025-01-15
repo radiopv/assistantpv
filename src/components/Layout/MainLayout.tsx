@@ -34,7 +34,7 @@ const MainLayout = () => {
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="p-0 w-[80%] sm:w-[350px] bg-cuba-offwhite">
-                  <Sidebar />
+                  <Navigation />
                 </SheetContent>
               </Sheet>
             </div>
