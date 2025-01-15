@@ -27,7 +27,7 @@ export default function Home() {
   const { data: modules, isLoading, error } = useQuery({
     queryKey: ['homepage-modules'],
     queryFn: async () => {
-      console.log('Fetching homepage modules...'); // Debug log
+      console.log('Fetching homepage modules...'); 
 
       const { data, error } = await supabase
         .from('homepage_modules')
@@ -41,37 +41,38 @@ export default function Home() {
         throw error;
       }
 
+      console.log('Raw data from Supabase:', data);
+
       if (!data || data.length === 0) {
-        console.log('No modules found or empty data');
+        console.log('No active modules found');
         return [];
       }
 
-      console.log('Raw data from Supabase:', data); // Debug log
-
       // Transform the data to match our interface
-      const transformedModules = data.map(module => ({
-        ...module,
-        content: module.content || {},
-        settings: {
-          title: "Notre Impact",
-          showTotalSponsors: true,
-          showTotalChildren: true,
-          showTotalDonations: true,
-          animateNumbers: true,
-          backgroundStyle: "gradient",
-          ...(typeof module.settings === 'object' ? module.settings : {})
-        },
-        order_index: module.order_index || 0
-      })) as HomepageModule[];
+      const transformedModules = data.map(module => {
+        console.log('Processing module:', module);
+        return {
+          id: module.id,
+          module_type: module.module_type || '',
+          content: module.content || {},
+          settings: {
+            title: "Notre Impact",
+            showTotalSponsors: true,
+            showTotalChildren: true,
+            showTotalDonations: true,
+            animateNumbers: true,
+            backgroundStyle: "gradient",
+            ...(typeof module.settings === 'object' ? module.settings : {})
+          },
+          is_active: module.is_active || false,
+          order_index: module.order_index || 0
+        } as HomepageModule;
+      });
 
-      console.log('Transformed modules:', transformedModules); // Debug log
+      console.log('Transformed modules:', transformedModules);
       return transformedModules;
     }
   });
-
-  const handleImageClick = () => {
-    console.log("Image clicked");
-  };
 
   if (isLoading) {
     return (
@@ -102,41 +103,39 @@ export default function Home() {
     );
   }
 
-  console.log('Modules to render:', modules); // Debug log
+  console.log('Modules to render:', modules);
 
   return (
     <div className="min-h-screen">
-      {modules
-        .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
-        .map((module) => {
-          console.log('Rendering module:', module); // Debug log for each module
-          
-          if (!module.module_type) {
-            console.warn('Module without type:', module);
-            return null;
-          }
+      {modules.map((module) => {
+        console.log('Rendering module:', module);
+        
+        if (!module.module_type) {
+          console.warn('Module without type:', module);
+          return null;
+        }
 
-          switch (module.module_type) {
-            case 'hero':
-              return (
-                <HeroSection 
-                  key={module.id} 
-                  heroSection={module.content}
-                  onImageClick={handleImageClick}
-                />
-              );
-            case 'impact_stats':
-              return (
-                <ImpactStats 
-                  key={module.id}
-                  settings={module.settings}
-                />
-              );
-            default:
-              console.warn('Unknown module type:', module.module_type);
-              return null;
-          }
-        })}
+        switch (module.module_type) {
+          case 'hero':
+            return (
+              <HeroSection 
+                key={module.id} 
+                heroSection={module.content}
+                onImageClick={() => console.log("Image clicked")}
+              />
+            );
+          case 'impact_stats':
+            return (
+              <ImpactStats 
+                key={module.id}
+                settings={module.settings}
+              />
+            );
+          default:
+            console.warn('Unknown module type:', module.module_type);
+            return null;
+        }
+      })}
     </div>
   );
 }
