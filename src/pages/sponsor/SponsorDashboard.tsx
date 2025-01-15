@@ -9,81 +9,38 @@ import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Camera, FileEdit, Clock, Heart, Calendar, ChartBar } from "lucide-react";
 import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
-import { PhotoGallery } from "@/components/Sponsors/Dashboard/Sections/PhotoGallery";
-import { TestimonialSection } from "@/components/Sponsors/Dashboard/Sections/TestimonialSection";
-import { StatisticsSection } from "@/components/Sponsors/Dashboard/Sections/StatisticsSection";
-import { NeedsSection } from "@/components/Sponsors/Dashboard/Sections/NeedsSection";
-import { StorySection } from "@/components/Sponsors/Dashboard/Sections/StorySection";
-import { convertJsonToNeeds } from "@/types/needs";
-import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
-import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
-import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
-import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/ImportantDatesCard";
+import { ImportantDatesCard } from "@/components/Sponsors/Dashboard/Cards/ImportantDatesCard";
+import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
 import { BirthdayCountdown } from "@/components/Sponsors/Dashboard/BirthdayCountdown";
 import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
-import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
-import { Camera, FileEdit, Clock } from "lucide-react";
+import { NeedNotifications } from "@/components/Dashboard/NeedNotifications";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
-  const [showTermination, setShowTermination] = useState(false);
 
   const translations = {
     fr: {
       welcomeMessage: "Bienvenue",
-      inviteFriends: "Inviter des amis",
-      loginRequired: "Veuillez vous connecter pour accéder à votre tableau de bord",
-      login: "Se connecter",
-      loading: "Chargement...",
-      sponsorDashboard: "Mon Espace Parrain",
-      photos: "Photos",
-      testimonials: "Témoignages",
-      statistics: "Statistiques",
-      needs: "Besoins",
-      story: "Histoire",
-      uploadSuccess: "Photo ajoutée avec succès",
-      uploadError: "Erreur lors de l'ajout de la photo",
-      urgentNeeds: "Besoins urgents détectés !",
-      age: "ans",
-      copySuccess: "Lien copié avec succès !",
-      copyError: "Erreur lors de la copie du lien",
-      noNotifications: "Aucune notification pour le moment",
       addPhoto: "Ajouter une photo",
       addTestimonial: "Ajouter un témoignage",
-      endSponsorship: "Mettre fin au parrainage"
+      endSponsorship: "Mettre fin au parrainage",
+      uploadSuccess: "Photo ajoutée avec succès",
+      uploadError: "Erreur lors de l'ajout de la photo",
+      sponsorDashboard: "Mon Espace Parrain",
     },
     es: {
       welcomeMessage: "Bienvenido",
-      inviteFriends: "Invitar amigos",
-      loginRequired: "Por favor, inicie sesión para acceder a su panel",
-      login: "Iniciar sesión",
-      loading: "Cargando...",
-      sponsorDashboard: "Mi Panel de Padrino",
-      photos: "Fotos",
-      testimonials: "Testimonios",
-      statistics: "Estadísticas",
-      needs: "Necesidades",
-      story: "Historia",
-      uploadSuccess: "Foto agregada con éxito",
-      uploadError: "Error al agregar la foto",
-      urgentNeeds: "¡Necesidades urgentes detectadas!",
-      age: "años",
-      copySuccess: "¡Enlace copiado con éxito!",
-      copyError: "Error al copiar el enlace",
-      noNotifications: "No hay notificaciones por el momento",
       addPhoto: "Agregar foto",
       addTestimonial: "Agregar testimonio",
-      endSponsorship: "Finalizar apadrinamiento"
+      endSponsorship: "Finalizar apadrinamiento",
+      uploadSuccess: "Foto agregada con éxito",
+      uploadError: "Error al agregar la foto",
+      sponsorDashboard: "Mi Panel de Padrino",
     }
   };
 
@@ -164,7 +121,7 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  const { data: plannedVisits, refetch: refetchVisits } = useQuery({
+  const { data: plannedVisits } = useQuery({
     queryKey: ['planned-visits', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -179,36 +136,11 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  const handleShare = async () => {
-    const shareData = {
-      title: translations[language].inviteFriends,
-      text: translations[language].inviteFriends,
-      url: window.location.origin + '/become-sponsor'
-    };
-
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(shareData.url);
-        toast.success(t.copySuccess);
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-      toast.error(t.copyError);
-    }
-  };
-
   const calculateSponsorshipDuration = (startDate: string) => {
     if (!startDate) return 0;
     const start = new Date(startDate);
     const now = new Date();
     return differenceInDays(now, start);
-  };
-
-  const hasUrgentNeeds = (needs: any) => {
-    const needsArray = convertJsonToNeeds(needs);
-    return needsArray.some(need => need.is_urgent);
   };
 
   return (
@@ -234,7 +166,7 @@ const SponsorDashboard = () => {
             totalPhotos={childrenPhotos?.length || 0}
             totalTestimonials={testimonials?.length || 0}
             totalNeeds={sponsoredChildren?.reduce((acc, s) => 
-              acc + (convertJsonToNeeds(s.children?.needs)?.length || 0), 0
+              acc + (s.children?.needs?.length || 0), 0
             ) || 0}
             sponsorshipDays={sponsoredChildren?.reduce((acc, s) => 
               acc + calculateSponsorshipDuration(s.start_date), 0
@@ -263,20 +195,6 @@ const SponsorDashboard = () => {
           ]}
         />
 
-        <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
-          <h3 className="text-lg font-semibold mb-4 text-cuba-coral">Visites planifiées</h3>
-          <div className="space-y-6">
-            <PlannedVisitForm 
-              sponsorId={user?.id || ''} 
-              onVisitPlanned={refetchVisits}
-            />
-            <VisitsSection 
-              visits={plannedVisits || []} 
-              onVisitDeleted={refetchVisits}
-            />
-          </div>
-        </Card>
-
         <div className="grid gap-4 md:gap-6">
           {sponsoredChildren?.map((sponsorship) => (
             <Card 
@@ -293,10 +211,11 @@ const SponsorDashboard = () => {
                       onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                     />
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col space-y-2 mt-4 md:mt-0">
                     <Button
                       variant="outline"
                       size="sm"
+                      className="w-full"
                       onClick={() => handleAddPhoto(sponsorship.children?.id)}
                     >
                       <Camera className="h-4 w-4 mr-2" />
@@ -305,6 +224,7 @@ const SponsorDashboard = () => {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="w-full"
                       onClick={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                     >
                       <FileEdit className="h-4 w-4 mr-2" />
@@ -313,81 +233,24 @@ const SponsorDashboard = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setShowTermination(true)}
+                      className="w-full"
+                      onClick={() => navigate(`/sponsor/end-sponsorship/${sponsorship.id}`)}
                     >
                       <Clock className="h-4 w-4 mr-2" />
                       {translations[language].endSponsorship}
                     </Button>
                   </div>
                 </div>
-                {hasUrgentNeeds(sponsorship.children?.needs) && (
-                  <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
-                    {translations[language].urgentNeeds}
-                  </span>
+
+                {selectedChild === sponsorship.children?.id && (
+                  <div className="mt-4">
+                    <PhotoUploader
+                      childId={selectedChild}
+                      onUploadSuccess={handleUploadSuccess}
+                    />
+                  </div>
                 )}
               </div>
-
-              {selectedChild === sponsorship.children?.id && (
-                <div className="mt-4">
-                  <PhotoUploader
-                    childId={selectedChild}
-                    onUploadSuccess={handleUploadSuccess}
-                  />
-                </div>
-              )}
-
-              <Tabs defaultValue="photos" className="mt-4 md:mt-6">
-                <TabsList className="flex flex-col w-full md:grid md:grid-cols-5 gap-2">
-                  {[
-                    { value: "photos", label: t.photos },
-                    { value: "testimonials", label: t.testimonials },
-                    { value: "statistics", label: t.statistics },
-                    { value: "needs", label: t.needs },
-                    { value: "story", label: t.story }
-                  ].map((tab) => (
-                    <TabsTrigger
-                      key={tab.value}
-                      value={tab.value}
-                      className="w-full text-sm px-3 py-3 mb-1 md:mb-0 bg-white hover:bg-gray-50"
-                    >
-                      {tab.label}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-
-                <div className="mt-6 space-y-6">
-                  <TabsContent value="photos" className="focus:outline-none">
-                    <PhotoGallery 
-                      photos={(childrenPhotos || []).filter(photo => photo.child_id === sponsorship.children?.id)} 
-                      childName={sponsorship.children?.name} 
-                    />
-                  </TabsContent>
-
-                  <TabsContent value="testimonials" className="focus:outline-none">
-                    <TestimonialSection testimonials={(testimonials || []).filter(testimonial => testimonial.child_id === sponsorship.children?.id)} />
-                  </TabsContent>
-
-                  <TabsContent value="statistics" className="focus:outline-none">
-                    <StatisticsSection
-                      photos={(childrenPhotos || []).filter(photo => photo.child_id === sponsorship.children?.id)}
-                      needs={convertJsonToNeeds(sponsorship.children?.needs)}
-                      sponsorshipDuration={calculateSponsorshipDuration(sponsorship.start_date)}
-                      sponsorshipStartDate={sponsorship.start_date}
-                    />
-                  </TabsContent>
-
-                  <TabsContent value="needs" className="focus:outline-none">
-                    <NeedsSection needs={convertJsonToNeeds(sponsorship.children?.needs)} />
-                  </TabsContent>
-
-                  <TabsContent value="story" className="focus:outline-none">
-                    <StorySection
-                      description={sponsorship.children?.description}
-                      story={sponsorship.children?.story}
-                    />
-                  </TabsContent>
-                </div>
-              </Tabs>
             </Card>
           ))}
         </div>
