@@ -31,7 +31,21 @@ export default function Home() {
         .select('*')
         .eq('is_active', true)
         .order('order_index');
-      return data as HomepageModule[];
+
+      // Transform the data to match our interface
+      return (data || []).map(module => ({
+        ...module,
+        content: module.content as HomepageModule['content'],
+        settings: {
+          title: "Notre Impact",
+          showTotalSponsors: true,
+          showTotalChildren: true,
+          showTotalDonations: true,
+          animateNumbers: true,
+          backgroundStyle: "gradient",
+          ...(module.settings as Partial<HomepageModule['settings']>)
+        }
+      })) as HomepageModule[];
     }
   });
 
