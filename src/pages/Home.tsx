@@ -6,6 +6,7 @@ import { HowItWorks } from "@/components/Home/HowItWorks";
 import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
 import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
+import { CallToAction } from "@/components/Home/CallToAction";
 import { toast } from "sonner";
 
 interface HomepageModule {
@@ -44,7 +45,7 @@ export default function Home() {
         toast.error("Erreur lors du chargement de la page");
         throw error;
       }
-
+      
       console.log('Raw data from Supabase:', data);
 
       if (!data || data.length === 0) {
@@ -126,6 +127,7 @@ export default function Home() {
           />
         );
       case 'impact_stats':
+      case 'impact-stats':
         return (
           <ImpactStats 
             key={module.id}
@@ -133,18 +135,22 @@ export default function Home() {
           />
         );
       case 'how_it_works':
+      case 'how-it-works':
         return (
           <HowItWorks 
             key={module.id}
           />
         );
       case 'featured_children':
+      case 'featured-children':
+      case 'children-grid':
         return (
           <FeaturedChildren 
             key={module.id}
           />
         );
       case 'featured_album':
+      case 'featured-album':
         return (
           <FeaturedAlbum 
             key={module.id}
@@ -154,7 +160,9 @@ export default function Home() {
         return (
           <div key={module.id} className="py-12 bg-white">
             <div className="container mx-auto px-4">
-              <h2 className="text-3xl font-bold text-center mb-8">Témoignages de nos parrains</h2>
+              <h2 className="text-3xl font-bold text-center mb-8">
+                {module.settings?.title || "Témoignages de nos parrains"}
+              </h2>
               <FeaturedTestimonials />
             </div>
           </div>
@@ -168,6 +176,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {modules.map(renderModule)}
+      <CallToAction />
     </div>
   );
 }
