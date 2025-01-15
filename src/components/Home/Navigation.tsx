@@ -13,6 +13,7 @@ import {
   LogOut,
   HelpCircle,
   BarChart,
+  Menu,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
