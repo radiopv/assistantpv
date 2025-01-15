@@ -40,7 +40,7 @@ const SponsoredChildren = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-0 sm:px-4 py-8">
         <p className="text-center text-gray-500">Chargement des enfants parrainés...</p>
       </div>
     );
@@ -48,8 +48,8 @@ const SponsoredChildren = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
-      <div className="container mx-auto px-4 py-12 space-y-12">
-        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
+      <div className="container mx-auto px-0 sm:px-4 py-12 space-y-12">
+        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-6 sm:p-8 rounded-none sm:rounded-xl shadow-lg text-center mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
             Enfants Parrainés
           </h1>
@@ -58,7 +58,7 @@ const SponsoredChildren = () => {
           </p>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-orange-200">
+        <div className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-8 border border-orange-200">
           <SponsoredChildrenList children={children} />
         </div>
       </div>
