@@ -1,5 +1,21 @@
 import { Button } from "@/components/ui/button";
-import { Menu, Users, Settings, Gift, Home, FileText, Bell, Mail, User, LogIn, LogOut, HelpCircle, BarChart } from "lucide-react";
+import { Plus } from "lucide-react";
+import {
+  Users,
+  Settings,
+  Gift,
+  Home,
+  FileText,
+  Bell,
+  Mail,
+  User,
+  LogIn,
+  LogOut,
+  HelpCircle,
+  BarChart,
+  Menu,
+  Shield,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
@@ -7,6 +23,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Separator } from "@/components/ui/separator";
 
 export const Navigation = () => {
   const navigate = useNavigate();
@@ -86,44 +103,33 @@ export const Navigation = () => {
 
   const AdminLinks = () => (
     isAssistant && (
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:border-none md:static md:bg-transparent">
-        <div className="flex justify-around p-2 md:flex-col md:space-y-2">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              navigate("/admin/children-management");
-              setIsOpen(false);
-            }}
-            className="!justify-center md:justify-start text-primary"
-          >
-            <Users className="h-4 w-4 md:mr-2" />
-            <span className="hidden md:inline">Gestion des enfants</span>
-          </Button>
-          
-          <Button
-            variant="ghost"
-            onClick={() => {
-              navigate("/admin/donations-management");
-              setIsOpen(false);
-            }}
-            className="!justify-center md:justify-start text-primary"
-          >
-            <Gift className="h-4 w-4 md:mr-2" />
-            <span className="hidden md:inline">Gestion des donations</span>
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={() => {
-              navigate("/admin/validation");
-              setIsOpen(false);
-            }}
-            className="!justify-center md:justify-start text-primary"
-          >
-            <Settings className="h-4 w-4 md:mr-2" />
-            <span className="hidden md:inline">Validation</span>
-          </Button>
+      <div className="flex flex-col space-y-2">
+        <div className="flex items-center space-x-2 px-2 py-1 bg-muted rounded-lg">
+          <Shield className="h-4 w-4 text-primary" />
+          <span className="text-sm font-medium">Section Admin</span>
         </div>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/admin/children-management");
+            setIsOpen(false);
+          }}
+          className="justify-start text-primary w-full"
+        >
+          <Users className="h-4 w-4 mr-2" />
+          Gestion des enfants
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            navigate("/admin/donations-management");
+            setIsOpen(false);
+          }}
+          className="justify-start text-primary w-full"
+        >
+          <Gift className="h-4 w-4 mr-2" />
+          Gestion des donations
+        </Button>
       </div>
     )
   );
@@ -143,10 +149,25 @@ export const Navigation = () => {
               </SheetTrigger>
               <SheetContent side="left" className="w-[80%] sm:w-[385px] bg-white">
                 <div className="flex flex-col h-full">
-                  <div className="flex-1 py-6">
-                    <PublicLinks />
+                  <div className="flex-1 py-6 space-y-6">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2 px-2 py-1 bg-muted rounded-lg">
+                        <Home className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium">Navigation Principale</span>
+                      </div>
+                      <PublicLinks />
+                    </div>
+                    
+                    {isAssistant && (
+                      <>
+                        <Separator />
+                        <AdminLinks />
+                      </>
+                    )}
                   </div>
-                  <div className="border-t py-4">
+                  
+                  <Separator />
+                  <div className="py-4 space-y-4">
                     {user ? (
                       <>
                         <Button
@@ -223,10 +244,6 @@ export const Navigation = () => {
             )}
           </div>
         </div>
-      </div>
-      {/* Mobile Admin Menu */}
-      <div className="md:hidden">
-        <AdminLinks />
       </div>
     </nav>
   );
