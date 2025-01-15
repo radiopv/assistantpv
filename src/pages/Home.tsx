@@ -103,7 +103,7 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center px-0 sm:px-4">
         <div className="text-xl text-gray-600">Chargement...</div>
       </div>
     );
@@ -112,7 +112,7 @@ export default function Home() {
   if (error) {
     console.error('Error loading modules:', error);
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center px-0 sm:px-4">
         <div className="text-xl text-red-600">
           Une erreur est survenue lors du chargement de la page
         </div>
@@ -122,7 +122,7 @@ export default function Home() {
 
   if (!modules || modules.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center px-0 sm:px-4">
         <div className="text-xl text-gray-600">
           Aucun module actif. Veuillez configurer la page d'accueil dans l'interface d'administration.
         </div>
@@ -142,7 +142,7 @@ export default function Home() {
 
     const moduleWrapper = (content: JSX.Element) => (
       <div key={module.id} className="w-full py-16 bg-cuba-offwhite">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-0 sm:px-4">
           {content}
         </div>
       </div>
