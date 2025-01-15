@@ -81,12 +81,12 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 sm:px-4">
         {[1, 2, 3].map((n) => (
-          <Card key={n} className="p-4 space-y-4">
+          <Card key={n} className="p-3">
             <Skeleton className="h-48 w-full" />
-            <Skeleton className="h-4 w-2/3" />
-            <Skeleton className="h-4 w-1/2" />
+            <Skeleton className="h-4 w-2/3 mt-3" />
+            <Skeleton className="h-4 w-1/2 mt-2" />
           </Card>
         ))}
       </div>
@@ -95,7 +95,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
   if (!children.length) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-6 text-gray-500">
         Aucun enfant disponible
       </div>
     );
@@ -106,11 +106,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-2 sm:px-4">
       {children.map((child) => (
         <Card 
           key={child.id} 
-          className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige transform hover:scale-[1.02]"
+          className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
         >
           <div className="aspect-video relative">
             <img
@@ -121,26 +121,26 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               crossOrigin="anonymous"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
-            <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-              <h3 className="text-xl font-title font-bold">{child.name}</h3>
-              <div className="flex items-center gap-2 text-sm mt-1">
-                <Calendar className="w-4 h-4" />
-                <span>{formatAge(child.birth_date)}</span>
-                <MapPin className="w-4 h-4 ml-2" />
-                <span>{child.city}</span>
+            <div className="absolute bottom-0 left-0 right-0 p-3">
+              <h3 className="text-lg font-title font-bold text-white truncate">{child.name}</h3>
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <Calendar className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{formatAge(child.birth_date)}</span>
+                <MapPin className="w-4 h-4 flex-shrink-0 ml-2" />
+                <span className="truncate">{child.city}</span>
               </div>
             </div>
           </div>
 
-          <div className="p-4 space-y-3">
+          <div className="p-3 space-y-2">
             {child.description && (
-              <div className="bg-white/80 rounded-lg p-3">
-                <p className="text-sm text-gray-700 line-clamp-3">{child.description}</p>
+              <div className="bg-white/80 rounded-lg p-2">
+                <p className="text-sm text-gray-700 line-clamp-2">{child.description}</p>
               </div>
             )}
 
             {Array.isArray(child.needs) && child.needs.length > 0 && (
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {child.needs.slice(0, 2).map((need: any, index: number) => (
                   <div
                     key={`${need.category}-${index}`}
@@ -150,7 +150,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                         : "bg-orange-50 border border-orange-200 text-orange-700"
                     }`}
                   >
-                    <div className="text-sm font-medium">
+                    <div className="text-sm font-medium truncate">
                       {need.category}
                       {need.is_urgent && " (!)"} 
                     </div>

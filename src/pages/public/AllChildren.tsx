@@ -9,38 +9,38 @@ export default function AllChildren() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
-      <div className="container mx-auto px-4 py-12 space-y-12">
-        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
-          <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
+      <div className="container mx-auto py-8 space-y-8">
+        <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-6 rounded-xl shadow-lg text-center mb-6 mx-2 sm:mx-4">
+          <h1 className="text-2xl md:text-3xl font-bold font-title mb-3">
             Les Enfants
           </h1>
-          <p className="text-white/90 max-w-2xl mx-auto text-lg">
+          <p className="text-white/90 max-w-2xl mx-auto text-base sm:text-lg">
             Découvrez les enfants qui attendent votre soutien et ceux qui ont déjà trouvé une famille de cœur
           </p>
         </div>
 
-        <Card className="p-6">
+        <Card className="mx-2 sm:mx-4">
           <Tabs defaultValue="available" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger 
                 value="available" 
-                className="text-lg py-4 data-[state=active]:bg-orange-100"
+                className="text-base sm:text-lg py-3 data-[state=active]:bg-orange-100"
               >
                 Enfants disponibles
               </TabsTrigger>
               <TabsTrigger 
                 value="sponsored" 
-                className="text-lg py-4 data-[state=active]:bg-orange-100"
+                className="text-base sm:text-lg py-3 data-[state=active]:bg-orange-100"
               >
                 Enfants parrainés
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="available" className="mt-6">
+            <TabsContent value="available" className="mt-4">
               <AvailableChildren />
             </TabsContent>
 
-            <TabsContent value="sponsored" className="mt-6">
+            <TabsContent value="sponsored" className="mt-4">
               <SponsoredChildren />
             </TabsContent>
           </Tabs>
