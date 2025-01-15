@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/components/Home/HeroSection";
 import { ImpactStats } from "@/components/Home/ImpactStats";
+import { toast } from "sonner";
 
 interface HomepageModule {
   id: string;
@@ -26,6 +27,8 @@ export default function Home() {
   const { data: modules, isLoading, error } = useQuery({
     queryKey: ['homepage-modules'],
     queryFn: async () => {
+      console.log('Fetching homepage modules...'); // Debug log
+
       const { data, error } = await supabase
         .from('homepage_modules')
         .select('*')
@@ -34,11 +37,19 @@ export default function Home() {
 
       if (error) {
         console.error('Error fetching modules:', error);
+        toast.error("Erreur lors du chargement de la page");
         throw error;
       }
 
+      if (!data || data.length === 0) {
+        console.log('No modules found or empty data');
+        return [];
+      }
+
+      console.log('Raw data from Supabase:', data); // Debug log
+
       // Transform the data to match our interface
-      return data.map(module => ({
+      const transformedModules = data.map(module => ({
         ...module,
         content: module.content || {},
         settings: {
@@ -52,6 +63,9 @@ export default function Home() {
         },
         order_index: module.order_index || 0
       })) as HomepageModule[];
+
+      console.log('Transformed modules:', transformedModules); // Debug log
+      return transformedModules;
     }
   });
 
@@ -71,7 +85,9 @@ export default function Home() {
     console.error('Error loading modules:', error);
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-red-600">Une erreur est survenue lors du chargement de la page</div>
+        <div className="text-xl text-red-600">
+          Une erreur est survenue lors du chargement de la page
+        </div>
       </div>
     );
   }
@@ -79,7 +95,9 @@ export default function Home() {
   if (!modules || modules.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl text-gray-600">Aucun module actif</div>
+        <div className="text-xl text-gray-600">
+          Aucun module actif. Veuillez configurer la page d'accueil dans l'interface d'administration.
+        </div>
       </div>
     );
   }
@@ -89,9 +107,15 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {modules
-        .sort((a, b) => a.order_index - b.order_index)
+        .sort((a, b) => (a.order_index || 0) - (b.order_index || 0))
         .map((module) => {
           console.log('Rendering module:', module); // Debug log for each module
+          
+          if (!module.module_type) {
+            console.warn('Module without type:', module);
+            return null;
+          }
+
           switch (module.module_type) {
             case 'hero':
               return (
@@ -109,7 +133,7 @@ export default function Home() {
                 />
               );
             default:
-              console.log('Unknown module type:', module.module_type);
+              console.warn('Unknown module type:', module.module_type);
               return null;
           }
         })}
