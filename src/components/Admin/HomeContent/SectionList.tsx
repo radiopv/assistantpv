@@ -87,9 +87,12 @@ export const SectionList = ({ sections = [] }: SectionListProps) => {
 
     // Update all affected sections with new order_index values
     for (let i = 0; i < items.length; i++) {
+      const section = items[i];
+      if (!section.id) continue; // Skip if no valid ID
+
       try {
         await updateSection.mutateAsync({
-          id: items[i].id,
+          id: section.id,
           updates: { order_index: i }
         });
       } catch (error) {
