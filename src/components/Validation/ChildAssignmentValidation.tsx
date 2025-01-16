@@ -28,7 +28,12 @@ export const ChildAssignmentValidation = () => {
       childRequestApprovedSubject: "Votre demande a été approuvée",
       childRequestApprovedContent: "Votre demande pour {name} a été approuvée",
       childRequestRejectedSubject: "Votre demande a été rejetée",
-      childRequestRejectedContent: "Votre demande pour {name} a été rejetée"
+      childRequestRejectedContent: "Votre demande pour {name} a été rejetée",
+      requestDate: "Date de la demande",
+      childName: "Enfant",
+      sponsorName: "Parrain potentiel",
+      sponsorEmail: "Email",
+      city: "Ville"
     },
     es: {
       loading: "Cargando...",
@@ -55,7 +60,17 @@ export const ChildAssignmentValidation = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('child_assignment_requests')
-        .select('*')
+        .select(`
+          *,
+          children:child_id (
+            name
+          ),
+          sponsors:sponsor_id (
+            name,
+            email,
+            city
+          )
+        `)
         .eq('status', 'pending');
       
       if (error) {
@@ -63,11 +78,11 @@ export const ChildAssignmentValidation = () => {
         throw error;
       }
       
-      return data as ChildAssignmentRequest[];
+      return data;
     }
   });
 
-  const handleApprove = async (request: ChildAssignmentRequest) => {
+  const handleApprove = async (request: any) => {
     try {
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
@@ -77,9 +92,9 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        to: [request.requester_email],
+        to: [request.sponsors.email],
         subject: t.childRequestApprovedSubject,
-        html: t.childRequestApprovedContent.replace('{name}', request.name)
+        html: t.childRequestApprovedContent.replace('{name}', request.children.name)
       });
 
       toast({
@@ -100,7 +115,7 @@ export const ChildAssignmentValidation = () => {
     }
   };
 
-  const handleReject = async (request: ChildAssignmentRequest) => {
+  const handleReject = async (request: any) => {
     try {
       const { error: updateError } = await supabase
         .from('child_assignment_requests')
@@ -110,9 +125,9 @@ export const ChildAssignmentValidation = () => {
       if (updateError) throw updateError;
 
       await sendEmail({
-        to: [request.requester_email],
+        to: [request.sponsors.email],
         subject: t.childRequestRejectedSubject,
-        html: t.childRequestRejectedContent.replace('{name}', request.name)
+        html: t.childRequestRejectedContent.replace('{name}', request.children.name)
       });
 
       toast({
@@ -142,11 +157,13 @@ export const ChildAssignmentValidation = () => {
       {requests?.map((request) => (
         <Card key={request.id} className="p-4">
           <div className="flex justify-between items-start">
-            <div>
-              <h3 className="font-semibold">{request.name}</h3>
-              <p className="text-sm text-gray-500">{request.requester_email}</p>
+            <div className="space-y-2">
+              <h3 className="font-semibold">{t.childName}: {request.children?.name}</h3>
+              <p className="text-sm text-gray-500">{t.sponsorName}: {request.sponsors?.name}</p>
+              <p className="text-sm text-gray-500">{t.sponsorEmail}: {request.sponsors?.email}</p>
+              <p className="text-sm text-gray-500">{t.city}: {request.sponsors?.city}</p>
               <p className="text-sm text-gray-500">
-                {new Date(request.created_at || '').toLocaleDateString()}
+                {t.requestDate}: {new Date(request.created_at || '').toLocaleDateString()}
               </p>
             </div>
             <div className="space-x-2">
