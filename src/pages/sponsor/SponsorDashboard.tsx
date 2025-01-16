@@ -12,9 +12,7 @@ import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
 import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
 import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
-import { StatisticsSection } from "@/components/Sponsors/Dashboard/Sections/StatisticsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
-import { differenceInDays } from "date-fns";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -67,87 +65,6 @@ const SponsorDashboard = () => {
 
       if (error) throw error;
       return sponsorships || [];
-    },
-    enabled: !!user?.id
-  });
-
-  // Fetch contribution stats
-  const { data: contributionStats } = useQuery({
-    queryKey: ['contribution-stats', user?.id],
-    queryFn: async () => {
-      try {
-        // Get total photos
-        const { data: photos, error: photosError } = await supabase
-          .from('album_media')
-          .select('*')
-          .eq('sponsor_id', user?.id);
-
-        if (photosError) throw photosError;
-
-        // Get latest photo
-        const { data: latestPhoto, error: latestPhotoError } = await supabase
-          .from('album_media')
-          .select('created_at')
-          .eq('sponsor_id', user?.id)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (latestPhotoError) throw latestPhotoError;
-
-        // Get sponsorship start date and calculate duration
-        const { data: sponsorship, error: sponsorshipError } = await supabase
-          .from('sponsorships')
-          .select('start_date')
-          .eq('sponsor_id', user?.id)
-          .eq('status', 'active')
-          .order('start_date', { ascending: true })
-          .limit(1)
-          .maybeSingle();
-
-        if (sponsorshipError) throw sponsorshipError;
-
-        // Calculate sponsorship duration
-        const sponsorshipDays = sponsorship?.start_date 
-          ? differenceInDays(new Date(), new Date(sponsorship.start_date))
-          : 0;
-
-        // Get needs count and urgent needs count
-        let totalNeeds = 0;
-        let urgentNeeds = 0;
-
-        if (sponsoredChildren) {
-          sponsoredChildren.forEach(sponsorship => {
-            if (sponsorship.children?.needs) {
-              const needs = Array.isArray(sponsorship.children.needs) 
-                ? sponsorship.children.needs 
-                : JSON.parse(sponsorship.children.needs as string);
-              
-              totalNeeds += needs.length;
-              urgentNeeds += needs.filter((need: any) => need.is_urgent).length;
-            }
-          });
-        }
-
-        return {
-          totalPhotos: photos?.length || 0,
-          latestPhotoDate: latestPhoto?.created_at,
-          totalNeeds,
-          urgentNeeds,
-          sponsorshipDays,
-          sponsorshipStartDate: sponsorship?.start_date
-        };
-      } catch (error) {
-        console.error('Error fetching contribution stats:', error);
-        return {
-          totalPhotos: 0,
-          latestPhotoDate: null,
-          totalNeeds: 0,
-          urgentNeeds: 0,
-          sponsorshipDays: 0,
-          sponsorshipStartDate: null
-        };
-      }
     },
     enabled: !!user?.id
   });
@@ -240,14 +157,6 @@ const SponsorDashboard = () => {
 
           {/* Timeline */}
           <SponsorshipTimeline events={[]} />
-
-          {/* Statistics */}
-          <StatisticsSection
-            photos={[]}
-            needs={[]}
-            sponsorshipDuration={contributionStats?.sponsorshipDays || 0}
-            sponsorshipStartDate={contributionStats?.sponsorshipStartDate || ""}
-          />
 
           {/* Notifications */}
           {notifications?.map((notification) => (
