@@ -17,6 +17,13 @@ export const PhotoGrid = ({
     return <p className="text-gray-500 text-sm">Aucune photo disponible</p>;
   }
 
+  const handleDelete = async (id: string) => {
+    console.log("Handling delete for photo ID:", id);
+    if (onPhotoDelete) {
+      onPhotoDelete(id);
+    }
+  };
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {photos.map((photo) => (
@@ -24,7 +31,7 @@ export const PhotoGrid = ({
           key={photo.id}
           photo={photo}
           onPhotoClick={onPhotoClick}
-          onDelete={onPhotoDelete}
+          onDelete={handleDelete}
           onToggleFavorite={onToggleFavorite}
           isReadOnly={!onPhotoDelete && !onToggleFavorite}
         />

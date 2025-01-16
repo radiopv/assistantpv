@@ -6,13 +6,16 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
 
   const handleDelete = async (donationId: string) => {
     try {
-      // Delete associated photos
+      // Delete associated photos first
       const { error: photosError } = await supabase
         .from('donation_photos')
         .delete()
         .eq('donation_id', donationId);
 
-      if (photosError) throw photosError;
+      if (photosError) {
+        console.error('Error deleting photos:', photosError);
+        throw photosError;
+      }
 
       // Delete associated videos
       const { error: videosError } = await supabase
@@ -20,7 +23,10 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
         .delete()
         .eq('donation_id', donationId);
 
-      if (videosError) throw videosError;
+      if (videosError) {
+        console.error('Error deleting videos:', videosError);
+        throw videosError;
+      }
 
       // Delete donation items
       const { error: itemsError } = await supabase
@@ -28,7 +34,10 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
         .delete()
         .eq('donation_id', donationId);
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        console.error('Error deleting items:', itemsError);
+        throw itemsError;
+      }
 
       // Delete associated donors
       const { error: donorsError } = await supabase
@@ -36,7 +45,10 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
         .delete()
         .eq('donation_id', donationId);
 
-      if (donorsError) throw donorsError;
+      if (donorsError) {
+        console.error('Error deleting donors:', donorsError);
+        throw donorsError;
+      }
 
       // Finally, delete the donation
       const { error: donationError } = await supabase
@@ -44,7 +56,10 @@ export const useDonationDelete = (onDeleteSuccess?: () => void) => {
         .delete()
         .eq('id', donationId);
 
-      if (donationError) throw donationError;
+      if (donationError) {
+        console.error('Error deleting donation:', donationError);
+        throw donationError;
+      }
 
       toast({
         title: "Don supprimé",

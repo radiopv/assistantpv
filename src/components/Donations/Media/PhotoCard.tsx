@@ -17,6 +17,14 @@ export const PhotoCard = ({
   onToggleFavorite,
   isReadOnly = false
 }: PhotoCardProps) => {
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent photo click when clicking delete
+    if (onDelete) {
+      console.log("Deleting photo with ID:", photo.id);
+      onDelete(photo.id);
+    }
+  };
+
   return (
     <div className="relative group">
       <img
@@ -36,7 +44,10 @@ export const PhotoCard = ({
                 "h-8 w-8 bg-white/80 hover:bg-white",
                 photo.is_featured && "text-yellow-500"
               )}
-              onClick={() => onToggleFavorite(photo.id, !photo.is_featured)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite(photo.id, !photo.is_featured);
+              }}
             >
               <Star className="h-4 w-4" />
             </Button>
@@ -47,7 +58,7 @@ export const PhotoCard = ({
               variant="ghost"
               size="icon"
               className="h-8 w-8 bg-white/80 hover:bg-white text-red-500 hover:text-red-600"
-              onClick={() => onDelete(photo.id)}
+              onClick={handleDelete}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
