@@ -52,7 +52,7 @@ export default function ChildrenManagement() {
               <SponsorshipManagement />
             </TabsContent>
           </Tabs>
-        </div>
+        </Card>
       </div>
     </div>
   );
