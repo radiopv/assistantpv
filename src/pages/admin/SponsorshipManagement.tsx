@@ -142,34 +142,34 @@ export default function SponsorshipManagement() {
           </TableHeader>
           <TableBody>
             {filterBySearch(sponsors || []).map((sponsor) => (
-              <>
-                <TableRow key={sponsor.id}>
-                  <TableCell className="font-medium">{sponsor.name}</TableCell>
-                  <TableCell>{sponsor.email}</TableCell>
-                  <TableCell className="hidden md:table-cell">{sponsor.city}</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {sponsor.last_login 
-                      ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
-                      : "Jamais connecté"}
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {sponsor.sponsorships
-                      ?.filter((s: any) => s.status === 'active')
-                      .map((s: any) => s.child.name)
-                      .join(", ") || "Aucun"}
-                  </TableCell>
-                  <TableCell>
-                    <Collapsible>
-                      <CollapsibleTrigger asChild>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(sponsor)}
-                        >
-                          Modifier
-                        </Button>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className="p-4 space-y-4 bg-gray-50">
+              <TableRow key={sponsor.id}>
+                <TableCell className="font-medium">{sponsor.name}</TableCell>
+                <TableCell>{sponsor.email}</TableCell>
+                <TableCell className="hidden md:table-cell">{sponsor.city}</TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {sponsor.last_login 
+                    ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
+                    : "Jamais connecté"}
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {sponsor.sponsorships
+                    ?.filter((s: any) => s.status === 'active')
+                    .map((s: any) => s.child.name)
+                    .join(", ") || "Aucun"}
+                </TableCell>
+                <TableCell>
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEdit(sponsor)}
+                      >
+                        Modifier
+                      </Button>
+                    </CollapsibleTrigger>
+                    {editingSponsorId === sponsor.id && (
+                      <CollapsibleContent className="w-full p-4 space-y-4 bg-gray-50 border-t">
                         <div className="grid gap-4">
                           <div>
                             <label className="text-sm font-medium">Nom</label>
@@ -220,10 +220,10 @@ export default function SponsorshipManagement() {
                           </div>
                         </div>
                       </CollapsibleContent>
-                    </Collapsible>
-                  </TableCell>
-                </TableRow>
-              </>
+                    )}
+                  </Collapsible>
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
