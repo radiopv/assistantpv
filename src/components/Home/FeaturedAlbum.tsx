@@ -25,12 +25,14 @@ export const FeaturedAlbum = () => {
     queryKey: ["featured-photos"],
     queryFn: async () => {
       try {
+        console.log('Fetching featured photos...');
+        
         const { data, error } = await supabase
           .from("album_media")
           .select(`
             *,
             children (name),
-            sponsors (name)
+            sponsors!album_media_new_sponsor_id_fkey (name)
           `)
           .eq("is_featured", true)
           .eq("is_approved", true)
@@ -41,6 +43,7 @@ export const FeaturedAlbum = () => {
           throw error;
         }
 
+        console.log('Photos récupérées:', data);
         return data as AlbumMedia[];
       } catch (error) {
         console.error("Error in featured photos query:", error);
