@@ -14,6 +14,8 @@ import {
   HelpCircle,
   BarChart,
   Menu,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -22,6 +24,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
 import { toast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const publicLinks = [
   {
@@ -88,6 +91,8 @@ export const Navigation = () => {
   const navigate = useNavigate();
   const { user, signOut, isAssistant } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
+  const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
   const { t } = useLanguage();
 
   const handleLogout = async () => {
@@ -110,31 +115,42 @@ export const Navigation = () => {
 
   const MenuItems = () => (
     <div className="flex flex-col space-y-2 p-4">
-      {/* Public Links Section - Always visible */}
-      <div className="space-y-2">
-        <p className="text-sm font-semibold text-gray-500 px-2 mb-2">Menu Principal</p>
-        {publicLinks.map((link) => (
-          <Button
-            key={link.href}
-            variant="ghost"
-            onClick={() => {
-              navigate(link.href);
-              setIsOpen(false);
-            }}
-            className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
-          >
-            <link.icon className="h-4 w-4 mr-2" />
-            {link.label}
+      {/* Public Links Section with Collapsible */}
+      <Collapsible open={isMainMenuOpen} onOpenChange={setIsMainMenuOpen}>
+        <CollapsibleTrigger asChild>
+          <Button variant="ghost" className="w-full justify-between">
+            <span className="text-sm font-semibold text-gray-500">Menu Principal</span>
+            {isMainMenuOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
           </Button>
-        ))}
-      </div>
+        </CollapsibleTrigger>
+        <CollapsibleContent className="space-y-2">
+          {publicLinks.map((link) => (
+            <Button
+              key={link.href}
+              variant="ghost"
+              onClick={() => {
+                navigate(link.href);
+                setIsOpen(false);
+              }}
+              className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
+            >
+              <link.icon className="h-4 w-4 mr-2" />
+              {link.label}
+            </Button>
+          ))}
+        </CollapsibleContent>
+      </Collapsible>
 
-      {/* Admin Links Section - Only show if user is assistant */}
+      {/* Admin Links Section with Collapsible */}
       {isAssistant && (
-        <>
-          <div className="border-t my-4" />
-          <p className="text-sm font-semibold text-gray-500 px-2 mb-2">Menu Administrateur</p>
-          <div className="space-y-2">
+        <Collapsible open={isAdminMenuOpen} onOpenChange={setIsAdminMenuOpen}>
+          <CollapsibleTrigger asChild>
+            <Button variant="ghost" className="w-full justify-between">
+              <span className="text-sm font-semibold text-gray-500">Menu Administrateur</span>
+              {isAdminMenuOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-2">
             {adminLinks.map((link) => (
               <Button
                 key={link.href}
@@ -149,8 +165,8 @@ export const Navigation = () => {
                 {link.label}
               </Button>
             ))}
-          </div>
-        </>
+          </CollapsibleContent>
+        </Collapsible>
       )}
 
       {/* User Actions Section - Always at the bottom */}
@@ -202,7 +218,7 @@ export const Navigation = () => {
     <nav className="bg-white shadow-sm w-full">
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center">
-          {/* Mobile Menu Button - Updated styling */}
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
