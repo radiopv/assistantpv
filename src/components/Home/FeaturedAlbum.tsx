@@ -31,8 +31,9 @@ export const FeaturedAlbum = () => {
             *,
             children (name)
           `)
-          .eq("is_featured", true)
           .eq("is_approved", true)
+          .eq("type", "image")
+          .order("created_at", { ascending: false })
           .limit(10);
 
         if (error) {
@@ -73,11 +74,11 @@ export const FeaturedAlbum = () => {
               <img
                 src={photo.url}
                 alt={photo.title || "Photo souvenir"}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full hover:scale-110 transition-transform duration-300"
               />
-              {photo.title && (
+              {photo.children?.name && (
                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/50 text-white">
-                  <p className="text-xs truncate">{photo.title}</p>
+                  <p className="text-xs truncate">{photo.children.name}</p>
                 </div>
               )}
             </div>
