@@ -24,4 +24,9 @@ export const frenchTranslations = {
   errorTerminatingSponsorship: "Une erreur est survenue lors de la fin du parrainage",
   confirmTermination: "Confirmer la fin du parrainage",
   processing: "En cours...",
+  // Add these translations
+  childrenAndSponsorship: "Gestion des enfants et parrainages",
+  children: "Enfants",
+  photos: "Photos",
+  sponsorshipManagement: "Parrainages",
 };
