@@ -23,7 +23,7 @@ export const AssignSponsorDialog = ({
   const [searchTerm, setSearchTerm] = useState("");
   const { t } = useLanguage();
 
-  const { data: sponsors = [] } = useQuery({
+  const { data: sponsors = [], isLoading } = useQuery({
     queryKey: ['sponsors-for-assignment'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -41,6 +41,8 @@ export const AssignSponsorDialog = ({
 
   const handleSelectSponsor = async (sponsorId: string) => {
     try {
+      console.log('Creating assignment request:', { sponsorId, childId });
+      
       const { error } = await supabase
         .from('child_assignment_requests')
         .insert({
@@ -49,7 +51,10 @@ export const AssignSponsorDialog = ({
           status: 'pending'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating assignment request:', error);
+        throw error;
+      }
 
       toast.success(t("sponsorshipRequestCreated"));
       onAssignComplete?.();
@@ -71,6 +76,7 @@ export const AssignSponsorDialog = ({
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onSelectSponsor={handleSelectSponsor}
+          isLoading={isLoading}
         />
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={onClose}>

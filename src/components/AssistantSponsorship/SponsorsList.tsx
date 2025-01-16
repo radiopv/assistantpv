@@ -1,63 +1,69 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface Sponsor {
-  id: string;
-  name: string;
-  email: string;
-}
-
 interface SponsorsListProps {
-  sponsors: Sponsor[];
+  sponsors: any[];
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onSelectSponsor: (sponsorId: string) => void;
+  isLoading?: boolean;
 }
 
-export function SponsorsList({
+export const SponsorsList = ({
   sponsors,
   searchTerm,
   onSearchChange,
   onSelectSponsor,
-}: SponsorsListProps) {
+  isLoading = false
+}: SponsorsListProps) => {
   const { t } = useLanguage();
-  const filteredSponsors = sponsors.filter((sponsor) =>
-    sponsor.name.toLowerCase().includes(searchTerm.toLowerCase())
+
+  const filteredSponsors = sponsors.filter(sponsor =>
+    sponsor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sponsor.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-4">
+        <Loader2 className="h-6 w-6 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">{t("sponsors")}</h2>
-      <div className="flex items-center space-x-2">
-        <Search className="w-4 h-4 text-gray-500" />
-        <Input
-          placeholder={t("searchSponsor")}
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="w-full"
-        />
-      </div>
-      <div className="space-y-2 max-h-96 overflow-y-auto">
-        {filteredSponsors.map((sponsor) => (
-          <div
-            key={sponsor.id}
-            className="p-4 border rounded-lg hover:bg-gray-50 flex justify-between items-center"
-          >
-            <div>
-              <p className="font-medium">{sponsor.name}</p>
-              <p className="text-sm text-gray-600">{sponsor.email}</p>
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => onSelectSponsor(sponsor.id)}
+      <Input
+        placeholder={t("searchSponsors")}
+        value={searchTerm}
+        onChange={(e) => onSearchChange(e.target.value)}
+        className="w-full"
+      />
+      <div className="space-y-2 max-h-[400px] overflow-y-auto">
+        {filteredSponsors.length === 0 ? (
+          <p className="text-center text-gray-500 py-4">{t("noSponsorsFound")}</p>
+        ) : (
+          filteredSponsors.map((sponsor) => (
+            <div
+              key={sponsor.id}
+              className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50"
             >
-              {t("select")}
-            </Button>
-          </div>
-        ))}
+              <div>
+                <p className="font-medium">{sponsor.name}</p>
+                <p className="text-sm text-gray-500">{sponsor.email}</p>
+              </div>
+              <Button
+                onClick={() => onSelectSponsor(sponsor.id)}
+                size="sm"
+              >
+                {t("select")}
+              </Button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
-}
+};
