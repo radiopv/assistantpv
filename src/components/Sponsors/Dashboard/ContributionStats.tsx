@@ -34,68 +34,78 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
   const { data: stats } = useQuery({
     queryKey: ['contribution-stats', sponsorId],
     queryFn: async () => {
-      // Get total photos
-      const { data: photos, error: photosError } = await supabase
-        .from('album_media')
-        .select('*')
-        .eq('sponsor_id', sponsorId);
+      try {
+        // Get total photos
+        const { data: photos, error: photosError } = await supabase
+          .from('album_media')
+          .select('*')
+          .eq('sponsor_id', sponsorId);
 
-      if (photosError) throw photosError;
+        if (photosError) throw photosError;
 
-      // Get total testimonials
-      const { data: testimonials, error: testimonialsError } = await supabase
-        .from('temoignage')
-        .select('*')
-        .eq('sponsor_id', sponsorId);
+        // Get total testimonials
+        const { data: testimonials, error: testimonialsError } = await supabase
+          .from('temoignage')
+          .select('*')
+          .eq('sponsor_id', sponsorId);
 
-      if (testimonialsError) throw testimonialsError;
+        if (testimonialsError) throw testimonialsError;
 
-      // Get sponsorship start date to calculate duration
-      const { data: sponsorship, error: sponsorshipError } = await supabase
-        .from('sponsorships')
-        .select('start_date')
-        .eq('sponsor_id', sponsorId)
-        .eq('status', 'active')
-        .order('start_date', { ascending: true })
-        .limit(1)
-        .single();
+        // Get sponsorship start date to calculate duration
+        const { data: sponsorship, error: sponsorshipError } = await supabase
+          .from('sponsorships')
+          .select('start_date')
+          .eq('sponsor_id', sponsorId)
+          .eq('status', 'active')
+          .order('start_date', { ascending: true })
+          .limit(1)
+          .single();
 
-      if (sponsorshipError && sponsorshipError.code !== 'PGRST116') throw sponsorshipError;
+        if (sponsorshipError && sponsorshipError.code !== 'PGRST116') throw sponsorshipError;
 
-      // Get total fulfilled needs
-      const { data: children, error: childrenError } = await supabase
-        .from('sponsorships')
-        .select(`
-          children (
-            needs
-          )
-        `)
-        .eq('sponsor_id', sponsorId)
-        .eq('status', 'active');
+        // Get total fulfilled needs
+        const { data: children, error: childrenError } = await supabase
+          .from('sponsorships')
+          .select(`
+            children (
+              needs
+            )
+          `)
+          .eq('sponsor_id', sponsorId)
+          .eq('status', 'active');
 
-      if (childrenError) throw childrenError;
+        if (childrenError) throw childrenError;
 
-      let totalNeeds = 0;
-      children?.forEach(sponsorship => {
-        if (sponsorship.children?.needs) {
-          const needs = Array.isArray(sponsorship.children.needs) 
-            ? sponsorship.children.needs 
-            : JSON.parse(sponsorship.children.needs as string);
-          totalNeeds += needs.length;
-        }
-      });
+        let totalNeeds = 0;
+        children?.forEach(sponsorship => {
+          if (sponsorship.children?.needs) {
+            const needs = Array.isArray(sponsorship.children.needs) 
+              ? sponsorship.children.needs 
+              : JSON.parse(sponsorship.children.needs as string);
+            totalNeeds += needs.length;
+          }
+        });
 
-      // Calculate sponsorship duration
-      const sponsorshipDays = sponsorship?.start_date 
-        ? differenceInDays(new Date(), new Date(sponsorship.start_date))
-        : 0;
+        // Calculate sponsorship duration
+        const sponsorshipDays = sponsorship?.start_date 
+          ? differenceInDays(new Date(), new Date(sponsorship.start_date))
+          : 0;
 
-      return {
-        totalPhotos: photos?.length || 0,
-        totalTestimonials: testimonials?.length || 0,
-        totalNeeds,
-        sponsorshipDays
-      };
+        return {
+          totalPhotos: photos?.length || 0,
+          totalTestimonials: testimonials?.length || 0,
+          totalNeeds,
+          sponsorshipDays
+        };
+      } catch (error) {
+        console.error('Error fetching contribution stats:', error);
+        return {
+          totalPhotos: 0,
+          totalTestimonials: 0,
+          totalNeeds: 0,
+          sponsorshipDays: 0
+        };
+      }
     }
   });
 
