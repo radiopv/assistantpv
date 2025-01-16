@@ -14,9 +14,7 @@ interface AlbumMedia {
   children?: {
     name: string;
   } | null;
-  sponsors?: {
-    name: string;
-  } | null;
+  sponsor_id: string | null;
   created_at: string;
 }
 
@@ -31,8 +29,7 @@ export const FeaturedAlbum = () => {
           .from("album_media")
           .select(`
             *,
-            children (name),
-            sponsors!album_media_new_sponsor_id_fkey (name)
+            children (name)
           `)
           .eq("is_featured", true)
           .eq("is_approved", true)
