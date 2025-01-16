@@ -49,7 +49,12 @@ export const ChildAssignmentValidation = () => {
       childRequestApprovedSubject: "Su solicitud ha sido aprobada",
       childRequestApprovedContent: "Su solicitud para {name} ha sido aprobada",
       childRequestRejectedSubject: "Su solicitud ha sido rechazada",
-      childRequestRejectedContent: "Su solicitud para {name} ha sido rechazada"
+      childRequestRejectedContent: "Su solicitud para {name} ha sido rechazada",
+      requestDate: "Fecha de solicitud",
+      childName: "Niño",
+      sponsorName: "Padrino potencial",
+      sponsorEmail: "Correo electrónico",
+      city: "Ciudad"
     }
   };
 
