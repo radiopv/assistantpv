@@ -12,6 +12,8 @@ import { PhotoValidation } from "@/components/Validation/PhotoValidation";
 import { ChildAssignmentValidation } from "@/components/Validation/ChildAssignmentValidation";
 import { AuditLogsList } from "@/components/Admin/AuditLogs/AuditLogsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 const Dashboard = () => {
   const { language } = useLanguage();
@@ -32,7 +34,8 @@ const Dashboard = () => {
       sponsorships: "Parrainages",
       photos: "Photos",
       testimonials: "Témoignages",
-      childRequests: "Demandes d'enfants"
+      childRequests: "Demandes d'enfants",
+      pendingApprovals: "Vous avez des éléments en attente d'approbation"
     },
     es: {
       dashboard: "Panel de control",
@@ -48,12 +51,71 @@ const Dashboard = () => {
       sponsorships: "Patrocinios",
       photos: "Fotos",
       testimonials: "Testimonios",
-      childRequests: "Solicitudes de niños"
+      childRequests: "Solicitudes de niños",
+      pendingApprovals: "Tiene elementos pendientes de aprobación"
     }
   };
 
   const t = translations[language as keyof typeof translations];
   const dateLocale = language === 'fr' ? fr : es;
+
+  // Query for pending photos
+  const { data: pendingPhotos } = useQuery({
+    queryKey: ['pending-photos'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .eq('is_approved', false);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: isAssistant
+  });
+
+  // Query for pending testimonials
+  const { data: pendingTestimonials } = useQuery({
+    queryKey: ['pending-testimonials'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('temoignage')
+        .select('*')
+        .eq('is_approved', false);
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: isAssistant
+  });
+
+  // Query for pending child requests
+  const { data: pendingChildRequests } = useQuery({
+    queryKey: ['pending-child-requests'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('child_assignment_requests')
+        .select('*')
+        .eq('status', 'pending');
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: isAssistant
+  });
+
+  // Effect to show notifications for pending items
+  useEffect(() => {
+    if (isAssistant) {
+      const totalPending = (pendingPhotos?.length || 0) + 
+                          (pendingTestimonials?.length || 0) + 
+                          (pendingChildRequests?.length || 0);
+      
+      if (totalPending > 0) {
+        toast(t.pendingApprovals, {
+          description: `Photos: ${pendingPhotos?.length || 0}, Témoignages: ${pendingTestimonials?.length || 0}, Demandes: ${pendingChildRequests?.length || 0}`,
+          duration: 5000,
+        });
+      }
+    }
+  }, [pendingPhotos, pendingTestimonials, pendingChildRequests, isAssistant, t]);
 
   const { data: upcomingBirthdays } = useQuery({
     queryKey: ['upcoming-birthdays'],
@@ -115,10 +177,18 @@ const Dashboard = () => {
               <Card className="p-6">
                 <Tabs defaultValue="sponsorships">
                   <TabsList>
-                    <TabsTrigger value="sponsorships">{t.sponsorships}</TabsTrigger>
-                    <TabsTrigger value="photos">{t.photos}</TabsTrigger>
-                    <TabsTrigger value="testimonials">{t.testimonials}</TabsTrigger>
-                    <TabsTrigger value="children">{t.childRequests}</TabsTrigger>
+                    <TabsTrigger value="sponsorships">
+                      {t.sponsorships}
+                    </TabsTrigger>
+                    <TabsTrigger value="photos">
+                      {t.photos} {pendingPhotos?.length ? `(${pendingPhotos.length})` : ''}
+                    </TabsTrigger>
+                    <TabsTrigger value="testimonials">
+                      {t.testimonials} {pendingTestimonials?.length ? `(${pendingTestimonials.length})` : ''}
+                    </TabsTrigger>
+                    <TabsTrigger value="children">
+                      {t.childRequests} {pendingChildRequests?.length ? `(${pendingChildRequests.length})` : ''}
+                    </TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="sponsorships">
@@ -149,7 +219,6 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Anniversaires à venir */}
       {upcomingBirthdays && upcomingBirthdays.length > 0 && (
         <Card className="p-6">
           <div className="space-y-4">
