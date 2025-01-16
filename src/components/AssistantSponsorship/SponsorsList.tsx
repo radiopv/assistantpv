@@ -25,6 +25,13 @@ export const SponsorsList = ({
     sponsor.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleSponsorSelect = (sponsorId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Handling sponsor selection:', sponsorId);
+    onSelectSponsor(sponsorId);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center p-4">
@@ -55,14 +62,15 @@ export const SponsorsList = ({
                 <p className="text-sm text-gray-500">{sponsor.email}</p>
               </div>
               <Button
-                onClick={() => {
-                  console.log('Select button clicked for sponsor:', sponsor.id);
-                  onSelectSponsor(sponsor.id);
-                }}
+                onClick={(e) => handleSponsorSelect(sponsor.id, e)}
                 size="sm"
                 disabled={isLoading}
               >
-                {t("select")}
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  t("select")
+                )}
               </Button>
             </div>
           ))

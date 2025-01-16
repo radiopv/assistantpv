@@ -24,7 +24,7 @@ export const AssignSponsorDialog = ({
   const { t } = useLanguage();
   const [isAssigning, setIsAssigning] = useState(false);
 
-  const { data: sponsors = [], isLoading } = useQuery({
+  const { data: sponsors = [], isLoading: isLoadingSponsors } = useQuery({
     queryKey: ['sponsors-for-assignment'],
     queryFn: async () => {
       console.log('Fetching sponsors for assignment');
@@ -122,7 +122,7 @@ export const AssignSponsorDialog = ({
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onSelectSponsor={handleSelectSponsor}
-          isLoading={isLoading || isAssigning}
+          isLoading={isLoadingSponsors || isAssigning}
         />
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={onClose} disabled={isAssigning}>
