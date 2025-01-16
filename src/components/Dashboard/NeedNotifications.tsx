@@ -120,7 +120,7 @@ export const NeedNotifications = () => {
 
   if (loading) {
     return (
-      <Card className="p-6">
+      <Card className="p-4">
         <div className="flex items-center justify-center">
           <span className="text-gray-500">{t("loading")}</span>
         </div>
@@ -130,7 +130,7 @@ export const NeedNotifications = () => {
 
   if (notifications.length === 0) {
     return (
-      <Card className="p-6">
+      <Card className="p-4">
         <div className="flex items-center justify-center text-gray-500">
           <span>{t("noNotifications")}</span>
         </div>
@@ -139,7 +139,7 @@ export const NeedNotifications = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <Card className="divide-y divide-gray-100">
       {notifications.map((notification) => (
         <div key={notification.id} className="relative">
           <DetailedNotification notification={notification} />
@@ -148,13 +148,13 @@ export const NeedNotifications = () => {
               variant="ghost"
               size="sm"
               onClick={() => handleMarkAsRead(notification.id)}
-              className="absolute top-2 right-2"
+              className="absolute top-2 right-2 h-7 px-2 text-xs"
             >
               {t("markAsRead")}
             </Button>
           )}
         </div>
       ))}
-    </div>
+    </Card>
   );
 };
