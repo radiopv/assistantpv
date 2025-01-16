@@ -14,7 +14,7 @@ const Statistics = () => {
       // Get sponsorship stats
       const { data: sponsorships, error: sponsorshipsError } = await supabase
         .from("sponsorships")
-        .select("status");
+        .select("status, sponsor_id");
 
       if (sponsorshipsError) throw sponsorshipsError;
 

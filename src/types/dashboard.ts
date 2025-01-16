@@ -12,3 +12,14 @@ export interface StatisticsData {
     count: number;
   }>;
 }
+
+export interface DashboardStats {
+  urgent_needs: Array<{
+    child_id: string;
+    child_name: string;
+    needs: Array<{
+      category: string;
+      description?: string;
+    }>;
+  }>;
+}
