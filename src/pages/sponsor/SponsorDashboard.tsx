@@ -138,12 +138,27 @@ const SponsorDashboard = () => {
       
       const { data, error } = await supabase
         .from('album_media')
-        .select('*')
-        .in('child_id', sponsoredChildren.map(s => s.child_id))
+        .select(`
+          id,
+          url,
+          type,
+          title,
+          description,
+          is_featured,
+          created_at,
+          child_id,
+          sponsor_id
+        `)
+        .in('child_id', sponsoredChildren.map(s => s.children?.id))
         .eq('is_approved', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching photos:', error);
+        throw error;
+      }
+
+      console.log('Fetched photos:', data);
       return data || [];
     },
     enabled: !!sponsoredChildren?.length
@@ -295,13 +310,27 @@ const SponsorDashboard = () => {
                   />
                 </div>
 
-                {hasUrgentNeeds(sponsorship.children?.needs) && (
-                  <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
-                    {translations[language].urgentNeeds}
-                  </span>
-                )}
+                {/* Photo Grid */}
+                <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {childrenPhotos
+                    .filter(photo => photo.child_id === sponsorship.children?.id)
+                    .map((photo) => (
+                      <div 
+                        key={photo.id} 
+                        className="aspect-square rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <img
+                          src={photo.url}
+                          alt={photo.title || "Photo album"}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          onClick={() => window.open(photo.url, '_blank')}
+                        />
+                      </div>
+                    ))}
+                </div>
               </div>
 
+              {/* Photo uploader */}
               {selectedChild === sponsorship.children?.id && (
                 <div className="mt-4 w-full">
                   <PhotoUploader
