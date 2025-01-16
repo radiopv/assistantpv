@@ -13,6 +13,7 @@ import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionS
 import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
 import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
+import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -26,14 +27,16 @@ const SponsorDashboard = () => {
       loading: "Chargement...",
       sponsorDashboard: "Mon Espace Parrain",
       uploadSuccess: "Photo ajoutée avec succès",
-      uploadError: "Erreur lors de l'ajout de la photo"
+      uploadError: "Erreur lors de l'ajout de la photo",
+      plannedVisits: "Visites Planifiées"
     },
     es: {
       welcomeMessage: "Bienvenido",
       loading: "Cargando...",
       sponsorDashboard: "Mi Panel de Padrino",
       uploadSuccess: "Foto agregada con éxito",
-      uploadError: "Error al agregar la foto"
+      uploadError: "Error al agregar la foto",
+      plannedVisits: "Visitas Planificadas"
     }
   };
 
@@ -69,7 +72,7 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  const { data: plannedVisits = [] } = useQuery({
+  const { data: plannedVisits = [], refetch: refetchVisits } = useQuery({
     queryKey: ['planned-visits', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -150,9 +153,15 @@ const SponsorDashboard = () => {
           {/* Planned Visits */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">
-              {language === 'fr' ? 'Visites Planifiées' : 'Visitas Planificadas'}
+              {t.plannedVisits}
             </h3>
-            <VisitsSection visits={plannedVisits || []} />
+            <div className="space-y-6">
+              <PlannedVisitForm 
+                sponsorId={user?.id || ''} 
+                onVisitPlanned={() => refetchVisits()} 
+              />
+              <VisitsSection visits={plannedVisits || []} onVisitDeleted={() => refetchVisits()} />
+            </div>
           </Card>
 
           {/* Timeline */}
