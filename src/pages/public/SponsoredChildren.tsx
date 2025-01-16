@@ -20,7 +20,7 @@ const SponsoredChildren = () => {
           sponsor_name,
           sponsorship_date,
           sponsorship_status,
-          age,
+          birth_date,
           photos
         `)
         .eq('is_sponsored', true)
