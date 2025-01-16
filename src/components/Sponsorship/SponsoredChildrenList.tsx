@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInYears, parseISO } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SponsoredChildrenListProps {
   children: any[];
@@ -20,6 +22,38 @@ const formatAge = (birthDate: string) => {
 
 export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) => {
   const { t } = useLanguage();
+
+  // Fetch album photos for all children
+  const { data: albumPhotos } = useQuery({
+    queryKey: ['album-photos', children.map(child => child.id)],
+    queryFn: async () => {
+      if (!children.length) return [];
+      
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .in('child_id', children.map(child => child.id))
+        .eq('type', 'image')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching album photos:', error);
+        return [];
+      }
+
+      return data || [];
+    },
+    enabled: children.length > 0
+  });
+
+  // Group photos by child
+  const photosByChild = albumPhotos?.reduce((acc, photo) => {
+    if (!acc[photo.child_id]) {
+      acc[photo.child_id] = [];
+    }
+    acc[photo.child_id].push(photo);
+    return acc;
+  }, {} as Record<string, any[]>) || {};
 
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -55,11 +89,11 @@ export const SponsoredChildrenList = ({ children }: SponsoredChildrenListProps) 
 
           <div className="p-4 space-y-4">
             {/* Album Photos Grid */}
-            {child.photos && child.photos.length > 0 && (
+            {photosByChild[child.id]?.length > 0 && (
               <div className="bg-white/60 rounded-lg p-3">
                 <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
                 <div className="grid grid-cols-3 gap-2">
-                  {child.photos.slice(0, 3).map((photo: any) => (
+                  {photosByChild[child.id].slice(0, 3).map((photo: any) => (
                     <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
                       <img
                         src={photo.url}
