@@ -1,82 +1,60 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export const PhotoValidation = () => {
   const { t } = useLanguage();
   const queryClient = useQueryClient();
 
   const { data: photos, isLoading } = useQuery({
-    queryKey: ["pending-photos"],
+    queryKey: ['pending-photos'],
     queryFn: async () => {
       console.log("Fetching pending photos");
       const { data, error } = await supabase
-        .from("album_media")
-        .select("*")
-        .eq("is_approved", false);
+        .from('album_media')
+        .select('*')
+        .eq('is_approved', false);
 
-      if (error) {
-        console.error("Error fetching photos:", error);
-        throw error;
-      }
-
+      if (error) throw error;
       console.log("Fetched photos:", data);
       return data;
-    },
+    }
   });
 
   const handleApprove = async (id: string) => {
     try {
       const { error } = await supabase
-        .from("album_media")
+        .from('album_media')
         .update({ is_approved: true })
-        .eq("id", id);
+        .eq('id', id);
 
-      if (error) {
-        console.error("Error approving photo:", error);
-        toast.error(t("errorApprovingPhoto"));
-        return;
-      }
+      if (error) throw error;
 
-      toast.success(t("photoApproved"));
-      queryClient.invalidateQueries({ queryKey: ["pending-photos"] });
+      toast.success("Photo approuvée avec succès");
+      queryClient.invalidateQueries({ queryKey: ['pending-photos'] });
     } catch (error) {
-      console.error("Error in handleApprove:", error);
-      toast.error(t("errorApprovingPhoto"));
+      console.error('Error approving photo:', error);
+      toast.error("Erreur lors de l'approbation de la photo");
     }
   };
 
   const handleReject = async (id: string) => {
     try {
       const { error } = await supabase
-        .from("album_media")
-        .update({ 
-          is_approved: false,
-          is_featured: false 
-        })
-        .eq("id", id);
+        .from('album_media')
+        .delete()
+        .eq('id', id);
 
-      if (error) {
-        console.error("Error rejecting photo:", error);
-        toast.error(t("errorRejectingPhoto"));
-        return;
-      }
+      if (error) throw error;
 
-      toast.success(t("photoRejected"));
-      queryClient.invalidateQueries({ queryKey: ["pending-photos"] });
+      toast.success("Photo rejetée avec succès");
+      queryClient.invalidateQueries({ queryKey: ['pending-photos'] });
     } catch (error) {
-      console.error("Error in handleReject:", error);
-      toast.error(t("errorRejectingPhoto"));
+      console.error('Error rejecting photo:', error);
+      toast.error("Erreur lors du rejet de la photo");
     }
   };
 
@@ -105,19 +83,20 @@ export const PhotoValidation = () => {
               <TableCell>
                 <img
                   src={photo.url}
-                  alt=""
+                  alt="Photo à valider"
                   className="w-20 h-20 object-cover rounded"
                 />
               </TableCell>
-              <TableCell>{photo.title}</TableCell>
+              <TableCell>{photo.child_id}</TableCell>
               <TableCell>
-                {new Date(photo.created_at || "").toLocaleDateString()}
+                {new Date(photo.created_at).toLocaleDateString()}
               </TableCell>
               <TableCell className="space-x-2">
                 <Button
                   variant="default"
                   size="sm"
                   onClick={() => handleApprove(photo.id)}
+                  className="bg-green-500 hover:bg-green-600 text-white"
                 >
                   {t("approve")}
                 </Button>
