@@ -81,7 +81,6 @@ export default function SponsorshipManagement() {
     );
   };
 
-  // Filter and organize data
   const activeSponsors = sponsorshipData?.filter(sponsor => 
     sponsor.sponsorships?.some(s => s.status === 'active')
   ).sort((a, b) => a.name.localeCompare(b.name)) || [];
@@ -95,7 +94,7 @@ export default function SponsorshipManagement() {
   ) || [];
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-2 sm:p-4 max-w-full">
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-4">Gestion des Parrainages</h1>
         <div className="relative">
@@ -105,23 +104,23 @@ export default function SponsorshipManagement() {
             placeholder="Rechercher un parrain ou un enfant..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 w-full"
           />
         </div>
       </div>
 
       <Tabs defaultValue="active" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="active">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          <TabsTrigger value="active" className="min-h-[44px]">
             Parrains Actifs ({activeSponsors.length})
           </TabsTrigger>
-          <TabsTrigger value="inactive">
+          <TabsTrigger value="inactive" className="min-h-[44px]">
             Parrains Inactifs ({inactiveSponsors.length})
           </TabsTrigger>
-          <TabsTrigger value="unsponsored">
+          <TabsTrigger value="unsponsored" className="min-h-[44px]">
             Enfants Sans Parrain ({unsponsored?.length || 0})
           </TabsTrigger>
-          <TabsTrigger value="noname">
+          <TabsTrigger value="noname" className="min-h-[44px]">
             Parrains Sans Nom ({sponsoredNoName.length})
           </TabsTrigger>
         </TabsList>
@@ -131,14 +130,15 @@ export default function SponsorshipManagement() {
             <Button
               variant="outline"
               onClick={() => setShowBulkOperations(true)}
+              className="w-full sm:w-auto"
             >
               Actions en masse ({selectedSponsors.length})
             </Button>
           </div>
         )}
 
-        <TabsContent value="active">
-          <div className="grid md:grid-cols-2 gap-4">
+        <TabsContent value="active" className="mt-4">
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {filterBySearch(activeSponsors).map((sponsor) => (
               <SponsorListItem
                 key={sponsor.id}
@@ -153,8 +153,8 @@ export default function SponsorshipManagement() {
           </div>
         </TabsContent>
 
-        <TabsContent value="inactive">
-          <div className="grid md:grid-cols-2 gap-4">
+        <TabsContent value="inactive" className="mt-4">
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {filterBySearch(inactiveSponsors).map((sponsor) => (
               <SponsorListItem
                 key={sponsor.id}
@@ -169,40 +169,47 @@ export default function SponsorshipManagement() {
           </div>
         </TabsContent>
 
-        <TabsContent value="unsponsored">
-          <div className="grid md:grid-cols-2 gap-4">
+        <TabsContent value="unsponsored" className="mt-4">
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {filterBySearch(unsponsored || []).map((child) => (
               <Card key={child.id} className="p-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  {child.name}
-                  <AlertCircle className="text-yellow-500" size={20} />
-                </h3>
-                <p className="text-gray-600">{child.city}</p>
+                <div className="flex flex-col space-y-2">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    {child.name}
+                    <AlertCircle className="text-yellow-500" size={20} />
+                  </h3>
+                  <p className="text-gray-600">{child.city}</p>
+                  {child.age && (
+                    <p className="text-gray-600">{child.age} ans</p>
+                  )}
+                </div>
               </Card>
             ))}
           </div>
         </TabsContent>
 
-        <TabsContent value="noname">
-          <div className="grid md:grid-cols-2 gap-4">
+        <TabsContent value="noname" className="mt-4">
+          <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {filterBySearch(sponsoredNoName).map((sponsor) => (
               <Card key={sponsor.id} className="p-4">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <AlertCircle className="text-red-500" size={20} />
-                  Parrain sans nom
-                </h3>
-                <p className="text-gray-600">{sponsor.email}</p>
-                <div className="mt-2">
-                  <h4 className="font-medium">Enfants parrainés :</h4>
-                  <ul className="list-disc list-inside">
-                    {sponsor.sponsorships
-                      ?.filter(s => s.status === 'active')
-                      .map(s => (
-                        <li key={s.id}>
-                          {s.child.name}
-                        </li>
-                      ))}
-                  </ul>
+                <div className="flex flex-col space-y-3">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <AlertCircle className="text-red-500" size={20} />
+                    Parrain sans nom
+                  </h3>
+                  <p className="text-gray-600 break-all">{sponsor.email}</p>
+                  <div className="mt-2">
+                    <h4 className="font-medium mb-2">Enfants parrainés :</h4>
+                    <ul className="list-disc list-inside space-y-1">
+                      {sponsor.sponsorships
+                        ?.filter(s => s.status === 'active')
+                        .map(s => (
+                          <li key={s.id} className="text-gray-600">
+                            {s.child.name}
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
                 </div>
               </Card>
             ))}
