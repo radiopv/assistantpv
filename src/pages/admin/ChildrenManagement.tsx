@@ -14,12 +14,12 @@ export default function ChildrenManagement() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-6 border border-orange-200 w-full max-w-[100%]">
-          <h1 className="text-2xl font-bold mb-4">{t("childrenAndSponsorship")}</h1>
+      <div className="w-full max-w-[100%] py-4">
+        <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg border border-orange-200">
+          <h1 className="text-2xl font-bold p-4 sm:p-6">{t("childrenAndSponsorship")}</h1>
           
           <Tabs defaultValue="children" className="w-full">
-            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 p-4">
               <TabsTrigger 
                 value="children" 
                 className="flex items-center gap-2 min-h-[44px] w-full justify-center"
