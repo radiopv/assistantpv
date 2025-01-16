@@ -75,63 +75,79 @@ const SponsorDashboard = () => {
   const { data: contributionStats } = useQuery({
     queryKey: ['contribution-stats', user?.id],
     queryFn: async () => {
-      // Get total photos
-      const { data: photos, error: photosError } = await supabase
-        .from('album_media')
-        .select('*')
-        .eq('sponsor_id', user?.id);
+      try {
+        // Get total photos
+        const { data: photos, error: photosError } = await supabase
+          .from('album_media')
+          .select('*')
+          .eq('sponsor_id', user?.id);
 
-      if (photosError) throw photosError;
+        if (photosError) throw photosError;
 
-      // Get latest photo
-      const { data: latestPhoto } = await supabase
-        .from('album_media')
-        .select('created_at')
-        .eq('sponsor_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+        // Get latest photo
+        const { data: latestPhoto, error: latestPhotoError } = await supabase
+          .from('album_media')
+          .select('created_at')
+          .eq('sponsor_id', user?.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
 
-      // Get sponsorship start date and calculate duration
-      const { data: sponsorship } = await supabase
-        .from('sponsorships')
-        .select('start_date')
-        .eq('sponsor_id', user?.id)
-        .eq('status', 'active')
-        .order('start_date', { ascending: true })
-        .limit(1)
-        .single();
+        if (latestPhotoError) throw latestPhotoError;
 
-      // Calculate sponsorship duration
-      const sponsorshipDays = sponsorship?.start_date 
-        ? differenceInDays(new Date(), new Date(sponsorship.start_date))
-        : 0;
+        // Get sponsorship start date and calculate duration
+        const { data: sponsorship, error: sponsorshipError } = await supabase
+          .from('sponsorships')
+          .select('start_date')
+          .eq('sponsor_id', user?.id)
+          .eq('status', 'active')
+          .order('start_date', { ascending: true })
+          .limit(1)
+          .maybeSingle();
 
-      // Get needs count and urgent needs count
-      let totalNeeds = 0;
-      let urgentNeeds = 0;
+        if (sponsorshipError) throw sponsorshipError;
 
-      if (sponsoredChildren) {
-        sponsoredChildren.forEach(sponsorship => {
-          if (sponsorship.children?.needs) {
-            const needs = Array.isArray(sponsorship.children.needs) 
-              ? sponsorship.children.needs 
-              : JSON.parse(sponsorship.children.needs);
-            
-            totalNeeds += needs.length;
-            urgentNeeds += needs.filter((need: any) => need.is_urgent).length;
-          }
-        });
+        // Calculate sponsorship duration
+        const sponsorshipDays = sponsorship?.start_date 
+          ? differenceInDays(new Date(), new Date(sponsorship.start_date))
+          : 0;
+
+        // Get needs count and urgent needs count
+        let totalNeeds = 0;
+        let urgentNeeds = 0;
+
+        if (sponsoredChildren) {
+          sponsoredChildren.forEach(sponsorship => {
+            if (sponsorship.children?.needs) {
+              const needs = Array.isArray(sponsorship.children.needs) 
+                ? sponsorship.children.needs 
+                : JSON.parse(sponsorship.children.needs as string);
+              
+              totalNeeds += needs.length;
+              urgentNeeds += needs.filter((need: any) => need.is_urgent).length;
+            }
+          });
+        }
+
+        return {
+          totalPhotos: photos?.length || 0,
+          latestPhotoDate: latestPhoto?.created_at,
+          totalNeeds,
+          urgentNeeds,
+          sponsorshipDays,
+          sponsorshipStartDate: sponsorship?.start_date
+        };
+      } catch (error) {
+        console.error('Error fetching contribution stats:', error);
+        return {
+          totalPhotos: 0,
+          latestPhotoDate: null,
+          totalNeeds: 0,
+          urgentNeeds: 0,
+          sponsorshipDays: 0,
+          sponsorshipStartDate: null
+        };
       }
-
-      return {
-        totalPhotos: photos?.length || 0,
-        latestPhotoDate: latestPhoto?.created_at,
-        totalNeeds,
-        urgentNeeds,
-        sponsorshipDays,
-        sponsorshipStartDate: sponsorship?.start_date
-      };
     },
     enabled: !!user?.id
   });
@@ -223,7 +239,7 @@ const SponsorDashboard = () => {
           <SponsorshipTimeline events={[]} />
 
           {/* Notifications */}
-          {notifications.map((notification) => (
+          {notifications?.map((notification) => (
             <DetailedNotification key={notification.id} notification={notification} />
           ))}
 
@@ -232,7 +248,7 @@ const SponsorDashboard = () => {
             <h3 className="text-lg font-semibold mb-4">
               {language === 'fr' ? 'Visites Planifiées' : 'Visitas Planificadas'}
             </h3>
-            <VisitsSection visits={plannedVisits} />
+            <VisitsSection visits={plannedVisits || []} />
           </Card>
 
           {/* Statistics */}
