@@ -38,7 +38,7 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
 
   const t = translations[language as keyof typeof translations];
 
-  // Query for photos
+  // Query for photos - Updated to include proper filters and logging
   const { data: photos = [] } = useQuery({
     queryKey: ['sponsor-photos', sponsorId],
     queryFn: async () => {
@@ -46,7 +46,9 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
       const { data, error } = await supabase
         .from('album_media')
         .select('*')
-        .eq('sponsor_id', sponsorId);
+        .eq('sponsor_id', sponsorId)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching photos:', error);
@@ -66,7 +68,8 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
       const { data, error } = await supabase
         .from('temoignage')
         .select('*')
-        .eq('sponsor_id', sponsorId);
+        .eq('sponsor_id', sponsorId)
+        .eq('is_approved', true);
 
       if (error) {
         console.error('Error fetching testimonials:', error);
@@ -94,13 +97,14 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
             )
           `)
           .eq('sponsor_id', sponsorId)
-          .eq('status', 'active')
-          .order('start_date', { ascending: true });
+          .eq('status', 'active');
 
         if (error) {
           console.error('Error fetching sponsorship data:', error);
           throw error;
         }
+
+        console.log('Sponsorship data found:', data);
 
         // Calculate total needs and urgent needs from all sponsored children
         let totalNeeds = 0;
