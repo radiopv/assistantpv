@@ -47,12 +47,9 @@ export default function SponsorshipManagement() {
           sponsorships (
             id,
             status,
-            start_date,
             child:children (
               id,
-              name,
-              photo_url,
-              city
+              name
             )
           )
         `)
@@ -128,7 +125,7 @@ export default function SponsorshipManagement() {
         />
       </div>
 
-      <div className="rounded-md border">
+      <Card className="w-full overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>
@@ -142,35 +139,37 @@ export default function SponsorshipManagement() {
           </TableHeader>
           <TableBody>
             {filterBySearch(sponsors || []).map((sponsor) => (
-              <TableRow key={sponsor.id}>
-                <TableCell className="font-medium">{sponsor.name}</TableCell>
-                <TableCell>{sponsor.email}</TableCell>
-                <TableCell className="hidden md:table-cell">{sponsor.city}</TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {sponsor.last_login 
-                    ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
-                    : "Jamais connecté"}
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {sponsor.sponsorships
-                    ?.filter((s: any) => s.status === 'active')
-                    .map((s: any) => s.child.name)
-                    .join(", ") || "Aucun"}
-                </TableCell>
-                <TableCell>
-                  <Collapsible>
-                    <CollapsibleTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(sponsor)}
-                      >
-                        Modifier
-                      </Button>
-                    </CollapsibleTrigger>
-                    {editingSponsorId === sponsor.id && (
-                      <CollapsibleContent className="w-full p-4 space-y-4 bg-gray-50 border-t">
-                        <div className="grid gap-4">
+              <React.Fragment key={sponsor.id}>
+                <TableRow>
+                  <TableCell className="font-medium">{sponsor.name}</TableCell>
+                  <TableCell>{sponsor.email}</TableCell>
+                  <TableCell className="hidden md:table-cell">{sponsor.city}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {sponsor.last_login 
+                      ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
+                      : "Jamais connecté"}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {sponsor.sponsorships
+                      ?.filter((s: any) => s.status === 'active')
+                      .map((s: any) => s.child.name)
+                      .join(", ") || "Aucun"}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(sponsor)}
+                    >
+                      Modifier
+                    </Button>
+                  </TableCell>
+                </TableRow>
+                {editingSponsorId === sponsor.id && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="p-0">
+                      <div className="bg-gray-50 border-t p-4 space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <label className="text-sm font-medium">Nom</label>
                             <Input
@@ -203,31 +202,31 @@ export default function SponsorshipManagement() {
                               className="mt-1"
                             />
                           </div>
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setEditingSponsorId(null)}
-                            >
-                              Annuler
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={handleUpdate}
-                            >
-                              Sauvegarder
-                            </Button>
-                          </div>
                         </div>
-                      </CollapsibleContent>
-                    )}
-                  </Collapsible>
-                </TableCell>
-              </TableRow>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingSponsorId(null)}
+                          >
+                            Annuler
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={handleUpdate}
+                          >
+                            Sauvegarder
+                          </Button>
+                        </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
             ))}
           </TableBody>
         </Table>
-      </div>
+      </Card>
     </div>
   );
 }
