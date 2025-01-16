@@ -43,4 +43,25 @@
   .sidebar {
     @apply bg-cuba-gradient;
   }
+
+  /* Styles communs pour les pages administrateur */
+  .admin-page-container {
+    @apply w-full space-y-4;
+  }
+
+  .admin-grid {
+    @apply grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  .admin-card {
+    @apply overflow-hidden bg-white;
+  }
+
+  .admin-header {
+    @apply flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3;
+  }
+
+  .admin-alert {
+    @apply bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3;
+  }
 }
