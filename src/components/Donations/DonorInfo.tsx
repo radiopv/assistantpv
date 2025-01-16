@@ -13,15 +13,26 @@ export const DonorInfo = ({ donors }: DonorInfoProps) => {
   const translations = {
     fr: {
       donorInfo: "Information du donateur",
-      anonymous: "Anonyme"
+      anonymous: "Anonyme",
+      noDonors: "Aucun donateur enregistré"
     },
     es: {
       donorInfo: "Información del donante",
-      anonymous: "Anónimo"
+      anonymous: "Anónimo",
+      noDonors: "Sin donantes registrados"
     }
   };
 
   const t = translations[language as keyof typeof translations];
+
+  if (!donors || donors.length === 0) {
+    return (
+      <div className="space-y-2">
+        <h4 className="font-medium">{t.donorInfo}</h4>
+        <p className="text-sm text-gray-600">{t.noDonors}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-2">
