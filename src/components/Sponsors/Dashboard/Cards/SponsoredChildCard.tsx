@@ -1,10 +1,10 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Camera, FileEdit, Clock } from "lucide-react";
-import { useState } from "react";
 import { TerminationDialog } from "../TerminationDialog";
 import { differenceInDays, format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -43,6 +43,24 @@ export const SponsoredChildCard = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  // Query pour récupérer les photos de l'album
+  const { data: albumPhotos } = useQuery({
+    queryKey: ['album-photos', child.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .eq('child_id', child.id)
+        .eq('type', 'image')
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false })
+        .limit(4);
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const calculateDaysUntilBirthday = (birthDate: string) => {
     const today = new Date();
     const birth = parseISO(birthDate);
@@ -64,37 +82,6 @@ export const SponsoredChildCard = ({
     : null;
 
   const needs = convertJsonToNeeds(child.needs || []);
-
-  // Query existing testimonials
-  const { data: testimonials } = useQuery({
-    queryKey: ['testimonials', child.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('temoignage')
-        .select('*')
-        .eq('child_id', child.id)
-        .eq('is_approved', true)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  // Query planned visits
-  const { data: plannedVisits } = useQuery({
-    queryKey: ['planned-visits', sponsorshipId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('scheduled_visits')
-        .select('*')
-        .eq('sponsorship_id', sponsorshipId)
-        .order('visit_start_date', { ascending: true });
-
-      if (error) throw error;
-      return data;
-    }
-  });
 
   const handleSubmitTestimonial = async () => {
     if (!newTestimonial.trim()) {
@@ -136,120 +123,74 @@ export const SponsoredChildCard = ({
   return (
     <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Photo et informations de base */}
-        <div className="flex items-start space-x-4 md:w-1/3">
-          <Avatar className="h-16 w-16">
-            <AvatarImage src={child.photo_url} alt={child.name} />
-            <AvatarFallback>{child.name[0]}</AvatarFallback>
-          </Avatar>
-          <div>
-            <h3 className="text-lg font-semibold">{child.name}</h3>
-            {formattedBirthDate && (
-              <p className="text-sm text-gray-600">
-                Né(e) le {formattedBirthDate}
-              </p>
-            )}
-            {daysUntilBirthday !== null && (
-              <p className="text-sm text-cuba-coral mt-1">
-                {daysUntilBirthday === 0 
-                  ? "C'est son anniversaire aujourd'hui !" 
-                  : `Anniversaire dans ${daysUntilBirthday} jours`}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Description et besoins */}
-        <div className="flex-grow space-y-4">
-          {child.description && (
-            <div className="bg-white/60 rounded-lg p-3">
-              <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Description</h4>
-              <p className="text-sm text-gray-700">{child.description}</p>
-            </div>
+        <Avatar className="h-16 w-16">
+          <AvatarImage src={child.photo_url} alt={child.name} />
+          <AvatarFallback>{child.name[0]}</AvatarFallback>
+        </Avatar>
+        <div>
+          <h3 className="text-lg font-semibold">{child.name}</h3>
+          {formattedBirthDate && (
+            <p className="text-sm text-gray-600">
+              Né(e) le {formattedBirthDate}
+            </p>
           )}
-
-          <div className="space-y-2">
-            <h4 className="font-medium text-sm text-cuba-warmGray">Besoins</h4>
-            <div className="flex flex-wrap gap-2">
-              {needs.map((need: any, index: number) => (
-                <Badge
-                  key={`${need.category}-${index}`}
-                  variant={need.is_urgent ? "destructive" : "secondary"}
-                  className="text-xs"
-                >
-                  {need.category}
-                  {need.is_urgent && " (!)"} 
-                </Badge>
-              ))}
-            </div>
-          </div>
+          {daysUntilBirthday !== null && (
+            <p className="text-sm text-cuba-coral mt-1">
+              {daysUntilBirthday === 0 
+                ? "C'est son anniversaire aujourd'hui !" 
+                : `Anniversaire dans ${daysUntilBirthday} jours`}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Planned Visits Section */}
-      {plannedVisits && plannedVisits.length > 0 && (
-        <div className="mt-4 p-4 bg-cuba-warmBeige/10 rounded-lg">
-          <h4 className="font-medium text-sm mb-2">Visites planifiées</h4>
-          {plannedVisits.map((visit: any) => (
-            <div key={visit.id} className="text-sm text-gray-600">
-              Du {format(new Date(visit.visit_start_date), 'dd/MM/yyyy')} 
-              au {format(new Date(visit.visit_end_date), 'dd/MM/yyyy')}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Testimonials Section */}
-      <div className="mt-4">
-        {testimonials && testimonials.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="font-medium text-sm">Vos témoignages</h4>
-            {testimonials.map((testimonial: any) => (
-              <div 
-                key={testimonial.id}
-                className="p-3 bg-white/60 rounded-lg"
-              >
-                <p className="text-sm text-gray-600 italic">{testimonial.content}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {format(new Date(testimonial.created_at), 'dd/MM/yyyy')}
-                </p>
-              </div>
-            ))}
+      {/* Description et besoins */}
+      <div className="flex-grow space-y-4">
+        {child.description && (
+          <div className="bg-white/60 rounded-lg p-3">
+            <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Description</h4>
+            <p className="text-sm text-gray-700">{child.description}</p>
           </div>
         )}
 
-        {/* Add Testimonial Collapsible */}
-        <Collapsible
-          open={isTestimonialOpen}
-          onOpenChange={setIsTestimonialOpen}
-          className="mt-4"
-        >
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="outline"
-              className="flex items-center justify-center gap-2 w-full bg-white hover:bg-cuba-warmBeige/10 transition-colors"
-            >
-              <FileEdit className="h-4 w-4" />
-              <span>Ajouter un témoignage</span>
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-4 space-y-4">
-            <Textarea
-              placeholder="Partagez votre expérience..."
-              value={newTestimonial}
-              onChange={(e) => setNewTestimonial(e.target.value)}
-              className="min-h-[100px]"
-            />
-            <Button 
-              onClick={handleSubmitTestimonial}
-              disabled={isSubmitting}
-              className="w-full"
-            >
-              {isSubmitting ? "Envoi en cours..." : "Envoyer"}
-            </Button>
-          </CollapsibleContent>
-        </Collapsible>
+        <div className="space-y-2">
+          <h4 className="font-medium text-sm text-cuba-warmGray">Besoins</h4>
+          <div className="flex flex-wrap gap-2">
+            {needs.map((need: any, index: number) => (
+              <Badge
+                key={`${need.category}-${index}`}
+                variant={need.is_urgent ? "destructive" : "secondary"}
+                className="text-xs"
+              >
+                {need.category}
+                {need.is_urgent && " (!)"} 
+              </Badge>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Album Photos Section */}
+      {albumPhotos && albumPhotos.length > 0 && (
+        <div className="mt-4">
+          <h4 className="font-medium text-sm mb-3 text-cuba-warmGray">Photos récentes</h4>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {albumPhotos.map((photo) => (
+              <div 
+                key={photo.id} 
+                className="aspect-square rounded-lg overflow-hidden"
+                onClick={() => window.open(photo.url, '_blank')}
+              >
+                <img
+                  src={photo.url}
+                  alt={`Photo de ${child.name}`}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Boutons d'action */}
       <div className="flex flex-col space-y-2 mt-6">
