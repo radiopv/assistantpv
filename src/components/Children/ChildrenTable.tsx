@@ -79,7 +79,7 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
   );
 
   return (
-    <div className="w-full overflow-auto">
+    <div className="w-full overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -96,12 +96,12 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
               key={child.id}
               className="cursor-pointer hover:bg-gray-50"
             >
-              <TableCell className="font-medium">{child.name}</TableCell>
+              <TableCell className="font-medium whitespace-normal break-words">{child.name}</TableCell>
               <TableCell>{formatAge(child.birth_date)}</TableCell>
-              <TableCell>{child.city}</TableCell>
+              <TableCell className="whitespace-normal break-words">{child.city}</TableCell>
               <TableCell>
                 <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                  className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                     !child.is_sponsored
                       ? "bg-green-100 text-green-800"
                       : "bg-blue-100 text-blue-800"

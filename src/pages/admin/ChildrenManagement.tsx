@@ -10,12 +10,12 @@ export default function ChildrenManagement() {
   const { t } = useLanguage();
 
   return (
-    <div className="w-full p-2 sm:p-4 space-y-4">
-      <Card className="p-4 sm:p-6 w-full">
-        <h1 className="text-2xl font-bold mb-6">Gestion des enfants et parrainages</h1>
+    <div className="w-full p-0 space-y-2">
+      <Card className="p-2 sm:p-4 w-full">
+        <h1 className="text-2xl font-bold mb-4">Gestion des enfants et parrainages</h1>
         
         <Tabs defaultValue="children" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 mb-6">
+          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
             <TabsTrigger 
               value="children" 
               className="flex items-center gap-2 min-h-[44px] w-full justify-center"
@@ -39,15 +39,15 @@ export default function ChildrenManagement() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="children" className="mt-2">
+          <TabsContent value="children" className="mt-2 px-0">
             <Children />
           </TabsContent>
 
-          <TabsContent value="photos" className="mt-2">
+          <TabsContent value="photos" className="mt-2 px-0">
             <AssistantPhotos />
           </TabsContent>
 
-          <TabsContent value="sponsorship" className="mt-2">
+          <TabsContent value="sponsorship" className="mt-2 px-0">
             <SponsorshipManagement />
           </TabsContent>
         </Tabs>
