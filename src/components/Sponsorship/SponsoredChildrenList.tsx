@@ -4,6 +4,7 @@ import { convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { differenceInYears, parseISO } from "date-fns";
 
 interface SponsoredChildrenListProps {
   children: any[];
@@ -14,7 +15,7 @@ const calculateAge = (birthDate: string | null): number | null => {
   
   try {
     const today = new Date();
-    const birth = new Date(birthDate);
+    const birth = parseISO(birthDate);
     
     if (isNaN(birth.getTime())) {
       console.error('Invalid birth date:', birthDate);
