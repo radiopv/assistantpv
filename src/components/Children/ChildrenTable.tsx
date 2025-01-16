@@ -79,7 +79,7 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
   );
 
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="w-full">
       <Table>
         <TableHeader>
           <TableRow>
