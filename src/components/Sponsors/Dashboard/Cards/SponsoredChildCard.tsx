@@ -27,7 +27,7 @@ export const SponsoredChildCard = ({
 
   return (
     <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
-      <div className="flex justify-between gap-4">
+      <div className="flex flex-col gap-4">
         <div className="flex items-center space-x-4">
           <Avatar className="h-16 w-16">
             <AvatarImage src={child.photo_url} alt={child.name} />
@@ -43,10 +43,19 @@ export const SponsoredChildCard = ({
           </div>
         </div>
 
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-2 w-full">
           <Button
             variant="outline"
-            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors whitespace-nowrap"
+            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
+            onClick={onAddPhoto}
+          >
+            <Camera className="h-4 w-4" />
+            <span>Ajouter une photo</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
             onClick={onAddTestimonial}
           >
             <FileEdit className="h-4 w-4" />
@@ -55,7 +64,7 @@ export const SponsoredChildCard = ({
 
           <Button
             variant="outline"
-            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors whitespace-nowrap"
+            className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
             onClick={() => setShowTermination(true)}
           >
             <Clock className="h-4 w-4" />
