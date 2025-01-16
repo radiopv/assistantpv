@@ -16,11 +16,7 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { PasswordFields } from "@/components/Sponsor/SponsorshipForm/PasswordFields";
 
 export default function SponsorshipManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -30,6 +26,8 @@ export default function SponsorshipManagement() {
     name: "",
     phone: "",
     city: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const { data: sponsors, isLoading, refetch } = useQuery({
@@ -70,26 +68,47 @@ export default function SponsorshipManagement() {
       name: sponsor.name || "",
       phone: sponsor.phone || "",
       city: sponsor.city || "",
+      password: "",
+      confirmPassword: "",
     });
   };
 
   const handleUpdate = async () => {
     try {
+      if (editForm.password && editForm.password !== editForm.confirmPassword) {
+        toast.error("Les mots de passe ne correspondent pas");
+        return;
+      }
+
+      const updateData: any = {
+        email: editForm.email,
+        name: editForm.name,
+        phone: editForm.phone,
+        city: editForm.city,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (editForm.password) {
+        updateData.password_hash = editForm.password;
+      }
+
       const { error } = await supabase
         .from('sponsors')
-        .update({
-          email: editForm.email,
-          name: editForm.name,
-          phone: editForm.phone,
-          city: editForm.city,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', editingSponsorId);
 
       if (error) throw error;
 
       toast.success("Informations mises à jour avec succès");
       setEditingSponsorId(null);
+      setEditForm({
+        email: "",
+        name: "",
+        phone: "",
+        city: "",
+        password: "",
+        confirmPassword: "",
+      });
       refetch();
     } catch (error) {
       console.error('Error updating sponsor:', error);
@@ -171,7 +190,7 @@ export default function SponsorshipManagement() {
                       <div className="bg-gray-50 border-t p-4 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="text-sm font-medium">Nom</label>
+                            <Label className="text-sm font-medium">Nom</Label>
                             <Input
                               value={editForm.name}
                               onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
@@ -179,7 +198,7 @@ export default function SponsorshipManagement() {
                             />
                           </div>
                           <div>
-                            <label className="text-sm font-medium">Email</label>
+                            <Label className="text-sm font-medium">Email</Label>
                             <Input
                               value={editForm.email}
                               onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
@@ -187,7 +206,7 @@ export default function SponsorshipManagement() {
                             />
                           </div>
                           <div>
-                            <label className="text-sm font-medium">Téléphone</label>
+                            <Label className="text-sm font-medium">Téléphone</Label>
                             <Input
                               value={editForm.phone}
                               onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
@@ -195,7 +214,7 @@ export default function SponsorshipManagement() {
                             />
                           </div>
                           <div>
-                            <label className="text-sm font-medium">Ville</label>
+                            <Label className="text-sm font-medium">Ville</Label>
                             <Input
                               value={editForm.city}
                               onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
@@ -203,6 +222,13 @@ export default function SponsorshipManagement() {
                             />
                           </div>
                         </div>
+                        
+                        <PasswordFields
+                          password={editForm.password}
+                          confirmPassword={editForm.confirmPassword}
+                          onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+                        />
+
                         <div className="flex justify-end gap-2">
                           <Button
                             variant="outline"
