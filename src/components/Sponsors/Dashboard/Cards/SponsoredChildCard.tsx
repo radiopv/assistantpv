@@ -202,6 +202,37 @@ export const SponsoredChildCard = ({
           <span>Ajouter une photo</span>
         </Button>
 
+        <Collapsible
+          open={isTestimonialOpen}
+          onOpenChange={setIsTestimonialOpen}
+          className="space-y-2"
+        >
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
+            >
+              <FileEdit className="h-4 w-4" />
+              <span>Ajouter un témoignage</span>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-2">
+            <Textarea
+              placeholder="Partagez votre expérience..."
+              value={newTestimonial}
+              onChange={(e) => setNewTestimonial(e.target.value)}
+              className="min-h-[100px]"
+            />
+            <Button
+              onClick={handleSubmitTestimonial}
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting ? "Envoi en cours..." : "Envoyer"}
+            </Button>
+          </CollapsibleContent>
+        </Collapsible>
+
         <Button
           variant="outline"
           className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
