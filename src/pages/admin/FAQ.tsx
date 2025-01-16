@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { FAQItem } from "@/components/Admin/FAQ/FAQItem";
 import { AddFAQDialog } from "@/components/Admin/FAQ/AddFAQDialog";
+import { Card } from "@/components/ui/card";
 
 const FAQ = () => {
   const { toast } = useToast();
@@ -136,43 +137,47 @@ const FAQ = () => {
   }
 
   return (
-    <div className="p-0 md:p-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center px-4 md:px-0 mb-8">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 break-words">FAQ</h1>
-          <p className="text-gray-600 mt-2 break-words">
-            Gestion des questions fréquemment posées
-          </p>
-        </div>
-        <div className="mt-4 md:mt-0">
-          <AddFAQDialog
-            isOpen={isEditing}
-            onOpenChange={setIsEditing}
-            newQuestion={newQuestion}
-            setNewQuestion={setNewQuestion}
-            newAnswer={newAnswer}
-            setNewAnswer={setNewAnswer}
-            onAdd={handleAddFaq}
-          />
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-orange-100 to-white">
+      <div className="container mx-auto p-0 sm:p-4 space-y-4">
+        <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-6 border border-orange-200">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 break-words">FAQ</h1>
+              <p className="text-gray-600 mt-2 break-words">
+                Gestion des questions fréquemment posées
+              </p>
+            </div>
+            <div className="mt-4 md:mt-0">
+              <AddFAQDialog
+                isOpen={isEditing}
+                onOpenChange={setIsEditing}
+                newQuestion={newQuestion}
+                setNewQuestion={setNewQuestion}
+                newAnswer={newAnswer}
+                setNewAnswer={setNewAnswer}
+                onAdd={handleAddFaq}
+              />
+            </div>
+          </div>
 
-      <div className="px-0">
-        <Accordion type="single" collapsible className="w-full space-y-4">
-          {faqItems?.map((item) => (
-            <FAQItem
-              key={item.id}
-              item={item}
-              editingFaq={editingFaq}
-              setEditingFaq={setEditingFaq}
-              onUpdate={updateFaqMutation.mutate}
-              onDelete={deleteFaqMutation.mutate}
-              onToggleVisibility={(id, is_active) =>
-                toggleVisibilityMutation.mutate({ id, is_active })
-              }
-            />
-          ))}
-        </Accordion>
+          <div className="px-0">
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {faqItems?.map((item) => (
+                <FAQItem
+                  key={item.id}
+                  item={item}
+                  editingFaq={editingFaq}
+                  setEditingFaq={setEditingFaq}
+                  onUpdate={updateFaqMutation.mutate}
+                  onDelete={deleteFaqMutation.mutate}
+                  onToggleVisibility={(id, is_active) =>
+                    toggleVisibilityMutation.mutate({ id, is_active })
+                  }
+                />
+              ))}
+            </Accordion>
+          </div>
+        </Card>
       </div>
     </div>
   );

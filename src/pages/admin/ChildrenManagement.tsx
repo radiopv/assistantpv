@@ -10,9 +10,9 @@ export default function ChildrenManagement() {
   const { t } = useLanguage();
 
   return (
-    <div className="w-full p-0">
-      <Card className="rounded-none sm:rounded-lg border-0 sm:border">
-        <div className="p-2 sm:p-4 w-full">
+    <div className="min-h-screen bg-gradient-to-b from-orange-100 to-white">
+      <div className="container mx-auto p-0 sm:p-4 space-y-6">
+        <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-6 border border-orange-200">
           <h1 className="text-2xl font-bold mb-4">{t("childrenAndSponsorship")}</h1>
           
           <Tabs defaultValue="children" className="w-full">
@@ -53,7 +53,7 @@ export default function ChildrenManagement() {
             </TabsContent>
           </Tabs>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }
