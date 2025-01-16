@@ -34,7 +34,8 @@ export default function AvailableChildren() {
         query = query
           .eq("is_sponsored", false)
           .not('needs', 'is', null)
-          .neq('needs', '[]');
+          .neq('needs', '[]')
+          .filter('needs', 'cs', '{"is_urgent":true}');
       }
 
       if (selectedCity !== "all") {

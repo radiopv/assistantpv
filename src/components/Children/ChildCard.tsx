@@ -35,9 +35,10 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
                 <Badge
                   key={`${need.category}-${index}`}
                   variant={need.is_urgent ? "destructive" : "secondary"}
-                  className="text-xs truncate max-w-[150px]"
+                  className={`text-xs truncate max-w-[150px] ${need.is_urgent ? 'bg-red-500 hover:bg-red-600' : ''}`}
                 >
                   {need.category}
+                  {need.is_urgent && " (!)"} 
                 </Badge>
               ))}
             </div>
