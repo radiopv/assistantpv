@@ -26,22 +26,25 @@ export const PhotoCard = ({
 
   return (
     <Card 
-      className="relative group overflow-hidden aspect-square"
+      className="relative group overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform duration-200"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => onPhotoClick(photo.url)}
     >
       <img
         src={photo.url}
         alt={photo.title || "Photo de donation"}
-        onClick={() => onPhotoClick(photo.url)}
-        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
+        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
       
       {!isReadOnly && (
         <div className={`absolute inset-0 bg-black/40 flex items-center justify-center gap-4 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
           {onToggleFavorite && (
             <button
-              onClick={() => onToggleFavorite(photo.id, !!photo.is_featured)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleFavorite(photo.id, !!photo.is_featured);
+              }}
               className={`p-2 rounded-full ${photo.is_featured ? 'bg-yellow-400 text-black' : 'bg-white/20 text-white'} hover:bg-yellow-400 hover:text-black transition-colors`}
               title={photo.is_featured ? "Retirer des favoris" : "Marquer comme favori"}
             >
@@ -51,7 +54,10 @@ export const PhotoCard = ({
           
           {onDelete && (
             <button
-              onClick={() => onDelete(photo.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(photo.id);
+              }}
               className="p-2 rounded-full bg-red-500/80 text-white hover:bg-red-600 transition-colors"
               title="Supprimer la photo"
             >

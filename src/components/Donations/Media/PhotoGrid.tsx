@@ -1,4 +1,6 @@
 import { PhotoCard } from "./PhotoCard";
+import { useState } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 interface PhotoGridProps {
   photos: any[];
@@ -15,9 +17,15 @@ export const PhotoGrid = ({
   onToggleFavorite,
   className = ""
 }: PhotoGridProps) => {
+  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+
   if (!photos?.length) {
     return <p className="text-gray-500 text-sm text-center">Aucune photo disponible</p>;
   }
+
+  const handlePhotoClick = (url: string) => {
+    setSelectedPhoto(url);
+  };
 
   const handleDelete = async (id: string) => {
     console.log("Handling delete for photo ID:", id);
@@ -27,17 +35,31 @@ export const PhotoGrid = ({
   };
 
   return (
-    <div className={`grid ${className}`}>
-      {photos.map((photo) => (
-        <PhotoCard
-          key={photo.id}
-          photo={photo}
-          onPhotoClick={onPhotoClick}
-          onDelete={handleDelete}
-          onToggleFavorite={onToggleFavorite}
-          isReadOnly={!onPhotoDelete && !onToggleFavorite}
-        />
-      ))}
-    </div>
+    <>
+      <div className={`grid gap-2 ${className}`}>
+        {photos.map((photo) => (
+          <PhotoCard
+            key={photo.id}
+            photo={photo}
+            onPhotoClick={handlePhotoClick}
+            onDelete={handleDelete}
+            onToggleFavorite={onToggleFavorite}
+            isReadOnly={!onPhotoDelete && !onToggleFavorite}
+          />
+        ))}
+      </div>
+
+      <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
+        <DialogContent className="max-w-4xl bg-white p-0">
+          {selectedPhoto && (
+            <img 
+              src={selectedPhoto} 
+              alt="Photo agrandie"
+              className="w-full h-auto object-contain rounded-lg"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
