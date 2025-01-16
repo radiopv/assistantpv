@@ -57,6 +57,7 @@ export const SponsorsList = ({
               <Button
                 onClick={() => onSelectSponsor(sponsor.id)}
                 size="sm"
+                disabled={isLoading}
               >
                 {t("select")}
               </Button>

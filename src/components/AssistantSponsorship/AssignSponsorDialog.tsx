@@ -22,6 +22,7 @@ export const AssignSponsorDialog = ({
 }: AssignSponsorDialogProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { t } = useLanguage();
+  const [isAssigning, setIsAssigning] = useState(false);
 
   const { data: sponsors = [], isLoading } = useQuery({
     queryKey: ['sponsors-for-assignment'],
@@ -41,19 +42,49 @@ export const AssignSponsorDialog = ({
 
   const handleSelectSponsor = async (sponsorId: string) => {
     try {
+      setIsAssigning(true);
       console.log('Creating assignment request:', { sponsorId, childId });
       
+      // First check if there's already a request
+      const { data: existingRequests } = await supabase
+        .from('child_assignment_requests')
+        .select('*')
+        .eq('child_id', childId)
+        .eq('sponsor_id', sponsorId)
+        .eq('status', 'pending');
+
+      if (existingRequests && existingRequests.length > 0) {
+        toast.error(t("requestAlreadyExists"));
+        return;
+      }
+
+      // Create new request
       const { error } = await supabase
         .from('child_assignment_requests')
         .insert({
           sponsor_id: sponsorId,
           child_id: childId,
-          status: 'pending'
+          status: 'pending',
+          created_at: new Date().toISOString()
         });
 
       if (error) {
         console.error('Error creating assignment request:', error);
         throw error;
+      }
+
+      // Update child status
+      const { error: updateError } = await supabase
+        .from('children')
+        .update({ 
+          status: 'pending',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', childId);
+
+      if (updateError) {
+        console.error('Error updating child status:', updateError);
+        throw updateError;
       }
 
       toast.success(t("sponsorshipRequestCreated"));
@@ -62,6 +93,8 @@ export const AssignSponsorDialog = ({
     } catch (error) {
       console.error('Error assigning sponsor:', error);
       toast.error(t("errorAssigningSponsor"));
+    } finally {
+      setIsAssigning(false);
     }
   };
 
@@ -76,10 +109,10 @@ export const AssignSponsorDialog = ({
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onSelectSponsor={handleSelectSponsor}
-          isLoading={isLoading}
+          isLoading={isLoading || isAssigning}
         />
         <div className="flex justify-end mt-4">
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={isAssigning}>
             {t("cancel")}
           </Button>
         </div>
