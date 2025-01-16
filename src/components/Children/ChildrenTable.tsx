@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, UserPlus } from "lucide-react";
+import { ArrowUpDown, UserPlus, UserMinus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useState } from "react";
@@ -10,9 +10,10 @@ interface ChildrenTableProps {
   onViewProfile: (id: string) => void;
   onSponsorClick: (child: any) => void;
   onAssignSponsor?: (childId: string) => void;
+  onRemoveSponsor?: (childId: string) => void;
 }
 
-export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssignSponsor }: ChildrenTableProps) => {
+export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssignSponsor, onRemoveSponsor }: ChildrenTableProps) => {
   const { t } = useLanguage();
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: '', direction: 'asc' });
 
@@ -92,7 +93,14 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssig
               key={child.id}
               className="cursor-pointer hover:bg-gray-50"
             >
-              <TableCell className="font-medium whitespace-normal break-words">{child.name}</TableCell>
+              <TableCell className="font-medium whitespace-normal break-words">
+                {child.name}
+                {child.is_sponsored && child.sponsor_name && (
+                  <span className="ml-2 text-sm text-gray-500">
+                    ({t("sponsoredBy")} {child.sponsor_name})
+                  </span>
+                )}
+              </TableCell>
               <TableCell>{formatAge(child.birth_date)}</TableCell>
               <TableCell className="whitespace-normal break-words">{child.city}</TableCell>
               <TableCell>
@@ -120,6 +128,20 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssig
                     >
                       <UserPlus className="h-4 w-4" />
                       {t("assignSponsor")}
+                    </Button>
+                  )}
+                  {child.is_sponsored && onRemoveSponsor && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveSponsor(child.id);
+                      }}
+                      className="flex items-center gap-1 text-red-600 hover:text-red-700"
+                    >
+                      <UserMinus className="h-4 w-4" />
+                      {t("removeSponsor")}
                     </Button>
                   )}
                 </div>

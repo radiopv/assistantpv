@@ -56,5 +56,9 @@ export const frenchTranslations = {
   successRate: "Taux de réussite",
   statisticsTitle: "Nos statistiques",
   statisticsDescription: "Découvrez l'impact de notre communauté",
-  and: "et"
+  and: "et",
+  sponsoredBy: "Parrainé par",
+  removeSponsor: "Retirer le parrain",
+  sponsorRemoved: "Parrain retiré avec succès",
+  errorRemovingSponsor: "Erreur lors du retrait du parrain"
 };

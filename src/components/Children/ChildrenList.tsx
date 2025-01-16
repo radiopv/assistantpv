@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AssignSponsorDialog } from "../AssistantSponsorship/AssignSponsorDialog";
+import { toast } from "sonner";
 
 interface ChildrenListProps {
   children: any[];
@@ -57,6 +58,27 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const handleAssignSponsor = (childId: string) => {
     setSelectedChildForAssignment(childId);
     setShowAssignDialog(true);
+  };
+
+  const handleRemoveSponsor = async (childId: string) => {
+    try {
+      const { error } = await supabase
+        .from('children')
+        .update({ 
+          is_sponsored: false,
+          sponsor_id: null,
+          sponsor_name: null 
+        })
+        .eq('id', childId);
+
+      if (error) throw error;
+
+      toast.success(t("sponsorRemoved"));
+      // Refresh data if needed
+    } catch (error) {
+      console.error('Error removing sponsor:', error);
+      toast.error(t("errorRemovingSponsor"));
+    }
   };
 
   const handleAssignComplete = () => {
@@ -190,6 +212,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
           onViewProfile={onViewProfile}
           onSponsorClick={setSelectedChild}
           onAssignSponsor={handleAssignSponsor}
+          onRemoveSponsor={handleRemoveSponsor}
         />
       )}
 
