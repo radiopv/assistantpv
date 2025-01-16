@@ -16,7 +16,6 @@ const calculateAge = (birthDate: string | null): number | null => {
     const today = new Date();
     const birth = new Date(birthDate);
     
-    // Vérifier si la date est valide
     if (isNaN(birth.getTime())) {
       console.error('Invalid birth date:', birthDate);
       return null;
@@ -25,7 +24,6 @@ const calculateAge = (birthDate: string | null): number | null => {
     let age = today.getFullYear() - birth.getFullYear();
     const monthDifference = today.getMonth() - birth.getMonth();
 
-    // Ajuster l'âge si l'anniversaire n'est pas encore passé cette année
     if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
       age--;
     }
