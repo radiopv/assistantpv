@@ -3,6 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import { fr, es } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Bell, Image, FileText, ListTodo } from "lucide-react";
+import { Json } from "@/integrations/supabase/types/json";
 
 interface DetailedNotificationProps {
   notification: {
@@ -11,26 +12,9 @@ interface DetailedNotificationProps {
     content: string;
     type: string;
     created_at: string;
-    metadata?: {
-      previous_state?: {
-        description?: string;
-        story?: string;
-        needs?: any[];
-        photo_url?: string;
-      };
-      new_state?: {
-        description?: string;
-        story?: string;
-        needs?: any[];
-        photo_url?: string;
-      };
-      changed_fields?: {
-        description?: boolean;
-        story?: boolean;
-        needs?: boolean;
-        photo?: boolean;
-      };
-    };
+    is_read?: boolean;
+    metadata?: Json;
+    link?: string;
   };
 }
 
@@ -52,8 +36,28 @@ export const DetailedNotification = ({ notification }: DetailedNotificationProps
   };
 
   const renderChanges = () => {
-    const { metadata } = notification;
-    if (!metadata) return null;
+    if (!notification.metadata || typeof notification.metadata !== 'object') return null;
+
+    const metadata = notification.metadata as {
+      previous_state?: {
+        description?: string;
+        story?: string;
+        needs?: any[];
+        photo_url?: string;
+      };
+      new_state?: {
+        description?: string;
+        story?: string;
+        needs?: any[];
+        photo_url?: string;
+      };
+      changed_fields?: {
+        description?: boolean;
+        story?: boolean;
+        needs?: boolean;
+        photo?: boolean;
+      };
+    };
 
     return (
       <div className="mt-4 space-y-3">
