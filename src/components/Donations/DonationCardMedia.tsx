@@ -35,15 +35,19 @@ export const DonationCardMedia = ({
   const canManagePhotos = user?.role === 'admin' || user?.role === 'assistant';
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <PhotoGrid 
         photos={photos || []} 
         onPhotoDelete={!isPublicView && canManagePhotos ? () => onPhotosUpdate() : undefined}
         onToggleFavorite={!isPublicView && canManagePhotos ? (id, status) => {
           onPhotosUpdate();
         } : undefined}
+        className="grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
       />
-      <VideoGrid videos={videos} />
+      <VideoGrid 
+        videos={videos}
+        className="grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" 
+      />
     </div>
   );
 };

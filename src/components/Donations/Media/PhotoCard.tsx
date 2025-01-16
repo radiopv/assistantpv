@@ -1,70 +1,65 @@
-import { cn } from "@/lib/utils";
-import { Star, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Star } from "lucide-react";
 
 interface PhotoCardProps {
-  photo: any;
+  photo: {
+    id: string;
+    url: string;
+    title?: string;
+    is_featured?: boolean;
+  };
   onPhotoClick?: (url: string) => void;
   onDelete?: (id: string) => void;
   onToggleFavorite?: (id: string, currentStatus: boolean) => void;
   isReadOnly?: boolean;
 }
 
-export const PhotoCard = ({ 
-  photo, 
-  onPhotoClick = () => {}, 
+export const PhotoCard = ({
+  photo,
+  onPhotoClick = () => {},
   onDelete,
   onToggleFavorite,
   isReadOnly = false
 }: PhotoCardProps) => {
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent photo click when clicking delete
-    if (onDelete) {
-      console.log("Deleting photo with ID:", photo.id);
-      onDelete(photo.id);
-    }
-  };
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="relative group">
+    <Card 
+      className="relative group overflow-hidden aspect-square"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <img
         src={photo.url}
-        alt={photo.title || `Photo ${photo.id}`}
-        className="h-48 w-full object-cover rounded-md cursor-pointer"
+        alt={photo.title || "Photo de donation"}
         onClick={() => onPhotoClick(photo.url)}
+        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 cursor-pointer"
       />
       
       {!isReadOnly && (
-        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className={`absolute inset-0 bg-black/40 flex items-center justify-center gap-4 transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
           {onToggleFavorite && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className={cn(
-                "h-8 w-8 bg-white/80 hover:bg-white",
-                photo.is_featured && "text-yellow-500"
-              )}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFavorite(photo.id, !photo.is_featured);
-              }}
+            <button
+              onClick={() => onToggleFavorite(photo.id, !!photo.is_featured)}
+              className={`p-2 rounded-full ${photo.is_featured ? 'bg-yellow-400 text-black' : 'bg-white/20 text-white'} hover:bg-yellow-400 hover:text-black transition-colors`}
+              title={photo.is_featured ? "Retirer des favoris" : "Marquer comme favori"}
             >
-              <Star className="h-4 w-4" />
-            </Button>
+              <Star className="w-5 h-5" />
+            </button>
           )}
           
           {onDelete && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 bg-white/80 hover:bg-white text-red-500 hover:text-red-600"
-              onClick={handleDelete}
+            <button
+              onClick={() => onDelete(photo.id)}
+              className="p-2 rounded-full bg-red-500/80 text-white hover:bg-red-600 transition-colors"
+              title="Supprimer la photo"
             >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+              ×
+            </button>
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 };
