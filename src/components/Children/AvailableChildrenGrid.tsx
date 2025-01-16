@@ -198,7 +198,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                     key={`${need.category}-${index}`}
                     className={`p-2 rounded-lg ${
                       need.is_urgent
-                        ? "bg-red-50 border border-red-200 text-red-700"
+                        ? "bg-[#ea384c] text-white font-medium"
                         : "bg-orange-50 border border-orange-200 text-orange-700"
                     }`}
                   >
@@ -213,7 +213,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
             <Button 
               onClick={() => handleLearnMore(child.id)}
-              className="w-full bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white group-hover:scale-105 transition-all duration-300"
+              className={`w-full ${
+                child.needs?.some((need: any) => need.is_urgent)
+                  ? "bg-[#ea384c] hover:bg-[#d62d3f] text-white"
+                  : "bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white"
+              } group-hover:scale-105 transition-all duration-300`}
             >
               <Info className="w-4 h-4 mr-2" />
               En savoir plus
