@@ -212,17 +212,17 @@ const SponsorDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-2 md:p-6">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-0 md:p-6">
       <div className="container mx-auto space-y-4 md:space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 md:p-0">
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
-        <div className="mb-4 w-full">
+        <div className="mb-4 w-full px-4 md:px-0">
           <NeedNotifications />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-4 px-4 md:px-0">
           <BirthdayCountdown 
             children={sponsoredChildren?.map(s => ({
               name: s.children?.name || '',
@@ -242,28 +242,30 @@ const SponsorDashboard = () => {
           />
         </div>
 
-        <SponsorshipTimeline
-          events={[
-            ...(sponsoredChildren?.map(s => ({
-              date: s.start_date,
-              type: 'sponsorship_start' as const,
-              title: `Début du parrainage de ${s.children?.name}`,
-            })) || []),
-            ...(childrenPhotos?.map(p => ({
-              date: p.created_at,
-              type: 'photo' as const,
-              title: 'Nouvelle photo ajoutée',
-              description: p.title
-            })) || []),
-            ...(testimonials?.map(t => ({
-              date: t.created_at,
-              type: 'testimonial' as const,
-              title: 'Nouveau témoignage',
-            })) || [])
-          ]}
-        />
+        <div className="px-4 md:px-0">
+          <SponsorshipTimeline
+            events={[
+              ...(sponsoredChildren?.map(s => ({
+                date: s.start_date,
+                type: 'sponsorship_start' as const,
+                title: `Début du parrainage de ${s.children?.name}`,
+              })) || []),
+              ...(childrenPhotos?.map(p => ({
+                date: p.created_at,
+                type: 'photo' as const,
+                title: 'Nouvelle photo ajoutée',
+                description: p.title
+              })) || []),
+              ...(testimonials?.map(t => ({
+                date: t.created_at,
+                type: 'testimonial' as const,
+                title: 'Nouveau témoignage',
+              })) || [])
+            ]}
+          />
+        </div>
 
-        <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+        <Card className="mx-4 md:mx-0 p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
           <h3 className="text-lg font-semibold mb-4 text-cuba-coral">Visites planifiées</h3>
           <div className="space-y-6">
             <PlannedVisitForm 
@@ -277,11 +279,11 @@ const SponsorDashboard = () => {
           </div>
         </Card>
 
-        <div className="grid gap-4 md:gap-6">
+        <div className="grid gap-4 md:gap-6 px-4 md:px-0">
           {sponsoredChildren?.map((sponsorship) => (
             <Card 
               key={sponsorship.id} 
-              className="overflow-hidden bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-shadow duration-300 p-3 md:p-6"
+              className="overflow-hidden bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-shadow duration-300 p-3 md:p-6 rounded-none md:rounded-lg"
             >
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col md:flex-row md:items-center justify-between">
@@ -293,11 +295,12 @@ const SponsorDashboard = () => {
                       onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                     />
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 mt-4 md:mt-0">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleAddPhoto(sponsorship.children?.id)}
+                      className="w-full md:w-auto"
                     >
                       <Camera className="h-4 w-4 mr-2" />
                       {translations[language].addPhoto}
@@ -306,6 +309,7 @@ const SponsorDashboard = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
+                      className="w-full md:w-auto"
                     >
                       <FileEdit className="h-4 w-4 mr-2" />
                       {translations[language].addTestimonial}
@@ -314,12 +318,14 @@ const SponsorDashboard = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => setShowTermination(true)}
+                      className="w-full md:w-auto"
                     >
                       <Clock className="h-4 w-4 mr-2" />
                       {translations[language].endSponsorship}
                     </Button>
                   </div>
                 </div>
+
                 {hasUrgentNeeds(sponsorship.children?.needs) && (
                   <span className="text-red-500 font-medium animate-pulse mt-2 md:mt-0 text-sm md:text-base">
                     {translations[language].urgentNeeds}
