@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { Label } from "@/components/ui/label";
 import { PasswordFields } from "@/components/Sponsor/SponsorshipForm/PasswordFields";
 
 export default function SponsorshipManagement() {
