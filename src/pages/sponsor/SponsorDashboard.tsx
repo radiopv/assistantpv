@@ -3,55 +3,43 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
-import { Camera, FileEdit, Clock } from "lucide-react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
+import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
+import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
+import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
+import { StatisticsSection } from "@/components/Sponsors/Dashboard/Sections/StatisticsSection";
+import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
-  const [showTermination, setShowTermination] = useState(false);
 
   const translations = {
     fr: {
       welcomeMessage: "Bienvenue",
-      inviteFriends: "Inviter des amis",
-      loginRequired: "Veuillez vous connecter pour accéder à votre tableau de bord",
-      login: "Se connecter",
       loading: "Chargement...",
       sponsorDashboard: "Mon Espace Parrain",
-      photos: "Photos",
       uploadSuccess: "Photo ajoutée avec succès",
-      uploadError: "Erreur lors de l'ajout de la photo",
-      addPhoto: "Ajouter une photo",
-      addTestimonial: "Ajouter un témoignage",
-      endSponsorship: "Mettre fin au parrainage"
+      uploadError: "Erreur lors de l'ajout de la photo"
     },
     es: {
       welcomeMessage: "Bienvenido",
-      inviteFriends: "Invitar amigos",
-      loginRequired: "Por favor, inicie sesión para acceder a su panel",
-      login: "Iniciar sesión",
       loading: "Cargando...",
       sponsorDashboard: "Mi Panel de Padrino",
-      photos: "Fotos",
       uploadSuccess: "Foto agregada con éxito",
-      uploadError: "Error al agregar la foto",
-      addPhoto: "Agregar foto",
-      addTestimonial: "Agregar testimonio",
-      endSponsorship: "Finalizar apadrinamiento"
+      uploadError: "Error al agregar la foto"
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
-  const { data: sponsoredChildren, isLoading } = useQuery({
+  const { data: sponsoredChildren, isLoading: childrenLoading } = useQuery({
     queryKey: ["sponsored-children", user?.id],
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
@@ -81,30 +69,18 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  const { data: childrenPhotos = [], refetch: refetchPhotos } = useQuery({
-    queryKey: ["children-photos", sponsoredChildren?.map(s => s.child_id)],
+  const { data: plannedVisits = [] } = useQuery({
+    queryKey: ['planned-visits', user?.id],
     queryFn: async () => {
-      if (!sponsoredChildren?.length) return [];
-      
-      const childIds = sponsoredChildren.map(s => s.children?.id).filter(Boolean);
-      console.log("Fetching photos for children:", childIds);
-      
       const { data, error } = await supabase
-        .from('album_media')
+        .from('planned_visits')
         .select('*')
-        .in('child_id', childIds)
-        .eq('is_approved', true)
-        .order('created_at', { ascending: false });
+        .eq('sponsor_id', user?.id)
+        .order('start_date', { ascending: true });
 
-      if (error) {
-        console.error('Error fetching photos:', error);
-        throw error;
-      }
-
-      console.log('Fetched photos:', data);
-      return data || [];
-    },
-    enabled: !!sponsoredChildren?.length
+      if (error) throw error;
+      return data;
+    }
   });
 
   const handleAddPhoto = (childId: string) => {
@@ -115,11 +91,10 @@ const SponsorDashboard = () => {
     if (selectedChild) {
       toast.success(t.uploadSuccess);
       setSelectedChild(null);
-      refetchPhotos();
     }
   };
 
-  if (isLoading) {
+  if (childrenLoading) {
     return <div className="text-center p-4">{t.loading}</div>;
   }
 
@@ -129,55 +104,61 @@ const SponsorDashboard = () => {
         <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
 
         <div className="grid gap-6">
+          {/* Sponsored Children Cards */}
           {sponsoredChildren?.map((sponsorship) => {
             const child = sponsorship.children;
             if (!child) return null;
-            
-            // Filter photos for this specific child
-            const childPhotos = childrenPhotos.filter(photo => photo.child_id === child.id);
-            console.log(`Photos for child ${child.id}:`, childPhotos);
 
             return (
-              <Card key={child.id} className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+              <div key={child.id} className="space-y-6">
                 <SponsoredChildCard
                   child={child}
                   sponsorshipId={sponsorship.id}
                   onAddPhoto={() => handleAddPhoto(child.id)}
-                  onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: child.id } })}
+                  onAddTestimonial={() => {}}
                 />
 
-                {/* Album Photos Section */}
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-4">Album Photos</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {childPhotos.map((photo) => (
-                      <div 
-                        key={photo.id} 
-                        className="aspect-square rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-                      >
-                        <img
-                          src={photo.url}
-                          alt={photo.title || `Photo de ${child.name}`}
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
-                          onClick={() => window.open(photo.url, '_blank')}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Photo Upload Section */}
                 {selectedChild === child.id && (
-                  <div className="mt-6">
+                  <Card className="p-4">
                     <PhotoUploader
                       childId={selectedChild}
                       onUploadSuccess={handleUploadSuccess}
                     />
-                  </div>
+                  </Card>
                 )}
-              </Card>
+              </div>
             );
           })}
+
+          {/* Contribution Stats */}
+          <ContributionStats
+            totalPhotos={0}
+            totalTestimonials={0}
+            totalNeeds={0}
+            sponsorshipDays={0}
+          />
+
+          {/* Timeline */}
+          <SponsorshipTimeline events={[]} />
+
+          {/* Notifications */}
+          <DetailedNotification />
+
+          {/* Planned Visits */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">
+              {language === 'fr' ? 'Visites Planifiées' : 'Visitas Planificadas'}
+            </h3>
+            <VisitsSection visits={plannedVisits} />
+          </Card>
+
+          {/* Statistics */}
+          <StatisticsSection
+            photos={[]}
+            needs={[]}
+            sponsorshipDuration={0}
+            sponsorshipStartDate=""
+          />
         </div>
       </div>
     </div>
