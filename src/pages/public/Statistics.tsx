@@ -5,6 +5,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatisticsData } from "@/types/dashboard";
 import { Progress } from "@/components/ui/progress";
+import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
+import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 
 const Statistics = () => {
   const { t } = useLanguage();
@@ -168,6 +170,11 @@ const Statistics = () => {
                 </div>
               </div>
             </Card>
+          </div>
+
+          <div className="space-y-8 mt-12">
+            <SponsorshipStats />
+            <UserEngagementStats />
           </div>
         </div>
       </div>
