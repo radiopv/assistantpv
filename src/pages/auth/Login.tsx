@@ -58,7 +58,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-100 flex items-start justify-center p-4 pt-12">
       <Card className="w-full max-w-md p-8 space-y-6 bg-white">
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold">Espace Parrain</h1>
