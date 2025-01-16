@@ -24,13 +24,13 @@ export default function AllChildren() {
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger 
                 value="available" 
-                className="text-base sm:text-lg py-3 data-[state=active]:bg-orange-100"
+                className="text-base sm:text-lg py-3 data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 hover:bg-orange-50 transition-colors duration-200"
               >
                 Enfants disponibles
               </TabsTrigger>
               <TabsTrigger 
                 value="sponsored" 
-                className="text-base sm:text-lg py-3 data-[state=active]:bg-orange-100"
+                className="text-base sm:text-lg py-3 data-[state=active]:bg-orange-100 data-[state=active]:text-orange-700 hover:bg-orange-50 transition-colors duration-200"
               >
                 Enfants parrainés
               </TabsTrigger>
