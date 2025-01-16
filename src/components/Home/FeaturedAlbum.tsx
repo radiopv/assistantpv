@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Carousel,
@@ -6,45 +6,45 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import AutoplayPlugin from "embla-carousel-autoplay";
-import type { Database } from "@/integrations/supabase/types";
 
-type AlbumMedia = Database["public"]["Tables"]["album_media"]["Row"] & {
+interface AlbumMedia {
+  id: string;
+  url: string;
+  title: string | null;
   children?: {
     name: string;
   } | null;
   sponsors?: {
     name: string;
   } | null;
-};
+  created_at: string;
+}
 
 export const FeaturedAlbum = () => {
-  const [photos, setPhotos] = useState<AlbumMedia[]>([]);
-
-  useEffect(() => {
-    const fetchFeaturedPhotos = async () => {
+  const { data: photos, isLoading } = useQuery({
+    queryKey: ["featured-photos"],
+    queryFn: async () => {
       const { data, error } = await supabase
-        .from('album_media')
+        .from("album_media")
         .select(`
           *,
           children (name),
-          sponsors!album_media_new_sponsor_id_fkey (name)
+          sponsors (name)
         `)
-        .eq('is_featured', true)
-        .eq('is_approved', true)
+        .eq("is_featured", true)
+        .eq("is_approved", true)
         .limit(10);
 
       if (error) {
-        console.error('Error fetching featured photos:', error);
-        return;
+        console.error("Error fetching featured photos:", error);
+        throw error;
       }
 
-      setPhotos(data || []);
-    };
+      return data as AlbumMedia[];
+    },
+  });
 
-    fetchFeaturedPhotos();
-  }, []);
-
-  if (photos.length === 0) {
+  if (isLoading || !photos?.length) {
     return null;
   }
 
