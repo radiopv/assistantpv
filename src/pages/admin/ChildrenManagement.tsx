@@ -14,8 +14,8 @@ export default function ChildrenManagement() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
-      <div className="container mx-auto p-0 sm:p-4 space-y-6">
-        <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-6 border border-orange-200">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg p-4 sm:p-6 border border-orange-200 w-full max-w-[100%]">
           <h1 className="text-2xl font-bold mb-4">{t("childrenAndSponsorship")}</h1>
           
           <Tabs defaultValue="children" className="w-full">
@@ -43,16 +43,22 @@ export default function ChildrenManagement() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="children" className="mt-2 px-0">
-              <Children />
+            <TabsContent value="children" className="mt-2">
+              <div className="w-full overflow-x-auto">
+                <Children />
+              </div>
             </TabsContent>
 
-            <TabsContent value="photos" className="mt-2 px-0">
-              <AssistantPhotos />
+            <TabsContent value="photos" className="mt-2">
+              <div className="w-full overflow-x-auto">
+                <AssistantPhotos />
+              </div>
             </TabsContent>
 
-            <TabsContent value="sponsorship" className="mt-2 px-0">
-              <SponsorshipManagement />
+            <TabsContent value="sponsorship" className="mt-2">
+              <div className="w-full overflow-x-auto">
+                <SponsorshipManagement />
+              </div>
             </TabsContent>
           </Tabs>
         </Card>
@@ -63,7 +69,6 @@ export default function ChildrenManagement() {
         onClose={() => setSelectedChildId(null)}
         childId={selectedChildId || ""}
         onAssignComplete={() => {
-          // Refresh data after assignment
           window.location.reload();
         }}
       />
