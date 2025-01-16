@@ -11,6 +11,8 @@ import { useEffect, useRef, useState } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
 import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -22,6 +24,38 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   const navigate = useNavigate();
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
+
+  // Fetch album photos for all children
+  const { data: albumPhotos } = useQuery({
+    queryKey: ['album-photos', children.map(child => child.id)],
+    queryFn: async () => {
+      if (!children.length) return [];
+      
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .in('child_id', children.map(child => child.id))
+        .eq('type', 'image')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching album photos:', error);
+        return [];
+      }
+
+      return data || [];
+    },
+    enabled: children.length > 0
+  });
+
+  // Group photos by child
+  const photosByChild = albumPhotos?.reduce((acc, photo) => {
+    if (!acc[photo.child_id]) {
+      acc[photo.child_id] = [];
+    }
+    acc[photo.child_id].push(photo);
+    return acc;
+  }, {} as Record<string, any[]>) || {};
 
   useEffect(() => {
     loadFaceDetectionModels()
@@ -133,6 +167,24 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
           </div>
 
           <div className="p-2 space-y-2">
+            {/* Album Photos Grid */}
+            {photosByChild[child.id]?.length > 0 && (
+              <div className="bg-white/80 rounded-lg p-2">
+                <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  {photosByChild[child.id].slice(0, 3).map((photo: any) => (
+                    <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
+                      <img
+                        src={photo.url}
+                        alt="Photo album"
+                        className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {child.description && (
               <div className="bg-white/80 rounded-lg p-2">
                 <p className="text-sm text-gray-700 line-clamp-2">{child.description}</p>
