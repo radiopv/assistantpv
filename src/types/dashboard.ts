@@ -4,6 +4,8 @@ export interface StatisticsData {
   total_sponsors: number;
   active_sponsorships: number;
   pending_sponsorships: number;
+  sponsored_children: number;
+  total_people_helped: number;
   monthly_trends?: Array<{
     donation_date: string;
   }>;
