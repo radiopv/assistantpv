@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInDays } from "date-fns";
+import { Need } from "@/types/needs";
 
 interface ContributionStatsProps {
   sponsorId: string;
@@ -17,19 +18,25 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
       contributions: "Vos contributions",
       photos: "Photos",
       testimonials: "Témoignages",
-      needsFulfilled: "Besoins comblés",
+      needsFulfilled: "Besoins",
+      totalNeeds: "Total besoins:",
+      urgentNeeds: "Besoins urgents:",
       sponsorshipDays: "Jours de parrainage",
-      urgentNeeds: "Besoins urgents",
-      lastPhoto: "Dernière photo"
+      lastPhoto: "Dernière photo",
+      none: "Aucune",
+      startDate: "Date de début:"
     },
     es: {
       contributions: "Sus contribuciones",
       photos: "Fotos",
       testimonials: "Testimonios",
-      needsFulfilled: "Necesidades cumplidas",
+      needsFulfilled: "Necesidades",
+      totalNeeds: "Total necesidades:",
+      urgentNeeds: "Necesidades urgentes:",
       sponsorshipDays: "Días de apadrinamiento",
-      urgentNeeds: "Necesidades urgentes",
-      lastPhoto: "Última foto"
+      lastPhoto: "Última foto",
+      none: "Ninguna",
+      startDate: "Fecha de inicio:"
     }
   };
 
@@ -83,7 +90,7 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
               : JSON.parse(sponsorship.children.needs as string);
             
             totalNeeds += needs.length;
-            urgentNeeds += needs.filter((need: any) => need.is_urgent).length;
+            urgentNeeds += needs.filter((need: Need) => need.is_urgent).length;
           }
         });
 
@@ -109,7 +116,8 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
           totalNeeds,
           urgentNeeds,
           sponsorshipDays,
-          latestPhotoDate: latestPhoto?.created_at || null
+          latestPhotoDate: latestPhoto?.created_at || null,
+          sponsorshipStartDate: earliestSponsorship?.start_date || null
         };
       } catch (error) {
         console.error('Error fetching contribution stats:', error);
@@ -119,7 +127,8 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
           totalNeeds: 0,
           urgentNeeds: 0,
           sponsorshipDays: 0,
-          latestPhotoDate: null
+          latestPhotoDate: null,
+          sponsorshipStartDate: null
         };
       }
     }
@@ -138,11 +147,26 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
             <span className="font-medium">{t.photos}</span>
           </div>
           <p className="text-2xl font-bold">{stats?.totalPhotos || 0}</p>
-          {stats?.latestPhotoDate && (
-            <p className="text-xs text-gray-600 mt-1">
-              {new Date(stats.latestPhotoDate).toLocaleDateString()}
+          <p className="text-xs text-gray-600 mt-1">
+            {stats?.latestPhotoDate 
+              ? new Date(stats.latestPhotoDate).toLocaleDateString()
+              : t.none
+            }
+          </p>
+        </div>
+        <div className="p-3 bg-cuba-warmBeige/10 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <Heart className="w-4 h-4 text-cuba-coral" />
+            <span className="font-medium">{t.needsFulfilled}</span>
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm">
+              {t.totalNeeds} <span className="font-bold">{stats?.totalNeeds || 0}</span>
             </p>
-          )}
+            <p className="text-sm">
+              {t.urgentNeeds} <span className="font-bold text-red-600">{stats?.urgentNeeds || 0}</span>
+            </p>
+          </div>
         </div>
         <div className="p-3 bg-cuba-warmBeige/10 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
@@ -153,22 +177,16 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
         </div>
         <div className="p-3 bg-cuba-warmBeige/10 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
-            <Heart className="w-4 h-4 text-cuba-coral" />
-            <span className="font-medium">{t.needsFulfilled}</span>
-          </div>
-          <p className="text-2xl font-bold">{stats?.totalNeeds || 0}</p>
-          {stats?.urgentNeeds > 0 && (
-            <p className="text-xs text-red-600 mt-1">
-              {stats.urgentNeeds} {t.urgentNeeds}
-            </p>
-          )}
-        </div>
-        <div className="p-3 bg-cuba-warmBeige/10 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
             <Clock className="w-4 h-4 text-cuba-coral" />
             <span className="font-medium">{t.sponsorshipDays}</span>
           </div>
           <p className="text-2xl font-bold">{stats?.sponsorshipDays || 0}</p>
+          <p className="text-xs text-gray-600 mt-1">
+            {t.startDate} {stats?.sponsorshipStartDate 
+              ? new Date(stats.sponsorshipStartDate).toLocaleDateString()
+              : t.none
+            }
+          </p>
         </div>
       </div>
     </Card>
