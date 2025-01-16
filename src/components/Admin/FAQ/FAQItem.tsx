@@ -28,12 +28,12 @@ export const FAQItem = ({
   return (
     <AccordionItem
       value={item.id}
-      className={`border p-4 rounded-lg transition-all duration-300 hover:shadow-md 
+      className={`border p-4 rounded-none md:rounded-lg transition-all duration-300 hover:shadow-md 
         ${!item.is_active ? "opacity-60" : ""}
-        bg-white/80 backdrop-blur-sm hover:bg-cuba-warmBeige/20`}
+        bg-white/80 backdrop-blur-sm hover:bg-cuba-warmBeige/20 break-words`}
     >
-      <div className="flex justify-between items-center">
-        <AccordionTrigger className="text-left hover:no-underline font-title">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+        <AccordionTrigger className="text-left hover:no-underline font-title break-words flex-1">
           {editingFaq?.id === item.id ? (
             <Input
               value={editingFaq.question}
@@ -41,18 +41,18 @@ export const FAQItem = ({
                 setEditingFaq({ ...editingFaq, question: e.target.value })
               }
               onClick={(e) => e.stopPropagation()}
-              className="bg-cuba-offwhite/50"
+              className="bg-cuba-offwhite/50 w-full"
             />
           ) : (
-            <span className="text-lg font-medium">{item.question}</span>
+            <span className="text-base md:text-lg font-medium break-words">{item.question}</span>
           )}
         </AccordionTrigger>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto justify-end">
           {editingFaq?.id === item.id ? (
             <Button 
               size="sm" 
               onClick={() => onUpdate(editingFaq)}
-              className="bg-cuba-turquoise hover:bg-cuba-turquoise/80"
+              className="bg-cuba-turquoise hover:bg-cuba-turquoise/80 w-full md:w-auto"
             >
               Sauvegarder
             </Button>
@@ -97,10 +97,10 @@ export const FAQItem = ({
             onChange={(e) =>
               setEditingFaq({ ...editingFaq, answer: e.target.value })
             }
-            className="bg-cuba-offwhite/50"
+            className="bg-cuba-offwhite/50 w-full min-h-[100px]"
           />
         ) : (
-          <div className="prose max-w-none">
+          <div className="prose max-w-none break-words">
             {item.answer}
           </div>
         )}
