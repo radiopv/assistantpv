@@ -24,23 +24,28 @@ export const FeaturedAlbum = () => {
   const { data: photos, isLoading } = useQuery({
     queryKey: ["featured-photos"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("album_media")
-        .select(`
-          *,
-          children (name),
-          sponsors (name)
-        `)
-        .eq("is_featured", true)
-        .eq("is_approved", true)
-        .limit(10);
+      try {
+        const { data, error } = await supabase
+          .from("album_media")
+          .select(`
+            *,
+            children (name),
+            sponsors (name)
+          `)
+          .eq("is_featured", true)
+          .eq("is_approved", true)
+          .limit(10);
 
-      if (error) {
-        console.error("Error fetching featured photos:", error);
-        throw error;
+        if (error) {
+          console.error("Error fetching featured photos:", error);
+          throw error;
+        }
+
+        return data as AlbumMedia[];
+      } catch (error) {
+        console.error("Error in featured photos query:", error);
+        return [];
       }
-
-      return data as AlbumMedia[];
     },
   });
 

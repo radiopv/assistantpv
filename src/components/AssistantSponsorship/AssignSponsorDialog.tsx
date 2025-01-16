@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { SponsorsList } from "./SponsorsList";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +21,6 @@ export const AssignSponsorDialog = ({
 }: AssignSponsorDialogProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const { t } = useLanguage();
-  const { toast } = useToast();
 
   const handleSelectSponsor = async (sponsorId: string) => {
     try {
@@ -35,12 +34,12 @@ export const AssignSponsorDialog = ({
 
       if (error) throw error;
 
-      toast.success(t("assignmentRequestCreated"));
+      toast("Demande de parrainage créée avec succès");
       onAssignComplete?.();
       onClose();
     } catch (error) {
       console.error('Error assigning sponsor:', error);
-      toast.error(t("errorAssigningSponsor"));
+      toast("Erreur lors de l'assignation du parrain");
     }
   };
 
