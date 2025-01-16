@@ -5,6 +5,7 @@ import { SponsorsList } from "./SponsorsList";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
 
 interface AssignSponsorDialogProps {
   isOpen: boolean;
@@ -22,6 +23,22 @@ export const AssignSponsorDialog = ({
   const [searchTerm, setSearchTerm] = useState("");
   const { t } = useLanguage();
 
+  const { data: sponsors = [] } = useQuery({
+    queryKey: ['sponsors-for-assignment'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sponsors')
+        .select('*')
+        .order('name');
+      
+      if (error) {
+        console.error('Error fetching sponsors:', error);
+        throw error;
+      }
+      return data || [];
+    }
+  });
+
   const handleSelectSponsor = async (sponsorId: string) => {
     try {
       const { error } = await supabase
@@ -34,12 +51,12 @@ export const AssignSponsorDialog = ({
 
       if (error) throw error;
 
-      toast("Demande de parrainage créée avec succès");
+      toast.success(t("sponsorshipRequestCreated"));
       onAssignComplete?.();
       onClose();
     } catch (error) {
       console.error('Error assigning sponsor:', error);
-      toast("Erreur lors de l'assignation du parrain");
+      toast.error(t("errorAssigningSponsor"));
     }
   };
 
@@ -50,7 +67,7 @@ export const AssignSponsorDialog = ({
           <DialogTitle>{t("assignSponsor")}</DialogTitle>
         </DialogHeader>
         <SponsorsList
-          sponsors={[]}
+          sponsors={sponsors}
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onSelectSponsor={handleSelectSponsor}
