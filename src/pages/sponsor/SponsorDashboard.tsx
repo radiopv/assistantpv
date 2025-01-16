@@ -90,17 +90,7 @@ const SponsorDashboard = () => {
       
       const { data, error } = await supabase
         .from('album_media')
-        .select(`
-          id,
-          url,
-          type,
-          title,
-          description,
-          is_featured,
-          created_at,
-          child_id,
-          sponsor_id
-        `)
+        .select('*')
         .in('child_id', sponsoredChildren.map(s => s.children?.id))
         .eq('is_approved', true)
         .order('created_at', { ascending: false });
