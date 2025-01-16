@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { AssignSponsorDialog } from "../AssistantSponsorship/AssignSponsorDialog";
 
 interface ChildrenListProps {
   children: any[];
@@ -28,6 +29,8 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const isMobile = useIsMobile();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? "grid" : "table");
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [selectedChildForAssignment, setSelectedChildForAssignment] = useState<string | null>(null);
 
   const uniqueChildren = children.reduce((acc, current) => {
     const x = acc.find(item => item.id === current.id);
@@ -50,6 +53,17 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       return data;
     }
   });
+
+  const handleAssignSponsor = (childId: string) => {
+    setSelectedChildForAssignment(childId);
+    setShowAssignDialog(true);
+  };
+
+  const handleAssignComplete = () => {
+    setShowAssignDialog(false);
+    setSelectedChildForAssignment(null);
+    // Optionally refresh data here
+  };
 
   const getMissingFields = (child: any) => {
     const missingFields = [];
@@ -175,6 +189,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
           children={uniqueChildren}
           onViewProfile={onViewProfile}
           onSponsorClick={setSelectedChild}
+          onAssignSponsor={handleAssignSponsor}
         />
       )}
 
@@ -186,6 +201,13 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
           onClose={() => setSelectedChild(null)}
         />
       )}
+
+      <AssignSponsorDialog
+        isOpen={showAssignDialog}
+        onClose={() => setShowAssignDialog(false)}
+        childId={selectedChildForAssignment || ""}
+        onAssignComplete={handleAssignComplete}
+      />
     </div>
   );
 };

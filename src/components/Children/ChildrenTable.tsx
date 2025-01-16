@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, UserPlus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
 import { useState } from "react";
@@ -9,16 +9,12 @@ interface ChildrenTableProps {
   children: any[];
   onViewProfile: (id: string) => void;
   onSponsorClick: (child: any) => void;
+  onAssignSponsor?: (childId: string) => void;
 }
 
-type SortConfig = {
-  key: string;
-  direction: 'asc' | 'desc';
-};
-
-export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: ChildrenTableProps) => {
+export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssignSponsor }: ChildrenTableProps) => {
   const { t } = useLanguage();
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: '', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: '', direction: 'asc' });
 
   const formatAge = (birthDate: string) => {
     if (!birthDate) return t("ageNotAvailable");
@@ -112,7 +108,20 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
-                  {/* Empty cell to maintain table structure */}
+                  {!child.is_sponsored && onAssignSponsor && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAssignSponsor(child.id);
+                      }}
+                      className="flex items-center gap-1"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      {t("assignSponsor")}
+                    </Button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
