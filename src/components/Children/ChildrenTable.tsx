@@ -21,7 +21,7 @@ export const ChildrenTable = ({
   onRemoveSponsor 
 }: ChildrenTableProps) => {
   const { t } = useLanguage();
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: '', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' }); // Default sort by name
 
   const formatAge = (birthDate: string) => {
     if (!birthDate) return t("ageNotAvailable");
