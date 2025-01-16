@@ -40,7 +40,8 @@ const AssistantPhotos = () => {
     queryFn: async () => {
       const { data: childrenData, error: childrenError } = await supabase
         .from('children')
-        .select('id, name');
+        .select('id, name')
+        .order('name');  // Added sorting by name
       
       if (childrenError) throw childrenError;
 
@@ -84,7 +85,7 @@ const AssistantPhotos = () => {
       await notifySponsor(selectedChild);
       await logActivity(selectedChild, 'media_added', { child_id: selectedChild });
       toast.success(t.photosAdded);
-      setSelectedChild(null); // Ferme l'album après l'upload
+      setSelectedChild(null);
     }
   };
 
