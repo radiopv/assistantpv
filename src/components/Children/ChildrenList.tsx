@@ -86,10 +86,10 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-2 sm:px-0">
         {!isMobile && (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full">
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="outline" size="icon" className="min-h-[44px] min-w-[44px]">
@@ -110,12 +110,12 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
               </PopoverContent>
             </Popover>
 
-            <div className="flex items-center gap-2 border rounded-lg p-1">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
               <Button
                 variant={viewMode === "grid" ? "secondary" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
-                className="gap-2 min-h-[44px]"
+                className="gap-2 min-h-[44px] w-full sm:w-auto"
               >
                 <Grid className="h-4 w-4" />
                 {t("gridView")}
@@ -124,7 +124,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
                 variant={viewMode === "table" ? "secondary" : "ghost"}
                 size="sm"
                 onClick={() => setViewMode("table")}
-                className="gap-2 min-h-[44px]"
+                className="gap-2 min-h-[44px] w-full sm:w-auto"
               >
                 <List className="h-4 w-4" />
                 {t("tableView")}
@@ -150,7 +150,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       )}
 
       {(viewMode === "grid" || isMobile) ? (
-        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-2 sm:px-0">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-2 sm:px-0">
           {uniqueChildren.map((child) => (
             <div key={child.id} className="space-y-2">
               <ChildCard
