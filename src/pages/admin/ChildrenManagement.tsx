@@ -5,6 +5,7 @@ import Children from "@/pages/Children";
 import AssistantPhotos from "@/pages/AssistantPhotos";
 import SponsorshipManagement from "./SponsorshipManagement";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function ChildrenManagement() {
   const { t } = useLanguage();
