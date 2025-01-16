@@ -53,8 +53,7 @@ export const SponsoredChildCard = ({
         .eq('child_id', child.id)
         .eq('type', 'image')
         .eq('is_approved', true)
-        .order('created_at', { ascending: false })
-        .limit(4);
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data;
@@ -173,7 +172,7 @@ export const SponsoredChildCard = ({
       {/* Album Photos Section */}
       {albumPhotos && albumPhotos.length > 0 && (
         <div className="mt-4">
-          <h4 className="font-medium text-sm mb-3 text-cuba-warmGray">Photos récentes</h4>
+          <h4 className="font-medium text-sm mb-3 text-cuba-warmGray">Photos de l'album</h4>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {albumPhotos.map((photo) => (
               <div 
