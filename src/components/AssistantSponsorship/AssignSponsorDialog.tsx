@@ -43,10 +43,10 @@ export const AssignSponsorDialog = ({
   });
 
   const handleSelectSponsor = async (sponsorId: string) => {
+    console.log('Starting sponsor assignment process:', { sponsorId, childId });
     try {
       setIsAssigning(true);
-      console.log('Starting sponsor assignment process:', { sponsorId, childId });
-      
+
       // First check if there's already a request
       const { data: existingRequests, error: checkError } = await supabase
         .from('child_assignment_requests')
@@ -57,7 +57,8 @@ export const AssignSponsorDialog = ({
 
       if (checkError) {
         console.error('Error checking existing requests:', checkError);
-        throw checkError;
+        toast.error(t("errorAssigningSponsor"));
+        return;
       }
 
       console.log('Existing requests:', existingRequests);
@@ -81,7 +82,8 @@ export const AssignSponsorDialog = ({
 
       if (insertError) {
         console.error('Error creating assignment request:', insertError);
-        throw insertError;
+        toast.error(t("errorAssigningSponsor"));
+        return;
       }
 
       // Update child status
@@ -96,7 +98,8 @@ export const AssignSponsorDialog = ({
 
       if (updateError) {
         console.error('Error updating child status:', updateError);
-        throw updateError;
+        toast.error(t("errorAssigningSponsor"));
+        return;
       }
 
       console.log('Assignment process completed successfully');
