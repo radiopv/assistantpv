@@ -133,21 +133,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "album_media_new_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "album_media_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_album_media_sponsors"
             columns: ["sponsor_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
@@ -2210,21 +2196,7 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "album_media_new_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "album_media_sponsor_id_fkey"
-            columns: ["sponsor_id"]
-            isOneToOne: false
-            referencedRelation: "sponsors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_album_media_sponsors"
             columns: ["sponsor_id"]
             isOneToOne: false
             referencedRelation: "sponsors"
@@ -2658,6 +2630,14 @@ export type Database = {
       }
       process_sponsorship_end_dates: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      reassign_child_to_sponsor: {
+        Args: {
+          child_id: string
+          new_sponsor_id: string
+          admin_id: string
+        }
         Returns: undefined
       }
       refresh_statistics: {
