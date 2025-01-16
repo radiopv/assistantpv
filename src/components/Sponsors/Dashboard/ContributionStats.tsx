@@ -3,7 +3,7 @@ import { ChartBar, Heart, Camera, MessageSquare, Clock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { differenceInDays } from "date-fns";
+import { differenceInDays, subDays } from "date-fns";
 import { Need } from "@/types/needs";
 
 interface ContributionStatsProps {
@@ -107,6 +107,11 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
           ? differenceInDays(new Date(), new Date(earliestSponsorship.start_date))
           : 0;
 
+        // Calculate start date from days count if no start_date is found
+        const calculatedStartDate = sponsorshipDays > 0 && !earliestSponsorship?.start_date
+          ? subDays(new Date(), sponsorshipDays).toISOString()
+          : earliestSponsorship?.start_date;
+
         // Get latest photo date
         const latestPhoto = photos && photos.length > 0 ? photos[0] : null;
 
@@ -117,7 +122,7 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
           urgentNeeds,
           sponsorshipDays,
           latestPhotoDate: latestPhoto?.created_at || null,
-          sponsorshipStartDate: earliestSponsorship?.start_date || null
+          sponsorshipStartDate: calculatedStartDate || null
         };
       } catch (error) {
         console.error('Error fetching contribution stats:', error);
