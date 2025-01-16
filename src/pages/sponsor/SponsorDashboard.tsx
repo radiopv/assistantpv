@@ -125,30 +125,30 @@ const SponsorDashboard = () => {
           <ContributionStats sponsorId={user?.id || ''} />
 
           {/* Sponsored Children Cards */}
-          {sponsoredChildren?.map((sponsorship) => {
-            const child = sponsorship.children;
-            if (!child) return null;
 
-            return (
-              <div key={child.id} className="space-y-6">
-                <SponsoredChildCard
-                  child={child}
-                  sponsorshipId={sponsorship.id}
-                  onAddPhoto={() => handleAddPhoto(child.id)}
-                  onAddTestimonial={() => {}}
-                />
+{sponsoredChildren?.map((sponsorship) => {
+  const child = sponsorship.children;
+  if (!child) return null;
 
-                {selectedChild === child.id && (
-                  <Card className="p-4">
-                    <PhotoUploader
-                      childId={selectedChild}
-                      onUploadSuccess={handleUploadSuccess}
-                    />
-                  </Card>
-                )}
-              </div>
-            );
-          })}
+  return (
+    <div key={child.id} className="space-y-6">
+      <SponsoredChildCard
+        child={child}
+        sponsorshipId={sponsorship.id}
+        onAddPhoto={() => handleAddPhoto(child.id)}
+      />
+
+      {selectedChild === child.id && (
+        <Card className="p-4">
+          <PhotoUploader
+            childId={selectedChild}
+            onUploadSuccess={handleUploadSuccess}
+          />
+        </Card>
+      )}
+    </div>
+  );
+})}
 
           {/* Planned Visits */}
           <Card className="p-6">
