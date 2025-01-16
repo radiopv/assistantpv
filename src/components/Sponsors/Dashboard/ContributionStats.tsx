@@ -48,7 +48,7 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
       try {
         console.log('Fetching stats for sponsor:', sponsorId);
         
-        // Get photos with details
+        // Get photos with details - Mise à jour de la requête pour inclure is_approved
         const { data: photos, error: photosError } = await supabase
           .from('album_media')
           .select('*')
@@ -61,7 +61,7 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
           throw photosError;
         }
 
-        console.log('Found photos:', photos?.length);
+        console.log('Found photos:', photos);
 
         // Get testimonials
         const { data: testimonials, error: testimonialsError } = await supabase
