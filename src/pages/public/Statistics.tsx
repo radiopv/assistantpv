@@ -2,43 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
-} from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
-
-interface StatisticsData {
-  total_donations: number;
-  total_children: number;
-  total_sponsors: number;
-  active_sponsorships: number;
-  pending_sponsorships: number;
-  monthly_trends?: Array<{
-    month: string;
-    donations: number;
-  }>;
-  city_distribution?: Array<{
-    city: string;
-    count: number;
-  }>;
-}
-
-const COLORS = [
-  '#FF6B6B',  // cuba-coral
-  '#FEC6A1',  // cuba-softOrange
-  '#FFD700',  // cuba-gold
-  '#50C878',  // cuba-emerald
-  '#0072BB'   // cuba-turquoise
-];
+import { StatisticsData } from "@/types/dashboard";
 
 const Statistics = () => {
   const { t } = useLanguage();
@@ -46,51 +11,45 @@ const Statistics = () => {
   const { data: stats, isLoading } = useQuery({
     queryKey: ["statistics"],
     queryFn: async () => {
-      // Fetch general statistics
-      const { data: statsData, error: statsError } = await supabase
-        .from('sponsorships')
-        .select('status');
+      // Get sponsorship stats
+      const { data: sponsorships, error: sponsorshipsError } = await supabase
+        .from("sponsorships")
+        .select("status");
 
-      if (statsError) throw statsError;
+      if (sponsorshipsError) throw sponsorshipsError;
 
-      // Count active and pending sponsorships
-      const activeSponsors = statsData.filter(s => s.status === 'active').length;
-      const pendingSponsors = statsData.filter(s => s.status === 'pending').length;
+      // Get children stats
+      const { data: children, error: childrenError } = await supabase
+        .from("children")
+        .select("id, is_sponsored");
 
-      // Fetch monthly donation trends
-      const { data: trendsData, error: trendsError } = await supabase
-        .from('donations')
-        .select('donation_date')
-        .gte('donation_date', new Date(new Date().setMonth(new Date().getMonth() - 12)).toISOString());
+      if (childrenError) throw childrenError;
 
-      if (trendsError) throw trendsError;
+      // Get donations stats
+      const { data: donations, error: donationsError } = await supabase
+        .from("donations")
+        .select("id, donation_date");
 
-      // Get city distribution
-      const { data: cityData, error: cityError } = await supabase
-        .from('children')
-        .select('city')
-        .not('city', 'is', null);
-      
-      if (cityError) throw cityError;
+      if (donationsError) throw donationsError;
 
-      // Process city distribution
-      const cityDistribution = cityData.reduce((acc: Record<string, number>, curr) => {
-        acc[curr.city] = (acc[curr.city] || 0) + 1;
-        return acc;
-      }, {});
-
-      const cityStats = Object.entries(cityDistribution).map(([city, count]) => ({
-        city,
-        count
-      }));
+      // Calculate stats
+      const active = sponsorships.filter((s) => s.status === "active").length;
+      const pending = sponsorships.filter((s) => s.status === "pending").length;
+      const totalChildren = children.length;
+      const totalSponsors = new Set(sponsorships.map(s => s.sponsor_id)).size;
 
       return {
-        active_sponsorships: activeSponsors,
-        pending_sponsorships: pendingSponsors,
-        monthly_trends: trendsData,
-        city_distribution: cityStats
+        active_sponsorships: active,
+        pending_sponsorships: pending,
+        total_donations: donations.length,
+        total_children: totalChildren,
+        total_sponsors: totalSponsors,
+        monthly_trends: donations.map(d => ({
+          donation_date: d.donation_date
+        })),
+        city_distribution: [] // This can be implemented if needed
       } as StatisticsData;
-    }
+    },
   });
 
   if (isLoading) {
@@ -110,6 +69,9 @@ const Statistics = () => {
   const safeStats = {
     active_sponsorships: stats?.active_sponsorships || 0,
     pending_sponsorships: stats?.pending_sponsorships || 0,
+    total_donations: stats?.total_donations || 0,
+    total_children: stats?.total_children || 0,
+    total_sponsors: stats?.total_sponsors || 0,
     monthly_trends: stats?.monthly_trends || [],
     city_distribution: stats?.city_distribution || []
   };
