@@ -13,7 +13,13 @@ interface ChildrenTableProps {
   onRemoveSponsor?: (childId: string) => void;
 }
 
-export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssignSponsor, onRemoveSponsor }: ChildrenTableProps) => {
+export const ChildrenTable = ({ 
+  children, 
+  onViewProfile, 
+  onSponsorClick,
+  onAssignSponsor, 
+  onRemoveSponsor 
+}: ChildrenTableProps) => {
   const { t } = useLanguage();
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: '', direction: 'asc' });
 
@@ -75,6 +81,10 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssig
     </Button>
   );
 
+  const handleRowClick = (childId: string) => {
+    onViewProfile(childId);
+  };
+
   return (
     <div className="w-full">
       <Table>
@@ -92,6 +102,7 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssig
             <TableRow 
               key={child.id}
               className="cursor-pointer hover:bg-gray-50"
+              onClick={() => handleRowClick(child.id)}
             >
               <TableCell className="font-medium whitespace-normal break-words">
                 {child.name}
@@ -116,13 +127,13 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick, onAssig
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex items-center justify-end gap-2">
-                  {!child.is_sponsored && onAssignSponsor && (
+                  {!child.is_sponsored && (
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onAssignSponsor(child.id);
+                        onSponsorClick(child);
                       }}
                       className="flex items-center gap-1"
                     >
