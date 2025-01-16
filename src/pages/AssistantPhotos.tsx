@@ -99,59 +99,61 @@ const AssistantPhotos = () => {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">{t.title}</h1>
-        <p className="text-lg text-gray-600">{t.subtitle}</p>
-        <p className="text-sm text-gray-500">{t.instructions}</p>
-      </div>
-
-      {selectedChild ? (
-        <Card className="p-6">
-          <ScrollArea className="h-[calc(100vh-12rem)]">
-            <div className="space-y-6">
-              <PhotoUploader
-                childId={selectedChild}
-                onUploadSuccess={handleUploadSuccess}
-              />
-              <AlbumMediaGrid childId={selectedChild} />
-            </div>
-          </ScrollArea>
-        </Card>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {children?.map((child) => (
-            <Card 
-              key={child.id} 
-              className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => setSelectedChild(child.id)}
-            >
-              <div className="aspect-square relative">
-                <div className="grid grid-cols-2 h-full">
-                  {child.photos.slice(0, 4).map((photo, index) => (
-                    <div key={index} className="relative aspect-square">
-                      <img
-                        src={photo.url}
-                        alt={`Photo de ${child.name}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                  {child.photos.length === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                      <p className="text-gray-500 text-sm">{t.noPhotos}</p>
-                    </div>
-                  )}
-                </div>
-                <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-4">
-                  <h3 className="text-white font-semibold truncate">{child.name}</h3>
-                  <p className="text-white/80 text-sm">{t.viewAlbum}</p>
-                </div>
-              </div>
-            </Card>
-          ))}
+    <div className="w-full p-0">
+      <div className="space-y-6">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold">{t.title}</h1>
+          <p className="text-lg text-gray-600">{t.subtitle}</p>
+          <p className="text-sm text-gray-500">{t.instructions}</p>
         </div>
-      )}
+
+        {selectedChild ? (
+          <Card className="p-4 rounded-none sm:rounded-lg">
+            <ScrollArea className="h-[calc(100vh-12rem)]">
+              <div className="space-y-6">
+                <PhotoUploader
+                  childId={selectedChild}
+                  onUploadSuccess={handleUploadSuccess}
+                />
+                <AlbumMediaGrid childId={selectedChild} />
+              </div>
+            </ScrollArea>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {children?.map((child) => (
+              <Card 
+                key={child.id} 
+                className="overflow-hidden cursor-pointer hover:shadow-lg transition-shadow rounded-none sm:rounded-lg"
+                onClick={() => setSelectedChild(child.id)}
+              >
+                <div className="aspect-square relative">
+                  <div className="grid grid-cols-2 h-full">
+                    {child.photos.slice(0, 4).map((photo, index) => (
+                      <div key={index} className="relative aspect-square">
+                        <img
+                          src={photo.url}
+                          alt={`Photo de ${child.name}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                    {child.photos.length === 0 && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                        <p className="text-gray-500 text-sm">{t.noPhotos}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-4">
+                    <h3 className="text-white font-semibold truncate">{child.name}</h3>
+                    <p className="text-white/80 text-sm">{t.viewAlbum}</p>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

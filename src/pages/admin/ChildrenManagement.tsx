@@ -11,46 +11,48 @@ export default function ChildrenManagement() {
 
   return (
     <div className="w-full p-0">
-      <Card className="p-2 sm:p-4 w-full">
-        <h1 className="text-2xl font-bold mb-4">{t("childrenAndSponsorship")}</h1>
-        
-        <Tabs defaultValue="children" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
-            <TabsTrigger 
-              value="children" 
-              className="flex items-center gap-2 min-h-[44px] w-full justify-center"
-            >
-              <Users className="w-4 h-4" />
-              {t("children")}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="photos" 
-              className="flex items-center gap-2 min-h-[44px] w-full justify-center"
-            >
-              <Image className="w-4 h-4" />
-              {t("photos")}
-            </TabsTrigger>
-            <TabsTrigger 
-              value="sponsorship" 
-              className="flex items-center gap-2 min-h-[44px] w-full justify-center"
-            >
-              <Users className="w-4 h-4" />
-              {t("sponsorshipManagement")}
-            </TabsTrigger>
-          </TabsList>
+      <Card className="rounded-none sm:rounded-lg">
+        <div className="p-2 sm:p-4 w-full">
+          <h1 className="text-2xl font-bold mb-4">{t("childrenAndSponsorship")}</h1>
+          
+          <Tabs defaultValue="children" className="w-full">
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+              <TabsTrigger 
+                value="children" 
+                className="flex items-center gap-2 min-h-[44px] w-full justify-center"
+              >
+                <Users className="w-4 h-4" />
+                {t("children")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="photos" 
+                className="flex items-center gap-2 min-h-[44px] w-full justify-center"
+              >
+                <Image className="w-4 h-4" />
+                {t("photos")}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="sponsorship" 
+                className="flex items-center gap-2 min-h-[44px] w-full justify-center"
+              >
+                <Users className="w-4 h-4" />
+                {t("sponsorshipManagement")}
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="children" className="mt-2 px-0">
-            <Children />
-          </TabsContent>
+            <TabsContent value="children" className="mt-2 px-0">
+              <Children />
+            </TabsContent>
 
-          <TabsContent value="photos" className="mt-2 px-0">
-            <AssistantPhotos />
-          </TabsContent>
+            <TabsContent value="photos" className="mt-2 px-0">
+              <AssistantPhotos />
+            </TabsContent>
 
-          <TabsContent value="sponsorship" className="mt-2 px-0">
-            <SponsorshipManagement />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="sponsorship" className="mt-2 px-0">
+              <SponsorshipManagement />
+            </TabsContent>
+          </Tabs>
+        </div>
       </Card>
     </div>
   );
