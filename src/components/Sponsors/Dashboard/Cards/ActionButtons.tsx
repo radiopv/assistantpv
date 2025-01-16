@@ -24,10 +24,8 @@ export const ActionButtons = ({
 
   const handleSubmitTestimonial = async () => {
     if (!newTestimonial.trim()) {
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Le témoignage ne peut pas être vide",
+      toast("Le témoignage ne peut pas être vide", {
+        description: "Veuillez écrire votre témoignage avant de l'envoyer"
       });
       return;
     }
@@ -41,18 +39,15 @@ export const ActionButtons = ({
 
       if (error) throw error;
 
-      toast({
-        title: "Succès",
-        description: "Votre témoignage a été soumis et sera examiné",
+      toast("Témoignage soumis", {
+        description: "Votre témoignage a été soumis et sera examiné"
       });
       setNewTestimonial("");
       setIsTestimonialOpen(false);
     } catch (error) {
       console.error("Error submitting testimonial:", error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de soumettre le témoignage",
+      toast("Erreur", {
+        description: "Impossible de soumettre le témoignage"
       });
     } finally {
       setIsSubmitting(false);
