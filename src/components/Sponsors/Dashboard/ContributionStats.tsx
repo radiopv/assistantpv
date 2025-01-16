@@ -1,19 +1,15 @@
-import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert } from "@/components/ui/alert";
-import { AlertTriangle, Heart, Camera, MessageSquare, Clock } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { logActivity } from "@/utils/activity-logger";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { useToast } from "@/hooks/use-toast";
-import { Need } from "@/types/needs";
+import { Heart, Camera, MessageSquare, Clock } from "lucide-react";
 
-export const ContributionStats = ({ sponsorId }: { sponsorId: string }) => {
-  const { user } = useAuth();
+interface ContributionStatsProps {
+  sponsorId: string;
+}
+
+export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
   const { language } = useLanguage();
-  const { toast } = useToast();
 
   const translations = {
     fr: {
@@ -42,16 +38,15 @@ export const ContributionStats = ({ sponsorId }: { sponsorId: string }) => {
 
   const t = translations[language as keyof typeof translations];
 
-  // Requête pour obtenir les photos
-  const { data: photos = [], isLoading: photosLoading } = useQuery({
+  // Query for photos
+  const { data: photos = [] } = useQuery({
     queryKey: ['sponsor-photos', sponsorId],
     queryFn: async () => {
       console.log('Fetching photos for sponsor:', sponsorId);
       const { data, error } = await supabase
         .from('album_media')
-        .select('*, children(name)')
-        .eq('sponsor_id', sponsorId)
-        .order('created_at', { ascending: false });
+        .select('*')
+        .eq('sponsor_id', sponsorId);
 
       if (error) {
         console.error('Error fetching photos:', error);
@@ -60,12 +55,11 @@ export const ContributionStats = ({ sponsorId }: { sponsorId: string }) => {
 
       console.log('Photos found:', data);
       return data || [];
-    },
-    enabled: !!sponsorId
+    }
   });
 
-  // Requête pour obtenir les témoignages
-  const { data: testimonials = [], isLoading: testimonialsLoading } = useQuery({
+  // Query for testimonials
+  const { data: testimonials = [] } = useQuery({
     queryKey: ['sponsor-testimonials', sponsorId],
     queryFn: async () => {
       console.log('Fetching testimonials for sponsor:', sponsorId);
@@ -81,65 +75,68 @@ export const ContributionStats = ({ sponsorId }: { sponsorId: string }) => {
 
       console.log('Testimonials found:', data);
       return data || [];
-    },
-    enabled: !!sponsorId
+    }
   });
 
-  // Requête pour obtenir les besoins et la durée du parrainage
-  const { data: sponsorshipData, isLoading: sponsorshipLoading } = useQuery({
+  // Query for sponsorship data and needs
+  const { data: sponsorshipData } = useQuery({
     queryKey: ['sponsorship-data', sponsorId],
     queryFn: async () => {
-      const { data: sponsorships, error } = await supabase
-        .from('sponsorships')
-        .select(`
-          id,
-          start_date,
-          children (
+      try {
+        const { data, error } = await supabase
+          .from('sponsorships')
+          .select(`
             id,
-            needs
-          )
-        `)
-        .eq('sponsor_id', sponsorId)
-        .eq('status', 'active')
-        .order('start_date', { ascending: true })
-        .single();
+            start_date,
+            children (
+              id,
+              needs
+            )
+          `)
+          .eq('sponsor_id', sponsorId)
+          .eq('status', 'active')
+          .order('start_date', { ascending: true });
 
-      if (error) {
+        if (error) {
+          console.error('Error fetching sponsorship data:', error);
+          throw error;
+        }
+
+        // Calculate total needs and urgent needs from all sponsored children
+        let totalNeeds = 0;
+        let urgentNeeds = 0;
+        let sponsorshipDays = 0;
+
+        if (data && data.length > 0) {
+          data.forEach(sponsorship => {
+            if (sponsorship.children?.needs) {
+              const needs = Array.isArray(sponsorship.children.needs) 
+                ? sponsorship.children.needs 
+                : [];
+              
+              totalNeeds += needs.length;
+              urgentNeeds += needs.filter((need: any) => need.is_urgent).length;
+            }
+
+            if (sponsorship.start_date) {
+              const startDate = new Date(sponsorship.start_date);
+              const days = Math.floor((new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24));
+              sponsorshipDays = Math.max(sponsorshipDays, days);
+            }
+          });
+        }
+
+        return {
+          totalNeeds,
+          urgentNeeds,
+          sponsorshipDays
+        };
+      } catch (error) {
         console.error('Error fetching sponsorship data:', error);
         throw error;
       }
-
-      let totalNeeds = 0;
-      let urgentNeeds = 0;
-      let sponsorshipDays = 0;
-
-      if (sponsorships?.start_date) {
-        const startDate = new Date(sponsorships.start_date);
-        sponsorshipDays = Math.floor((new Date().getTime() - startDate.getTime()) / (1000 * 3600 * 24));
-
-        if (sponsorships.children?.needs) {
-          const needs = Array.isArray(sponsorships.children.needs) 
-            ? sponsorships.children.needs 
-            : JSON.parse(sponsorships.children.needs as string);
-          
-          totalNeeds = needs.length;
-          urgentNeeds = needs.filter((need: Need) => need.is_urgent).length;
-        }
-      }
-
-      return {
-        totalNeeds,
-        urgentNeeds,
-        sponsorshipDays,
-        startDate: sponsorships?.start_date
-      };
-    },
-    enabled: !!sponsorId
+    }
   });
-
-  if (photosLoading || testimonialsLoading || sponsorshipLoading) {
-    return <Skeleton className="h-[200px] w-full" />;
-  }
 
   return (
     <Card className="p-4">
@@ -187,12 +184,6 @@ export const ContributionStats = ({ sponsorId }: { sponsorId: string }) => {
             <span className="font-medium">{t.sponsorshipDays}</span>
           </div>
           <p className="text-2xl font-bold">{sponsorshipData?.sponsorshipDays || 0}</p>
-          <p className="text-xs text-gray-600 mt-1">
-            {t.startDate} {sponsorshipData?.startDate 
-              ? new Date(sponsorshipData.startDate).toLocaleDateString()
-              : t.none
-            }
-          </p>
         </div>
       </div>
     </Card>
