@@ -212,17 +212,17 @@ const SponsorDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-0 md:p-6">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-0">
       <div className="container mx-auto space-y-4 md:space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 md:p-0">
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
-        <div className="mb-4 w-full px-4 md:px-0">
+        <div className="mb-4 w-full px-0 md:px-0">
           <NeedNotifications />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4 px-4 md:px-0">
+        <div className="grid md:grid-cols-2 gap-4 px-0 md:px-0">
           <BirthdayCountdown 
             children={sponsoredChildren?.map(s => ({
               name: s.children?.name || '',
@@ -242,7 +242,7 @@ const SponsorDashboard = () => {
           />
         </div>
 
-        <div className="px-4 md:px-0">
+        <div className="px-0 md:px-0">
           <SponsorshipTimeline
             events={[
               ...(sponsoredChildren?.map(s => ({
@@ -265,7 +265,7 @@ const SponsorDashboard = () => {
           />
         </div>
 
-        <Card className="mx-4 md:mx-0 p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
+        <Card className="mx-0 md:mx-0 p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 rounded-none md:rounded-lg">
           <h3 className="text-lg font-semibold mb-4 text-cuba-coral">Visites planifiées</h3>
           <div className="space-y-6">
             <PlannedVisitForm 
@@ -279,7 +279,7 @@ const SponsorDashboard = () => {
           </div>
         </Card>
 
-        <div className="grid gap-4 md:gap-6 px-4 md:px-0">
+        <div className="grid gap-4 md:gap-6 px-0 md:px-0">
           {sponsoredChildren?.map((sponsorship) => (
             <Card 
               key={sponsorship.id} 
