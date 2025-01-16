@@ -1,14 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Home/Navigation";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 const MainLayout = () => {
   const { user, isAssistant } = useAuth();
@@ -24,21 +17,6 @@ const MainLayout = () => {
       <div className="flex-1 flex">
         {showSidebar && (
           <>
-            {/* Mobile Menu Button */}
-            <div className="md:hidden fixed top-4 left-4 z-50">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="bg-white/80 backdrop-blur-sm">
-                    <Menu className="h-6 w-6" />
-                    <span className="sr-only">Menu</span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="p-0 w-[80%] sm:w-[350px]">
-                  <Navigation />
-                </SheetContent>
-              </Sheet>
-            </div>
-
             {/* Desktop Sidebar - Always visible */}
             <div className="hidden md:block w-64 fixed h-full">
               <Sidebar />
