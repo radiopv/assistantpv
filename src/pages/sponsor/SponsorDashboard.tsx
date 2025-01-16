@@ -201,6 +201,9 @@ const SponsorDashboard = () => {
         <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
 
         <div className="grid gap-6">
+          {/* Contribution Stats */}
+          <ContributionStats sponsorId={user?.id || ''} />
+
           {/* Sponsored Children Cards */}
           {sponsoredChildren?.map((sponsorship) => {
             const child = sponsorship.children;
@@ -227,17 +230,6 @@ const SponsorDashboard = () => {
             );
           })}
 
-          {/* Contribution Stats */}
-          <ContributionStats sponsorId={user?.id || ''} />
-
-          {/* Timeline */}
-          <SponsorshipTimeline events={[]} />
-
-          {/* Notifications */}
-          {notifications?.map((notification) => (
-            <DetailedNotification key={notification.id} notification={notification} />
-          ))}
-
           {/* Planned Visits */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">
@@ -246,6 +238,9 @@ const SponsorDashboard = () => {
             <VisitsSection visits={plannedVisits || []} />
           </Card>
 
+          {/* Timeline */}
+          <SponsorshipTimeline events={[]} />
+
           {/* Statistics */}
           <StatisticsSection
             photos={[]}
@@ -253,6 +248,11 @@ const SponsorDashboard = () => {
             sponsorshipDuration={contributionStats?.sponsorshipDays || 0}
             sponsorshipStartDate={contributionStats?.sponsorshipStartDate || ""}
           />
+
+          {/* Notifications */}
+          {notifications?.map((notification) => (
+            <DetailedNotification key={notification.id} notification={notification} />
+          ))}
         </div>
       </div>
     </div>
