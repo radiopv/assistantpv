@@ -112,6 +112,16 @@ const Children = () => {
         </div>
       </div>
 
+      {/* Hero Section for Available Children */}
+      <div className="bg-gradient-to-r from-orange-400 to-orange-500 text-white p-6 sm:p-8 rounded-xl shadow-lg text-center mb-8 animate-fade-in">
+        <h1 className="text-3xl md:text-4xl font-bold font-title mb-4">
+          Enfants en attente de parrainage
+        </h1>
+        <p className="text-white/90 max-w-2xl mx-auto text-lg">
+          Découvrez les enfants qui attendent votre soutien et votre amour
+        </p>
+      </div>
+
       <ChildrenFilters
         searchTerm={searchTerm}
         selectedCity={selectedCity}
