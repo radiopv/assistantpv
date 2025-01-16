@@ -1,12 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useState } from "react";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
 import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
@@ -83,6 +84,20 @@ const SponsorDashboard = () => {
     }
   });
 
+  const { data: notifications = [] } = useQuery({
+    queryKey: ['sponsor-notifications', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('recipient_id', user?.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
   const handleAddPhoto = (childId: string) => {
     setSelectedChild(childId);
   };
@@ -142,7 +157,9 @@ const SponsorDashboard = () => {
           <SponsorshipTimeline events={[]} />
 
           {/* Notifications */}
-          <DetailedNotification />
+          {notifications.map((notification) => (
+            <DetailedNotification key={notification.id} notification={notification} />
+          ))}
 
           {/* Planned Visits */}
           <Card className="p-6">
