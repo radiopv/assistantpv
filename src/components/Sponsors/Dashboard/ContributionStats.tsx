@@ -46,14 +46,22 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
     queryKey: ['contribution-stats', sponsorId],
     queryFn: async () => {
       try {
+        console.log('Fetching stats for sponsor:', sponsorId);
+        
         // Get photos with details
         const { data: photos, error: photosError } = await supabase
           .from('album_media')
           .select('*')
           .eq('sponsor_id', sponsorId)
+          .eq('is_approved', true)
           .order('created_at', { ascending: false });
 
-        if (photosError) throw photosError;
+        if (photosError) {
+          console.error('Error fetching photos:', photosError);
+          throw photosError;
+        }
+
+        console.log('Found photos:', photos?.length);
 
         // Get testimonials
         const { data: testimonials, error: testimonialsError } = await supabase
