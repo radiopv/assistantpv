@@ -5,7 +5,6 @@ import { ChildCard } from "./ChildCard";
 import { ChildrenTable } from "./ChildrenTable";
 import { SponsorDialog } from "./SponsorDialog";
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { AlertTriangle, Grid, HelpCircle, List } from "lucide-react";
 import {
   Popover,
@@ -67,9 +66,9 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
 
   if (isLoading) {
     return (
-      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-2 sm:px-0">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <Card key={i} className="overflow-hidden">
+          <div key={i} className="overflow-hidden">
             <div className="relative pb-[75%]">
               <Skeleton className="absolute inset-0" />
             </div>
@@ -79,15 +78,15 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
               <Skeleton className="h-4 w-1/3" />
               <Skeleton className="h-10 w-full" />
             </div>
-          </Card>
+          </div>
         ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-4 w-full">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-2 sm:px-0">
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         {!isMobile && (
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full">
             <Popover>
@@ -135,7 +134,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       </div>
 
       {window.location.search.includes('status=incomplete') && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3 rounded mx-2 sm:mx-0">
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3">
           <div className="flex">
             <div className="flex-shrink-0">
               <AlertTriangle className="h-5 w-5 text-yellow-400" />
@@ -150,7 +149,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       )}
 
       {(viewMode === "grid" || isMobile) ? (
-        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-2 sm:px-0">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {uniqueChildren.map((child) => (
             <div key={child.id} className="space-y-2">
               <ChildCard
@@ -159,7 +158,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
                 onSponsorClick={setSelectedChild}
               />
               {window.location.search.includes('status=incomplete') && (
-                <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="p-3 bg-gray-50">
                   <p className="text-sm font-medium text-gray-700 mb-2">Informations manquantes :</p>
                   <ul className="list-disc list-inside text-sm text-gray-600">
                     {getMissingFields(child).map((field) => (
