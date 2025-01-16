@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Upload } from "lucide-react";
+import { Upload, Loader2 } from "lucide-react";
 
 interface PhotoUploaderProps {
   childId: string;
@@ -21,32 +21,41 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
       }
 
       setUploading(true);
-      const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${childId}/${Math.random()}.${fileExt}`;
+      const files = Array.from(event.target.files);
+      
+      // Upload each file
+      const uploadPromises = files.map(async (file) => {
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${childId}/${Math.random()}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('album-media')
-        .upload(filePath, file);
+        const { error: uploadError } = await supabase.storage
+          .from('album-media')
+          .upload(filePath, file);
 
-      if (uploadError) throw uploadError;
+        if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('album-media')
-        .getPublicUrl(filePath);
+        const { data: { publicUrl } } = supabase.storage
+          .from('album-media')
+          .getPublicUrl(filePath);
 
-      // Insert into album_media table
-      const { error: dbError } = await supabase
-        .from('album_media')
-        .insert({
-          child_id: childId,
-          url: publicUrl,
-          type: 'image'
-        });
+        // Insert into album_media table
+        const { error: dbError } = await supabase
+          .from('album_media')
+          .insert({
+            child_id: childId,
+            url: publicUrl,
+            type: 'image'
+          });
 
-      if (dbError) throw dbError;
+        if (dbError) throw dbError;
 
-      // Notify sponsors about the new photo
+        return publicUrl;
+      });
+
+      // Wait for all uploads to complete
+      await Promise.all(uploadPromises);
+
+      // Notify sponsors about the new photos
       const { data: child } = await supabase
         .from('children')
         .select('name, sponsorships(sponsor_id)')
@@ -60,27 +69,27 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
             .insert({
               recipient_id: sponsorship.sponsor_id,
               type: 'photo_added',
-              title: `Nouvelle photo de ${child.name}`,
-              content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
+              title: `Nouvelles photos de ${child.name}`,
+              content: `De nouvelles photos ont été ajoutées à l'album de ${child.name}.`,
               link: `/children/${childId}/album`
             });
         }
       }
 
       toast({
-        title: "Photo ajoutée",
-        description: "La photo a été ajoutée avec succès à l'album.",
+        title: "Photos ajoutées",
+        description: "Les photos ont été ajoutées avec succès à l'album.",
       });
 
       if (onUploadSuccess) {
         onUploadSuccess();
       }
     } catch (error: any) {
-      console.error('Error uploading photo:', error);
+      console.error('Error uploading photos:', error);
       toast({
         variant: "destructive",
         title: "Erreur",
-        description: "Une erreur est survenue lors de l'upload de la photo.",
+        description: "Une erreur est survenue lors de l'upload des photos.",
       });
     } finally {
       setUploading(false);
@@ -97,10 +106,20 @@ export const PhotoUploader = ({ childId, onUploadSuccess }: PhotoUploaderProps) 
         accept="image/*"
         onChange={handleUpload}
         disabled={uploading}
+        multiple
       />
       <Button disabled={uploading}>
-        <Upload className="w-4 h-4 mr-2" />
-        {uploading ? "Upload en cours..." : "Ajouter une photo"}
+        {uploading ? (
+          <>
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Upload en cours...
+          </>
+        ) : (
+          <>
+            <Upload className="w-4 h-4 mr-2" />
+            Ajouter des photos
+          </>
+        )}
       </Button>
     </div>
   );

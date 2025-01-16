@@ -2230,6 +2230,7 @@ export type Database = {
       sponsored_children_view: {
         Row: {
           age: number | null
+          birth_date: string | null
           city: string | null
           description: string | null
           id: string | null
