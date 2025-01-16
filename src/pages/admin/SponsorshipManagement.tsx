@@ -26,7 +26,6 @@ export default function SponsorshipManagement() {
     email: "",
     name: "",
     phone: "",
-    city: "",
     password: "",
     confirmPassword: "",
   });
@@ -41,8 +40,8 @@ export default function SponsorshipManagement() {
           name,
           email,
           last_login,
-          city,
           phone,
+          password_hash,
           sponsorships (
             id,
             status,
@@ -68,7 +67,6 @@ export default function SponsorshipManagement() {
       email: sponsor.email || "",
       name: sponsor.name || "",
       phone: sponsor.phone || "",
-      city: sponsor.city || "",
       password: "",
       confirmPassword: "",
     });
@@ -85,7 +83,6 @@ export default function SponsorshipManagement() {
         email: editForm.email,
         name: editForm.name,
         phone: editForm.phone,
-        city: editForm.city,
         updated_at: new Date().toISOString(),
       };
 
@@ -106,7 +103,6 @@ export default function SponsorshipManagement() {
         email: "",
         name: "",
         phone: "",
-        city: "",
         password: "",
         confirmPassword: "",
       });
@@ -121,8 +117,7 @@ export default function SponsorshipManagement() {
     if (!searchTerm) return items;
     return items.filter(item => 
       item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.city?.toLowerCase().includes(searchTerm.toLowerCase())
+      item.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
@@ -151,7 +146,7 @@ export default function SponsorshipManagement() {
             <TableRow>
               <TableHead>Nom</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead className="hidden md:table-cell">Ville</TableHead>
+              <TableHead>Mot de passe actuel</TableHead>
               <TableHead className="hidden md:table-cell">Dernière connexion</TableHead>
               <TableHead className="hidden md:table-cell">Enfants parrainés</TableHead>
               <TableHead>Actions</TableHead>
@@ -163,7 +158,7 @@ export default function SponsorshipManagement() {
                 <TableRow>
                   <TableCell className="font-medium">{sponsor.name}</TableCell>
                   <TableCell>{sponsor.email}</TableCell>
-                  <TableCell className="hidden md:table-cell">{sponsor.city}</TableCell>
+                  <TableCell>{sponsor.password_hash || "Non défini"}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     {sponsor.last_login 
                       ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
@@ -211,14 +206,6 @@ export default function SponsorshipManagement() {
                             <Input
                               value={editForm.phone}
                               onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-sm font-medium">Ville</Label>
-                            <Input
-                              value={editForm.city}
-                              onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
                               className="mt-1"
                             />
                           </div>
