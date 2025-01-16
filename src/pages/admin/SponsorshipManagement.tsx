@@ -96,7 +96,7 @@ export default function SponsorshipManagement() {
   return (
     <div className="w-full p-0">
       <div className="space-y-4">
-        <div className="mb-6">
+        <div className="mb-6 px-4 md:px-0">
           <h1 className="text-2xl font-bold mb-4">Gestion des Parrainages</h1>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -111,22 +111,22 @@ export default function SponsorshipManagement() {
         </div>
 
         <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-            <TabsTrigger value="active" className="min-h-[44px]">
+          <TabsList className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 px-4 md:px-0">
+            <TabsTrigger value="active" className="min-h-[44px] text-sm break-words">
               Parrains Actifs ({activeSponsors.length})
             </TabsTrigger>
-            <TabsTrigger value="inactive" className="min-h-[44px]">
+            <TabsTrigger value="inactive" className="min-h-[44px] text-sm break-words">
               Parrains Inactifs ({inactiveSponsors.length})
             </TabsTrigger>
-            <TabsTrigger value="unsponsored" className="min-h-[44px]">
+            <TabsTrigger value="unsponsored" className="min-h-[44px] text-sm break-words">
               Enfants Sans Parrain ({unsponsored?.length || 0})
             </TabsTrigger>
-            <TabsTrigger value="noname" className="min-h-[44px]">
+            <TabsTrigger value="noname" className="min-h-[44px] text-sm break-words">
               Parrains Sans Nom ({sponsoredNoName.length})
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="mt-4">
+          <TabsContent value="active" className="mt-4 px-4 md:px-0">
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
               {filterBySearch(activeSponsors).map((sponsor) => (
                 <SponsorListItem
@@ -142,7 +142,7 @@ export default function SponsorshipManagement() {
             </div>
           </TabsContent>
 
-          <TabsContent value="inactive" className="mt-4">
+          <TabsContent value="inactive" className="mt-4 px-4 md:px-0">
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
               {filterBySearch(inactiveSponsors).map((sponsor) => (
                 <SponsorListItem
@@ -158,16 +158,16 @@ export default function SponsorshipManagement() {
             </div>
           </TabsContent>
 
-          <TabsContent value="unsponsored" className="mt-4">
+          <TabsContent value="unsponsored" className="mt-4 px-4 md:px-0">
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
               {filterBySearch(unsponsored || []).map((child) => (
                 <Card key={child.id} className="p-4">
                   <div className="flex flex-col space-y-2">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <h3 className="text-lg font-semibold flex items-center gap-2 break-words">
                       {child.name}
-                      <AlertCircle className="text-yellow-500" size={20} />
+                      <AlertCircle className="text-yellow-500 shrink-0" size={20} />
                     </h3>
-                    <p className="text-gray-600">{child.city}</p>
+                    <p className="text-gray-600 break-words">{child.city}</p>
                     {child.age && (
                       <p className="text-gray-600">{child.age} ans</p>
                     )}
@@ -177,14 +177,14 @@ export default function SponsorshipManagement() {
             </div>
           </TabsContent>
 
-          <TabsContent value="noname" className="mt-4">
+          <TabsContent value="noname" className="mt-4 px-4 md:px-0">
             <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
               {filterBySearch(sponsoredNoName).map((sponsor) => (
                 <Card key={sponsor.id} className="p-4">
                   <div className="flex flex-col space-y-3">
                     <h3 className="text-lg font-semibold flex items-center gap-2">
-                      <AlertCircle className="text-red-500" size={20} />
-                      Parrain sans nom
+                      <AlertCircle className="text-red-500 shrink-0" size={20} />
+                      <span className="break-words">Parrain sans nom</span>
                     </h3>
                     <p className="text-gray-600 break-all">{sponsor.email}</p>
                     <div className="mt-2">
@@ -193,7 +193,7 @@ export default function SponsorshipManagement() {
                         {sponsor.sponsorships
                           ?.filter(s => s.status === 'active')
                           .map(s => (
-                            <li key={s.id} className="text-gray-600">
+                            <li key={s.id} className="text-gray-600 break-words">
                               {s.child.name}
                             </li>
                           ))}
