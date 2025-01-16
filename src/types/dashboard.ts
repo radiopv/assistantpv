@@ -1,26 +1,14 @@
-export interface DashboardStats {
-  children: {
-    total: number;
-    sponsored: number;
-    available: number;
-    urgent_needs: number;
-  };
-  sponsors: number;
-  donations: {
-    total: number;
-    people_helped: number;
-  };
-  urgent_needs: Array<{
-    child_id: string;
-    child_name: string;
-    needs: Array<{
-      category: string;
-      description?: string;
-      is_urgent: boolean;
-    }>;
+export interface StatisticsData {
+  total_donations: number;
+  total_children: number;
+  total_sponsors: number;
+  active_sponsorships: number;
+  pending_sponsorships: number;
+  monthly_trends?: Array<{
+    donation_date: string;
   }>;
-}
-
-export interface DashboardResponse {
-  data: DashboardStats;
+  city_distribution?: Array<{
+    city: string;
+    count: number;
+  }>;
 }
