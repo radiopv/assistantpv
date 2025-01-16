@@ -27,6 +27,7 @@ export const AssignSponsorDialog = ({
   const { data: sponsors = [], isLoading } = useQuery({
     queryKey: ['sponsors-for-assignment'],
     queryFn: async () => {
+      console.log('Fetching sponsors for assignment');
       const { data, error } = await supabase
         .from('sponsors')
         .select('*')
@@ -36,6 +37,7 @@ export const AssignSponsorDialog = ({
         console.error('Error fetching sponsors:', error);
         throw error;
       }
+      console.log('Fetched sponsors:', data);
       return data || [];
     }
   });
@@ -43,23 +45,32 @@ export const AssignSponsorDialog = ({
   const handleSelectSponsor = async (sponsorId: string) => {
     try {
       setIsAssigning(true);
-      console.log('Creating assignment request:', { sponsorId, childId });
+      console.log('Starting sponsor assignment process:', { sponsorId, childId });
       
       // First check if there's already a request
-      const { data: existingRequests } = await supabase
+      const { data: existingRequests, error: checkError } = await supabase
         .from('child_assignment_requests')
         .select('*')
         .eq('child_id', childId)
         .eq('sponsor_id', sponsorId)
         .eq('status', 'pending');
 
+      if (checkError) {
+        console.error('Error checking existing requests:', checkError);
+        throw checkError;
+      }
+
+      console.log('Existing requests:', existingRequests);
+
       if (existingRequests && existingRequests.length > 0) {
+        console.log('Found existing request');
         toast.error(t("requestAlreadyExists"));
         return;
       }
 
       // Create new request
-      const { error } = await supabase
+      console.log('Creating new assignment request');
+      const { error: insertError } = await supabase
         .from('child_assignment_requests')
         .insert({
           sponsor_id: sponsorId,
@@ -68,12 +79,13 @@ export const AssignSponsorDialog = ({
           created_at: new Date().toISOString()
         });
 
-      if (error) {
-        console.error('Error creating assignment request:', error);
-        throw error;
+      if (insertError) {
+        console.error('Error creating assignment request:', insertError);
+        throw insertError;
       }
 
       // Update child status
+      console.log('Updating child status');
       const { error: updateError } = await supabase
         .from('children')
         .update({ 
@@ -87,11 +99,12 @@ export const AssignSponsorDialog = ({
         throw updateError;
       }
 
+      console.log('Assignment process completed successfully');
       toast.success(t("sponsorshipRequestCreated"));
       onAssignComplete?.();
       onClose();
     } catch (error) {
-      console.error('Error assigning sponsor:', error);
+      console.error('Error in assignment process:', error);
       toast.error(t("errorAssigningSponsor"));
     } finally {
       setIsAssigning(false);

@@ -55,7 +55,10 @@ export const SponsorsList = ({
                 <p className="text-sm text-gray-500">{sponsor.email}</p>
               </div>
               <Button
-                onClick={() => onSelectSponsor(sponsor.id)}
+                onClick={() => {
+                  console.log('Select button clicked for sponsor:', sponsor.id);
+                  onSelectSponsor(sponsor.id);
+                }}
                 size="sm"
                 disabled={isLoading}
               >

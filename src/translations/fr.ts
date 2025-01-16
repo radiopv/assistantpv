@@ -1,5 +1,9 @@
 export const frenchTranslations = {
   dashboard: "Tableau de bord",
+  select: "Sélectionner",
+  requestAlreadyExists: "Une demande est déjà en cours pour ce parrain",
+  sponsorshipRequestCreated: "Demande de parrainage créée avec succès",
+  errorAssigningSponsor: "Erreur lors de l'assignation du parrain",
   recentMessages: "Messages récents",
   checkMessages: "Consultez vos messages et notifications dans l'onglet Messages.",
   upcomingBirthdays: "Anniversaires à venir",
