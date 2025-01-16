@@ -18,14 +18,18 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
       photos: "Photos",
       testimonials: "Témoignages",
       needsFulfilled: "Besoins comblés",
-      sponsorshipDays: "Jours de parrainage"
+      sponsorshipDays: "Jours de parrainage",
+      urgentNeeds: "Besoins urgents",
+      lastPhoto: "Dernière photo"
     },
     es: {
       contributions: "Sus contribuciones",
       photos: "Fotos",
       testimonials: "Testimonios",
       needsFulfilled: "Necesidades cumplidas",
-      sponsorshipDays: "Días de apadrinamiento"
+      sponsorshipDays: "Días de apadrinamiento",
+      urgentNeeds: "Necesidades urgentes",
+      lastPhoto: "Última foto"
     }
   };
 
@@ -35,15 +39,16 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
     queryKey: ['contribution-stats', sponsorId],
     queryFn: async () => {
       try {
-        // Get total photos
+        // Get photos with details
         const { data: photos, error: photosError } = await supabase
           .from('album_media')
           .select('*')
-          .eq('sponsor_id', sponsorId);
+          .eq('sponsor_id', sponsorId)
+          .order('created_at', { ascending: false });
 
         if (photosError) throw photosError;
 
-        // Get total testimonials
+        // Get testimonials
         const { data: testimonials, error: testimonialsError } = await supabase
           .from('temoignage')
           .select('*')
@@ -51,51 +56,60 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
 
         if (testimonialsError) throw testimonialsError;
 
-        // Get sponsorship start date to calculate duration
-        const { data: sponsorship, error: sponsorshipError } = await supabase
-          .from('sponsorships')
-          .select('start_date')
-          .eq('sponsor_id', sponsorId)
-          .eq('status', 'active')
-          .order('start_date', { ascending: true })
-          .limit(1)
-          .single();
-
-        if (sponsorshipError && sponsorshipError.code !== 'PGRST116') throw sponsorshipError;
-
-        // Get total fulfilled needs
-        const { data: children, error: childrenError } = await supabase
+        // Get sponsorship and children details
+        const { data: sponsorships, error: sponsorshipsError } = await supabase
           .from('sponsorships')
           .select(`
+            id,
+            start_date,
             children (
+              id,
               needs
             )
           `)
           .eq('sponsor_id', sponsorId)
           .eq('status', 'active');
 
-        if (childrenError) throw childrenError;
+        if (sponsorshipsError) throw sponsorshipsError;
 
+        // Calculate needs statistics
         let totalNeeds = 0;
-        children?.forEach(sponsorship => {
+        let urgentNeeds = 0;
+        
+        sponsorships?.forEach(sponsorship => {
           if (sponsorship.children?.needs) {
             const needs = Array.isArray(sponsorship.children.needs) 
               ? sponsorship.children.needs 
               : JSON.parse(sponsorship.children.needs as string);
+            
             totalNeeds += needs.length;
+            urgentNeeds += needs.filter((need: any) => need.is_urgent).length;
           }
         });
 
+        // Get earliest sponsorship start date
+        const earliestSponsorship = sponsorships?.reduce((earliest, current) => {
+          if (!earliest || (current.start_date && current.start_date < earliest.start_date)) {
+            return current;
+          }
+          return earliest;
+        }, null);
+
         // Calculate sponsorship duration
-        const sponsorshipDays = sponsorship?.start_date 
-          ? differenceInDays(new Date(), new Date(sponsorship.start_date))
+        const sponsorshipDays = earliestSponsorship?.start_date 
+          ? differenceInDays(new Date(), new Date(earliestSponsorship.start_date))
           : 0;
+
+        // Get latest photo date
+        const latestPhoto = photos && photos.length > 0 ? photos[0] : null;
 
         return {
           totalPhotos: photos?.length || 0,
           totalTestimonials: testimonials?.length || 0,
           totalNeeds,
-          sponsorshipDays
+          urgentNeeds,
+          sponsorshipDays,
+          latestPhotoDate: latestPhoto?.created_at || null
         };
       } catch (error) {
         console.error('Error fetching contribution stats:', error);
@@ -103,7 +117,9 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
           totalPhotos: 0,
           totalTestimonials: 0,
           totalNeeds: 0,
-          sponsorshipDays: 0
+          urgentNeeds: 0,
+          sponsorshipDays: 0,
+          latestPhotoDate: null
         };
       }
     }
@@ -122,6 +138,11 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
             <span className="font-medium">{t.photos}</span>
           </div>
           <p className="text-2xl font-bold">{stats?.totalPhotos || 0}</p>
+          {stats?.latestPhotoDate && (
+            <p className="text-xs text-gray-600 mt-1">
+              {new Date(stats.latestPhotoDate).toLocaleDateString()}
+            </p>
+          )}
         </div>
         <div className="p-3 bg-cuba-warmBeige/10 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
@@ -136,6 +157,11 @@ export const ContributionStats = ({ sponsorId }: ContributionStatsProps) => {
             <span className="font-medium">{t.needsFulfilled}</span>
           </div>
           <p className="text-2xl font-bold">{stats?.totalNeeds || 0}</p>
+          {stats?.urgentNeeds > 0 && (
+            <p className="text-xs text-red-600 mt-1">
+              {stats.urgentNeeds} {t.urgentNeeds}
+            </p>
+          )}
         </div>
         <div className="p-3 bg-cuba-warmBeige/10 rounded-lg">
           <div className="flex items-center gap-2 mb-2">
