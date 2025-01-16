@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,6 +9,14 @@ import { TerminationDialog } from "../TerminationDialog";
 import { differenceInDays, format, parseISO } from "date-fns";
 import { fr } from "date-fns/locale";
 import { convertJsonToNeeds } from "@/types/needs";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface SponsoredChildCardProps {
   child: {
@@ -20,16 +29,19 @@ interface SponsoredChildCardProps {
   };
   sponsorshipId: string;
   onAddPhoto: () => void;
-  onAddTestimonial: () => void;
+  onAddTestimonial?: () => void;
 }
 
 export const SponsoredChildCard = ({
   child,
   sponsorshipId,
   onAddPhoto,
-  onAddTestimonial,
 }: SponsoredChildCardProps) => {
   const [showTermination, setShowTermination] = useState(false);
+  const [isTestimonialOpen, setIsTestimonialOpen] = useState(false);
+  const [newTestimonial, setNewTestimonial] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const calculateDaysUntilBirthday = (birthDate: string) => {
     const today = new Date();
@@ -52,6 +64,74 @@ export const SponsoredChildCard = ({
     : null;
 
   const needs = convertJsonToNeeds(child.needs || []);
+
+  // Query existing testimonials
+  const { data: testimonials } = useQuery({
+    queryKey: ['testimonials', child.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('temoignage')
+        .select('*')
+        .eq('child_id', child.id)
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  // Query planned visits
+  const { data: plannedVisits } = useQuery({
+    queryKey: ['planned-visits', sponsorshipId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('scheduled_visits')
+        .select('*')
+        .eq('sponsorship_id', sponsorshipId)
+        .order('visit_start_date', { ascending: true });
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const handleSubmitTestimonial = async () => {
+    if (!newTestimonial.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Le témoignage ne peut pas être vide",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.from("temoignage").insert({
+        content: newTestimonial,
+        child_id: child.id,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "Votre témoignage a été soumis et sera examiné",
+      });
+      setNewTestimonial("");
+      setIsTestimonialOpen(false);
+    } catch (error) {
+      console.error("Error submitting testimonial:", error);
+      toast({
+        variant: "destructive",
+        title: "Erreur",
+        description: "Impossible de soumettre le témoignage",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Card className="p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20">
@@ -106,6 +186,71 @@ export const SponsoredChildCard = ({
         </div>
       </div>
 
+      {/* Planned Visits Section */}
+      {plannedVisits && plannedVisits.length > 0 && (
+        <div className="mt-4 p-4 bg-cuba-warmBeige/10 rounded-lg">
+          <h4 className="font-medium text-sm mb-2">Visites planifiées</h4>
+          {plannedVisits.map((visit: any) => (
+            <div key={visit.id} className="text-sm text-gray-600">
+              Du {format(new Date(visit.visit_start_date), 'dd/MM/yyyy')} 
+              au {format(new Date(visit.visit_end_date), 'dd/MM/yyyy')}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Testimonials Section */}
+      <div className="mt-4">
+        {testimonials && testimonials.length > 0 && (
+          <div className="space-y-3">
+            <h4 className="font-medium text-sm">Vos témoignages</h4>
+            {testimonials.map((testimonial: any) => (
+              <div 
+                key={testimonial.id}
+                className="p-3 bg-white/60 rounded-lg"
+              >
+                <p className="text-sm text-gray-600 italic">{testimonial.content}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {format(new Date(testimonial.created_at), 'dd/MM/yyyy')}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Add Testimonial Collapsible */}
+        <Collapsible
+          open={isTestimonialOpen}
+          onOpenChange={setIsTestimonialOpen}
+          className="mt-4"
+        >
+          <CollapsibleTrigger asChild>
+            <Button
+              variant="outline"
+              className="flex items-center justify-center gap-2 w-full bg-white hover:bg-cuba-warmBeige/10 transition-colors"
+            >
+              <FileEdit className="h-4 w-4" />
+              <span>Ajouter un témoignage</span>
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4 space-y-4">
+            <Textarea
+              placeholder="Partagez votre expérience..."
+              value={newTestimonial}
+              onChange={(e) => setNewTestimonial(e.target.value)}
+              className="min-h-[100px]"
+            />
+            <Button 
+              onClick={handleSubmitTestimonial}
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting ? "Envoi en cours..." : "Envoyer"}
+            </Button>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
+
       {/* Boutons d'action */}
       <div className="flex flex-col space-y-2 mt-6">
         <Button
@@ -115,15 +260,6 @@ export const SponsoredChildCard = ({
         >
           <Camera className="h-4 w-4" />
           <span>Ajouter une photo</span>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="flex items-center justify-center gap-2 bg-white hover:bg-cuba-warmBeige/10 transition-colors"
-          onClick={onAddTestimonial}
-        >
-          <FileEdit className="h-4 w-4" />
-          <span>Ajouter un témoignage</span>
         </Button>
 
         <Button
