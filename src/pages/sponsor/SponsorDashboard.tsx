@@ -213,16 +213,16 @@ const SponsorDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-0">
-      <div className="container mx-auto space-y-4 md:space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 md:p-0">
+      <div className="container mx-auto space-y-4 md:space-y-6 p-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4">
           <h2 className="text-lg md:text-xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
         </div>
 
-        <div className="mb-4 w-full px-0">
+        <div className="mb-4 w-full">
           <NeedNotifications />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4 px-0">
+        <div className="grid md:grid-cols-2 gap-4 w-full">
           <BirthdayCountdown 
             children={sponsoredChildren?.map(s => ({
               name: s.children?.name || '',
@@ -242,7 +242,7 @@ const SponsorDashboard = () => {
           />
         </div>
 
-        <div className="px-0">
+        <div className="w-full">
           <SponsorshipTimeline
             events={[
               ...(sponsoredChildren?.map(s => ({
@@ -265,7 +265,7 @@ const SponsorDashboard = () => {
           />
         </div>
 
-        <Card className="mx-0 p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 rounded-none md:rounded-lg">
+        <Card className="w-full p-4 md:p-6 bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 rounded-none md:rounded-lg">
           <h3 className="text-lg font-semibold mb-4 text-cuba-coral">Visites planifiées</h3>
           <div className="space-y-6">
             <PlannedVisitForm 
@@ -279,14 +279,14 @@ const SponsorDashboard = () => {
           </div>
         </Card>
 
-        <div className="grid gap-4 md:gap-6 px-0">
+        <div className="grid gap-4 md:gap-6 w-full">
           {sponsoredChildren?.map((sponsorship) => (
             <Card 
               key={sponsorship.id} 
               className="w-full overflow-hidden bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-shadow duration-300 p-3 md:p-6 rounded-none md:rounded-lg"
             >
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col md:flex-row md:items-center justify-between">
+              <div className="flex flex-col gap-4 w-full">
+                <div className="flex flex-col md:flex-row md:items-center justify-between w-full">
                   <div className="flex-1 w-full">
                     <SponsoredChildCard
                       child={sponsorship.children}
@@ -295,7 +295,7 @@ const SponsorDashboard = () => {
                       onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
                     />
                   </div>
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 mt-4 md:mt-0">
+                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
                     <Button
                       variant="outline"
                       size="sm"
@@ -334,7 +334,7 @@ const SponsorDashboard = () => {
               </div>
 
               {selectedChild === sponsorship.children?.id && (
-                <div className="mt-4">
+                <div className="mt-4 w-full">
                   <PhotoUploader
                     childId={selectedChild}
                     onUploadSuccess={handleUploadSuccess}
@@ -342,7 +342,7 @@ const SponsorDashboard = () => {
                 </div>
               )}
 
-              <Tabs defaultValue="photos" className="mt-4 md:mt-6">
+              <Tabs defaultValue="photos" className="mt-4 md:mt-6 w-full">
                 <TabsList className="flex flex-col w-full md:grid md:grid-cols-5 gap-2">
                   {[
                     { value: "photos", label: t.photos },
@@ -361,7 +361,7 @@ const SponsorDashboard = () => {
                   ))}
                 </TabsList>
 
-                <div className="mt-6 space-y-6">
+                <div className="mt-6 space-y-6 w-full">
                   <TabsContent value="photos" className="focus:outline-none">
                     <PhotoGallery 
                       photos={(childrenPhotos || []).filter(photo => photo.child_id === sponsorship.children?.id)} 
