@@ -228,12 +228,7 @@ const SponsorDashboard = () => {
           })}
 
           {/* Contribution Stats */}
-          <ContributionStats
-            totalPhotos={contributionStats?.totalPhotos || 0}
-            totalTestimonials={0}
-            totalNeeds={contributionStats?.totalNeeds || 0}
-            sponsorshipDays={contributionStats?.sponsorshipDays || 0}
-          />
+          <ContributionStats sponsorId={user?.id || ''} />
 
           {/* Timeline */}
           <SponsorshipTimeline events={[]} />
