@@ -286,44 +286,13 @@ const SponsorDashboard = () => {
               className="w-full overflow-hidden bg-white/80 backdrop-blur-sm border border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-shadow duration-300 p-3 md:p-6 rounded-none md:rounded-lg"
             >
               <div className="flex flex-col gap-4 w-full">
-                <div className="flex flex-col md:flex-row md:items-center justify-between w-full">
-                  <div className="flex-1 w-full">
-                    <SponsoredChildCard
-                      child={sponsorship.children}
-                      sponsorshipId={sponsorship.id}
-                      onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
-                      onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
-                    />
-                  </div>
-                  <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleAddPhoto(sponsorship.children?.id)}
-                      className="w-full md:w-auto"
-                    >
-                      <Camera className="h-4 w-4 mr-2" />
-                      {translations[language].addPhoto}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
-                      className="w-full md:w-auto"
-                    >
-                      <FileEdit className="h-4 w-4 mr-2" />
-                      {translations[language].addTestimonial}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowTermination(true)}
-                      className="w-full md:w-auto"
-                    >
-                      <Clock className="h-4 w-4 mr-2" />
-                      {translations[language].endSponsorship}
-                    </Button>
-                  </div>
+                <div className="flex-1 w-full">
+                  <SponsoredChildCard
+                    child={sponsorship.children}
+                    sponsorshipId={sponsorship.id}
+                    onAddPhoto={() => handleAddPhoto(sponsorship.children?.id)}
+                    onAddTestimonial={() => navigate('/testimonials/new', { state: { childId: sponsorship.children?.id } })}
+                  />
                 </div>
 
                 {hasUrgentNeeds(sponsorship.children?.needs) && (
