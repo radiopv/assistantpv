@@ -28,12 +28,12 @@ export const DonationCard = ({ donation, onDelete, canDelete = false, isPublicVi
 
   return (
     <>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden rounded-none md:rounded-lg break-words">
         <DonationCardHeader 
           donation={donation} 
           onDeleteClick={canDelete ? () => setShowDeleteDialog(true) : undefined}
         />
-        <div className="p-6 space-y-6">
+        <div className="p-4 md:p-6 space-y-6">
           <DonationDetails donation={donation} />
           <DonationCardMedia
             donationId={donation.id}

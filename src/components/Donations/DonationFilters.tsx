@@ -58,8 +58,8 @@ export const DonationFilters = ({
   const t = translations[language as keyof typeof translations];
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
-      <div className="flex-1">
+    <div className="flex flex-col md:flex-row gap-4 mb-6 w-full">
+      <div className="flex-1 min-w-0">
         <SearchInput
           placeholder={t.searchPlaceholder}
           value={searchTerm}
@@ -68,44 +68,46 @@ export const DonationFilters = ({
           icon={Search}
         />
       </div>
-      <Select value={cityFilter} onValueChange={onCityFilterChange}>
-        <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder={t.filterByCity} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">{t.allCities}</SelectItem>
-          {cities.map(city => (
-            <SelectItem key={city} value={city}>{city}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select value={sortBy} onValueChange={onSortChange}>
-        <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder={t.sortBy} />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="date">{t.date}</SelectItem>
-          <SelectItem value="peopleHelped">{t.peopleHelped}</SelectItem>
-          <SelectItem value="city">{t.city}</SelectItem>
-        </SelectContent>
-      </Select>
-      <div className="flex gap-2">
-        <Button
-          variant={viewMode === "grid" ? "default" : "outline"}
-          size="icon"
-          onClick={() => onViewModeChange("grid")}
-          title={t.grid}
-        >
-          <Grid className="h-4 w-4" />
-        </Button>
-        <Button
-          variant={viewMode === "list" ? "default" : "outline"}
-          size="icon"
-          onClick={() => onViewModeChange("list")}
-          title={t.list}
-        >
-          <List className="h-4 w-4" />
-        </Button>
+      <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+        <Select value={cityFilter} onValueChange={onCityFilterChange}>
+          <SelectTrigger className="w-full md:w-[200px]">
+            <SelectValue placeholder={t.filterByCity} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t.allCities}</SelectItem>
+            {cities.map(city => (
+              <SelectItem key={city} value={city}>{city}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={sortBy} onValueChange={onSortChange}>
+          <SelectTrigger className="w-full md:w-[200px]">
+            <SelectValue placeholder={t.sortBy} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="date">{t.date}</SelectItem>
+            <SelectItem value="peopleHelped">{t.peopleHelped}</SelectItem>
+            <SelectItem value="city">{t.city}</SelectItem>
+          </SelectContent>
+        </Select>
+        <div className="flex gap-2 justify-end">
+          <Button
+            variant={viewMode === "grid" ? "default" : "outline"}
+            size="icon"
+            onClick={() => onViewModeChange("grid")}
+            title={t.grid}
+          >
+            <Grid className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === "list" ? "default" : "outline"}
+            size="icon"
+            onClick={() => onViewModeChange("list")}
+            title={t.list}
+          >
+            <List className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   );
