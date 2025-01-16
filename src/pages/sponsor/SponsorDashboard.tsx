@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
 import { Camera, FileEdit, Clock } from "lucide-react";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useState } from "react";
+import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -86,12 +86,13 @@ const SponsorDashboard = () => {
     queryFn: async () => {
       if (!sponsoredChildren?.length) return [];
       
-      console.log("Fetching photos for children:", sponsoredChildren.map(s => s.child_id));
+      const childIds = sponsoredChildren.map(s => s.children?.id).filter(Boolean);
+      console.log("Fetching photos for children:", childIds);
       
       const { data, error } = await supabase
         .from('album_media')
         .select('*')
-        .in('child_id', sponsoredChildren.map(s => s.children?.id))
+        .in('child_id', childIds)
         .eq('is_approved', true)
         .order('created_at', { ascending: false });
 
