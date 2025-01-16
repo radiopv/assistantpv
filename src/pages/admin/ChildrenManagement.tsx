@@ -11,7 +11,7 @@ export default function ChildrenManagement() {
 
   return (
     <div className="w-full p-0">
-      <Card className="rounded-none sm:rounded-lg">
+      <Card className="rounded-none sm:rounded-lg border-0 sm:border">
         <div className="p-2 sm:p-4 w-full">
           <h1 className="text-2xl font-bold mb-4">{t("childrenAndSponsorship")}</h1>
           
