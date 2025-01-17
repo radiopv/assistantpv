@@ -14,6 +14,11 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { toast } from "sonner";
 import { ErrorAlert } from "@/components/ErrorAlert";
 
+const isValidUUID = (id: string): boolean => {
+  const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+  return uuidRegex.test(id);
+};
+
 const ChildDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,7 +27,8 @@ const ChildDetails = () => {
   const { data: child, isLoading, error, refetch } = useQuery({
     queryKey: ["child", id],
     queryFn: async () => {
-      if (!id) throw new Error("No child ID provided");
+      if (!id) throw new Error("Aucun ID d'enfant fourni");
+      if (!isValidUUID(id)) throw new Error("L'ID fourni n'est pas un UUID valide");
       
       const { data, error } = await supabase
         .from("children")
@@ -31,10 +37,10 @@ const ChildDetails = () => {
         .maybeSingle();
 
       if (error) throw error;
-      if (!data) throw new Error("Child not found");
+      if (!data) throw new Error("Enfant non trouvé");
       return data;
     },
-    enabled: !!id
+    enabled: !!id && isValidUUID(id)
   });
 
   const handleSponsorClick = async () => {
