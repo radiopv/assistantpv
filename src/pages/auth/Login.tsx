@@ -3,76 +3,31 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AuthError } from "@supabase/supabase-js";
 import { ErrorAlert } from "@/components/ErrorAlert";
+import { toast } from "@/components/ui/use-toast";
 
 const Login = () => {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log("Initial session check:", { session, error });
+      if (error) {
+        console.error("Session check error:", error);
+        setError("Erreur de connexion à la base de données. Veuillez réessayer dans quelques instants.");
+        return;
+      }
+      if (session?.user?.id) handleUserSession(session);
+    });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log("Auth state change event:", event);
-        console.log("Session:", session);
-
+        console.log("Auth state change:", { event, session });
         if (event === "SIGNED_IN" && session?.user?.id) {
-          try {
-            const { data: profile, error: fetchError } = await supabase
-              .from("sponsors")
-              .select("*")
-              .eq("id", session.user.id)
-              .maybeSingle();
-            
-            console.log("Profile data:", profile);
-            console.log("Fetch error:", fetchError);
-
-            if (fetchError) {
-              console.error("Error fetching profile:", fetchError);
-              setError("Erreur lors de la récupération du profil. Veuillez réessayer dans quelques instants.");
-              return;
-            }
-
-            if (profile) {
-              console.log("Existing profile found:", profile);
-              if (profile.role === "admin" || profile.role === "assistant") {
-                navigate("/dashboard");
-              } else {
-                navigate("/");
-              }
-            } else {
-              console.log("No profile found, creating new sponsor...");
-              const { data: newSponsor, error: insertError } = await supabase
-                .from("sponsors")
-                .insert([
-                  { 
-                    id: session.user.id,
-                    email: session.user.email,
-                    role: "sponsor",
-                    name: session.user.user_metadata?.full_name || session.user.email,
-                    is_active: true,
-                    show_name_publicly: false
-                  }
-                ])
-                .select()
-                .maybeSingle();
-
-              if (insertError) {
-                console.error("Error creating sponsor record:", insertError);
-                setError("Erreur lors de la création du profil. Veuillez réessayer dans quelques instants.");
-                return;
-              }
-
-              if (newSponsor) {
-                console.log("New sponsor created:", newSponsor);
-                navigate("/");
-              }
-            }
-          } catch (error: any) {
-            console.error("Error in auth state change:", error);
-            setError("Une erreur est survenue lors de la connexion. Veuillez réessayer dans quelques instants.");
-          }
+          handleUserSession(session);
         }
       }
     );
@@ -82,8 +37,76 @@ const Login = () => {
     };
   }, [navigate]);
 
+  const handleUserSession = async (session: any) => {
+    try {
+      console.log("Fetching user profile...");
+      const { data: profile, error: fetchError } = await supabase
+        .from("sponsors")
+        .select("*")
+        .eq("id", session.user.id)
+        .maybeSingle();
+      
+      console.log("Profile fetch result:", { profile, fetchError });
+
+      if (fetchError) {
+        console.error("Error fetching profile:", fetchError);
+        setError("Erreur lors de la récupération du profil. Veuillez réessayer dans quelques instants.");
+        return;
+      }
+
+      if (profile) {
+        console.log("Existing profile found:", profile);
+        if (profile.role === "admin" || profile.role === "assistant") {
+          navigate("/dashboard");
+        } else {
+          navigate("/");
+        }
+      } else {
+        console.log("Creating new sponsor profile...");
+        const { data: newSponsor, error: insertError } = await supabase
+          .from("sponsors")
+          .insert([
+            { 
+              id: session.user.id,
+              email: session.user.email,
+              role: "sponsor",
+              name: session.user.user_metadata?.full_name || session.user.email,
+              is_active: true,
+              show_name_publicly: false
+            }
+          ])
+          .select()
+          .maybeSingle();
+
+        if (insertError) {
+          console.error("Error creating sponsor record:", insertError);
+          setError("Erreur lors de la création du profil. Veuillez réessayer dans quelques instants.");
+          return;
+        }
+
+        if (newSponsor) {
+          console.log("New sponsor created:", newSponsor);
+          navigate("/");
+        }
+      }
+    } catch (error: any) {
+      console.error("Error in session handling:", error);
+      setError("Une erreur est survenue lors de la connexion. Veuillez réessayer dans quelques instants.");
+    }
+  };
+
   const handleError = (error: AuthError) => {
     console.error("Auth error:", error);
+    
+    if (error.message.includes("Database error querying schema")) {
+      setError("Erreur de connexion à la base de données. L'équipe technique a été notifiée. Veuillez réessayer dans quelques minutes.");
+      toast({
+        title: "Erreur technique",
+        description: "Une erreur est survenue avec la base de données. Nous travaillons à résoudre ce problème.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     switch (error.message) {
       case "Invalid login credentials":
@@ -91,9 +114,6 @@ const Login = () => {
         break;
       case "Email not confirmed":
         setError("Veuillez confirmer votre email avant de vous connecter");
-        break;
-      case "Database error querying schema":
-        setError("Erreur de connexion à la base de données. Veuillez réessayer dans quelques instants.");
         break;
       case "Email logins are disabled":
         setError("La connexion par email est temporairement désactivée. Veuillez contacter l'administrateur.");
