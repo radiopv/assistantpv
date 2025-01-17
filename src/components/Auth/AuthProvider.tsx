@@ -2,13 +2,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: any | null;
   loading: boolean;
   signOut: () => Promise<void>;
   isAssistant: boolean;
-  session: any | null;
+  session: Session | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,64 +22,61 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          
-          const { data: sponsor, error } = await supabase
-            .from('sponsors')
-            .select('*')
-            .eq('id', parsedUser.id)
-            .maybeSingle();
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-          if (error || !sponsor) {
-            console.error('User not found in sponsors table:', error);
-            localStorage.removeItem('user');
-            setUser(null);
-            navigate("/login");
-            return;
-          }
-
-          setUser(sponsor);
-          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN') {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // Fetch user profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session?.user?.id)
+          .single();
+        
+        if (profile) {
+          setUser(profile);
+          setIsAssistant(['assistant', 'admin'].includes(profile.role));
           
+          // Redirect based on role
           if (window.location.pathname === '/login') {
-            if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
+            if (profile.role === 'admin' || profile.role === 'assistant') {
               navigate('/dashboard');
             } else {
               navigate('/');
             }
           }
-        } else {
-          setUser(null);
-          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
-            navigate("/login");
-          }
         }
-      } catch (error) {
-        console.error('Error checking auth:', error);
+      } else if (event === 'SIGNED_OUT') {
+        setSession(null);
         setUser(null);
-        navigate("/login");
-      } finally {
-        setLoading(false);
+        setIsAssistant(false);
+        navigate('/login');
       }
-    };
+    });
 
-    checkAuth();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const signOut = async () => {
     try {
-      localStorage.removeItem('user');
-      setUser(null);
-      setIsAssistant(false);
+      await supabase.auth.signOut();
       toast({
         title: "Déconnexion réussie",
         description: "À bientôt !",
@@ -95,7 +93,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut, isAssistant, session: user }}>
+    <AuthContext.Provider value={{ user, loading, signOut, isAssistant, session }}>
       {!loading && children}
     </AuthContext.Provider>
   );

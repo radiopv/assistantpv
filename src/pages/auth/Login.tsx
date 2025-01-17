@@ -18,37 +18,38 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { data: sponsor, error } = await supabase
-        .from('sponsors')
-        .select('*')
-        .eq('email', email)
-        .single();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
       if (error) throw error;
 
-      if (!sponsor) {
+      if (!data.user) {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      if (sponsor.password_hash !== password) {
-        throw new Error("Email ou mot de passe incorrect");
-      }
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', data.user.id)
+        .single();
 
-      if (!['admin', 'assistant', 'sponsor'].includes(sponsor.role)) {
+      if (profileError) throw profileError;
+
+      if (!['admin', 'assistant', 'sponsor'].includes(profile.role)) {
         throw new Error("Accès non autorisé");
       }
 
-      localStorage.setItem('user', JSON.stringify(sponsor));
-
       toast({
         title: "Connexion réussie",
-        description: sponsor.role === 'sponsor' ? 
+        description: profile.role === 'sponsor' ? 
           "Bienvenue dans votre espace parrain" : 
           "Bienvenue dans l'espace administration",
       });
       
       // Redirect based on role
-      if (['admin', 'assistant'].includes(sponsor.role)) {
+      if (['admin', 'assistant'].includes(profile.role)) {
         navigate("/dashboard");
       } else {
         navigate("/sponsor-dashboard");
