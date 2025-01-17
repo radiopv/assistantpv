@@ -16,13 +16,13 @@ const Login = () => {
         console.log("Auth state change event:", event);
         console.log("Session:", session);
 
-        if (event === "SIGNED_IN") {
+        if (event === "SIGNED_IN" && session?.user?.id) {
           try {
             const { data: profile, error: fetchError } = await supabase
               .from("sponsors")
               .select("*")
-              .eq("id", session?.user?.id)
-              .single();
+              .eq("id", session.user.id)
+              .maybeSingle();
             
             console.log("Profile data:", profile);
             console.log("Fetch error:", fetchError);
@@ -32,18 +32,20 @@ const Login = () => {
               
               // Si le profil n'existe pas, on le crée
               if (fetchError.code === 'PGRST116') {
-                const { error: insertError } = await supabase
+                const { data: newSponsor, error: insertError } = await supabase
                   .from('sponsors')
                   .insert([
                     { 
-                      id: session?.user?.id,
-                      email: session?.user?.email,
+                      id: session.user.id,
+                      email: session.user.email,
                       role: 'sponsor',
-                      name: session?.user?.user_metadata?.full_name || session?.user?.email,
+                      name: session.user.user_metadata?.full_name || session.user.email,
                       is_active: true,
                       show_name_publicly: false
                     }
-                  ]);
+                  ])
+                  .select()
+                  .maybeSingle();
                 
                 if (insertError) {
                   console.error('Error creating sponsor record:', insertError);
@@ -51,8 +53,11 @@ const Login = () => {
                   return;
                 }
                 
-                navigate('/');
-                return;
+                if (newSponsor) {
+                  console.log("New sponsor created:", newSponsor);
+                  navigate('/');
+                  return;
+                }
               }
               
               setError("Erreur lors de la récupération du profil");
