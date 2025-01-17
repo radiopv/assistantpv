@@ -3,7 +3,7 @@ import Login from "@/pages/auth/Login";
 import ForgotPassword from "@/pages/auth/ForgotPassword";
 import BecomeSponsor from "@/pages/BecomeSponsor";
 import EmailsPage from "@/pages/admin/Emails";
-import { ProtectedRoute } from "./ProtectedRoute";
+import { ProtectedRoute } from "@/components/Routes/ProtectedRoute";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Navigate } from "react-router-dom";
 
