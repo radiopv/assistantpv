@@ -232,7 +232,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
                 {Array.isArray(childNeeds) && childNeeds.length > 0 && (
                   <div className="space-y-1">
-                    {childNeeds.slice(0, 2).map((need: Need, index: number) => (
+                    {childNeeds.map((need: Need, index: number) => (
                       <div
                         key={`${need.category}-${index}`}
                         className={`p-2 rounded-lg ${
