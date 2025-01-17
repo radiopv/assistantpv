@@ -1,11 +1,8 @@
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { differenceInDays, differenceInYears, parseISO } from "date-fns";
-import { useMemo } from "react";
-import { ChildCard } from "./ChildCard/ChildCard";
+import { differenceInYears, parseISO } from "date-fns";
 import { convertJsonToNeeds } from "@/types/needs";
+import { ChildCard } from "./ChildCard/ChildCard";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -20,44 +17,12 @@ const formatAge = (birthDate: string) => {
 };
 
 export const AvailableChildrenGrid = ({ children, isLoading, onViewProfile }: AvailableChildrenGridProps) => {
-  // Fetch album photos for all children
-  const { data: albumPhotos } = useQuery({
-    queryKey: ['album-photos', children.map(child => child.id)],
-    queryFn: async () => {
-      if (!children.length) return [];
-      
-      const { data, error } = await supabase
-        .from('album_media')
-        .select('*')
-        .in('child_id', children.map(child => child.id))
-        .eq('type', 'image')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching album photos:', error);
-        return [];
-      }
-
-      return data || [];
-    },
-    enabled: children.length > 0
-  });
-
-  // Group photos by child
-  const photosByChild = albumPhotos?.reduce((acc, photo) => {
-    if (!acc[photo.child_id]) {
-      acc[photo.child_id] = [];
-    }
-    acc[photo.child_id].push(photo);
-    return acc;
-  }, {} as Record<string, any[]>) || {};
-
   // Calculer le score de priorité d'un enfant
   const calculatePriorityScore = (child: any) => {
     const needs = convertJsonToNeeds(child.needs);
     const urgentNeedsCount = needs.filter(need => need.is_urgent).length;
     const totalNeedsCount = needs.length;
-    const daysSinceCreation = differenceInDays(new Date(), parseISO(child.created_at));
+    const daysSinceCreation = differenceInYears(new Date(), parseISO(child.created_at));
     
     return (urgentNeedsCount * 3) + (totalNeedsCount * 2) + (daysSinceCreation * 0.1);
   };

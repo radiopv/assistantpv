@@ -137,7 +137,7 @@ export default function AvailableChildren() {
             <AvailableChildrenGrid 
               children={filteredChildren}
               isLoading={isLoading}
-              onViewProfile={(childId) => navigate(`/become-sponsor/${childId}`)}
+              onViewProfile={(childId) => navigate(`/children/${childId}`)}
             />
           </div>
         )}
