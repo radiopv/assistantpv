@@ -7,7 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
 import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -114,6 +114,27 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     }
   };
 
+  // Nouvelle fonction pour calculer le score de priorité d'un enfant
+  const calculatePriorityScore = (child: any) => {
+    const needs = convertJsonToNeeds(child.needs);
+    const urgentNeedsCount = needs.filter(need => need.is_urgent).length;
+    const totalNeedsCount = needs.length;
+    
+    // Calculer le temps depuis la création (en jours)
+    const daysSinceCreation = differenceInDays(new Date(), parseISO(child.created_at));
+    
+    // Score basé sur :
+    // - Nombre de besoins urgents (poids: 3)
+    // - Nombre total de besoins (poids: 2)
+    // - Temps d'attente (poids: 1)
+    return (urgentNeedsCount * 3) + (totalNeedsCount * 2) + (daysSinceCreation * 0.1);
+  };
+
+  // Trier les enfants par score de priorité
+  const sortedChildren = useMemo(() => {
+    return [...children].sort((a, b) => calculatePriorityScore(b) - calculatePriorityScore(a));
+  }, [children]);
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
@@ -142,7 +163,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
-      {children.map((child) => {
+      {sortedChildren.map((child) => {
         const childNeeds = convertJsonToNeeds(child.needs);
         const hasUrgentNeeds = Array.isArray(childNeeds) && childNeeds.some(need => need.is_urgent);
 
@@ -172,7 +193,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
             </div>
 
             <div className="p-2 space-y-2">
-              {/* Album Photos Grid */}
               {photosByChild[child.id]?.length > 0 && (
                 <div className="bg-white/80 rounded-lg p-2">
                   <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
