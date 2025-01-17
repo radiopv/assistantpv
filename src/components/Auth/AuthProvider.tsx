@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             .from('sponsors')
             .select('*')
             .eq('id', session?.user?.id)
-            .single();
+            .maybeSingle();
           
           console.log("Sponsor data:", sponsor);
           console.log("Fetch error:", fetchError);
@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 .from('sponsors')
                 .select('*')
                 .eq('id', session?.user?.id)
-                .single();
+                .maybeSingle();
 
               if (newSponsor) {
                 setUser(newSponsor);
