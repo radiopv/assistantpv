@@ -22,7 +22,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
@@ -114,7 +114,8 @@ export const Navigation = () => {
   };
 
   const handleSponsorDashboard = () => {
-    navigate("/sponsor-dashboard");
+    console.log("Navigating to sponsor dashboard");
+    navigate("/sponsor-dashboard", { replace: true });
     setIsOpen(false);
   };
 
