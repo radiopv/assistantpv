@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
 import ChildrenManagement from "@/pages/admin/ChildrenManagement";
@@ -21,7 +21,6 @@ import Settings from "@/pages/Settings";
 import Tasks from "@/pages/Tasks";
 import AssistantPhotos from "@/pages/AssistantPhotos";
 import MediaManagement from "@/pages/MediaManagement";
-import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 import Validation from "@/pages/admin/Validation";
@@ -53,7 +52,6 @@ export const AppRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
-        <Route path="/sponsor-album" element={<SponsorDashboard />} />
         <Route path="/donations" element={<Donations />} />
         <Route path="/donations/add" element={<AddDonation />} />
         <Route path="/settings" element={<Settings />} />
@@ -62,7 +60,6 @@ export const AppRoutes = () => {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
-        <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}
