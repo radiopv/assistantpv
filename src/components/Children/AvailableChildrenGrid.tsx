@@ -257,12 +257,12 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   onClick={() => onSponsorClick(child.id)}
                   className={`w-full ${
                     hasUrgentNeeds
-                      ? "bg-[#ea384c] hover:bg-[#d62d3f] text-white"
-                      : "bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white"
+                      ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
+                      : "bg-gradient-to-r from-cuba-coral to-cuba-gold hover:from-cuba-coral/90 hover:to-cuba-gold/90 text-white"
                   } group-hover:scale-105 transition-all duration-300`}
                 >
-                  <Info className="w-4 h-4 mr-2" />
-                  En savoir plus
+                  <Heart className="w-4 h-4 mr-2" />
+                  Parrainer
                 </Button>
               </div>
             </Card>
