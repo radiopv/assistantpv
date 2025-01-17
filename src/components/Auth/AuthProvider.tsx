@@ -37,17 +37,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth event:", event);
       if (event === 'SIGNED_IN') {
         setSession(session);
         setUser(session?.user ?? null);
         
         // Fetch sponsor data
-        const { data: sponsor } = await supabase
+        const { data: sponsor, error: fetchError } = await supabase
           .from('sponsors')
           .select('*')
           .eq('id', session?.user?.id)
           .single();
         
+        console.log("Sponsor data:", sponsor);
+        console.log("Fetch error:", fetchError);
+
         if (sponsor) {
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
@@ -69,7 +73,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 id: session?.user?.id,
                 email: session?.user?.email,
                 role: 'sponsor',
-                name: session?.user?.user_metadata?.full_name || session?.user?.email
+                name: session?.user?.user_metadata?.full_name || session?.user?.email,
+                is_active: true,
+                show_name_publicly: false
               }
             ]);
           
@@ -80,6 +86,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               description: "Veuillez réessayer ou contacter l'administrateur",
               variant: "destructive",
             });
+          } else {
+            // Fetch the newly created sponsor record
+            const { data: newSponsor } = await supabase
+              .from('sponsors')
+              .select('*')
+              .eq('id', session?.user?.id)
+              .single();
+
+            if (newSponsor) {
+              setUser(newSponsor);
+              navigate('/');
+            }
           }
         }
       } else if (event === 'SIGNED_OUT') {
