@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Need, convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
+import { differenceInMonths, differenceInYears, differenceInDays, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
