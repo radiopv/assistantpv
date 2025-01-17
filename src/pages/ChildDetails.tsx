@@ -13,13 +13,14 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { toast } from "sonner";
+import { ErrorAlert } from "@/components/ErrorAlert";
 
 const ChildDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { data: child, isLoading, error } = useQuery({
+  const { data: child, isLoading, error, refetch } = useQuery({
     queryKey: ["child", id],
     queryFn: async () => {
       if (!id) throw new Error("No child ID provided");
@@ -64,10 +65,10 @@ const ChildDetails = () => {
   if (error) {
     return (
       <div className="container mx-auto p-4">
-        <Card className="p-6 text-center">
-          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <p className="text-red-500">Erreur lors du chargement des détails de l'enfant</p>
-        </Card>
+        <ErrorAlert 
+          message={error instanceof Error ? error.message : "Erreur lors du chargement des détails de l'enfant"}
+          retry={refetch}
+        />
       </div>
     );
   }
