@@ -107,15 +107,7 @@ const Login = () => {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={loading}
-          >
-            {loading ? "Connexion en cours..." : "Se connecter"}
-          </Button>
-
-          <div className="text-center">
+          <div className="flex justify-end">
             <Link 
               to="/forgot-password" 
               className="text-sm text-blue-600 hover:text-blue-800"
@@ -123,6 +115,14 @@ const Login = () => {
               Mot de passe oublié ?
             </Link>
           </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? "Connexion en cours..." : "Se connecter"}
+          </Button>
         </form>
       </Card>
     </div>
