@@ -15,7 +15,6 @@ import PublicDonations from "@/pages/public/PublicDonations";
 import Dashboard from "@/pages/Dashboard";
 import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
-import ChildProfile from "@/pages/ChildProfile";
 import Donations from "@/pages/Donations";
 import AddDonation from "@/pages/AddDonation";
 import Settings from "@/pages/Settings";
@@ -54,7 +53,6 @@ export const AppRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
-        <Route path="/children/:id" element={<ChildProfile />} />
         <Route path="/sponsor-album" element={<SponsorDashboard />} />
         <Route path="/donations" element={<Donations />} />
         <Route path="/donations/add" element={<AddDonation />} />
