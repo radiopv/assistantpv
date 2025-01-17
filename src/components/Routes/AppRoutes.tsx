@@ -8,7 +8,7 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/children" element={<Children />} />
       <Route path="/children/add" element={<AddChild />} />
-      <Route path="/children/:id" element={<ChildProfile />} />
+      <Route path="/child/:id" element={<ChildProfile />} />
     </Routes>
   );
 };
