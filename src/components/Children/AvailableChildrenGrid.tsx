@@ -81,7 +81,9 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {children.map((child) => {
-          const hasUrgentNeeds = child.needs && child.needs.some((need: any) => need.is_urgent);
+          // Ensure needs is an array and check for urgent needs
+          const needsArray = Array.isArray(child.needs) ? child.needs : [];
+          const hasUrgentNeeds = needsArray.some((need: any) => need.is_urgent);
           
           return (
             <Card key={child.id} className="overflow-hidden">
