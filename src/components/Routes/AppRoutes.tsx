@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
 import ChildProfile from "@/pages/ChildProfile";
-import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
+import SponsorDashboard from "@/pages/SponsorDashboard";
 
 export const AppRoutes = () => {
   return (
