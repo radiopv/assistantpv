@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
+import { differenceInYears, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,53 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import {
-  User,
-  Calendar,
-  MapPin,
-  ArrowLeft,
-  Heart,
-  AlertTriangle,
-  GraduationCap,
-  Shirt,
-  Apple,
-  Stethoscope,
-  Sparkles,
-  Book
-} from "lucide-react";
-
-const NEED_CATEGORIES = {
-  education: {
-    icon: GraduationCap,
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-50"
-  },
-  jouet: {
-    icon: Sparkles,
-    color: "text-purple-500",
-    bgColor: "bg-purple-50"
-  },
-  vetement: {
-    icon: Shirt,
-    color: "text-blue-500",
-    bgColor: "bg-blue-50"
-  },
-  nourriture: {
-    icon: Apple,
-    color: "text-green-500",
-    bgColor: "bg-green-50"
-  },
-  medicament: {
-    icon: Stethoscope,
-    color: "text-red-500",
-    bgColor: "bg-red-50"
-  },
-  hygiene: {
-    icon: Book,
-    color: "text-cyan-500",
-    bgColor: "bg-cyan-50"
-  }
-};
+import { ArrowLeft, Heart, AlertTriangle } from "lucide-react";
 
 const ChildDetails = () => {
   const { id } = useParams();
@@ -78,20 +32,9 @@ const ChildDetails = () => {
   });
 
   const formatAge = (birthDate: string) => {
-    const today = new Date();
-    const birth = parseISO(birthDate);
-    const years = differenceInYears(today, birth);
-    const months = differenceInMonths(today, birth) % 12;
-
-    if (years === 0) {
-      return `${months} mois`;
-    }
-    
-    if (months === 0) {
-      return `${years} ans`;
-    }
-
-    return `${years} ans et ${months} mois`;
+    if (!birthDate) return '';
+    const years = differenceInYears(new Date(), parseISO(birthDate));
+    return `${years} ans`;
   };
 
   const handleSponsorshipRequest = async () => {
@@ -169,19 +112,13 @@ const ChildDetails = () => {
       <div className="grid md:grid-cols-12 gap-8">
         {/* Left Column - Photo and Sponsorship Button */}
         <div className="md:col-span-5 space-y-6">
-          <Card className="overflow-hidden">
+          <Card className="overflow-hidden border-cuba-softOrange/20">
             <div className="aspect-square relative">
-              {child?.photo_url ? (
-                <img
-                  src={child.photo_url}
-                  alt={child.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                  <User className="w-20 h-20 text-gray-400" />
-                </div>
-              )}
+              <img
+                src={child?.photo_url || "/placeholder.svg"}
+                alt={child?.name}
+                className="w-full h-full object-cover"
+              />
             </div>
           </Card>
           
@@ -201,32 +138,30 @@ const ChildDetails = () => {
         <div className="md:col-span-7 space-y-6">
           <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
             <div className="space-y-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <h1 className="text-3xl font-bold text-cuba-coral mb-2">{child?.name}</h1>
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MapPin className="w-4 h-4" />
-                    <span>{child?.city || "Ville non renseignée"}</span>
+              <div className="border-b border-cuba-softOrange/20 pb-4">
+                <h1 className="text-3xl font-bold text-cuba-coral mb-2">{child?.name}</h1>
+                <div className="flex flex-wrap gap-4 text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Âge:</span>
+                    <span>{child?.birth_date ? formatAge(child.birth_date) : "Non renseigné"}</span>
                   </div>
-                </div>
-                <div className="flex items-center gap-2 bg-cuba-warmBeige/10 px-3 py-1 rounded-full">
-                  <Calendar className="w-4 h-4 text-cuba-coral" />
-                  <span className="text-cuba-coral font-medium">
-                    {child?.birth_date ? formatAge(child.birth_date) : "Âge non renseigné"}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Ville:</span>
+                    <span>{child?.city || "Non renseignée"}</span>
+                  </div>
                 </div>
               </div>
 
               {child?.description && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Description</h3>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-cuba-coral">Description</h3>
                   <p className="text-gray-700 leading-relaxed">{child.description}</p>
                 </div>
               )}
 
               {child?.story && (
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Histoire</h3>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold text-cuba-coral">Histoire</h3>
                   <p className="text-gray-700 leading-relaxed italic">{child.story}</p>
                 </div>
               )}
@@ -246,23 +181,17 @@ const ChildDetails = () => {
                     <h4 className="font-medium text-red-500">Besoins urgents</h4>
                   </div>
                   <div className="grid gap-3">
-                    {urgentNeeds.map((need, index) => {
-                      const NeedIcon = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]?.icon || AlertTriangle;
-                      return (
-                        <div
-                          key={index}
-                          className="bg-red-50 border border-red-100 rounded-lg p-4 flex items-start gap-3"
-                        >
-                          <NeedIcon className="w-5 h-5 text-red-500 mt-1" />
-                          <div>
-                            <span className="font-medium text-red-700">{need.category}</span>
-                            {need.description && (
-                              <p className="text-sm text-red-600 mt-1">{need.description}</p>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {urgentNeeds.map((need, index) => (
+                      <div
+                        key={index}
+                        className="bg-red-50 border border-red-100 rounded-lg p-4"
+                      >
+                        <span className="font-medium text-red-700">{need.category}</span>
+                        {need.description && (
+                          <p className="text-sm text-red-600 mt-1">{need.description}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
@@ -270,24 +199,17 @@ const ChildDetails = () => {
               {/* Regular Needs */}
               {regularNeeds.length > 0 && (
                 <div className="grid gap-3">
-                  {regularNeeds.map((need, index) => {
-                    const category = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES];
-                    const NeedIcon = category?.icon || AlertTriangle;
-                    return (
-                      <div
-                        key={index}
-                        className={`${category?.bgColor || 'bg-gray-50'} border border-gray-100 rounded-lg p-4 flex items-start gap-3`}
-                      >
-                        <NeedIcon className={`w-5 h-5 ${category?.color || 'text-gray-500'} mt-1`} />
-                        <div>
-                          <span className="font-medium text-gray-700">{need.category}</span>
-                          {need.description && (
-                            <p className="text-sm text-gray-600 mt-1">{need.description}</p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {regularNeeds.map((need, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 border border-gray-100 rounded-lg p-4"
+                    >
+                      <span className="font-medium text-gray-700">{need.category}</span>
+                      {need.description && (
+                        <p className="text-sm text-gray-600 mt-1">{need.description}</p>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </Card>
