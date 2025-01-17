@@ -5,9 +5,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Children } from "@/integrations/supabase/types/children";
 
 interface AvailableChildrenGridProps {
-  children: any[];
+  children: Children["Row"][];
   isLoading: boolean;
 }
 
@@ -81,7 +82,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {children.map((child) => {
-          // Ensure needs is an array and check for urgent needs
+          // Convert needs to array if it's not already and check for urgent needs
           const needsArray = Array.isArray(child.needs) ? child.needs : [];
           const hasUrgentNeeds = needsArray.some((need: any) => need.is_urgent);
           

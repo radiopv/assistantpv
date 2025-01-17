@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ChildrenFilters } from "@/components/Children/ChildrenFilters";
@@ -8,7 +7,6 @@ import { useState, useMemo } from "react";
 import { differenceInYears, parseISO } from "date-fns";
 
 export default function AvailableChildren() {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCity, setSelectedCity] = useState("all");
   const [selectedGender, setSelectedGender] = useState("all");
@@ -116,7 +114,6 @@ export default function AvailableChildren() {
             <AvailableChildrenGrid 
               children={filteredChildren}
               isLoading={isLoading}
-              onSponsorClick={(childId) => navigate(`/become-sponsor/${childId}`)}
             />
           </div>
         )}
