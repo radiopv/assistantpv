@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AuthError } from "@supabase/supabase-js";
+import { ErrorAlert } from "@/components/ErrorAlert";
 
 const Login = () => {
   const [error, setError] = useState<string>("");
@@ -115,9 +116,7 @@ const Login = () => {
         </div>
 
         {error && (
-          <Alert variant="destructive" className="mb-4">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <ErrorAlert message={error} />
         )}
 
         <div className="bg-white p-6 rounded-lg shadow-md border border-cuba-softOrange/20">
