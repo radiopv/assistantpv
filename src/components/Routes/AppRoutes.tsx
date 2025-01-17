@@ -50,6 +50,7 @@ export const AppRoutes = () => {
       {/* Protected routes */}
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/sponsor-dashboard" element={<Dashboard />} />
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
         <Route path="/donations" element={<Donations />} />

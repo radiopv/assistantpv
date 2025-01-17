@@ -58,7 +58,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         } else {
           setUser(null);
-          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
+          if (window.location.pathname !== '/login' && 
+              !window.location.pathname.startsWith('/') && 
+              !window.location.pathname.startsWith('/public-donations') &&
+              !window.location.pathname.startsWith('/children')) {
             navigate("/login");
           }
         }
