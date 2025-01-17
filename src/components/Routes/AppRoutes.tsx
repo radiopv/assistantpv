@@ -1,6 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
+import ChildrenManagement from "@/pages/admin/ChildrenManagement";
+import DonationsManagement from "@/pages/admin/DonationsManagement";
+import Notifications from "@/pages/Notifications";
 import Home from "@/pages/Home";
 import Login from "@/pages/auth/Login";
 import FAQ from "@/pages/public/FAQ";
@@ -32,7 +35,6 @@ import Messages from "@/pages/Messages";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import AllChildren from "@/pages/public/AllChildren";
-import Notifications from "@/pages/Notifications";
 
 export const AppRoutes = () => {
   return (
@@ -68,8 +70,8 @@ export const AppRoutes = () => {
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}
-        <Route path="/admin/children-management" element={<Children />} />
-        <Route path="/admin/donations-management" element={<Donations />} />
+        <Route path="/admin/children-management" element={<ChildrenManagement />} />
+        <Route path="/admin/donations-management" element={<DonationsManagement />} />
         <Route path="/admin/validation" element={<Validation />} />
         <Route path="/admin/emails" element={<Emails />} />
         <Route path="/admin/faq" element={<AdminFAQ />} />
@@ -79,6 +81,9 @@ export const AppRoutes = () => {
         <Route path="/admin/link-checker" element={<LinkChecker />} />
         <Route path="/admin/audit-logs" element={<AuditLogs />} />
       </Route>
+
+      {/* Catch all redirect to home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

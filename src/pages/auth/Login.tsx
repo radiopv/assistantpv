@@ -1,220 +1,122 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthError } from "@supabase/supabase-js";
-import { ErrorAlert } from "@/components/ErrorAlert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { Label } from "@/components/ui/label";
 
 const Login = () => {
-  const [error, setError] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Initial session check
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log("Initial session check:", { session, error });
-      if (error) {
-        console.error("Session check error:", error);
-        setError("Erreur de connexion à la base de données. Veuillez réessayer dans quelques instants.");
-        return;
-      }
-      if (session?.user?.id) handleUserSession(session);
-    });
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Auth state change:", { event, session });
-        if (event === "SIGNED_IN" && session?.user?.id) {
-          handleUserSession(session);
-        }
-      }
-    );
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate]);
-
-  const handleUserSession = async (session: any) => {
     try {
-      console.log("Handling user session for ID:", session.user.id);
-      
-      // First, check if profile exists
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .maybeSingle();
-      
-      console.log("Profile check result:", { profile, profileError });
+      const { data: sponsor, error } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('email', email)
+        .single();
 
-      if (profileError) {
-        console.error("Error checking profile:", profileError);
-        throw profileError;
+      if (error) throw error;
+
+      if (!sponsor) {
+        throw new Error("Email ou mot de passe incorrect");
       }
 
-      if (!profile) {
-        console.log("No profile found, creating one...");
-        // Create profile if it doesn't exist
-        const { error: insertError } = await supabase
-          .from("profiles")
-          .insert([
-            {
-              id: session.user.id,
-              role: 'sponsor'
-            }
-          ]);
-
-        if (insertError) {
-          console.error("Error creating profile:", insertError);
-          throw insertError;
-        }
+      if (sponsor.password_hash !== password) {
+        throw new Error("Email ou mot de passe incorrect");
       }
 
-      // Then fetch or create sponsor record
-      const { data: sponsor, error: fetchError } = await supabase
-        .from("sponsors")
-        .select("*")
-        .eq("id", session.user.id)
-        .maybeSingle();
+      if (!['admin', 'assistant', 'sponsor'].includes(sponsor.role)) {
+        throw new Error("Accès non autorisé");
+      }
+
+      localStorage.setItem('user', JSON.stringify(sponsor));
+
+      toast({
+        title: "Connexion réussie",
+        description: sponsor.role === 'sponsor' ? 
+          "Bienvenue dans votre espace parrain" : 
+          "Bienvenue dans l'espace administration",
+      });
       
-      console.log("Sponsor fetch result:", { sponsor, fetchError });
-
-      if (fetchError) {
-        console.error("Error fetching sponsor:", fetchError);
-        throw fetchError;
-      }
-
-      if (sponsor) {
-        console.log("Existing sponsor found:", sponsor);
-        if (sponsor.role === "admin" || sponsor.role === "assistant") {
-          navigate("/dashboard");
-        } else {
-          navigate("/");
-        }
+      // Redirect based on role
+      if (['admin', 'assistant'].includes(sponsor.role)) {
+        navigate("/dashboard");
       } else {
-        console.log("Creating new sponsor record...");
-        const { data: newSponsor, error: insertError } = await supabase
-          .from("sponsors")
-          .insert([
-            { 
-              id: session.user.id,
-              email: session.user.email,
-              role: "sponsor",
-              name: session.user.user_metadata?.full_name || session.user.email,
-              is_active: true,
-              show_name_publicly: false
-            }
-          ])
-          .select()
-          .maybeSingle();
-
-        if (insertError) {
-          console.error("Error creating sponsor record:", insertError);
-          throw insertError;
-        }
-
-        if (newSponsor) {
-          console.log("New sponsor created:", newSponsor);
-          navigate("/");
-        }
+        navigate("/sponsor-dashboard");
       }
     } catch (error: any) {
-      console.error("Error in session handling:", error);
-      setError("Une erreur est survenue lors de la connexion. Veuillez réessayer dans quelques instants.");
       toast({
         title: "Erreur de connexion",
-        description: "Une erreur est survenue lors de la création de votre profil. Veuillez réessayer.",
+        description: error.message || "Une erreur est survenue",
         variant: "destructive",
       });
-    }
-  };
-
-  const handleError = (error: AuthError) => {
-    console.error("Auth error:", error);
-    
-    if (error.message.includes("Database error querying schema")) {
-      setError("Erreur de connexion à la base de données. L'équipe technique a été notifiée. Veuillez réessayer dans quelques minutes.");
-      toast({
-        title: "Erreur technique",
-        description: "Une erreur est survenue avec la base de données. Nous travaillons à résoudre ce problème.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    switch (error.message) {
-      case "Invalid login credentials":
-        setError("Email ou mot de passe incorrect");
-        break;
-      case "Email not confirmed":
-        setError("Veuillez confirmer votre email avant de vous connecter");
-        break;
-      case "Email logins are disabled":
-        setError("La connexion par email est temporairement désactivée. Veuillez contacter l'administrateur.");
-        break;
-      default:
-        setError("Une erreur est survenue. Veuillez réessayer dans quelques instants.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-4">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-cuba-deepOrange mb-2">
-            Bienvenue
-          </h1>
+    <div className="min-h-screen bg-gray-100 flex items-start justify-center p-4 pt-12">
+      <Card className="w-full max-w-md p-8 space-y-6 bg-white">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Espace Parrain</h1>
           <p className="text-gray-600">
-            Connectez-vous pour accéder à votre espace
+            Connectez-vous pour accéder à votre espace parrain et :
           </p>
+          <ul className="text-left text-gray-600 pl-4 mt-2 space-y-2">
+            <li>• Suivre les enfants que vous parrainez</li>
+            <li>• Consulter et partager des photos</li>
+            <li>• Laisser des témoignages</li>
+            <li>• Planifier vos visites</li>
+            <li>• Voir les anniversaires à venir</li>
+          </ul>
         </div>
 
-        {error && (
-          <ErrorAlert message={error} />
-        )}
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="votre@email.com"
+              className="w-full"
+            />
+          </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md border border-cuba-softOrange/20">
-          <Auth
-            supabaseClient={supabase}
-            appearance={{
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#FF6B6B',
-                    brandAccent: '#FF5252',
-                  },
-                },
-              },
-            }}
-            providers={[]}
-            redirectTo="https://touspourcuba.lovable.app/login"
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: "Email",
-                  password_label: "Mot de passe",
-                  button_label: "Se connecter",
-                  loading_button_label: "Connexion en cours...",
-                  social_provider_text: "Continuer avec {{provider}}",
-                  link_text: "Vous avez déjà un compte ? Connectez-vous",
-                },
-                sign_up: {
-                  email_label: "Email",
-                  password_label: "Mot de passe",
-                  button_label: "S'inscrire",
-                  loading_button_label: "Inscription en cours...",
-                  social_provider_text: "S'inscrire avec {{provider}}",
-                  link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
-                },
-              },
-            }}
-          />
-        </div>
-      </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Mot de passe</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+              className="w-full"
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? "Connexion en cours..." : "Se connecter"}
+          </Button>
+        </form>
+      </Card>
     </div>
   );
 };
