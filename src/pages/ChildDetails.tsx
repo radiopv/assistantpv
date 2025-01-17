@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
@@ -11,7 +11,6 @@ import { ChildDescription } from "@/components/Children/Details/ChildDescription
 import { ChildNeeds } from "@/components/Children/Details/ChildNeeds";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { toast } from "sonner";
 
@@ -107,7 +106,7 @@ const ChildDetails = () => {
                   <Button 
                     onClick={handleSponsorClick}
                     size="lg"
-                    className="w-full max-w-md bg-cuba-coral hover:bg-cuba-coral/90"
+                    className="w-full max-w-md bg-cuba-coral hover:bg-cuba-coral/90 text-white font-semibold"
                   >
                     Parrainer cet enfant
                   </Button>
