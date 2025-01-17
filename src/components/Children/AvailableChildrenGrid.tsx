@@ -75,11 +75,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onViewProfile }: Av
           className="overflow-hidden rounded-none md:rounded-lg break-words group bg-gradient-to-br from-white to-cuba-warmBeige border-cuba-softOrange/20 shadow-lg hover:shadow-xl transition-all duration-300"
         >
           <div className="flex flex-col md:flex-row gap-4 p-4">
-            <div className="w-full md:w-1/2 aspect-square flex items-center justify-center bg-white/50 rounded-lg overflow-hidden">
+            <div className="w-full md:w-3/4 aspect-square flex items-center justify-center bg-white/50 rounded-lg overflow-hidden">
               <img
                 src={child.photo_url || "/placeholder.svg"}
                 alt={child.name}
-                className="h-full w-auto object-contain"
+                className="h-full w-full object-cover"
               />
             </div>
 

@@ -34,7 +34,7 @@ export const ChildCard = ({ child, photosByChild, onLearnMore }: ChildCardProps)
         onClick={() => onLearnMore(child.id)}
         className={`w-full ${
           hasUrgentNeeds
-            ? "bg-[#ea384c] hover:bg-[#d62d3f] text-white"
+            ? "bg-[#F2FCE2] hover:bg-[#E2ECD2] text-emerald-800"
             : "bg-[#F2FCE2] hover:bg-[#E2ECD2] text-emerald-800"
         } group-hover:scale-105 transition-all duration-300`}
       >
