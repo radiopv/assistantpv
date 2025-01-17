@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Initial session check
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Initial session check:", session);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -38,6 +39,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth event:", event);
+      console.log("Session:", session);
+      
       if (event === 'SIGNED_IN') {
         setSession(session);
         
@@ -65,8 +68,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               }
             }
           } else {
+            console.log("No sponsor record found, creating one...");
             // If no sponsor record exists, create one
-            const { error: insertError } = await supabase
+            const { data: newSponsor, error: insertError } = await supabase
               .from('sponsors')
               .insert([
                 { 
@@ -77,7 +81,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                   is_active: true,
                   show_name_publicly: false
                 }
-              ]);
+              ])
+              .select()
+              .maybeSingle();
             
             if (insertError) {
               console.error('Error creating sponsor record:', insertError);
@@ -86,25 +92,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 description: "Veuillez réessayer ou contacter l'administrateur",
                 variant: "destructive",
               });
-            } else {
-              // Fetch the newly created sponsor record
-              const { data: newSponsor } = await supabase
-                .from('sponsors')
-                .select('*')
-                .eq('id', session?.user?.id)
-                .maybeSingle();
-
-              if (newSponsor) {
-                setUser(newSponsor);
-                navigate('/');
-              }
+            } else if (newSponsor) {
+              console.log("New sponsor created:", newSponsor);
+              setUser(newSponsor);
+              navigate('/');
             }
           }
         } catch (error) {
           console.error('Error in auth state change:', error);
           toast({
             title: "Erreur de connexion",
-            description: "Une erreur est survenue lors de la connexion",
+            description: "Une erreur est survenue lors de la connexion à la base de données",
             variant: "destructive",
           });
         }
