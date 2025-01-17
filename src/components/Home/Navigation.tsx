@@ -89,7 +89,7 @@ const adminLinks = [
 
 export const Navigation = () => {
   const navigate = useNavigate();
-  const { user, signOut, isAssistant } = useAuth();
+  const { user, logout, isAssistant } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
@@ -97,7 +97,7 @@ export const Navigation = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut();
+      await logout();
       toast.success("Déconnexion réussie", {
         description: "À bientôt !"
       });
