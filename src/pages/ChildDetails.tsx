@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { ArrowLeft, Heart, MapPin, Calendar, AlertTriangle, Info } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, Calendar, AlertTriangle, Info, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const ChildDetails = () => {
@@ -110,7 +110,7 @@ const ChildDetails = () => {
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
       <div className="container mx-auto px-4 py-8">
         {/* Header with back button and name */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <Button 
             onClick={() => navigate(-1)} 
             variant="ghost" 
@@ -119,7 +119,10 @@ const ChildDetails = () => {
             <ArrowLeft className="w-5 h-5 mr-2" />
             Retour
           </Button>
-          <h1 className="text-3xl font-title font-bold text-cuba-coral">{child?.name}</h1>
+          <div className="flex items-center gap-2">
+            <User className="w-6 h-6 text-cuba-coral" />
+            <h1 className="text-3xl font-title font-bold text-cuba-coral">{child?.name}</h1>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-12 gap-8">
@@ -155,11 +158,11 @@ const ChildDetails = () => {
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-4 text-gray-600">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 bg-white/50 px-3 py-2 rounded-lg">
                     <Calendar className="w-5 h-5 text-cuba-coral" />
                     <span>{child?.birth_date ? formatAge(child.birth_date) : "Non renseigné"}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 bg-white/50 px-3 py-2 rounded-lg">
                     <MapPin className="w-5 h-5 text-cuba-coral" />
                     <span>{child?.city || "Non renseignée"}</span>
                   </div>
@@ -167,21 +170,21 @@ const ChildDetails = () => {
 
                 {/* Urgent Needs Section */}
                 {urgentNeeds.length > 0 && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
-                    <div className="flex items-center gap-2 mb-2">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6 animate-fade-in">
+                    <div className="flex items-center gap-2 mb-3">
                       <AlertTriangle className="w-5 h-5 text-red-500" />
                       <h3 className="font-semibold text-red-700">Besoins urgents</h3>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {urgentNeeds.map((need, index) => (
-                        <div key={index} className="bg-white/50 p-3 rounded-md border border-red-100">
+                        <div key={index} className="bg-white/50 p-4 rounded-md border border-red-100">
                           <div className="flex items-start justify-between">
                             <div>
-                              <Badge variant="destructive" className="mb-1">
+                              <Badge variant="destructive" className="mb-2">
                                 {need.category}
                               </Badge>
                               {need.description && (
-                                <p className="text-red-700 mt-1">{need.description}</p>
+                                <p className="text-red-700 mt-2">{need.description}</p>
                               )}
                             </div>
                             <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
@@ -195,19 +198,23 @@ const ChildDetails = () => {
                 {/* Description Section */}
                 {child?.description && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-cuba-coral mb-2 flex items-center gap-2">
+                    <h3 className="text-lg font-semibold text-cuba-coral mb-3 flex items-center gap-2">
                       <Info className="w-5 h-5" />
                       Description
                     </h3>
-                    <p className="text-gray-700 leading-relaxed">{child.description}</p>
+                    <p className="text-gray-700 leading-relaxed bg-white/50 p-4 rounded-lg">
+                      {child.description}
+                    </p>
                   </div>
                 )}
 
                 {/* Story Section */}
                 {child?.story && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-cuba-coral mb-2">Histoire</h3>
-                    <p className="text-gray-700 leading-relaxed italic">{child.story}</p>
+                    <h3 className="text-lg font-semibold text-cuba-coral mb-3">Histoire</h3>
+                    <p className="text-gray-700 leading-relaxed bg-white/50 p-4 rounded-lg italic">
+                      {child.story}
+                    </p>
                   </div>
                 )}
               </div>
@@ -236,7 +243,7 @@ const ChildDetails = () => {
                             {need.category}
                           </Badge>
                           {need.description && (
-                            <p className={`text-sm mt-1 ${
+                            <p className={`text-sm mt-2 ${
                               need.is_urgent ? "text-red-700" : "text-gray-600"
                             }`}>
                               {need.description}
