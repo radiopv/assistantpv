@@ -9,8 +9,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { ArrowLeft, Heart, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, Calendar, AlertTriangle } from "lucide-react";
 import { ChildNeeds } from "@/components/Dashboard/ChildrenNeeds/ChildNeeds";
+import { Badge } from "@/components/ui/badge";
 
 const ChildDetails = () => {
   const { id } = useParams();
@@ -80,6 +81,7 @@ const ChildDetails = () => {
           Retour
         </Button>
         <Card className="p-6 text-center">
+          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
           <p className="text-red-500">Erreur lors du chargement des détails de l'enfant</p>
         </Card>
       </div>
@@ -90,90 +92,144 @@ const ChildDetails = () => {
     return (
       <div className="container mx-auto p-4 space-y-4">
         <Skeleton className="h-8 w-24" />
-        <Skeleton className="h-64 w-full" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <Skeleton className="h-[500px]" />
+          <div className="space-y-4">
+            <Skeleton className="h-12" />
+            <Skeleton className="h-24" />
+            <Skeleton className="h-48" />
+          </div>
         </div>
       </div>
     );
   }
 
   const needs = child?.needs ? convertJsonToNeeds(child.needs) : [];
+  const urgentNeeds = needs.filter(need => need.is_urgent);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <Button onClick={() => navigate(-1)} variant="ghost" className="mb-6">
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Retour
-      </Button>
-
-      <div className="grid md:grid-cols-12 gap-8">
-        {/* Left Column - Photo and Sponsorship Button */}
-        <div className="md:col-span-5 space-y-6">
-          <Card className="overflow-hidden border-cuba-coral/20">
-            <div className="aspect-square relative">
-              <img
-                src={child?.photo_url || "/placeholder.svg"}
-                alt={child?.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </Card>
-          
-          {!child?.is_sponsored && (
-            <Button 
-              onClick={handleSponsorshipRequest}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cuba-coral to-cuba-coral/90 hover:from-cuba-coral/90 hover:to-cuba-coral text-white shadow-lg hover:shadow-xl transition-all duration-300 py-6 text-lg"
-              size="lg"
-            >
-              <Heart className="w-6 h-6" />
-              Parrainer {child?.name}
-            </Button>
-          )}
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <Button onClick={() => navigate(-1)} variant="ghost" className="text-cuba-coral">
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Retour
+          </Button>
+          <h1 className="text-3xl font-bold text-cuba-coral">{child?.name}</h1>
         </div>
 
-        {/* Right Column - Child Information */}
-        <div className="md:col-span-7 space-y-6">
-          <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
-            <div className="space-y-4">
-              <div className="border-b border-cuba-coral/20 pb-4">
-                <h1 className="text-3xl font-bold text-cuba-coral mb-2">{child?.name}</h1>
-                <div className="flex flex-wrap gap-4 text-gray-600">
+        <div className="grid md:grid-cols-12 gap-8">
+          {/* Left Column - Photo and Sponsorship Button */}
+          <div className="md:col-span-5 space-y-6">
+            <Card className="overflow-hidden border-cuba-coral/20 shadow-lg">
+              <div className="aspect-square relative">
+                <img
+                  src={child?.photo_url || "/placeholder.svg"}
+                  alt={child?.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+            </Card>
+            
+            {!child?.is_sponsored && (
+              <Button 
+                onClick={handleSponsorshipRequest}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cuba-coral to-cuba-coral/90 hover:from-cuba-coral/90 hover:to-cuba-coral text-white shadow-lg hover:shadow-xl transition-all duration-300 py-6 text-lg"
+                size="lg"
+              >
+                <Heart className="w-6 h-6" />
+                Parrainer {child?.name}
+              </Button>
+            )}
+          </div>
+
+          {/* Right Column - Child Information */}
+          <div className="md:col-span-7 space-y-6">
+            <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 text-gray-600">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">Âge:</span>
+                    <Calendar className="w-5 h-5 text-cuba-coral" />
                     <span>{child?.birth_date ? formatAge(child.birth_date) : "Non renseigné"}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium">Ville:</span>
+                    <MapPin className="w-5 h-5 text-cuba-coral" />
                     <span>{child?.city || "Non renseignée"}</span>
                   </div>
                 </div>
+
+                {urgentNeeds.length > 0 && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="w-5 h-5 text-red-500" />
+                      <h3 className="font-semibold text-red-700">Besoins urgents</h3>
+                    </div>
+                    <div className="space-y-2">
+                      {urgentNeeds.map((need, index) => (
+                        <div key={index} className="bg-white/50 p-3 rounded-md border border-red-100">
+                          <p className="text-red-700">{need.description || need.category}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {child?.description && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold text-cuba-coral mb-2">Description</h3>
+                    <p className="text-gray-700 leading-relaxed">{child.description}</p>
+                  </div>
+                )}
+
+                {child?.story && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold text-cuba-coral mb-2">Histoire</h3>
+                    <p className="text-gray-700 leading-relaxed italic">{child.story}</p>
+                  </div>
+                )}
               </div>
-
-              {child?.description && (
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-cuba-coral">Description</h3>
-                  <p className="text-gray-700 leading-relaxed">{child.description}</p>
-                </div>
-              )}
-
-              {child?.story && (
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-cuba-coral">Histoire</h3>
-                  <p className="text-gray-700 leading-relaxed italic">{child.story}</p>
-                </div>
-              )}
-            </div>
-          </Card>
-
-          {/* Needs Section */}
-          {needs.length > 0 && (
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
-              <h3 className="text-xl font-semibold mb-4 text-cuba-coral">Besoins</h3>
-              <ChildNeeds child={child} needs={needs} />
             </Card>
-          )}
+
+            {/* Needs Section */}
+            {needs.length > 0 && (
+              <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
+                <h3 className="text-xl font-semibold mb-4 text-cuba-coral">Tous les besoins</h3>
+                <div className="grid gap-3">
+                  {needs.map((need, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg ${
+                        need.is_urgent
+                          ? "bg-red-50 border border-red-200"
+                          : "bg-gray-50 border border-gray-200"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <Badge
+                            variant={need.is_urgent ? "destructive" : "secondary"}
+                            className="mb-2"
+                          >
+                            {need.category}
+                          </Badge>
+                          {need.description && (
+                            <p className={`text-sm mt-1 ${
+                              need.is_urgent ? "text-red-700" : "text-gray-600"
+                            }`}>
+                              {need.description}
+                            </p>
+                          )}
+                        </div>
+                        {need.is_urgent && (
+                          <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )}
+          </div>
         </div>
       </div>
     </div>
