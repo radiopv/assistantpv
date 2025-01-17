@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -22,6 +22,10 @@ import { PasswordFields } from "@/components/Sponsor/SponsorshipForm/PasswordFie
 export default function SponsorshipManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [editingSponsorId, setEditingSponsorId] = useState<string | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ 
+    key: 'name', 
+    direction: 'asc' 
+  });
   const [editForm, setEditForm] = useState({
     email: "",
     name: "",
@@ -113,6 +117,13 @@ export default function SponsorshipManagement() {
     }
   };
 
+  const handleSort = (key: string) => {
+    setSortConfig(current => ({
+      key,
+      direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
   const filterBySearch = (items: any[]) => {
     if (!searchTerm) return items;
     return items.filter(item => 
@@ -120,6 +131,38 @@ export default function SponsorshipManagement() {
       item.email?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
+
+  const sortData = (data: any[]) => {
+    if (!data) return [];
+    
+    return [...data].sort((a, b) => {
+      let aValue = a[sortConfig.key];
+      let bValue = b[sortConfig.key];
+
+      // Gestion spéciale pour last_login
+      if (sortConfig.key === 'last_login') {
+        aValue = aValue ? new Date(aValue).getTime() : 0;
+        bValue = bValue ? new Date(bValue).getTime() : 0;
+      }
+
+      if (sortConfig.direction === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  };
+
+  const renderSortButton = (key: string, label: string) => (
+    <Button
+      variant="ghost"
+      onClick={() => handleSort(key)}
+      className="h-8 flex items-center gap-1 p-0 hover:bg-transparent"
+    >
+      {label}
+      <ArrowUpDown className="h-4 w-4" />
+    </Button>
+  );
 
   if (isLoading) {
     return <div className="p-4">Chargement...</div>;
@@ -144,27 +187,27 @@ export default function SponsorshipManagement() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nom</TableHead>
-              <TableHead>Email</TableHead>
+              {renderSortButton('name', 'Nom')}
+              {renderSortButton('email', 'Email')}
               <TableHead>Mot de passe actuel</TableHead>
-              <TableHead className="hidden md:table-cell">Dernière connexion</TableHead>
-              <TableHead className="hidden md:table-cell">Enfants parrainés</TableHead>
+              <TableHead>{renderSortButton('last_login', 'Dernière connexion')}</TableHead>
+              <TableHead>Enfants parrainés</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filterBySearch(sponsors || []).map((sponsor) => (
+            {sortData(filterBySearch(sponsors || [])).map((sponsor) => (
               <React.Fragment key={sponsor.id}>
                 <TableRow>
                   <TableCell className="font-medium">{sponsor.name}</TableCell>
                   <TableCell>{sponsor.email}</TableCell>
                   <TableCell>{sponsor.password_hash || "Non défini"}</TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell>
                     {sponsor.last_login 
                       ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
                       : "Jamais connecté"}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell>
                     {sponsor.sponsorships
                       ?.filter((s: any) => s.status === 'active')
                       .map((s: any) => s.child.name)
