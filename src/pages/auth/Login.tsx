@@ -13,17 +13,27 @@ const Login = () => {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (event === "SIGNED_IN") {
-          const { data: profile } = await supabase
-            .from("sponsors")
-            .select("role")
-            .eq("id", session?.user?.id)
-            .single();
+        console.log("Auth state change event:", event);
+        console.log("Session:", session);
 
-          if (profile?.role === "admin" || profile?.role === "assistant") {
-            navigate("/dashboard");
-          } else {
-            navigate("/");
+        if (event === "SIGNED_IN") {
+          try {
+            const { data: profile } = await supabase
+              .from("sponsors")
+              .select("role")
+              .eq("id", session?.user?.id)
+              .single();
+
+            console.log("Profile data:", profile);
+
+            if (profile?.role === "admin" || profile?.role === "assistant") {
+              navigate("/dashboard");
+            } else {
+              navigate("/");
+            }
+          } catch (error) {
+            console.error("Error fetching profile:", error);
+            setError("Erreur lors de la récupération du profil");
           }
         }
       }
@@ -35,12 +45,17 @@ const Login = () => {
   }, [navigate]);
 
   const handleError = (error: AuthError) => {
+    console.error("Auth error:", error);
+    
     switch (error.message) {
       case "Invalid login credentials":
         setError("Email ou mot de passe incorrect");
         break;
       case "Email not confirmed":
         setError("Veuillez confirmer votre email avant de vous connecter");
+        break;
+      case "Database error querying schema":
+        setError("Erreur de connexion à la base de données. Veuillez réessayer dans quelques instants.");
         break;
       default:
         setError(error.message);
