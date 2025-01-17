@@ -18,7 +18,7 @@ export const PhotoGrid = ({
   onToggleFavorite 
 }: PhotoGridProps) => {
   if (!photos?.length) {
-    return <p>Aucune photo disponible pour le moment.</p>;
+    return <p className="text-gray-500">Aucune photo disponible</p>;
   }
 
   const handleDelete = (id: string) => {
