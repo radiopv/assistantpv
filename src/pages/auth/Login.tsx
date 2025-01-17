@@ -94,6 +94,9 @@ const Login = () => {
       case "Database error querying schema":
         setError("Erreur de connexion à la base de données. Veuillez réessayer dans quelques instants.");
         break;
+      case "Email logins are disabled":
+        setError("La connexion par email est temporairement désactivée. Veuillez contacter l'administrateur.");
+        break;
       default:
         setError(error.message);
     }
