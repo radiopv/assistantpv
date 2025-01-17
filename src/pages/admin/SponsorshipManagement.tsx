@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Label } from "@/components/ui/label";
 import { PasswordFields } from "@/components/Sponsor/SponsorshipForm/PasswordFields";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function SponsorshipManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -184,105 +185,112 @@ export default function SponsorshipManagement() {
       </div>
 
       <Card className="w-full overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {renderSortButton('name', 'Nom')}
-              {renderSortButton('email', 'Email')}
-              <TableHead>Mot de passe actuel</TableHead>
-              <TableHead>{renderSortButton('last_login', 'Dernière connexion')}</TableHead>
-              <TableHead>Enfants parrainés</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortData(filterBySearch(sponsors || [])).map((sponsor) => (
-              <React.Fragment key={sponsor.id}>
+        <ScrollArea className="w-full">
+          <div className="min-w-[800px]">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell className="font-medium">{sponsor.name}</TableCell>
-                  <TableCell>{sponsor.email}</TableCell>
-                  <TableCell>{sponsor.password_hash || "Non défini"}</TableCell>
-                  <TableCell>
-                    {sponsor.last_login 
-                      ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
-                      : "Jamais connecté"}
-                  </TableCell>
-                  <TableCell>
-                    {sponsor.sponsorships
-                      ?.filter((s: any) => s.status === 'active')
-                      .map((s: any) => s.child.name)
-                      .join(", ") || "Aucun"}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(sponsor)}
-                    >
-                      Modifier
-                    </Button>
-                  </TableCell>
+                  <TableHead className="min-w-[150px]">{renderSortButton('name', 'Nom')}</TableHead>
+                  <TableHead className="min-w-[200px]">{renderSortButton('email', 'Email')}</TableHead>
+                  <TableHead className="min-w-[150px]">Mot de passe actuel</TableHead>
+                  <TableHead className="min-w-[200px]">{renderSortButton('last_login', 'Dernière connexion')}</TableHead>
+                  <TableHead className="min-w-[200px]">Enfants parrainés</TableHead>
+                  <TableHead className="min-w-[100px]">Actions</TableHead>
                 </TableRow>
-                {editingSponsorId === sponsor.id && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="p-0">
-                      <div className="bg-gray-50 border-t p-4 space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <Label className="text-sm font-medium">Nom</Label>
-                            <Input
-                              value={editForm.name}
-                              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                              className="mt-1"
+              </TableHeader>
+              <TableBody>
+                {sortData(filterBySearch(sponsors || [])).map((sponsor) => (
+                  <React.Fragment key={sponsor.id}>
+                    <TableRow>
+                      <TableCell className="font-medium">{sponsor.name}</TableCell>
+                      <TableCell className="break-all">{sponsor.email}</TableCell>
+                      <TableCell>{sponsor.password_hash || "Non défini"}</TableCell>
+                      <TableCell>
+                        {sponsor.last_login 
+                          ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
+                          : "Jamais connecté"}
+                      </TableCell>
+                      <TableCell className="break-words">
+                        {sponsor.sponsorships
+                          ?.filter((s: any) => s.status === 'active')
+                          .map((s: any) => s.child.name)
+                          .join(", ") || "Aucun"}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(sponsor)}
+                          className="w-full md:w-auto"
+                        >
+                          Modifier
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                    {editingSponsorId === sponsor.id && (
+                      <TableRow>
+                        <TableCell colSpan={6} className="p-0">
+                          <div className="bg-gray-50 border-t p-4 space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <Label className="text-sm font-medium">Nom</Label>
+                                <Input
+                                  value={editForm.name}
+                                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium">Email</Label>
+                                <Input
+                                  value={editForm.email}
+                                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-sm font-medium">Téléphone</Label>
+                                <Input
+                                  value={editForm.phone}
+                                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                                  className="mt-1"
+                                />
+                              </div>
+                            </div>
+                            
+                            <PasswordFields
+                              password={editForm.password}
+                              confirmPassword={editForm.confirmPassword}
+                              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
                             />
-                          </div>
-                          <div>
-                            <Label className="text-sm font-medium">Email</Label>
-                            <Input
-                              value={editForm.email}
-                              onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                          <div>
-                            <Label className="text-sm font-medium">Téléphone</Label>
-                            <Input
-                              value={editForm.phone}
-                              onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                              className="mt-1"
-                            />
-                          </div>
-                        </div>
-                        
-                        <PasswordFields
-                          password={editForm.password}
-                          confirmPassword={editForm.confirmPassword}
-                          onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
-                        />
 
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditingSponsorId(null)}
-                          >
-                            Annuler
-                          </Button>
-                          <Button
-                            size="sm"
-                            onClick={handleUpdate}
-                          >
-                            Sauvegarder
-                          </Button>
-                        </div>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </React.Fragment>
-            ))}
-          </TableBody>
-        </Table>
+                            <div className="flex flex-col md:flex-row justify-end gap-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setEditingSponsorId(null)}
+                                className="w-full md:w-auto"
+                              >
+                                Annuler
+                              </Button>
+                              <Button
+                                size="sm"
+                                onClick={handleUpdate}
+                                className="w-full md:w-auto"
+                              >
+                                Sauvegarder
+                              </Button>
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </ScrollArea>
       </Card>
     </div>
   );
