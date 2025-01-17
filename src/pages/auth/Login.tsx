@@ -15,7 +15,7 @@ const Login = () => {
       async (event, session) => {
         if (event === "SIGNED_IN") {
           const { data: profile } = await supabase
-            .from("profiles")
+            .from("sponsors")
             .select("role")
             .eq("id", session?.user?.id)
             .single();
