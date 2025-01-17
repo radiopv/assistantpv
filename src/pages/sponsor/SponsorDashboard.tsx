@@ -28,7 +28,8 @@ const SponsorDashboard = () => {
       sponsorDashboard: "Mon Espace Parrain",
       uploadSuccess: "Photo ajoutée avec succès",
       uploadError: "Erreur lors de l'ajout de la photo",
-      plannedVisits: "Visites Planifiées"
+      plannedVisits: "Visites Planifiées",
+      noAccess: "Accès non autorisé"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -36,14 +37,20 @@ const SponsorDashboard = () => {
       sponsorDashboard: "Mi Panel de Padrino",
       uploadSuccess: "Foto agregada con éxito",
       uploadError: "Error al agregar la foto",
-      plannedVisits: "Visitas Planificadas"
+      plannedVisits: "Visitas Planificadas",
+      noAccess: "Acceso no autorizado"
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
+  // Vérifier si l'utilisateur est connecté
+  if (!user?.id) {
+    return <div className="text-center p-4">{t.noAccess}</div>;
+  }
+
   const { data: sponsoredChildren, isLoading: childrenLoading } = useQuery({
-    queryKey: ["sponsored-children", user?.id],
+    queryKey: ["sponsored-children", user.id],
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
         .from('sponsorships')
@@ -63,41 +70,43 @@ const SponsorDashboard = () => {
             age
           )
         `)
-        .eq('sponsor_id', user?.id)
+        .eq('sponsor_id', user.id)
         .eq('status', 'active');
 
       if (error) throw error;
       return sponsorships || [];
     },
-    enabled: !!user?.id
+    enabled: !!user.id
   });
 
   const { data: plannedVisits = [], refetch: refetchVisits } = useQuery({
-    queryKey: ['planned-visits', user?.id],
+    queryKey: ['planned-visits', user.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('planned_visits')
         .select('*')
-        .eq('sponsor_id', user?.id)
+        .eq('sponsor_id', user.id)
         .order('start_date', { ascending: true });
 
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!user.id
   });
 
   const { data: notifications = [] } = useQuery({
-    queryKey: ['sponsor-notifications', user?.id],
+    queryKey: ['sponsor-notifications', user.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
-        .eq('recipient_id', user?.id)
+        .eq('recipient_id', user.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!user.id
   });
 
   const handleAddPhoto = (childId: string) => {
@@ -122,33 +131,32 @@ const SponsorDashboard = () => {
 
         <div className="grid gap-6">
           {/* Contribution Stats */}
-          <ContributionStats sponsorId={user?.id || ''} />
+          {user?.id && <ContributionStats sponsorId={user.id} />}
 
           {/* Sponsored Children Cards */}
+          {sponsoredChildren?.map((sponsorship) => {
+            const child = sponsorship.children;
+            if (!child) return null;
 
-{sponsoredChildren?.map((sponsorship) => {
-  const child = sponsorship.children;
-  if (!child) return null;
+            return (
+              <div key={child.id} className="space-y-6">
+                <SponsoredChildCard
+                  child={child}
+                  sponsorshipId={sponsorship.id}
+                  onAddPhoto={() => handleAddPhoto(child.id)}
+                />
 
-  return (
-    <div key={child.id} className="space-y-6">
-      <SponsoredChildCard
-        child={child}
-        sponsorshipId={sponsorship.id}
-        onAddPhoto={() => handleAddPhoto(child.id)}
-      />
-
-      {selectedChild === child.id && (
-        <Card className="p-4">
-          <PhotoUploader
-            childId={selectedChild}
-            onUploadSuccess={handleUploadSuccess}
-          />
-        </Card>
-      )}
-    </div>
-  );
-})}
+                {selectedChild === child.id && (
+                  <Card className="p-4">
+                    <PhotoUploader
+                      childId={selectedChild}
+                      onUploadSuccess={handleUploadSuccess}
+                    />
+                  </Card>
+                )}
+              </div>
+            );
+          })}
 
           {/* Planned Visits */}
           <Card className="p-6">
@@ -157,7 +165,7 @@ const SponsorDashboard = () => {
             </h3>
             <div className="space-y-6">
               <PlannedVisitForm 
-                sponsorId={user?.id || ''} 
+                sponsorId={user.id} 
                 onVisitPlanned={() => refetchVisits()} 
               />
               <VisitsSection visits={plannedVisits || []} onVisitDeleted={() => refetchVisits()} />
