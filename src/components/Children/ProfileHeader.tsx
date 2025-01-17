@@ -24,8 +24,8 @@ export const ProfileHeader = ({
   const canEdit = userRole === 'admin' || userRole === 'assistant';
   const canDelete = userRole === 'admin' || userRole === 'assistant';
   
-  // Check if we're on a public route
-  const isPublicRoute = window.location.pathname.startsWith('/child-details/');
+  // Check if we're on a public route - this includes both /children/ and /child-details/ paths
+  const isPublicRoute = window.location.pathname.includes('/children/') || window.location.pathname.includes('/child-details/');
 
   return (
     <div className="flex justify-between items-center mb-6">
