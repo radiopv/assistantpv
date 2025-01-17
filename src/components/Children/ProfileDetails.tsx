@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { convertJsonToNeeds } from "@/types/needs";
+import { convertJsonToNeeds, convertNeedsToJson, Need } from "@/types/needs";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { translateNeedCategory } from "@/utils/needsTranslation";
 
 interface ProfileDetailsProps {
   child: any;
@@ -122,6 +125,11 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
       }
 
       onChange(field, value);
+      
+      toast({
+        title: t('successTitle'),
+        description: t('successMessage')
+      });
     } catch (error) {
       console.error("Error updating child:", error);
       toast({
@@ -131,6 +139,15 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
       });
     }
   };
+
+  const handleNeedChange = (index: number, field: keyof Need, value: any) => {
+    const currentNeeds = convertJsonToNeeds(child.needs);
+    const updatedNeeds = [...currentNeeds];
+    updatedNeeds[index] = { ...updatedNeeds[index], [field]: value };
+    handleChange('needs', convertNeedsToJson(updatedNeeds));
+  };
+
+  const needs = convertJsonToNeeds(child.needs);
 
   return (
     <Card className="p-6">
@@ -194,15 +211,59 @@ export const ProfileDetails = ({ child, editing, onChange, onPhotoUpdate }: Prof
           )}
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Besoins</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Besoins</label>
           {editing ? (
-            <textarea
-              value={JSON.stringify(child.needs)}
-              onChange={(e) => handleChange('needs', JSON.parse(e.target.value))}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-            />
+            <div className="space-y-4">
+              {needs.map((need, index) => (
+                <div key={index} className="p-4 border rounded-lg">
+                  <div className="flex items-center gap-4 mb-2">
+                    <select
+                      value={need.category}
+                      onChange={(e) => handleNeedChange(index, 'category', e.target.value)}
+                      className="border rounded p-2"
+                    >
+                      <option value="education">Éducation</option>
+                      <option value="jouet">Jouets</option>
+                      <option value="vetement">Vêtements</option>
+                      <option value="nourriture">Nourriture</option>
+                      <option value="medicament">Médicaments</option>
+                      <option value="hygiene">Hygiène</option>
+                      <option value="autre">Autre</option>
+                    </select>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={need.is_urgent}
+                        onCheckedChange={(checked) => 
+                          handleNeedChange(index, 'is_urgent', checked)
+                        }
+                      />
+                      <label>Urgent</label>
+                    </div>
+                  </div>
+                  <textarea
+                    value={need.description || ''}
+                    onChange={(e) => handleNeedChange(index, 'description', e.target.value)}
+                    placeholder="Description du besoin"
+                    className="w-full border rounded p-2"
+                  />
+                </div>
+              ))}
+            </div>
           ) : (
-            <p className="text-gray-900">{JSON.stringify(child.needs)}</p>
+            <div className="space-y-2">
+              {needs.map((need, index) => (
+                <div key={index} className={`p-3 rounded-lg ${need.is_urgent ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'} border`}>
+                  <Badge variant={need.is_urgent ? "destructive" : "secondary"}>
+                    {translateNeedCategory(need.category)}
+                  </Badge>
+                  {need.description && (
+                    <p className={`mt-2 text-sm ${need.is_urgent ? 'text-red-700' : 'text-gray-600'}`}>
+                      {need.description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
