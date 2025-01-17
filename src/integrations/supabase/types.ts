@@ -1374,19 +1374,40 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          role: string
+          role: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           id: string
-          role: string
+          role?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          role?: string
+          role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      profiles_backup: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string | null
+          role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string | null
+          role?: string | null
           updated_at?: string | null
         }
         Relationships: []
