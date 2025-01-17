@@ -207,10 +207,15 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                           : "bg-orange-50 border border-orange-200 text-orange-700"
                       }`}
                     >
-                      <div className="text-sm font-medium truncate">
+                      <div className="text-sm font-medium">
                         {translateNeedCategory(need.category)}
                         {need.is_urgent && " (!)"} 
                       </div>
+                      {need.description && (
+                        <p className="text-sm mt-1 opacity-90">
+                          {need.description}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
