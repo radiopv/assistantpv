@@ -180,83 +180,91 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
               key={child.id} 
               className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
             >
-            <div className="aspect-video relative">
-              <img
-                src={child.photo_url || "/placeholder.svg"}
-                alt={child.name}
-                className="w-full h-full object-cover transition-transform duration-300"
-                onLoad={(e) => handleImageLoad(e, child.photo_url)}
-                crossOrigin="anonymous"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
-              <div className="absolute bottom-0 left-0 right-0 p-2">
-                <h3 className="text-lg font-title font-bold text-white truncate">{child.name}</h3>
-                <div className="flex items-center gap-1 text-sm text-white/90">
-                  <Calendar className="w-4 h-4 flex-shrink-0" />
-                  <span className="truncate">{formatAge(child.birth_date)}</span>
-                  <MapPin className="w-4 h-4 flex-shrink-0 ml-1" />
-                  <span className="truncate">{child.city}</span>
+              <div className="aspect-video relative">
+                <img
+                  src={child.photo_url || "/placeholder.svg"}
+                  alt={child.name}
+                  className="w-full h-full object-cover transition-transform duration-300"
+                  onLoad={(e) => handleImageLoad(e, child.photo_url)}
+                  crossOrigin="anonymous"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
+                {hasUrgentNeeds && (
+                  <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-semibold animate-pulse">
+                    BESOIN URGENT
+                  </div>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 p-2">
+                  <h3 className="text-lg font-title font-bold text-white truncate">{child.name}</h3>
+                  <div className="flex items-center gap-1 text-sm text-white/90">
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">{formatAge(child.birth_date)}</span>
+                    <MapPin className="w-4 h-4 flex-shrink-0 ml-1" />
+                    <span className="truncate">{child.city}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="p-2 space-y-2">
-              {/* Album Photos Grid */}
-              {photosByChild[child.id]?.length > 0 && (
-                <div className="bg-white/80 rounded-lg p-2">
-                  <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
-                  <div className="grid grid-cols-3 gap-2">
-                    {photosByChild[child.id].slice(0, 3).map((photo: any) => (
-                      <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
-                        <img
-                          src={photo.url}
-                          alt="Photo album"
-                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                        />
+              <div className="p-2 space-y-2">
+                {/* Album Photos Grid */}
+                {photosByChild[child.id]?.length > 0 && (
+                  <div className="bg-white/80 rounded-lg p-2">
+                    <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
+                    <div className="grid grid-cols-3 gap-2">
+                      {photosByChild[child.id].slice(0, 3).map((photo: any) => (
+                        <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
+                          <img
+                            src={photo.url}
+                            alt="Photo album"
+                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {child.description && (
+                  <div className="bg-white/80 rounded-lg p-2">
+                    <p className="text-sm text-gray-700 line-clamp-2">{child.description}</p>
+                  </div>
+                )}
+
+                {Array.isArray(childNeeds) && childNeeds.length > 0 && (
+                  <div className="space-y-1">
+                    {childNeeds.slice(0, 2).map((need: Need, index: number) => (
+                      <div
+                        key={`${need.category}-${index}`}
+                        className={`p-2 rounded-lg ${
+                          need.is_urgent
+                            ? "bg-[#ea384c] text-white font-medium"
+                            : "bg-orange-50 border border-orange-200 text-orange-700"
+                        }`}
+                      >
+                        <div className="text-sm font-medium truncate">
+                          {need.category}
+                          {need.is_urgent && " (!)"} 
+                        </div>
+                        {need.description && (
+                          <p className="text-sm opacity-90 mt-1">{need.description}</p>
+                        )}
                       </div>
                     ))}
                   </div>
-                </div>
-              )}
+                )}
 
-              {child.description && (
-                <div className="bg-white/80 rounded-lg p-2">
-                  <p className="text-sm text-gray-700 line-clamp-2">{child.description}</p>
-                </div>
-              )}
-
-              {Array.isArray(childNeeds) && childNeeds.length > 0 && (
-                <div className="space-y-1">
-                  {childNeeds.slice(0, 2).map((need: Need, index: number) => (
-                    <div
-                      key={`${need.category}-${index}`}
-                      className={`p-2 rounded-lg ${
-                        need.is_urgent
-                          ? "bg-[#ea384c] text-white font-medium"
-                          : "bg-orange-50 border border-orange-200 text-orange-700"
-                      }`}
-                    >
-                      <div className="text-sm font-medium truncate">
-                        {need.category}
-                        {need.is_urgent && " (!)"} 
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              <Button 
-                onClick={() => handleLearnMore(child.id)}
-                className={`w-full ${
-                  hasUrgentNeeds
-                    ? "bg-[#ea384c] hover:bg-[#d62d3f] text-white"
-                    : "bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white"
-                } group-hover:scale-105 transition-all duration-300`}
-              >
-                <Info className="w-4 h-4 mr-2" />
-                En savoir plus
-              </Button>
-            </div>
+                <Button 
+                  onClick={() => onSponsorClick(child.id)}
+                  className={`w-full ${
+                    hasUrgentNeeds
+                      ? "bg-[#ea384c] hover:bg-[#d62d3f] text-white"
+                      : "bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white"
+                  } group-hover:scale-105 transition-all duration-300`}
+                >
+                  <Info className="w-4 h-4 mr-2" />
+                  En savoir plus
+                </Button>
+              </div>
             </Card>
           );
         })}
