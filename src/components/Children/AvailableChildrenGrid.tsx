@@ -246,7 +246,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 className={`w-full ${
                   hasUrgentNeeds
                     ? "bg-[#ea384c] hover:bg-[#d62d3f] text-white"
-                    : "bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white"
+                    : "bg-[#F2FCE2] hover:bg-[#E2ECD2] text-emerald-800"
                 } group-hover:scale-105 transition-all duration-300`}
               >
                 <Info className="w-4 h-4 mr-2" />
