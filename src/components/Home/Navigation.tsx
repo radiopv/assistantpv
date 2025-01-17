@@ -113,9 +113,13 @@ export const Navigation = () => {
     }
   };
 
+  const handleSponsorDashboard = () => {
+    navigate("/sponsor-dashboard");
+    setIsOpen(false);
+  };
+
   const MenuItems = () => (
     <div className="flex flex-col space-y-2 p-4">
-      {/* Public Links Section with Collapsible */}
       <Collapsible open={isMainMenuOpen} onOpenChange={setIsMainMenuOpen}>
         <CollapsibleTrigger asChild>
           <Button variant="ghost" className="w-full justify-between">
@@ -141,7 +145,6 @@ export const Navigation = () => {
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Admin Links Section with Collapsible */}
       {isAssistant && (
         <Collapsible open={isAdminMenuOpen} onOpenChange={setIsAdminMenuOpen}>
           <CollapsibleTrigger asChild>
@@ -169,17 +172,13 @@ export const Navigation = () => {
         </Collapsible>
       )}
 
-      {/* User Actions Section - Always at the bottom */}
       <div className="border-t my-4" />
       <div className="space-y-2">
         {user ? (
           <>
             <Button
               variant="ghost"
-              onClick={() => {
-                navigate("/sponsor-dashboard");
-                setIsOpen(false);
-              }}
+              onClick={handleSponsorDashboard}
               className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
             >
               <User className="h-4 w-4 mr-2" />
@@ -218,7 +217,6 @@ export const Navigation = () => {
     <nav className="bg-white shadow-sm w-full">
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center">
-          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -236,7 +234,6 @@ export const Navigation = () => {
             </Sheet>
           </div>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex flex-1 space-x-4">
             {publicLinks.map((link) => (
               <Button
@@ -251,13 +248,12 @@ export const Navigation = () => {
             ))}
           </div>
 
-          {/* Right side menu items - Desktop */}
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
                 <Button
                   variant="ghost"
-                  onClick={() => navigate("/sponsor-dashboard")}
+                  onClick={handleSponsorDashboard}
                   className="text-primary"
                 >
                   <User className="h-4 w-4 mr-2" />
