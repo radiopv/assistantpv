@@ -13,6 +13,7 @@ import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { translateNeedCategory } from "@/utils/needsTranslation";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -207,7 +208,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                       }`}
                     >
                       <div className="text-sm font-medium truncate">
-                        {need.category}
+                        {translateNeedCategory(need.category)}
                         {need.is_urgent && " (!)"} 
                       </div>
                     </div>

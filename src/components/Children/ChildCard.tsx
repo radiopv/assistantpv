@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
+import { translateNeedCategory } from "@/utils/needsTranslation";
 
 interface ChildCardProps {
   child: any;
@@ -37,7 +38,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
                   variant={need.is_urgent ? "destructive" : "secondary"}
                   className={`text-xs truncate max-w-[150px] ${need.is_urgent ? 'bg-red-500 hover:bg-red-600' : ''}`}
                 >
-                  {need.category}
+                  {translateNeedCategory(need.category)}
                   {need.is_urgent && " (!)"} 
                 </Badge>
               ))}
