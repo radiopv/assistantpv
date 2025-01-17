@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "@/components/Layout/MainLayout";
 import PublicLayout from "@/components/Layout/PublicLayout";
 import ChildrenManagement from "@/pages/admin/ChildrenManagement";
