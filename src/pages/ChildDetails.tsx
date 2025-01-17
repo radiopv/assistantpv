@@ -10,6 +10,7 @@ import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { ArrowLeft, Heart, AlertTriangle } from "lucide-react";
+import { ChildNeeds } from "@/components/Dashboard/ChildrenNeeds/ChildNeeds";
 
 const ChildDetails = () => {
   const { id } = useParams();
@@ -99,8 +100,6 @@ const ChildDetails = () => {
   }
 
   const needs = child?.needs ? convertJsonToNeeds(child.needs) : [];
-  const urgentNeeds = needs.filter(need => need.is_urgent);
-  const regularNeeds = needs.filter(need => !need.is_urgent);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -112,7 +111,7 @@ const ChildDetails = () => {
       <div className="grid md:grid-cols-12 gap-8">
         {/* Left Column - Photo and Sponsorship Button */}
         <div className="md:col-span-5 space-y-6">
-          <Card className="overflow-hidden border-cuba-softOrange/20">
+          <Card className="overflow-hidden border-cuba-coral/20">
             <div className="aspect-square relative">
               <img
                 src={child?.photo_url || "/placeholder.svg"}
@@ -138,7 +137,7 @@ const ChildDetails = () => {
         <div className="md:col-span-7 space-y-6">
           <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
             <div className="space-y-4">
-              <div className="border-b border-cuba-softOrange/20 pb-4">
+              <div className="border-b border-cuba-coral/20 pb-4">
                 <h1 className="text-3xl font-bold text-cuba-coral mb-2">{child?.name}</h1>
                 <div className="flex flex-wrap gap-4 text-gray-600">
                   <div className="flex items-center gap-2">
@@ -172,46 +171,7 @@ const ChildDetails = () => {
           {needs.length > 0 && (
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
               <h3 className="text-xl font-semibold mb-4 text-cuba-coral">Besoins</h3>
-              
-              {/* Urgent Needs */}
-              {urgentNeeds.length > 0 && (
-                <div className="mb-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <AlertTriangle className="text-red-500 w-5 h-5" />
-                    <h4 className="font-medium text-red-500">Besoins urgents</h4>
-                  </div>
-                  <div className="grid gap-3">
-                    {urgentNeeds.map((need, index) => (
-                      <div
-                        key={index}
-                        className="bg-red-50 border border-red-100 rounded-lg p-4"
-                      >
-                        <span className="font-medium text-red-700">{need.category}</span>
-                        {need.description && (
-                          <p className="text-sm text-red-600 mt-1">{need.description}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Regular Needs */}
-              {regularNeeds.length > 0 && (
-                <div className="grid gap-3">
-                  {regularNeeds.map((need, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 border border-gray-100 rounded-lg p-4"
-                    >
-                      <span className="font-medium text-gray-700">{need.category}</span>
-                      {need.description && (
-                        <p className="text-sm text-gray-600 mt-1">{need.description}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
+              <ChildNeeds child={child} needs={needs} />
             </Card>
           )}
         </div>
