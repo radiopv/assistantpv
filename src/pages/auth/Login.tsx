@@ -39,30 +39,63 @@ const Login = () => {
 
   const handleUserSession = async (session: any) => {
     try {
-      console.log("Fetching user profile...");
-      const { data: profile, error: fetchError } = await supabase
+      console.log("Handling user session for ID:", session.user.id);
+      
+      // First, check if profile exists
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .maybeSingle();
+      
+      console.log("Profile check result:", { profile, profileError });
+
+      if (profileError) {
+        console.error("Error checking profile:", profileError);
+        throw profileError;
+      }
+
+      if (!profile) {
+        console.log("No profile found, creating one...");
+        // Create profile if it doesn't exist
+        const { error: insertError } = await supabase
+          .from("profiles")
+          .insert([
+            {
+              id: session.user.id,
+              role: 'sponsor'
+            }
+          ]);
+
+        if (insertError) {
+          console.error("Error creating profile:", insertError);
+          throw insertError;
+        }
+      }
+
+      // Then fetch or create sponsor record
+      const { data: sponsor, error: fetchError } = await supabase
         .from("sponsors")
         .select("*")
         .eq("id", session.user.id)
         .maybeSingle();
       
-      console.log("Profile fetch result:", { profile, fetchError });
+      console.log("Sponsor fetch result:", { sponsor, fetchError });
 
       if (fetchError) {
-        console.error("Error fetching profile:", fetchError);
-        setError("Erreur lors de la récupération du profil. Veuillez réessayer dans quelques instants.");
-        return;
+        console.error("Error fetching sponsor:", fetchError);
+        throw fetchError;
       }
 
-      if (profile) {
-        console.log("Existing profile found:", profile);
-        if (profile.role === "admin" || profile.role === "assistant") {
+      if (sponsor) {
+        console.log("Existing sponsor found:", sponsor);
+        if (sponsor.role === "admin" || sponsor.role === "assistant") {
           navigate("/dashboard");
         } else {
           navigate("/");
         }
       } else {
-        console.log("Creating new sponsor profile...");
+        console.log("Creating new sponsor record...");
         const { data: newSponsor, error: insertError } = await supabase
           .from("sponsors")
           .insert([
@@ -80,8 +113,7 @@ const Login = () => {
 
         if (insertError) {
           console.error("Error creating sponsor record:", insertError);
-          setError("Erreur lors de la création du profil. Veuillez réessayer dans quelques instants.");
-          return;
+          throw insertError;
         }
 
         if (newSponsor) {
@@ -92,6 +124,11 @@ const Login = () => {
     } catch (error: any) {
       console.error("Error in session handling:", error);
       setError("Une erreur est survenue lors de la connexion. Veuillez réessayer dans quelques instants.");
+      toast({
+        title: "Erreur de connexion",
+        description: "Une erreur est survenue lors de la création de votre profil. Veuillez réessayer.",
+        variant: "destructive",
+      });
     }
   };
 
