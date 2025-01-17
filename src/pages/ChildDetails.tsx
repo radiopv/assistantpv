@@ -9,8 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { ArrowLeft, Heart, MapPin, Calendar, AlertTriangle } from "lucide-react";
-import { ChildNeeds } from "@/components/Dashboard/ChildrenNeeds/ChildNeeds";
+import { ArrowLeft, Heart, MapPin, Calendar, AlertTriangle, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const ChildDetails = () => {
@@ -110,18 +109,23 @@ const ChildDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
       <div className="container mx-auto px-4 py-8">
+        {/* Header with back button and name */}
         <div className="flex items-center justify-between mb-6">
-          <Button onClick={() => navigate(-1)} variant="ghost" className="text-cuba-coral">
+          <Button 
+            onClick={() => navigate(-1)} 
+            variant="ghost" 
+            className="text-cuba-coral hover:text-cuba-coral/80 transition-colors"
+          >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Retour
           </Button>
-          <h1 className="text-3xl font-bold text-cuba-coral">{child?.name}</h1>
+          <h1 className="text-3xl font-title font-bold text-cuba-coral">{child?.name}</h1>
         </div>
 
         <div className="grid md:grid-cols-12 gap-8">
           {/* Left Column - Photo and Sponsorship Button */}
           <div className="md:col-span-5 space-y-6">
-            <Card className="overflow-hidden border-cuba-coral/20 shadow-lg">
+            <Card className="overflow-hidden border-cuba-coral/20 shadow-lg transition-transform hover:scale-[1.01] duration-300">
               <div className="aspect-square relative">
                 <img
                   src={child?.photo_url || "/placeholder.svg"}
@@ -134,10 +138,12 @@ const ChildDetails = () => {
             {!child?.is_sponsored && (
               <Button 
                 onClick={handleSponsorshipRequest}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cuba-coral to-cuba-coral/90 hover:from-cuba-coral/90 hover:to-cuba-coral text-white shadow-lg hover:shadow-xl transition-all duration-300 py-6 text-lg"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cuba-coral to-cuba-coral/90 
+                         hover:from-cuba-coral/90 hover:to-cuba-coral text-white shadow-lg hover:shadow-xl 
+                         transition-all duration-300 py-6 text-lg group"
                 size="lg"
               >
-                <Heart className="w-6 h-6" />
+                <Heart className="w-6 h-6 transition-transform group-hover:scale-110" />
                 Parrainer {child?.name}
               </Button>
             )}
@@ -145,9 +151,10 @@ const ChildDetails = () => {
 
           {/* Right Column - Child Information */}
           <div className="md:col-span-7 space-y-6">
+            {/* Basic Info Card */}
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
               <div className="space-y-4">
-                <div className="flex items-center gap-4 text-gray-600">
+                <div className="flex flex-wrap gap-4 text-gray-600">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-cuba-coral" />
                     <span>{child?.birth_date ? formatAge(child.birth_date) : "Non renseigné"}</span>
@@ -158,6 +165,7 @@ const ChildDetails = () => {
                   </div>
                 </div>
 
+                {/* Urgent Needs Section */}
                 {urgentNeeds.length > 0 && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
                     <div className="flex items-center gap-2 mb-2">
@@ -167,20 +175,35 @@ const ChildDetails = () => {
                     <div className="space-y-2">
                       {urgentNeeds.map((need, index) => (
                         <div key={index} className="bg-white/50 p-3 rounded-md border border-red-100">
-                          <p className="text-red-700">{need.description || need.category}</p>
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <Badge variant="destructive" className="mb-1">
+                                {need.category}
+                              </Badge>
+                              {need.description && (
+                                <p className="text-red-700 mt-1">{need.description}</p>
+                              )}
+                            </div>
+                            <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
+                {/* Description Section */}
                 {child?.description && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-cuba-coral mb-2">Description</h3>
+                    <h3 className="text-lg font-semibold text-cuba-coral mb-2 flex items-center gap-2">
+                      <Info className="w-5 h-5" />
+                      Description
+                    </h3>
                     <p className="text-gray-700 leading-relaxed">{child.description}</p>
                   </div>
                 )}
 
+                {/* Story Section */}
                 {child?.story && (
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold text-cuba-coral mb-2">Histoire</h3>
@@ -190,7 +213,7 @@ const ChildDetails = () => {
               </div>
             </Card>
 
-            {/* Needs Section */}
+            {/* All Needs Section */}
             {needs.length > 0 && (
               <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
                 <h3 className="text-xl font-semibold mb-4 text-cuba-coral">Tous les besoins</h3>
@@ -198,11 +221,11 @@ const ChildDetails = () => {
                   {needs.map((need, index) => (
                     <div
                       key={index}
-                      className={`p-4 rounded-lg ${
-                        need.is_urgent
+                      className={`p-4 rounded-lg transition-all duration-200 hover:shadow-md
+                        ${need.is_urgent
                           ? "bg-red-50 border border-red-200"
                           : "bg-gray-50 border border-gray-200"
-                      }`}
+                        }`}
                     >
                       <div className="flex justify-between items-start">
                         <div>
