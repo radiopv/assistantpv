@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 const ChildDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useLanguage();
   const { user } = useAuth();
 
   const { data: child, isLoading, error } = useQuery({
