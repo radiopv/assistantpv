@@ -9,7 +9,6 @@ import { ChildBasicInfo } from "@/components/Children/Details/ChildBasicInfo";
 import { ChildPhoto } from "@/components/Children/Details/ChildPhoto";
 import { ChildDescription } from "@/components/Children/Details/ChildDescription";
 import { ChildNeeds } from "@/components/Children/Details/ChildNeeds";
-import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { toast } from "sonner";
