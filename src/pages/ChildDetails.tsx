@@ -10,9 +10,15 @@ import { ChildPhoto } from "@/components/Children/Details/ChildPhoto";
 import { ChildDescription } from "@/components/Children/Details/ChildDescription";
 import { ChildNeeds } from "@/components/Children/Details/ChildNeeds";
 import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { toast } from "sonner";
 
 const ChildDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   const { data: child, isLoading, error } = useQuery({
     queryKey: ["child", id],
@@ -27,6 +33,31 @@ const ChildDetails = () => {
       return data;
     }
   });
+
+  const handleSponsorClick = async () => {
+    if (!user) {
+      // Redirect to registration with return URL
+      navigate(`/become-sponsor?child=${id}`);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('child_assignment_requests')
+        .insert({
+          child_id: id,
+          sponsor_id: user.id,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+    } catch (error) {
+      console.error('Error submitting sponsorship request:', error);
+      toast.error("Une erreur est survenue lors de l'envoi de votre demande");
+    }
+  };
 
   if (error) {
     return (
@@ -63,11 +94,30 @@ const ChildDetails = () => {
         <ChildHeader name={child?.name || ''} />
 
         <div className="grid md:grid-cols-12 gap-8">
-          <div className="md:col-span-5 space-y-6">
-            <ChildPhoto photoUrl={child?.photo_url} name={child?.name || ''} />
+          <div className="md:col-span-7 space-y-6">
+            <Card className="overflow-hidden bg-white/80 backdrop-blur-sm border-cuba-coral/20">
+              <div className="aspect-[4/3] relative">
+                <img
+                  src={child?.photo_url || "/placeholder.svg"}
+                  alt={child?.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+              {!child?.is_sponsored && (
+                <div className="p-4 flex justify-center">
+                  <Button 
+                    onClick={handleSponsorClick}
+                    size="lg"
+                    className="w-full max-w-md"
+                  >
+                    Parrainer cet enfant
+                  </Button>
+                </div>
+              )}
+            </Card>
           </div>
 
-          <div className="md:col-span-7 space-y-6">
+          <div className="md:col-span-5 space-y-6">
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
               <div className="space-y-4">
                 <ChildBasicInfo 
