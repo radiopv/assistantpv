@@ -402,20 +402,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "children_audit_logs_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "children_audit_logs_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "sponsored_children_view"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "children_audit_logs_performed_by_fkey"
             columns: ["performed_by"]
             isOneToOne: false
