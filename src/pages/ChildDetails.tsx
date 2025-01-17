@@ -22,15 +22,18 @@ const ChildDetails = () => {
   const { data: child, isLoading, error } = useQuery({
     queryKey: ["child", id],
     queryFn: async () => {
+      if (!id) throw new Error("No child ID provided");
+      
       const { data, error } = await supabase
         .from("children")
         .select("*")
         .eq("id", id)
-        .maybeSingle();
+        .single();
 
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!id
   });
 
   const handleSponsorClick = async () => {
