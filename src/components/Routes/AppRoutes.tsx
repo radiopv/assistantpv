@@ -7,7 +7,7 @@ import EmailsPage from "@/pages/admin/Emails";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { Navigate } from "react-router-dom";
 
-const AppRoutes = () => {
+export const AppRoutes = () => {
   const { isAssistant } = useAuth();
 
   return (
@@ -25,5 +25,3 @@ const AppRoutes = () => {
     </Routes>
   );
 };
-
-export default AppRoutes;
