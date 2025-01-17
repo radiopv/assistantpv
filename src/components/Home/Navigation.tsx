@@ -98,17 +98,14 @@ export const Navigation = () => {
   const handleLogout = async () => {
     try {
       await signOut();
-      toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !",
+      toast.success("Déconnexion réussie", {
+        description: "À bientôt !"
       });
       navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
-      toast({
-        title: "Erreur lors de la déconnexion",
-        description: "Veuillez réessayer",
-        variant: "destructive",
+      toast.error("Erreur lors de la déconnexion", {
+        description: "Veuillez réessayer"
       });
     }
   };
