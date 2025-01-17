@@ -10,7 +10,6 @@ import FAQ from "@/pages/public/FAQ";
 import AvailableChildren from "@/pages/public/AvailableChildren";
 import SponsoredChildren from "@/pages/public/SponsoredChildren";
 import BecomeSponsor from "@/pages/BecomeSponsor";
-import ChildDetails from "@/pages/ChildDetails";
 import Statistics from "@/pages/public/Statistics";
 import PublicDonations from "@/pages/public/PublicDonations";
 import Dashboard from "@/pages/Dashboard";
@@ -48,7 +47,6 @@ export const AppRoutes = () => {
         <Route path="/public-donations" element={<PublicDonations />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
-        <Route path="/child-details/:id" element={<ChildDetails />} />
       </Route>
 
       {/* Protected routes */}
