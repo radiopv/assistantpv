@@ -28,9 +28,10 @@ const ChildDetails = () => {
         .from("children")
         .select("*")
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) throw new Error("Child not found");
       return data;
     },
     enabled: !!id
