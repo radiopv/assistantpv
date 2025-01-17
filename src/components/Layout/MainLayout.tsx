@@ -24,9 +24,9 @@ const MainLayout = () => {
           </>
         )}
 
-        <main className={`flex-1 ${showSidebar ? 'md:ml-64' : ''} pb-16 md:pb-0`}>
-          <div className="p-4 md:p-8">
-            <div className="container mx-auto animate-fade-in">
+        <main className={`flex-1 ${showSidebar ? 'md:ml-64' : ''}`}>
+          <div className="p-4">
+            <div className="animate-fade-in">
               <Outlet />
             </div>
           </div>

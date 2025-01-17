@@ -14,7 +14,7 @@ export default function ChildrenManagement() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
-      <div className="w-full max-w-[100%] py-4">
+      <div className="w-full">
         <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg border border-orange-200">
           <h1 className="text-2xl font-bold p-4 sm:p-6">{t("childrenAndSponsorship")}</h1>
           
