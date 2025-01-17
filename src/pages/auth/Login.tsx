@@ -29,7 +29,7 @@ const Login = () => {
 
             if (fetchError) {
               console.error("Error fetching profile:", fetchError);
-              setError("Erreur lors de la récupération du profil");
+              setError("Erreur lors de la récupération du profil. Veuillez réessayer dans quelques instants.");
               return;
             }
 
@@ -59,7 +59,7 @@ const Login = () => {
 
               if (insertError) {
                 console.error("Error creating sponsor record:", insertError);
-                setError("Erreur lors de la création du profil");
+                setError("Erreur lors de la création du profil. Veuillez réessayer dans quelques instants.");
                 return;
               }
 
@@ -70,7 +70,7 @@ const Login = () => {
             }
           } catch (error: any) {
             console.error("Error in auth state change:", error);
-            setError("Une erreur est survenue lors de la connexion");
+            setError("Une erreur est survenue lors de la connexion. Veuillez réessayer dans quelques instants.");
           }
         }
       }
@@ -98,7 +98,7 @@ const Login = () => {
         setError("La connexion par email est temporairement désactivée. Veuillez contacter l'administrateur.");
         break;
       default:
-        setError(error.message);
+        setError("Une erreur est survenue. Veuillez réessayer dans quelques instants.");
     }
   };
 
