@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -47,6 +47,7 @@ const Login = () => {
           "Bienvenue dans l'espace administration",
       });
       
+      // Redirect based on role
       if (['admin', 'assistant'].includes(sponsor.role)) {
         navigate("/dashboard");
       } else {
@@ -105,15 +106,6 @@ const Login = () => {
               placeholder="••••••••"
               className="w-full"
             />
-          </div>
-
-          <div className="flex justify-end">
-            <Link 
-              to="/forgot-password" 
-              className="text-sm text-blue-600 hover:text-blue-800"
-            >
-              Mot de passe oublié ?
-            </Link>
           </div>
 
           <Button
