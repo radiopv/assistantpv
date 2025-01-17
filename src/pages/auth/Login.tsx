@@ -29,45 +29,44 @@ const Login = () => {
 
             if (fetchError) {
               console.error("Error fetching profile:", fetchError);
-              
-              // Si le profil n'existe pas, on le crée
-              if (fetchError.code === 'PGRST116') {
-                const { data: newSponsor, error: insertError } = await supabase
-                  .from('sponsors')
-                  .insert([
-                    { 
-                      id: session.user.id,
-                      email: session.user.email,
-                      role: 'sponsor',
-                      name: session.user.user_metadata?.full_name || session.user.email,
-                      is_active: true,
-                      show_name_publicly: false
-                    }
-                  ])
-                  .select()
-                  .maybeSingle();
-                
-                if (insertError) {
-                  console.error('Error creating sponsor record:', insertError);
-                  setError("Erreur lors de la création du profil");
-                  return;
-                }
-                
-                if (newSponsor) {
-                  console.log("New sponsor created:", newSponsor);
-                  navigate('/');
-                  return;
-                }
-              }
-              
               setError("Erreur lors de la récupération du profil");
               return;
             }
 
-            if (profile?.role === "admin" || profile?.role === "assistant") {
-              navigate("/dashboard");
+            if (profile) {
+              console.log("Existing profile found:", profile);
+              if (profile.role === "admin" || profile.role === "assistant") {
+                navigate("/dashboard");
+              } else {
+                navigate("/");
+              }
             } else {
-              navigate("/");
+              console.log("No profile found, creating new sponsor...");
+              const { data: newSponsor, error: insertError } = await supabase
+                .from("sponsors")
+                .insert([
+                  { 
+                    id: session.user.id,
+                    email: session.user.email,
+                    role: "sponsor",
+                    name: session.user.user_metadata?.full_name || session.user.email,
+                    is_active: true,
+                    show_name_publicly: false
+                  }
+                ])
+                .select()
+                .maybeSingle();
+
+              if (insertError) {
+                console.error("Error creating sponsor record:", insertError);
+                setError("Erreur lors de la création du profil");
+                return;
+              }
+
+              if (newSponsor) {
+                console.log("New sponsor created:", newSponsor);
+                navigate("/");
+              }
             }
           } catch (error: any) {
             console.error("Error in auth state change:", error);
@@ -133,6 +132,7 @@ const Login = () => {
               },
             }}
             providers={[]}
+            redirectTo="https://touspourcuba.lovable.app/login"
             localization={{
               variables: {
                 sign_in: {
