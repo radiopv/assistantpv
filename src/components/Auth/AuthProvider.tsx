@@ -40,65 +40,73 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log("Auth event:", event);
       if (event === 'SIGNED_IN') {
         setSession(session);
-        setUser(session?.user ?? null);
         
-        // Fetch sponsor data
-        const { data: sponsor, error: fetchError } = await supabase
-          .from('sponsors')
-          .select('*')
-          .eq('id', session?.user?.id)
-          .single();
-        
-        console.log("Sponsor data:", sponsor);
-        console.log("Fetch error:", fetchError);
-
-        if (sponsor) {
-          setUser(sponsor);
-          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
-          
-          // Redirect based on role
-          if (window.location.pathname === '/login') {
-            if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
-              navigate('/dashboard');
-            } else {
-              navigate('/');
-            }
-          }
-        } else {
-          // If no sponsor record exists, create one
-          const { error: insertError } = await supabase
+        try {
+          // Fetch sponsor data in a single query
+          const { data: sponsor, error: fetchError } = await supabase
             .from('sponsors')
-            .insert([
-              { 
-                id: session?.user?.id,
-                email: session?.user?.email,
-                role: 'sponsor',
-                name: session?.user?.user_metadata?.full_name || session?.user?.email,
-                is_active: true,
-                show_name_publicly: false
-              }
-            ]);
+            .select('*')
+            .eq('id', session?.user?.id)
+            .single();
           
-          if (insertError) {
-            console.error('Error creating sponsor record:', insertError);
-            toast({
-              title: "Erreur lors de la création du profil",
-              description: "Veuillez réessayer ou contacter l'administrateur",
-              variant: "destructive",
-            });
-          } else {
-            // Fetch the newly created sponsor record
-            const { data: newSponsor } = await supabase
-              .from('sponsors')
-              .select('*')
-              .eq('id', session?.user?.id)
-              .single();
+          console.log("Sponsor data:", sponsor);
+          console.log("Fetch error:", fetchError);
 
-            if (newSponsor) {
-              setUser(newSponsor);
-              navigate('/');
+          if (sponsor) {
+            setUser(sponsor);
+            setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+            
+            // Redirect based on role
+            if (window.location.pathname === '/login') {
+              if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
+                navigate('/dashboard');
+              } else {
+                navigate('/');
+              }
+            }
+          } else {
+            // If no sponsor record exists, create one
+            const { error: insertError } = await supabase
+              .from('sponsors')
+              .insert([
+                { 
+                  id: session?.user?.id,
+                  email: session?.user?.email,
+                  role: 'sponsor',
+                  name: session?.user?.user_metadata?.full_name || session?.user?.email,
+                  is_active: true,
+                  show_name_publicly: false
+                }
+              ]);
+            
+            if (insertError) {
+              console.error('Error creating sponsor record:', insertError);
+              toast({
+                title: "Erreur lors de la création du profil",
+                description: "Veuillez réessayer ou contacter l'administrateur",
+                variant: "destructive",
+              });
+            } else {
+              // Fetch the newly created sponsor record
+              const { data: newSponsor } = await supabase
+                .from('sponsors')
+                .select('*')
+                .eq('id', session?.user?.id)
+                .single();
+
+              if (newSponsor) {
+                setUser(newSponsor);
+                navigate('/');
+              }
             }
           }
+        } catch (error) {
+          console.error('Error in auth state change:', error);
+          toast({
+            title: "Erreur de connexion",
+            description: "Une erreur est survenue lors de la connexion",
+            variant: "destructive",
+          });
         }
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
