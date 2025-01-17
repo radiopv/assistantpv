@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/components/ui/use-toast";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
-import { ArrowLeft, Heart, MapPin, Calendar, AlertTriangle, Info, User } from "lucide-react";
+import { ArrowLeft, Heart, MapPin, Calendar, AlertTriangle, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const ChildDetails = () => {
@@ -31,12 +31,6 @@ const ChildDetails = () => {
       return data;
     }
   });
-
-  const formatAge = (birthDate: string) => {
-    if (!birthDate) return '';
-    const years = differenceInYears(new Date(), parseISO(birthDate));
-    return `${years} ans`;
-  };
 
   const handleSponsorshipRequest = async () => {
     if (!user) {
@@ -105,6 +99,16 @@ const ChildDetails = () => {
 
   const needs = child?.needs ? convertJsonToNeeds(child.needs) : [];
   const urgentNeeds = needs.filter(need => need.is_urgent);
+  const calculateAge = (birthDate: string): number => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
@@ -119,10 +123,7 @@ const ChildDetails = () => {
             <ArrowLeft className="w-5 h-5 mr-2" />
             Retour
           </Button>
-          <div className="flex items-center gap-2">
-            <User className="w-6 h-6 text-cuba-coral" />
-            <h1 className="text-3xl font-title font-bold text-cuba-coral">{child?.name}</h1>
-          </div>
+          <h1 className="text-3xl font-title font-bold text-cuba-coral">{child?.name}</h1>
         </div>
 
         <div className="grid md:grid-cols-12 gap-8">
@@ -160,7 +161,7 @@ const ChildDetails = () => {
                 <div className="flex flex-wrap gap-4 text-gray-600">
                   <div className="flex items-center gap-2 bg-white/50 px-3 py-2 rounded-lg">
                     <Calendar className="w-5 h-5 text-cuba-coral" />
-                    <span>{child?.birth_date ? formatAge(child.birth_date) : "Non renseigné"}</span>
+                    <span>{child?.birth_date ? `${calculateAge(child.birth_date)} ans` : "Non renseigné"}</span>
                   </div>
                   <div className="flex items-center gap-2 bg-white/50 px-3 py-2 rounded-lg">
                     <MapPin className="w-5 h-5 text-cuba-coral" />
