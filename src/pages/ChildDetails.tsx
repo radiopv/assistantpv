@@ -36,7 +36,6 @@ const ChildDetails = () => {
 
   const handleSponsorClick = async () => {
     if (!user) {
-      // Redirect to registration with return URL
       navigate(`/become-sponsor?child=${id}`);
       return;
     }
@@ -108,7 +107,7 @@ const ChildDetails = () => {
                   <Button 
                     onClick={handleSponsorClick}
                     size="lg"
-                    className="w-full max-w-md"
+                    className="w-full max-w-md bg-cuba-coral hover:bg-cuba-coral/90"
                   >
                     Parrainer cet enfant
                   </Button>
