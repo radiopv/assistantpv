@@ -28,17 +28,6 @@ const ChildDetails = () => {
     }
   });
 
-  const calculateAge = (birthDate: string): number => {
-    const today = new Date();
-    const birth = new Date(birthDate);
-    let age = today.getFullYear() - birth.getFullYear();
-    const monthDiff = today.getMonth() - birth.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-      age--;
-    }
-    return age;
-  };
-
   if (error) {
     return (
       <div className="container mx-auto p-4">
@@ -84,7 +73,6 @@ const ChildDetails = () => {
                 <ChildBasicInfo 
                   birthDate={child?.birth_date || ''} 
                   city={child?.city} 
-                  calculateAge={calculateAge}
                 />
                 <ChildDescription 
                   description={child?.description} 
