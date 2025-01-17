@@ -112,8 +112,9 @@ export const Navigation = () => {
 
   const handleSponsorDashboard = () => {
     console.log("Navigating to sponsor dashboard");
-    navigate("/sponsor-dashboard", { replace: true });
+    navigate("/sponsor-dashboard");
     setIsOpen(false);
+    toast.success("Redirection vers l'espace parrain");
   };
 
   const MenuItems = () => (

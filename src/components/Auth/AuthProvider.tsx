@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
             } else {
-              navigate('/');
+              navigate('/sponsor-dashboard');
             }
           }
         } else {
