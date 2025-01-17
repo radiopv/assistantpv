@@ -18,7 +18,7 @@ const Login = () => {
 
         if (event === "SIGNED_IN") {
           try {
-            const { data: profile } = await supabase
+            const { data: profile, error: fetchError } = await supabase
               .from("sponsors")
               .select("role")
               .eq("id", session?.user?.id)
@@ -26,14 +26,20 @@ const Login = () => {
 
             console.log("Profile data:", profile);
 
+            if (fetchError) {
+              console.error("Error fetching profile:", fetchError);
+              setError("Erreur lors de la récupération du profil");
+              return;
+            }
+
             if (profile?.role === "admin" || profile?.role === "assistant") {
               navigate("/dashboard");
             } else {
               navigate("/");
             }
           } catch (error) {
-            console.error("Error fetching profile:", error);
-            setError("Erreur lors de la récupération du profil");
+            console.error("Error in auth state change:", error);
+            setError("Une erreur est survenue lors de la connexion");
           }
         }
       }
