@@ -1,13 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Calendar, Info } from "lucide-react";
+import { Heart, MapPin, Calendar, Info, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Need, convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
 import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -25,7 +25,25 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
-  // Fetch album photos for all children
+  // Sort children by needs urgency and waiting time
+  const sortedChildren = useMemo(() => {
+    return [...children].sort((a, b) => {
+      // Count urgent needs
+      const aUrgentNeeds = convertJsonToNeeds(a.needs).filter(need => need.is_urgent).length;
+      const bUrgentNeeds = convertJsonToNeeds(b.needs).filter(need => need.is_urgent).length;
+      
+      // Compare urgent needs first
+      if (aUrgentNeeds !== bUrgentNeeds) {
+        return bUrgentNeeds - aUrgentNeeds;
+      }
+      
+      // If urgent needs are equal, compare waiting time
+      const aCreatedAt = parseISO(a.created_at);
+      const bCreatedAt = parseISO(b.created_at);
+      return aCreatedAt.getTime() - bCreatedAt.getTime();
+    });
+  }, [children]);
+
   const { data: albumPhotos } = useQuery({
     queryKey: ['album-photos', children.map(child => child.id)],
     queryFn: async () => {
@@ -135,21 +153,33 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
-  const handleLearnMore = (childId: string) => {
-    navigate(`/child-details/${childId}`);
-  };
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
-      {children.map((child) => {
-        const childNeeds = convertJsonToNeeds(child.needs);
-        const hasUrgentNeeds = Array.isArray(childNeeds) && childNeeds.some(need => need.is_urgent);
+    <div className="space-y-6">
+      {/* Information Card */}
+      <Card className="p-4 bg-orange-50 border-orange-200">
+        <div className="flex gap-3">
+          <AlertTriangle className="h-5 w-5 text-orange-500 flex-shrink-0 mt-1" />
+          <div className="space-y-2">
+            <h3 className="font-semibold text-orange-800">À propos du parrainage</h3>
+            <p className="text-orange-700 text-sm">
+              Le parrainage n'est pas un engagement à long terme. Vous pouvez y mettre fin à tout moment depuis votre espace parrain, 
+              sans justification nécessaire. Les enfants affichés en premier sont ceux qui ont les besoins les plus urgents 
+              ou qui attendent un parrain depuis le plus longtemps.
+            </p>
+          </div>
+        </div>
+      </Card>
 
-        return (
-          <Card 
-            key={child.id} 
-            className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
-          >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
+        {sortedChildren.map((child) => {
+          const childNeeds = convertJsonToNeeds(child.needs);
+          const hasUrgentNeeds = Array.isArray(childNeeds) && childNeeds.some(need => need.is_urgent);
+
+          return (
+            <Card 
+              key={child.id} 
+              className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
+            >
             <div className="aspect-video relative">
               <img
                 src={child.photo_url || "/placeholder.svg"}
@@ -227,9 +257,10 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 En savoir plus
               </Button>
             </div>
-          </Card>
-        );
-      })}
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 };
