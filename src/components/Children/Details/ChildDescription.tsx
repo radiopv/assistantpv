@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { Info } from "lucide-react";
 
 interface ChildDescriptionProps {

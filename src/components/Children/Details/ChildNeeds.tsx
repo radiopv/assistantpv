@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 import { Need } from "@/types/needs";
 import { Badge } from "@/components/ui/badge";
@@ -15,35 +14,33 @@ export const ChildNeeds = ({ needs }: ChildNeedsProps) => {
   return (
     <>
       {urgentNeeds.length > 0 && (
-        <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
-            <div className="flex items-center gap-2 mb-3">
-              <AlertTriangle className="w-5 h-5 text-red-500" />
-              <h3 className="font-semibold text-red-700">Besoins urgents</h3>
-            </div>
-            <div className="space-y-3">
-              {urgentNeeds.map((need, index) => (
-                <div key={index} className="bg-white/50 p-4 rounded-md border border-red-100">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <Badge variant="destructive" className="mb-2">
-                        {translateNeedCategory(need.category)}
-                      </Badge>
-                      {need.description && (
-                        <p className="text-red-700 mt-2">{need.description}</p>
-                      )}
-                    </div>
-                    <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                  </div>
-                </div>
-              ))}
-            </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="w-5 h-5 text-red-500" />
+            <h3 className="font-semibold text-red-700">Besoins urgents</h3>
           </div>
-        </Card>
+          <div className="space-y-3">
+            {urgentNeeds.map((need, index) => (
+              <div key={index} className="bg-white/50 p-4 rounded-md border border-red-100">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <Badge variant="destructive" className="mb-2">
+                      {translateNeedCategory(need.category)}
+                    </Badge>
+                    {need.description && (
+                      <p className="text-red-700 mt-2">{need.description}</p>
+                    )}
+                  </div>
+                  <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {regularNeeds.length > 0 && (
-        <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
+        <div className="mt-6">
           <h3 className="text-xl font-semibold mb-4 text-cuba-coral">Autres besoins</h3>
           <div className="grid gap-3">
             {regularNeeds.map((need, index) => (
@@ -66,7 +63,7 @@ export const ChildNeeds = ({ needs }: ChildNeedsProps) => {
               </div>
             ))}
           </div>
-        </Card>
+        </div>
       )}
     </>
   );
