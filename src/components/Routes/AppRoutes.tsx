@@ -10,18 +10,20 @@ import FAQ from "@/pages/public/FAQ";
 import AvailableChildren from "@/pages/public/AvailableChildren";
 import SponsoredChildren from "@/pages/public/SponsoredChildren";
 import BecomeSponsor from "@/pages/BecomeSponsor";
+import ChildDetails from "@/pages/ChildDetails";
 import Statistics from "@/pages/public/Statistics";
 import PublicDonations from "@/pages/public/PublicDonations";
 import Dashboard from "@/pages/Dashboard";
-import SponsorDashboard from "@/pages/SponsorDashboard";
 import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
+import ChildProfile from "@/pages/ChildProfile";
 import Donations from "@/pages/Donations";
 import AddDonation from "@/pages/AddDonation";
 import Settings from "@/pages/Settings";
 import Tasks from "@/pages/Tasks";
 import AssistantPhotos from "@/pages/AssistantPhotos";
 import MediaManagement from "@/pages/MediaManagement";
+import SponsorDashboard from "@/pages/sponsor/SponsorDashboard";
 import NewTestimonial from "@/pages/testimonials/NewTestimonial";
 import SponsorshipManagement from "@/pages/admin/SponsorshipManagement";
 import Validation from "@/pages/admin/Validation";
@@ -46,14 +48,16 @@ export const AppRoutes = () => {
         <Route path="/public-donations" element={<PublicDonations />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="/become-sponsor" element={<BecomeSponsor />} />
+        <Route path="/child-details/:id" element={<ChildDetails />} />
       </Route>
 
       {/* Protected routes */}
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
+        <Route path="/children/:id" element={<ChildProfile />} />
+        <Route path="/sponsor-album" element={<SponsorDashboard />} />
         <Route path="/donations" element={<Donations />} />
         <Route path="/donations/add" element={<AddDonation />} />
         <Route path="/settings" element={<Settings />} />
@@ -62,6 +66,7 @@ export const AppRoutes = () => {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="/assistant-photos" element={<AssistantPhotos />} />
         <Route path="/media-management" element={<MediaManagement />} />
+        <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
         <Route path="/testimonials/new" element={<NewTestimonial />} />
 
         {/* Admin routes */}

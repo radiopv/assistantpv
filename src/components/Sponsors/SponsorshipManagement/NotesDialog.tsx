@@ -1,11 +1,10 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
 interface NotesDialogProps {
   isOpen: boolean;
@@ -16,45 +15,47 @@ interface NotesDialogProps {
 export const NotesDialog = ({
   isOpen,
   onClose,
-  sponsorshipId,
+  sponsorshipId
 }: NotesDialogProps) => {
-  const [newNote, setNewNote] = useState("");
+  const [note, setNote] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: notes, refetch } = useQuery({
-    queryKey: ["sponsorship-notes", sponsorshipId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("sponsorship_notes")
-        .select("*")
-        .eq("sponsorship_id", sponsorshipId)
-        .order("created_at", { ascending: false });
+  const handleAddTag = () => {
+    if (newTag.trim() && !tags.includes(newTag.trim())) {
+      setTags([...tags, newTag.trim()]);
+      setNewTag("");
+    }
+  };
 
-      if (error) throw error;
-      return data;
-    },
-  });
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter(tag => tag !== tagToRemove));
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newNote.trim()) return;
+  const handleSubmit = async () => {
+    if (!note.trim()) return;
 
+    setIsSubmitting(true);
     try {
-      const { data: user } = await supabase.auth.getUser();
-      
-      const { error } = await supabase.from("sponsorship_notes").insert({
-        sponsorship_id: sponsorshipId,
-        content: newNote,
-        created_by: user.user?.id,
-      });
+      const { error } = await supabase
+        .from('sponsorship_notes')
+        .insert({
+          sponsorship_id: sponsorshipId,
+          content: note.trim(),
+          tags,
+          created_by: (await supabase.auth.getUser()).data.user?.id
+        });
 
       if (error) throw error;
 
       toast.success("Note ajoutée avec succès");
-      setNewNote("");
-      refetch();
+      onClose();
     } catch (error) {
-      console.error("Error adding note:", error);
+      console.error('Error adding note:', error);
       toast.error("Erreur lors de l'ajout de la note");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -62,29 +63,48 @@ export const NotesDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Notes de parrainage</DialogTitle>
+          <DialogTitle>Ajouter une note</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           <Textarea
-            value={newNote}
-            onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Ajouter une nouvelle note..."
-            className="min-h-[100px]"
+            placeholder="Votre note..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
           />
-          <Button type="submit">Ajouter</Button>
-        </form>
-        <div className="space-y-4 mt-4">
-          {notes?.map((note) => (
-            <div
-              key={note.id}
-              className="p-4 bg-gray-50 rounded-lg space-y-2"
-            >
-              <p>{note.content}</p>
-              <p className="text-sm text-gray-500">
-                {format(new Date(note.created_at), "dd/MM/yyyy HH:mm")}
-              </p>
-            </div>
-          ))}
+          <div className="flex gap-2">
+            <Input
+              placeholder="Ajouter un tag..."
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+            />
+            <Button onClick={handleAddTag} variant="outline">
+              Ajouter
+            </Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {tags.map(tag => (
+              <span
+                key={tag}
+                className="bg-primary/10 px-2 py-1 rounded-full text-sm flex items-center gap-2"
+              >
+                {tag}
+                <button
+                  onClick={() => handleRemoveTag(tag)}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || !note.trim()}
+            className="w-full"
+          >
+            {isSubmitting ? 'Enregistrement...' : 'Enregistrer'}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

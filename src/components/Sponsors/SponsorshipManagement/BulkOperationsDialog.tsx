@@ -1,8 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -18,52 +15,53 @@ export const BulkOperationsDialog = ({
   isOpen,
   onClose,
   selectedSponsors,
-  onOperationComplete,
+  onOperationComplete
 }: BulkOperationsDialogProps) => {
-  const [operation, setOperation] = useState("");
-  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!operation) return;
-
+  const handleBulkPause = async () => {
     try {
-      const { data: user } = await supabase.auth.getUser();
-      
-      if (!user?.user?.id) {
-        throw new Error("Utilisateur non authentifié");
-      }
-
-      const updates = selectedSponsors.map((sponsorId) => ({
-        id: sponsorId,
-        is_active: operation === "deactivate" ? false : true,
-        updated_at: new Date().toISOString(),
-      }));
-
-      const { error } = await supabase.from("sponsors").upsert(updates);
+      setLoading(true);
+      const { error } = await supabase.rpc('handle_sponsorship_pause', {
+        sponsorship_id: selectedSponsors[0],
+        action: 'pause',
+        reason: 'Pause en masse',
+        performed_by: (await supabase.auth.getUser()).data.user?.id
+      });
 
       if (error) throw error;
-
-      // Log the operation
-      const { error: logError } = await supabase.from("activity_logs").insert(
-        selectedSponsors.map((sponsorId) => ({
-          user_id: sponsorId,
-          action: operation,
-          details: {
-            reason,
-            performed_by: user.user.id,
-          },
-        }))
-      );
-
-      if (logError) throw logError;
-
-      toast.success("Opération effectuée avec succès");
+      
+      toast.success("Parrainages mis en pause");
       onOperationComplete();
       onClose();
     } catch (error) {
-      console.error("Error performing bulk operation:", error);
-      toast.error("Erreur lors de l'opération");
+      console.error('Error pausing sponsorships:', error);
+      toast.error("Erreur lors de la mise en pause");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleBulkResume = async () => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.rpc('handle_sponsorship_pause', {
+        sponsorship_id: selectedSponsors[0],
+        action: 'resume',
+        reason: 'Reprise en masse',
+        performed_by: (await supabase.auth.getUser()).data.user?.id
+      });
+
+      if (error) throw error;
+      
+      toast.success("Parrainages repris");
+      onOperationComplete();
+      onClose();
+    } catch (error) {
+      console.error('Error resuming sponsorships:', error);
+      toast.error("Erreur lors de la reprise");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,37 +69,24 @@ export const BulkOperationsDialog = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Opérations en masse</DialogTitle>
+          <DialogTitle>Actions en masse</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label>Opération</Label>
-            <Select value={operation} onValueChange={setOperation}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner une opération" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="deactivate">Désactiver les comptes</SelectItem>
-                <SelectItem value="activate">Activer les comptes</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Raison</Label>
-            <Textarea
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="Raison de l'opération..."
-              required
-            />
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              Annuler
-            </Button>
-            <Button type="submit">Confirmer</Button>
-          </div>
-        </form>
+        <div className="space-y-4">
+          <Button
+            onClick={handleBulkPause}
+            disabled={loading}
+            className="w-full"
+          >
+            Mettre en pause tous les parrainages sélectionnés
+          </Button>
+          <Button
+            onClick={handleBulkResume}
+            disabled={loading}
+            className="w-full"
+          >
+            Reprendre tous les parrainages sélectionnés
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

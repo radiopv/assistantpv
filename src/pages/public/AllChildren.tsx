@@ -3,27 +3,9 @@ import { Card } from "@/components/ui/card";
 import AvailableChildren from "./AvailableChildren";
 import SponsoredChildren from "./SponsoredChildren";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Info } from "lucide-react";
 
 export default function AllChildren() {
   const { t } = useLanguage();
-
-  const InfoBanner = () => (
-    <div className="bg-orange-50 border-l-4 border-orange-300 p-4 mb-6 rounded-r">
-      <div className="flex">
-        <div className="flex-shrink-0">
-          <Info className="h-5 w-5 text-orange-400" />
-        </div>
-        <div className="ml-3">
-          <p className="text-sm text-orange-800">
-            Le parrainage peut être temporaire ou ponctuel selon vos possibilités. 
-            Vous pouvez y mettre fin à tout moment via votre espace parrain, sans justification nécessaire. 
-            Les enfants affichés en priorité sont ceux qui ont actuellement les besoins les plus urgents.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
@@ -55,16 +37,10 @@ export default function AllChildren() {
             </TabsList>
 
             <TabsContent value="available" className="mt-4">
-              <div className="px-4">
-                <InfoBanner />
-              </div>
               <AvailableChildren />
             </TabsContent>
 
             <TabsContent value="sponsored" className="mt-4">
-              <div className="px-4">
-                <InfoBanner />
-              </div>
               <SponsoredChildren />
             </TabsContent>
           </Tabs>

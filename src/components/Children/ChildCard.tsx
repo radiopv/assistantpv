@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
-import { translateNeedCategory } from "@/utils/needsTranslation";
 
 interface ChildCardProps {
   child: any;
@@ -31,26 +30,16 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
             <p className="text-sm text-gray-600 line-clamp-1">{child.city}</p>
           </div>
           {child.needs && (
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {convertJsonToNeeds(child.needs).map((need: any, index: number) => (
-                <div
+                <Badge
                   key={`${need.category}-${index}`}
-                  className={`p-2 rounded-lg ${
-                    need.is_urgent 
-                      ? 'bg-red-500 text-white' 
-                      : 'bg-gray-100'
-                  }`}
+                  variant={need.is_urgent ? "destructive" : "secondary"}
+                  className={`text-xs truncate max-w-[150px] ${need.is_urgent ? 'bg-red-500 hover:bg-red-600' : ''}`}
                 >
-                  <div className="text-sm font-medium">
-                    {translateNeedCategory(need.category)}
-                    {need.is_urgent && " (!)"} 
-                  </div>
-                  {need.description && (
-                    <p className="text-sm mt-1 opacity-90">
-                      {need.description}
-                    </p>
-                  )}
-                </div>
+                  {need.category}
+                  {need.is_urgent && " (!)"} 
+                </Badge>
               ))}
             </div>
           )}

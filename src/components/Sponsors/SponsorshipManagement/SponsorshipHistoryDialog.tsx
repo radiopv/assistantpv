@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface SponsorshipHistoryDialogProps {
   isOpen: boolean;
@@ -9,24 +10,60 @@ interface SponsorshipHistoryDialogProps {
   sponsorshipId: string;
 }
 
+interface HistoryEntry {
+  id: string;
+  action: string;
+  created_at: string;
+  reason?: string;
+  performed_by: {
+    name: string;
+  };
+}
+
 export const SponsorshipHistoryDialog = ({
   isOpen,
   onClose,
-  sponsorshipId,
+  sponsorshipId
 }: SponsorshipHistoryDialogProps) => {
-  const { data: history, isLoading } = useQuery({
-    queryKey: ["sponsorship-history", sponsorshipId],
+  const { data: history } = useQuery({
+    queryKey: ['sponsorship-history', sponsorshipId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("sponsorship_history")
-        .select("*")
-        .eq("sponsorship_id", sponsorshipId)
-        .order("created_at", { ascending: false });
+        .from('sponsorship_history')
+        .select(`
+          id,
+          action,
+          created_at,
+          reason,
+          performed_by:performed_by_id (
+            name
+          )
+        `)
+        .eq('sponsorship_id', sponsorshipId)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as unknown as HistoryEntry[];
     },
+    enabled: isOpen && !!sponsorshipId
   });
+
+  const getActionLabel = (action: string) => {
+    switch (action) {
+      case 'created':
+        return 'Création';
+      case 'transferred':
+        return 'Transfert';
+      case 'paused':
+        return 'Mise en pause';
+      case 'resumed':
+        return 'Reprise';
+      case 'ended':
+        return 'Fin';
+      default:
+        return action;
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -35,36 +72,24 @@ export const SponsorshipHistoryDialog = ({
           <DialogTitle>Historique du parrainage</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          {isLoading ? (
-            <p>Chargement...</p>
-          ) : history?.length === 0 ? (
-            <p>Aucun historique disponible</p>
-          ) : (
-            <div className="space-y-2">
-              {history?.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="p-4 bg-gray-50 rounded-lg space-y-2"
-                >
-                  <div className="flex justify-between items-start">
-                    <span className="font-medium">
-                      {entry.action === "pause"
-                        ? "Mise en pause"
-                        : entry.action === "resume"
-                        ? "Reprise"
-                        : entry.action}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {format(new Date(entry.created_at), "dd/MM/yyyy HH:mm")}
-                    </span>
-                  </div>
-                  {entry.reason && (
-                    <p className="text-sm text-gray-600">{entry.reason}</p>
-                  )}
+          {history?.map((entry) => (
+            <div key={entry.id} className="border-l-2 border-gray-200 pl-4 py-2">
+              <div className="text-sm font-medium">
+                {getActionLabel(entry.action)}
+              </div>
+              <div className="text-xs text-gray-500">
+                {format(new Date(entry.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
+              </div>
+              {entry.reason && (
+                <div className="text-sm text-gray-600 mt-1">
+                  Raison : {entry.reason}
                 </div>
-              ))}
+              )}
+              <div className="text-xs text-gray-500 mt-1">
+                Par : {entry.performed_by.name}
+              </div>
             </div>
-          )}
+          ))}
         </div>
       </DialogContent>
     </Dialog>

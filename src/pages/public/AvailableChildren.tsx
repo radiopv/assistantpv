@@ -15,27 +15,6 @@ export default function AvailableChildren() {
   const [selectedAge, setSelectedAge] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("available");
 
-  // Fetch cities from children table
-  const { data: cities = [] } = useQuery({
-    queryKey: ['cities'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('children')
-        .select('city')
-        .not('city', 'is', null)
-        .order('city');
-      
-      if (error) {
-        console.error('Error fetching cities:', error);
-        return [];
-      }
-
-      // Get unique cities
-      const uniqueCities = [...new Set(data.map(child => child.city))];
-      return uniqueCities.filter(Boolean);
-    }
-  });
-
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children", searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
@@ -127,7 +106,7 @@ export default function AvailableChildren() {
             onGenderChange={setSelectedGender}
             onAgeChange={setSelectedAge}
             onStatusChange={setSelectedStatus}
-            cities={cities}
+            cities={[]}
             ages={["0-2", "3-5", "6-12", "13+"]}
           />
         </div>
@@ -137,7 +116,7 @@ export default function AvailableChildren() {
             <AvailableChildrenGrid 
               children={filteredChildren}
               isLoading={isLoading}
-              onViewProfile={(childId) => navigate(`/children/${childId}`)}
+              onSponsorClick={(childId) => navigate(`/become-sponsor/${childId}`)}
             />
           </div>
         )}

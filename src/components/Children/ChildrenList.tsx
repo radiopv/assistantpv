@@ -33,27 +33,6 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [selectedChildForAssignment, setSelectedChildForAssignment] = useState<string | null>(null);
 
-  // Fetch unique cities from children table
-  const { data: cities = [] } = useQuery({
-    queryKey: ['cities'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('children')
-        .select('city')
-        .not('city', 'is', null)
-        .order('city');
-      
-      if (error) {
-        console.error('Error fetching cities:', error);
-        return [];
-      }
-
-      // Get unique cities
-      const uniqueCities = [...new Set(data.map(child => child.city))];
-      return uniqueCities.filter(Boolean);
-    }
-  });
-
   const uniqueChildren = children.reduce((acc, current) => {
     const x = acc.find(item => item.id === current.id);
     if (!x) {

@@ -2,7 +2,6 @@ import * as faceapi from 'face-api.js';
 
 let modelsLoaded = false;
 let loadingPromise: Promise<void> | null = null;
-const processedImages = new Map<string, string>();
 
 const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
 
@@ -33,14 +32,6 @@ export async function loadFaceDetectionModels() {
 
 export async function detectFace(imgElement: HTMLImageElement): Promise<string> {
   try {
-    const photoUrl = imgElement.src;
-    
-    // Check if we already processed this image
-    if (processedImages.has(photoUrl)) {
-      console.log('Using cached face position for:', photoUrl);
-      return processedImages.get(photoUrl) || '50% 20%';
-    }
-
     if (!modelsLoaded) {
       console.log('Models not loaded, attempting to load from CDN...');
       await loadFaceDetectionModels();
@@ -71,21 +62,13 @@ export async function detectFace(imgElement: HTMLImageElement): Promise<string> 
       const boundedX = Math.max(0, Math.min(100, centerX));
       const boundedY = Math.max(0, Math.min(100, centerY));
       
-      const position = `${boundedX}% ${boundedY}%`;
-      
-      // Cache the result
-      processedImages.set(photoUrl, position);
-      console.log(`Face detected and cached for ${photoUrl}, position: ${position}`);
-      
-      return position;
+      console.log(`Face detected, position: ${boundedX}% ${boundedY}%`);
+      return `${boundedX}% ${boundedY}%`;
     }
   } catch (error) {
     console.error('Detailed error in face detection:', error);
   }
   
-  // Cache default position for failed detections to avoid retrying
-  const defaultPosition = '50% 20%';
-  processedImages.set(imgElement.src, defaultPosition);
   console.log('Using default fallback position');
-  return defaultPosition;
+  return '50% 20%';
 }

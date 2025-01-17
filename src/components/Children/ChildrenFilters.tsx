@@ -49,7 +49,7 @@ export const ChildrenFilters = ({
           </SelectTrigger>
           <SelectContent className="bg-white max-h-[300px]">
             <SelectItem value="all">Toutes les villes</SelectItem>
-            {cities.filter(Boolean).map((city) => (
+            {cities.map((city) => (
               <SelectItem key={city} value={city}>
                 {city}
               </SelectItem>

@@ -14,11 +14,6 @@ interface AssignSponsorDialogProps {
   onAssignComplete?: () => void;
 }
 
-const isValidUUID = (id: string): boolean => {
-  const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-  return uuidRegex.test(id);
-};
-
 export const AssignSponsorDialog = ({
   isOpen,
   onClose,
@@ -48,12 +43,6 @@ export const AssignSponsorDialog = ({
   });
 
   const handleSelectSponsor = async (sponsorId: string) => {
-    if (!isValidUUID(childId) || !isValidUUID(sponsorId)) {
-      console.error('Invalid UUID provided:', { childId, sponsorId });
-      toast.error(t("errorAssigningSponsor"));
-      return;
-    }
-
     console.log('Starting sponsor assignment process:', { sponsorId, childId });
     try {
       setIsAssigning(true);

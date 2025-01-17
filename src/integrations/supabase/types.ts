@@ -402,6 +402,20 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "children_audit_logs_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "children"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "children_audit_logs_child_id_fkey"
+            columns: ["child_id"]
+            isOneToOne: false
+            referencedRelation: "sponsored_children_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "children_audit_logs_performed_by_fkey"
             columns: ["performed_by"]
             isOneToOne: false
@@ -1374,19 +1388,19 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          role: string | null
+          role: string
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           id: string
-          role?: string | null
+          role: string
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          role?: string | null
+          role?: string
           updated_at?: string | null
         }
         Relationships: []
@@ -2728,17 +2742,6 @@ export type Database = {
         Returns: {
           valid: boolean
           sponsor_id: string
-        }[]
-      }
-      validate_sponsor_login: {
-        Args: {
-          p_email: string
-          p_password: string
-        }
-        Returns: {
-          valid: boolean
-          sponsor_id: string
-          sponsor_role: string
         }[]
       }
     }

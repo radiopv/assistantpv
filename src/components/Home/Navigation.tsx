@@ -22,7 +22,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { UserProfileMenu } from "@/components/Layout/UserProfileMenu";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
@@ -89,7 +89,7 @@ const adminLinks = [
 
 export const Navigation = () => {
   const navigate = useNavigate();
-  const { user, logout, isAssistant } = useAuth();
+  const { user, signOut, isAssistant } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
   const [isAdminMenuOpen, setIsAdminMenuOpen] = useState(false);
@@ -97,28 +97,25 @@ export const Navigation = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
-      toast.success("Déconnexion réussie", {
-        description: "À bientôt !"
+      await signOut();
+      toast({
+        title: "Déconnexion réussie",
+        description: "À bientôt !",
       });
       navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
-      toast.error("Erreur lors de la déconnexion", {
-        description: "Veuillez réessayer"
+      toast({
+        title: "Erreur lors de la déconnexion",
+        description: "Veuillez réessayer",
+        variant: "destructive",
       });
     }
   };
 
-  const handleSponsorDashboard = () => {
-    console.log("Navigating to sponsor dashboard");
-    navigate("/sponsor-dashboard");
-    setIsOpen(false);
-    toast.success("Redirection vers l'espace parrain");
-  };
-
   const MenuItems = () => (
     <div className="flex flex-col space-y-2 p-4">
+      {/* Public Links Section with Collapsible */}
       <Collapsible open={isMainMenuOpen} onOpenChange={setIsMainMenuOpen}>
         <CollapsibleTrigger asChild>
           <Button variant="ghost" className="w-full justify-between">
@@ -144,6 +141,7 @@ export const Navigation = () => {
         </CollapsibleContent>
       </Collapsible>
 
+      {/* Admin Links Section with Collapsible */}
       {isAssistant && (
         <Collapsible open={isAdminMenuOpen} onOpenChange={setIsAdminMenuOpen}>
           <CollapsibleTrigger asChild>
@@ -171,13 +169,17 @@ export const Navigation = () => {
         </Collapsible>
       )}
 
+      {/* User Actions Section - Always at the bottom */}
       <div className="border-t my-4" />
       <div className="space-y-2">
         {user ? (
           <>
             <Button
               variant="ghost"
-              onClick={handleSponsorDashboard}
+              onClick={() => {
+                navigate("/sponsor-dashboard");
+                setIsOpen(false);
+              }}
               className="justify-start w-full text-primary hover:bg-cuba-warmBeige/10"
             >
               <User className="h-4 w-4 mr-2" />
@@ -216,6 +218,7 @@ export const Navigation = () => {
     <nav className="bg-white shadow-sm w-full">
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center">
+          {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -233,6 +236,7 @@ export const Navigation = () => {
             </Sheet>
           </div>
 
+          {/* Desktop Menu */}
           <div className="hidden md:flex flex-1 space-x-4">
             {publicLinks.map((link) => (
               <Button
@@ -247,12 +251,13 @@ export const Navigation = () => {
             ))}
           </div>
 
+          {/* Right side menu items - Desktop */}
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <>
                 <Button
                   variant="ghost"
-                  onClick={handleSponsorDashboard}
+                  onClick={() => navigate("/sponsor-dashboard")}
                   className="text-primary"
                 >
                   <User className="h-4 w-4 mr-2" />

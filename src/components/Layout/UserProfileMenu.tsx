@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 export const UserProfileMenu = () => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -172,7 +172,7 @@ export const UserProfileMenu = () => {
             </DialogContent>
           </Dialog>
 
-          <DropdownMenuItem onClick={logout}>
+          <DropdownMenuItem onClick={signOut}>
             <LogOut className="mr-2 h-4 w-4" />
             <span>{t("logout")}</span>
           </DropdownMenuItem>

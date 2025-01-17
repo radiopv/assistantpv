@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { DetailedNotification } from "./DetailedNotification";
+import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 
 interface NeedNotification {
   id: string;
