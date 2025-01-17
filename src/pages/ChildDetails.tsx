@@ -113,7 +113,6 @@ const ChildDetails = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
       <div className="container mx-auto px-4 py-8">
-        {/* Header with back button and name */}
         <div className="flex items-center justify-between mb-8">
           <Button 
             onClick={() => navigate(-1)} 
@@ -127,7 +126,6 @@ const ChildDetails = () => {
         </div>
 
         <div className="grid md:grid-cols-12 gap-8">
-          {/* Left Column - Photo and Sponsorship Button */}
           <div className="md:col-span-5 space-y-6">
             <Card className="overflow-hidden border-cuba-coral/20 shadow-lg transition-transform hover:scale-[1.01] duration-300">
               <div className="aspect-square relative">
@@ -153,9 +151,7 @@ const ChildDetails = () => {
             )}
           </div>
 
-          {/* Right Column - Child Information */}
           <div className="md:col-span-7 space-y-6">
-            {/* Basic Info Card */}
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-4 text-gray-600">
@@ -169,7 +165,6 @@ const ChildDetails = () => {
                   </div>
                 </div>
 
-                {/* Urgent Needs Section */}
                 {urgentNeeds.length > 0 && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6 animate-fade-in">
                     <div className="flex items-center gap-2 mb-3">
@@ -196,7 +191,6 @@ const ChildDetails = () => {
                   </div>
                 )}
 
-                {/* Description Section */}
                 {child?.description && (
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold text-cuba-coral mb-3 flex items-center gap-2">
@@ -209,7 +203,6 @@ const ChildDetails = () => {
                   </div>
                 )}
 
-                {/* Story Section */}
                 {child?.story && (
                   <div className="mt-6">
                     <h3 className="text-lg font-semibold text-cuba-coral mb-3">Histoire</h3>
@@ -221,7 +214,6 @@ const ChildDetails = () => {
               </div>
             </Card>
 
-            {/* All Needs Section */}
             {needs.length > 0 && (
               <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
                 <h3 className="text-xl font-semibold mb-4 text-cuba-coral">Tous les besoins</h3>
