@@ -30,6 +30,21 @@ export const theme = {
       hover: "#ff5252",
       light: "#ff8f8f",
     },
+    cuba: {
+      turquoise: "#0072BB",     // Ocean Blue
+      red: "#FF6B6B",           // Warm Red
+      gold: "#FFD700",          // Warm Gold
+      coral: "#FF6B6B",         // Coral Red
+      emerald: "#50C878",       // Emerald Green
+      pink: "#FFB6C1",          // Soft Pink
+      sand: "#F4D03F",          // Sand Yellow
+      offwhite: "#FFF9F5",      // Warm Off-white
+      warmBeige: "#FDE1D3",     // Warm Beige
+      softYellow: "#FEF7CD",    // Soft Yellow
+      softOrange: "#FEC6A1",    // Soft Orange
+      deepOrange: "#FF5733",    // Deep Orange
+      warmGray: "#8B7355",      // Warm Gray
+    }
   },
   gradients: {
     primary: "linear-gradient(135deg, #0072BB 0%, #3399cc 100%)",

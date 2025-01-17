@@ -34,7 +34,7 @@
   }
 
   body {
-    @apply bg-cuba-offwhite text-foreground antialiased;
+    @apply bg-[#FFF9F5] text-foreground antialiased;
     font-family: 'Montserrat', sans-serif;
   }
 
