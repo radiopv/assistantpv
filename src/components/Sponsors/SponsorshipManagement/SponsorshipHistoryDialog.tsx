@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
 
 interface SponsorshipHistoryDialogProps {
   isOpen: boolean;
@@ -10,7 +9,11 @@ interface SponsorshipHistoryDialogProps {
   sponsorshipId: string;
 }
 
-export const SponsorshipHistoryDialog = ({ isOpen, onClose, sponsorshipId }: SponsorshipHistoryDialogProps) => {
+export const SponsorshipHistoryDialog = ({
+  isOpen,
+  onClose,
+  sponsorshipId,
+}: SponsorshipHistoryDialogProps) => {
   const { data: history, isLoading } = useQuery({
     queryKey: ["sponsorship-history", sponsorshipId],
     queryFn: async () => {
@@ -23,7 +26,6 @@ export const SponsorshipHistoryDialog = ({ isOpen, onClose, sponsorshipId }: Spo
       if (error) throw error;
       return data;
     },
-    enabled: isOpen && !!sponsorshipId,
   });
 
   return (
@@ -32,25 +34,36 @@ export const SponsorshipHistoryDialog = ({ isOpen, onClose, sponsorshipId }: Spo
         <DialogHeader>
           <DialogTitle>Historique du parrainage</DialogTitle>
         </DialogHeader>
-        <div className="mt-4 space-y-4">
+        <div className="space-y-4">
           {isLoading ? (
             <p>Chargement...</p>
           ) : history?.length === 0 ? (
             <p>Aucun historique disponible</p>
           ) : (
-            history?.map((entry) => (
-              <div key={entry.id} className="border-b pb-2">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium">{entry.action}</p>
-                    {entry.reason && <p className="text-sm text-gray-600">{entry.reason}</p>}
+            <div className="space-y-2">
+              {history?.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="p-4 bg-gray-50 rounded-lg space-y-2"
+                >
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium">
+                      {entry.action === "pause"
+                        ? "Mise en pause"
+                        : entry.action === "resume"
+                        ? "Reprise"
+                        : entry.action}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {format(new Date(entry.created_at), "dd/MM/yyyy HH:mm")}
+                    </span>
                   </div>
-                  <span className="text-sm text-gray-500">
-                    {format(new Date(entry.created_at), "dd MMMM yyyy", { locale: fr })}
-                  </span>
+                  {entry.reason && (
+                    <p className="text-sm text-gray-600">{entry.reason}</p>
+                  )}
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </DialogContent>

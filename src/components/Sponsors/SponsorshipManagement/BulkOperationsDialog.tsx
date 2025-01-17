@@ -28,6 +28,12 @@ export const BulkOperationsDialog = ({
     if (!operation) return;
 
     try {
+      const { data: user } = await supabase.auth.getUser();
+      
+      if (!user?.user?.id) {
+        throw new Error("Utilisateur non authentifié");
+      }
+
       const updates = selectedSponsors.map((sponsorId) => ({
         id: sponsorId,
         is_active: operation === "deactivate" ? false : true,
@@ -45,7 +51,7 @@ export const BulkOperationsDialog = ({
           action: operation,
           details: {
             reason,
-            performed_by: (supabase.auth.getUser()).data.user?.id,
+            performed_by: user.user.id,
           },
         }))
       );

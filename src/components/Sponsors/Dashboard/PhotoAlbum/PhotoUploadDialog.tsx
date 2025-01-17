@@ -3,86 +3,93 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface PhotoUploadDialogProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
-  onUpload: (data: { file: File; caption: string; description: string; category: string }) => void;
+  onUploadComplete: () => void;
+  childId: string;
 }
 
-export const PhotoUploadDialog = ({ open, onClose, onUpload }: PhotoUploadDialogProps) => {
+export const PhotoUploadDialog = ({
+  isOpen,
+  onClose,
+  onUploadComplete,
+  childId,
+}: PhotoUploadDialogProps) => {
   const [file, setFile] = useState<File | null>(null);
-  const [caption, setCaption] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("general");
+  const [uploading, setUploading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (file) {
-      onUpload({
-        file,
-        caption,
-        description,
-        category
-      });
+  const handleUpload = async () => {
+    if (!file) return;
+
+    try {
+      setUploading(true);
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `${childId}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('child-albums')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('child-albums')
+        .getPublicUrl(filePath);
+
+      const { error: dbError } = await supabase
+        .from('album_media')
+        .insert({
+          child_id: childId,
+          url: publicUrl,
+          type: 'image',
+        });
+
+      if (dbError) throw dbError;
+
+      toast.success("Photo téléchargée avec succès");
+      onUploadComplete();
+      onClose();
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      toast.error("Erreur lors du téléchargement de la photo");
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Ajouter une photo</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4">
           <div>
-            <Label>Photo</Label>
+            <Label>Sélectionner une photo</Label>
             <Input
               type="file"
               accept="image/*"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
-              required
             />
-          </div>
-          <div>
-            <Label>Légende</Label>
-            <Input
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="Légende de la photo"
-              required
-            />
-          </div>
-          <div>
-            <Label>Description</Label>
-            <Input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Description détaillée"
-            />
-          </div>
-          <div>
-            <Label>Catégorie</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionner une catégorie" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="general">Général</SelectItem>
-                <SelectItem value="activity">Activité</SelectItem>
-                <SelectItem value="event">Événement</SelectItem>
-                <SelectItem value="daily">Vie quotidienne</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={onClose}>
               Annuler
             </Button>
-            <Button type="submit">Ajouter</Button>
+            <Button
+              onClick={handleUpload}
+              disabled={!file || uploading}
+            >
+              {uploading ? "Téléchargement..." : "Télécharger"}
+            </Button>
           </div>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );
