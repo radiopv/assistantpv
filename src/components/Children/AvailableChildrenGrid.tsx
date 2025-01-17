@@ -153,6 +153,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
+  const handleSponsorClick = (childId: string) => {
+    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
+    navigate(`/become-sponsor?child=${childId}`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Information Card */}
@@ -254,7 +259,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 )}
 
                 <Button 
-                  onClick={() => onSponsorClick(child.id)}
+                  onClick={() => handleSponsorClick(child.id)}
                   className={`w-full ${
                     hasUrgentNeeds
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
