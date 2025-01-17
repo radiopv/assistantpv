@@ -68,6 +68,7 @@ export default {
       },
       backgroundImage: {
         ...customTheme.gradients,
+        'cuba-gradient': 'linear-gradient(135deg, #0072BB 0%, #FEC6A1 100%)',
         'card-gradient': 'linear-gradient(to bottom right, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5))',
         'hover-gradient': 'linear-gradient(to bottom right, rgba(254, 198, 161, 0.1), rgba(255, 107, 107, 0.1))',
       },
