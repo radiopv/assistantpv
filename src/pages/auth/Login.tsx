@@ -20,14 +20,41 @@ const Login = () => {
           try {
             const { data: profile, error: fetchError } = await supabase
               .from("sponsors")
-              .select("role")
+              .select("*")
               .eq("id", session?.user?.id)
               .single();
-
+            
             console.log("Profile data:", profile);
+            console.log("Fetch error:", fetchError);
 
             if (fetchError) {
               console.error("Error fetching profile:", fetchError);
+              
+              // Si le profil n'existe pas, on le crée
+              if (fetchError.code === 'PGRST116') {
+                const { error: insertError } = await supabase
+                  .from('sponsors')
+                  .insert([
+                    { 
+                      id: session?.user?.id,
+                      email: session?.user?.email,
+                      role: 'sponsor',
+                      name: session?.user?.user_metadata?.full_name || session?.user?.email,
+                      is_active: true,
+                      show_name_publicly: false
+                    }
+                  ]);
+                
+                if (insertError) {
+                  console.error('Error creating sponsor record:', insertError);
+                  setError("Erreur lors de la création du profil");
+                  return;
+                }
+                
+                navigate('/');
+                return;
+              }
+              
               setError("Erreur lors de la récupération du profil");
               return;
             }
@@ -37,7 +64,7 @@ const Login = () => {
             } else {
               navigate("/");
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error("Error in auth state change:", error);
             setError("Une erreur est survenue lors de la connexion");
           }
