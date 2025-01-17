@@ -1391,27 +1391,6 @@ export type Database = {
         }
         Relationships: []
       }
-      profiles_backup: {
-        Row: {
-          created_at: string | null
-          id: string | null
-          role: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string | null
-          role?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string | null
-          role?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       reminder_preferences: {
         Row: {
           browser_notifications: boolean | null
