@@ -15,7 +15,7 @@ import {
   MapPin,
   ArrowLeft,
   Heart,
-  Info,
+  AlertTriangle,
   GraduationCap,
   Shirt,
   Apple,
@@ -27,31 +27,33 @@ import {
 const NEED_CATEGORIES = {
   education: {
     icon: GraduationCap,
-    color: "text-yellow-500"
+    color: "text-yellow-500",
+    bgColor: "bg-yellow-50"
   },
   jouet: {
     icon: Sparkles,
-    color: "text-purple-500"
+    color: "text-purple-500",
+    bgColor: "bg-purple-50"
   },
   vetement: {
     icon: Shirt,
-    color: "text-blue-500"
+    color: "text-blue-500",
+    bgColor: "bg-blue-50"
   },
   nourriture: {
     icon: Apple,
-    color: "text-green-500"
+    color: "text-green-500",
+    bgColor: "bg-green-50"
   },
   medicament: {
     icon: Stethoscope,
-    color: "text-red-500"
+    color: "text-red-500",
+    bgColor: "bg-red-50"
   },
   hygiene: {
     icon: Book,
-    color: "text-cyan-500"
-  },
-  autre: {
-    icon: Info,
-    color: "text-gray-500"
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-50"
   }
 };
 
@@ -154,119 +156,140 @@ const ChildDetails = () => {
   }
 
   const needs = child?.needs ? convertJsonToNeeds(child.needs) : [];
+  const urgentNeeds = needs.filter(need => need.is_urgent);
+  const regularNeeds = needs.filter(need => !need.is_urgent);
 
   return (
-    <div className="container mx-auto p-4 space-y-6 animate-fade-in bg-gradient-to-br from-orange-50 to-orange-100 min-h-screen">
-      <Button onClick={() => navigate(-1)} variant="ghost" className="mb-4">
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <Button onClick={() => navigate(-1)} variant="ghost" className="mb-6">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Retour
       </Button>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <div className="relative aspect-square rounded-lg overflow-hidden shadow-lg">
-            {child?.photo_url ? (
-              <img
-                src={child.photo_url}
-                alt={child.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                <User className="w-20 h-20 text-gray-400" />
-              </div>
-            )}
-          </div>
+      <div className="grid md:grid-cols-12 gap-8">
+        {/* Left Column - Photo and Sponsorship Button */}
+        <div className="md:col-span-5 space-y-6">
+          <Card className="overflow-hidden">
+            <div className="aspect-square relative">
+              {child?.photo_url ? (
+                <img
+                  src={child.photo_url}
+                  alt={child.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                  <User className="w-20 h-20 text-gray-400" />
+                </div>
+              )}
+            </div>
+          </Card>
           
           {!child?.is_sponsored && (
             <Button 
               onClick={handleSponsorshipRequest}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cuba-coral to-cuba-coral/90 hover:from-cuba-coral/90 hover:to-cuba-coral text-white shadow-lg hover:shadow-xl transition-all duration-300 py-6 text-lg"
               size="lg"
             >
-              <Heart className="w-5 h-5" />
-              Parrainer cet enfant
+              <Heart className="w-6 h-6" />
+              Parrainer {child?.name}
             </Button>
           )}
         </div>
 
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold mb-2 text-orange-800">{child?.name}</h1>
-            <div className="flex items-center gap-2 text-orange-600">
-              <MapPin className="w-4 h-4" />
-              <span>{child?.city || "Ville non renseignée"}</span>
-            </div>
-          </div>
-
-          <Card className="p-6 space-y-4 bg-white/80 backdrop-blur-sm border-orange-200">
-            <h2 className="text-xl font-semibold text-orange-800">Informations générales</h2>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-orange-500" />
+        {/* Right Column - Child Information */}
+        <div className="md:col-span-7 space-y-6">
+          <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
+            <div className="space-y-4">
+              <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm text-orange-600">Âge</p>
-                  <p className="font-medium">
+                  <h1 className="text-3xl font-bold text-cuba-coral mb-2">{child?.name}</h1>
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <MapPin className="w-4 h-4" />
+                    <span>{child?.city || "Ville non renseignée"}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-cuba-warmBeige/10 px-3 py-1 rounded-full">
+                  <Calendar className="w-4 h-4 text-cuba-coral" />
+                  <span className="text-cuba-coral font-medium">
                     {child?.birth_date ? formatAge(child.birth_date) : "Âge non renseigné"}
-                  </p>
+                  </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-orange-500" />
-                <div>
-                  <p className="text-sm text-orange-600">Genre</p>
-                  <p className="font-medium">
-                    {child?.gender === "male" ? "Masculin" : "Féminin"}
-                  </p>
+              {child?.description && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Description</h3>
+                  <p className="text-gray-700 leading-relaxed">{child.description}</p>
                 </div>
-              </div>
+              )}
+
+              {child?.story && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-2 text-cuba-coral">Histoire</h3>
+                  <p className="text-gray-700 leading-relaxed italic">{child.story}</p>
+                </div>
+              )}
             </div>
           </Card>
 
-          {child?.description && (
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-orange-200">
-              <h2 className="text-xl font-semibold mb-4 text-orange-800">Description</h2>
-              <p className="text-gray-600 whitespace-pre-line">{child.description}</p>
-            </Card>
-          )}
-
-          {child?.story && (
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-orange-200">
-              <h2 className="text-xl font-semibold mb-4 text-orange-800">Histoire</h2>
-              <p className="text-gray-600 whitespace-pre-line">{child.story}</p>
-            </Card>
-          )}
-
+          {/* Needs Section */}
           {needs.length > 0 && (
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-orange-200">
-              <h2 className="text-xl font-semibold mb-4 text-orange-800">Besoins</h2>
-              <div className="grid gap-2">
-                {needs.map((need, index) => {
-                  const NeedIcon = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]?.icon || Info;
-                  const iconColor = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]?.color || "text-gray-500";
-                  
-                  return (
-                    <div
-                      key={index}
-                      className={`p-3 rounded-lg flex items-center gap-2 ${
-                        need.is_urgent 
-                          ? "bg-red-100/80 backdrop-blur-sm text-red-800" 
-                          : "bg-orange-100/80 backdrop-blur-sm text-orange-800"
-                      }`}
-                    >
-                      <NeedIcon className={`w-4 h-4 ${iconColor}`} />
-                      <div>
-                        <span className="font-medium">{need.category}</span>
-                        {need.description && (
-                          <p className="text-sm mt-1">{need.description}</p>
-                        )}
+            <Card className="p-6 bg-white/80 backdrop-blur-sm border-cuba-coral/20">
+              <h3 className="text-xl font-semibold mb-4 text-cuba-coral">Besoins</h3>
+              
+              {/* Urgent Needs */}
+              {urgentNeeds.length > 0 && (
+                <div className="mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <AlertTriangle className="text-red-500 w-5 h-5" />
+                    <h4 className="font-medium text-red-500">Besoins urgents</h4>
+                  </div>
+                  <div className="grid gap-3">
+                    {urgentNeeds.map((need, index) => {
+                      const NeedIcon = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]?.icon || AlertTriangle;
+                      return (
+                        <div
+                          key={index}
+                          className="bg-red-50 border border-red-100 rounded-lg p-4 flex items-start gap-3"
+                        >
+                          <NeedIcon className="w-5 h-5 text-red-500 mt-1" />
+                          <div>
+                            <span className="font-medium text-red-700">{need.category}</span>
+                            {need.description && (
+                              <p className="text-sm text-red-600 mt-1">{need.description}</p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Regular Needs */}
+              {regularNeeds.length > 0 && (
+                <div className="grid gap-3">
+                  {regularNeeds.map((need, index) => {
+                    const category = NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES];
+                    const NeedIcon = category?.icon || AlertTriangle;
+                    return (
+                      <div
+                        key={index}
+                        className={`${category?.bgColor || 'bg-gray-50'} border border-gray-100 rounded-lg p-4 flex items-start gap-3`}
+                      >
+                        <NeedIcon className={`w-5 h-5 ${category?.color || 'text-gray-500'} mt-1`} />
+                        <div>
+                          <span className="font-medium text-gray-700">{need.category}</span>
+                          {need.description && (
+                            <p className="text-sm text-gray-600 mt-1">{need.description}</p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              )}
             </Card>
           )}
         </div>
