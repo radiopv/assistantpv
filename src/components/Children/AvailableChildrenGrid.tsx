@@ -2,15 +2,22 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { differenceInDays, parseISO } from "date-fns";
+import { differenceInDays, differenceInYears, parseISO } from "date-fns";
 import { useMemo } from "react";
 import { ChildCard } from "./ChildCard/ChildCard";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface AvailableChildrenGridProps {
   children: any[];
   isLoading: boolean;
   onViewProfile: (id: string) => void;
 }
+
+const formatAge = (birthDate: string) => {
+  if (!birthDate) return '';
+  const years = differenceInYears(new Date(), parseISO(birthDate));
+  return `${years} ans`;
+};
 
 export const AvailableChildrenGrid = ({ children, isLoading, onViewProfile }: AvailableChildrenGridProps) => {
   // Fetch album photos for all children
