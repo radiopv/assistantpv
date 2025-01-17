@@ -2730,6 +2730,17 @@ export type Database = {
           sponsor_id: string
         }[]
       }
+      validate_sponsor_login: {
+        Args: {
+          p_email: string
+          p_password: string
+        }
+        Returns: {
+          valid: boolean
+          sponsor_id: string
+          sponsor_role: string
+        }[]
+      }
     }
     Enums: {
       user_role:
