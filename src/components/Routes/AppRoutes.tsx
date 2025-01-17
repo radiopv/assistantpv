@@ -13,6 +13,7 @@ import BecomeSponsor from "@/pages/BecomeSponsor";
 import Statistics from "@/pages/public/Statistics";
 import PublicDonations from "@/pages/public/PublicDonations";
 import Dashboard from "@/pages/Dashboard";
+import SponsorDashboard from "@/pages/SponsorDashboard";
 import Children from "@/pages/Children";
 import AddChild from "@/pages/AddChild";
 import Donations from "@/pages/Donations";
@@ -50,7 +51,7 @@ export const AppRoutes = () => {
       {/* Protected routes */}
       <Route element={<MainLayout />}>
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/sponsor-dashboard" element={<Dashboard />} />
+        <Route path="/sponsor-dashboard" element={<SponsorDashboard />} />
         <Route path="/children" element={<Children />} />
         <Route path="/children/add" element={<AddChild />} />
         <Route path="/donations" element={<Donations />} />
