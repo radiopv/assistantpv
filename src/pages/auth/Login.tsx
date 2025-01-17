@@ -1,123 +1,108 @@
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/use-toast";
-import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AuthError } from "@supabase/supabase-js";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN") {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", session?.user?.id)
+            .single();
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) throw error;
-
-      if (!data.user) {
-        throw new Error("Email ou mot de passe incorrect");
+          if (profile?.role === "admin" || profile?.role === "assistant") {
+            navigate("/dashboard");
+          } else {
+            navigate("/");
+          }
+        }
       }
+    );
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', data.user.id)
-        .single();
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
 
-      if (profileError) throw profileError;
-
-      if (!['admin', 'assistant', 'sponsor'].includes(profile.role)) {
-        throw new Error("Accès non autorisé");
-      }
-
-      toast({
-        title: "Connexion réussie",
-        description: profile.role === 'sponsor' ? 
-          "Bienvenue dans votre espace parrain" : 
-          "Bienvenue dans l'espace administration",
-      });
-      
-      // Redirect based on role
-      if (['admin', 'assistant'].includes(profile.role)) {
-        navigate("/dashboard");
-      } else {
-        navigate("/sponsor-dashboard");
-      }
-    } catch (error: any) {
-      toast({
-        title: "Erreur de connexion",
-        description: error.message || "Une erreur est survenue",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+  const handleError = (error: AuthError) => {
+    switch (error.message) {
+      case "Invalid login credentials":
+        setError("Email ou mot de passe incorrect");
+        break;
+      case "Email not confirmed":
+        setError("Veuillez confirmer votre email avant de vous connecter");
+        break;
+      default:
+        setError(error.message);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-start justify-center p-4 pt-12">
-      <Card className="w-full max-w-md p-8 space-y-6 bg-white">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Espace Parrain</h1>
+    <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-4">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-cuba-deepOrange mb-2">
+            Bienvenue
+          </h1>
           <p className="text-gray-600">
-            Connectez-vous pour accéder à votre espace parrain et :
+            Connectez-vous pour accéder à votre espace
           </p>
-          <ul className="text-left text-gray-600 pl-4 mt-2 space-y-2">
-            <li>• Suivre les enfants que vous parrainez</li>
-            <li>• Consulter et partager des photos</li>
-            <li>• Laisser des témoignages</li>
-            <li>• Planifier vos visites</li>
-            <li>• Voir les anniversaires à venir</li>
-          </ul>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="votre@email.com"
-              className="w-full"
-            />
-          </div>
+        {error && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Mot de passe</Label>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className="w-full"
-            />
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={loading}
-          >
-            {loading ? "Connexion en cours..." : "Se connecter"}
-          </Button>
-        </form>
-      </Card>
+        <div className="bg-white p-6 rounded-lg shadow-md border border-cuba-softOrange/20">
+          <Auth
+            supabaseClient={supabase}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#FF6B6B',
+                    brandAccent: '#FF5252',
+                  },
+                },
+              },
+            }}
+            providers={[]}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: "Email",
+                  password_label: "Mot de passe",
+                  button_label: "Se connecter",
+                  loading_button_label: "Connexion en cours...",
+                  social_provider_text: "Continuer avec {{provider}}",
+                  link_text: "Vous avez déjà un compte ? Connectez-vous",
+                },
+                sign_up: {
+                  email_label: "Email",
+                  password_label: "Mot de passe",
+                  button_label: "S'inscrire",
+                  loading_button_label: "Inscription en cours...",
+                  social_provider_text: "S'inscrire avec {{provider}}",
+                  link_text: "Vous n'avez pas de compte ? Inscrivez-vous",
+                },
+              },
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
