@@ -41,24 +41,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Fetch user profile data
-        const { data: profile } = await supabase
-          .from('profiles')
+        // Fetch sponsor data
+        const { data: sponsor } = await supabase
+          .from('sponsors')
           .select('*')
           .eq('id', session?.user?.id)
           .single();
         
-        if (profile) {
-          setUser(profile);
-          setIsAssistant(['assistant', 'admin'].includes(profile.role));
+        if (sponsor) {
+          setUser(sponsor);
+          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
           // Redirect based on role
           if (window.location.pathname === '/login') {
-            if (profile.role === 'admin' || profile.role === 'assistant') {
+            if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
             } else {
               navigate('/');
             }
+          }
+        } else {
+          // If no sponsor record exists, create one
+          const { error: insertError } = await supabase
+            .from('sponsors')
+            .insert([
+              { 
+                id: session?.user?.id,
+                email: session?.user?.email,
+                role: 'sponsor',
+                name: session?.user?.user_metadata?.full_name || session?.user?.email
+              }
+            ]);
+          
+          if (insertError) {
+            console.error('Error creating sponsor record:', insertError);
+            toast({
+              title: "Erreur lors de la création du profil",
+              description: "Veuillez réessayer ou contacter l'administrateur",
+              variant: "destructive",
+            });
           }
         }
       } else if (event === 'SIGNED_OUT') {
