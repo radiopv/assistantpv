@@ -31,7 +31,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? "grid" : "table");
   const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [selectedChildForAssignment, setSelectedChildForAssignment] = useState<string | null>(null);
+  const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
 
   const uniqueChildren = children.reduce((acc, current) => {
     const x = acc.find(item => item.id === current.id);
@@ -56,7 +56,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   });
 
   const handleAssignSponsor = (childId: string) => {
-    setSelectedChildForAssignment(childId);
+    setSelectedSponsorId(childId);
     setShowAssignDialog(true);
   };
 
@@ -83,7 +83,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
 
   const handleAssignComplete = () => {
     setShowAssignDialog(false);
-    setSelectedChildForAssignment(null);
+    setSelectedSponsorId(null);
     // Optionally refresh data here
   };
 
@@ -228,8 +228,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       <AssignSponsorDialog
         isOpen={showAssignDialog}
         onClose={() => setShowAssignDialog(false)}
-        childId={selectedChildForAssignment || ""}
-        onAssignComplete={handleAssignComplete}
+        sponsorId={selectedSponsorId || ""}
       />
     </div>
   );

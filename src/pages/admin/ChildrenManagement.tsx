@@ -11,6 +11,8 @@ import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSpo
 export default function ChildrenManagement() {
   const { t } = useLanguage();
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
@@ -65,12 +67,9 @@ export default function ChildrenManagement() {
       </div>
 
       <AssignSponsorDialog
-        isOpen={!!selectedChildId}
-        onClose={() => setSelectedChildId(null)}
-        childId={selectedChildId || ""}
-        onAssignComplete={() => {
-          window.location.reload();
-        }}
+        isOpen={showAssignDialog}
+        onClose={() => setShowAssignDialog(false)}
+        sponsorId={selectedSponsorId || ""}
       />
     </div>
   );
