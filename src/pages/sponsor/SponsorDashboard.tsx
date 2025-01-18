@@ -96,6 +96,25 @@ const SponsorDashboard = () => {
     }
   };
 
+  const handleRemoveChild = async (childId: string) => {
+    try {
+      const { error } = await supabase
+        .from('child_assignment_requests')
+        .insert({
+          sponsor_id: user.id,
+          child_id: childId,
+          status: 'pending',
+          type: 'remove'
+        });
+
+      if (error) throw error;
+      toast.success("Demande de retrait envoyée");
+    } catch (error) {
+      console.error('Error requesting child removal:', error);
+      toast.error("Erreur lors de la demande de retrait");
+    }
+  };
+
   if (childrenLoading) {
     return <div className="text-center p-4">{t.loading}</div>;
   }
@@ -123,12 +142,22 @@ const SponsorDashboard = () => {
 
             return (
               <div key={child.id} className="space-y-6">
-                <SponsoredChildCard
-                  child={child}
-                  sponsorshipId={sponsorship.id}
-                  onAddPhoto={() => handleAddPhoto(child.id)}
-                  onAddTestimonial={() => {}}
-                />
+                <div className="relative">
+                  <SponsoredChildCard
+                    child={child}
+                    sponsorshipId={sponsorship.id}
+                    onAddPhoto={() => handleAddPhoto(child.id)}
+                  />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={() => handleRemoveChild(child.id)}
+                  >
+                    <Minus className="w-4 h-4 mr-2" />
+                    {t.removeChild}
+                  </Button>
+                </div>
 
                 {selectedChild === child.id && (
                   <Card className="p-4">
