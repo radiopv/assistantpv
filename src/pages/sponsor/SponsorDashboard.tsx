@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
@@ -13,7 +14,6 @@ import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/Sponsorship
 import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
-import { SponsoredChildrenDisplay } from "@/components/Sponsors/SponsoredChildrenDisplay";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -44,6 +44,7 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
+  // Vérifier si l'utilisateur est connecté
   if (!user?.id) {
     return <div className="text-center p-4">{t.noAccess}</div>;
   }
@@ -57,7 +58,6 @@ const SponsorDashboard = () => {
           id,
           child_id,
           start_date,
-          status,
           children (
             id,
             name,
@@ -130,10 +130,35 @@ const SponsorDashboard = () => {
         <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
 
         <div className="grid gap-6">
+          {/* Contribution Stats */}
           {user?.id && <ContributionStats sponsorId={user.id} />}
 
-          <SponsoredChildrenDisplay sponsorships={sponsoredChildren || []} />
+          {/* Sponsored Children Cards */}
+          {sponsoredChildren?.map((sponsorship) => {
+            const child = sponsorship.children;
+            if (!child) return null;
 
+            return (
+              <div key={child.id} className="space-y-6">
+                <SponsoredChildCard
+                  child={child}
+                  sponsorshipId={sponsorship.id}
+                  onAddPhoto={() => handleAddPhoto(child.id)}
+                />
+
+                {selectedChild === child.id && (
+                  <Card className="p-4">
+                    <PhotoUploader
+                      childId={selectedChild}
+                      onUploadSuccess={handleUploadSuccess}
+                    />
+                  </Card>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Planned Visits */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">
               {t.plannedVisits}
@@ -147,8 +172,10 @@ const SponsorDashboard = () => {
             </div>
           </Card>
 
+          {/* Timeline */}
           <SponsorshipTimeline events={[]} />
 
+          {/* Notifications */}
           {notifications?.map((notification) => (
             <DetailedNotification key={notification.id} notification={notification} />
           ))}
