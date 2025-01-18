@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
 
 export default function SponsorshipManagementNew() {
-  const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: sponsorsData, refetch } = useQuery({
@@ -57,8 +57,8 @@ export default function SponsorshipManagementNew() {
     }
   };
 
-  const handleAddChild = (sponsorId: string) => {
-    setSelectedSponsorId(sponsorId);
+  const handleAddChild = (childId: string) => {
+    setSelectedChildId(childId);
     setIsDialogOpen(true);
   };
 
@@ -125,13 +125,13 @@ export default function SponsorshipManagementNew() {
         data={sponsorsData || []}
       />
 
-      {selectedSponsorId && (
+      {selectedChildId && (
         <AssignSponsorDialog
-          sponsorId={selectedSponsorId}
+          childId={selectedChildId}
           isOpen={isDialogOpen}
           onClose={() => {
             setIsDialogOpen(false);
-            setSelectedSponsorId(null);
+            setSelectedChildId(null);
             refetch();
           }}
         />
