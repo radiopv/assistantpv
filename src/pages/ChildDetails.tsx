@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { convertJsonToNeeds } from "@/types/needs";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import {
@@ -75,6 +75,50 @@ const ChildDetails = () => {
     }
   });
 
+  const handleSponsorshipRequest = async () => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${id}`);
+      return;
+    }
+
+    try {
+      // Vérifier si l'utilisateur est déjà un parrain
+      const { data: existingSponsorship, error: sponsorshipError } = await supabase
+        .from('sponsorships')
+        .select('*')
+        .eq('sponsor_id', user.id)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      if (sponsorshipError) throw sponsorshipError;
+
+      if (!existingSponsorship) {
+        // L'utilisateur n'est pas encore parrain
+        navigate(`/become-sponsor?child=${id}`);
+        return;
+      }
+
+      // Créer une demande de parrainage
+      const { error: requestError } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: id,
+          full_name: user.name,
+          email: user.email,
+          city: user.city,
+          status: 'pending',
+          sponsor_id: user.id
+        });
+
+      if (requestError) throw requestError;
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+    } catch (error) {
+      console.error('Erreur lors de la demande de parrainage:', error);
+      toast.error("Une erreur est survenue lors de la demande de parrainage");
+    }
+  };
+
   const formatAge = (birthDate: string) => {
     const today = new Date();
     const birth = parseISO(birthDate);
@@ -90,40 +134,6 @@ const ChildDetails = () => {
     }
 
     return `${years} ans et ${months} mois`;
-  };
-
-  const handleSponsorshipRequest = async () => {
-    if (!user) {
-      navigate(`/become-sponsor?child=${id}`);
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('sponsorship_requests')
-        .insert({
-          child_id: id,
-          full_name: user.name,
-          email: user.email,
-          city: user.city,
-          status: 'pending',
-          sponsor_id: user.id
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Demande envoyée",
-        description: "Votre demande de parrainage est en cours d'examen",
-      });
-    } catch (error) {
-      console.error('Erreur lors de la demande de parrainage:', error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la demande de parrainage",
-      });
-    }
   };
 
   if (error) {
