@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
 import { Eye, Plus, Minus } from "lucide-react";
@@ -5,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -23,11 +23,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-interface SponsoredChildrenDisplayProps {
+interface SponsoredChildCardProps {
   sponsorships: any[];
 }
 
-export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisplayProps) => {
+export const SponsoredChildCard = ({ sponsorships }: SponsoredChildCardProps) => {
   const navigate = useNavigate();
   const [selectedSponsorship, setSelectedSponsorship] = useState<{id: string, childName: string} | null>(null);
   const [removalReason, setRemovalReason] = useState("");
