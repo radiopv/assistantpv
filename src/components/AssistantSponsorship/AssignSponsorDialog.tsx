@@ -18,14 +18,32 @@ export const AssignSponsorDialog = ({
   const { data: children = [], isLoading } = useQuery({
     queryKey: ["available-children"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: childrenData, error } = await supabase
         .from("children")
-        .select("*")
+        .select(`
+          id,
+          name,
+          age,
+          birth_date,
+          city,
+          comments,
+          created_at,
+          description,
+          end_date,
+          gender,
+          sponsorships:sponsorships(
+            id,
+            sponsor:sponsors(
+              id,
+              name
+            )
+          )
+        `)
         .eq("is_sponsored", false)
         .order("name");
 
       if (error) throw error;
-      return data;
+      return childrenData;
     },
   });
 
@@ -73,4 +91,4 @@ export const AssignSponsorDialog = ({
       </DialogContent>
     </Dialog>
   );
-}
+};

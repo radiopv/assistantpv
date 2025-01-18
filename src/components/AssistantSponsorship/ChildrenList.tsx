@@ -55,7 +55,7 @@ export const ChildrenList = ({
               <Button onClick={() => onSelectChild(child.id)}>
                 {t("select")}
               </Button>
-              {child.sponsorships.length > 0 && onRemoveSponsorship && (
+              {child.sponsorships?.length > 0 && onRemoveSponsorship && (
                 <Button 
                   variant="destructive" 
                   onClick={() => onRemoveSponsorship(child.id)}
