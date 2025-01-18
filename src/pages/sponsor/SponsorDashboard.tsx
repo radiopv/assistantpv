@@ -14,12 +14,15 @@ import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/Sponsorship
 import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
+import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
+import { Plus, Minus } from "lucide-react";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   const translations = {
     fr: {
@@ -29,7 +32,9 @@ const SponsorDashboard = () => {
       uploadSuccess: "Photo ajoutée avec succès",
       uploadError: "Erreur lors de l'ajout de la photo",
       plannedVisits: "Visites Planifiées",
-      noAccess: "Accès non autorisé"
+      noAccess: "Accès non autorisé",
+      addChild: "Ajouter un enfant",
+      removeChild: "Retirer un enfant"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -38,13 +43,14 @@ const SponsorDashboard = () => {
       uploadSuccess: "Foto agregada con éxito",
       uploadError: "Error al agregar la foto",
       plannedVisits: "Visitas Planificadas",
-      noAccess: "Acceso no autorizado"
+      noAccess: "Acceso no autorizado",
+      addChild: "Agregar un niño",
+      removeChild: "Retirar un niño"
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
-  // Vérifier si l'utilisateur est connecté
   if (!user?.id) {
     return <div className="text-center p-4">{t.noAccess}</div>;
   }
@@ -79,36 +85,6 @@ const SponsorDashboard = () => {
     enabled: !!user.id
   });
 
-  const { data: plannedVisits = [], refetch: refetchVisits } = useQuery({
-    queryKey: ['planned-visits', user.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('planned_visits')
-        .select('*')
-        .eq('sponsor_id', user.id)
-        .order('start_date', { ascending: true });
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user.id
-  });
-
-  const { data: notifications = [] } = useQuery({
-    queryKey: ['sponsor-notifications', user.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('recipient_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user.id
-  });
-
   const handleAddPhoto = (childId: string) => {
     setSelectedChild(childId);
   };
@@ -120,6 +96,25 @@ const SponsorDashboard = () => {
     }
   };
 
+  const handleRemoveChild = async (childId: string) => {
+    try {
+      const { error } = await supabase
+        .from('child_assignment_requests')
+        .insert({
+          sponsor_id: user.id,
+          child_id: childId,
+          status: 'pending',
+          type: 'remove'
+        });
+
+      if (error) throw error;
+      toast.success("Demande de retrait envoyée");
+    } catch (error) {
+      console.error('Error requesting child removal:', error);
+      toast.error("Erreur lors de la demande de retrait");
+    }
+  };
+
   if (childrenLoading) {
     return <div className="text-center p-4">{t.loading}</div>;
   }
@@ -127,24 +122,42 @@ const SponsorDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-4">
       <div className="container mx-auto space-y-6">
-        <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
+          <Button 
+            onClick={() => setShowAddDialog(true)}
+            className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            {t.addChild}
+          </Button>
+        </div>
 
         <div className="grid gap-6">
-          {/* Contribution Stats */}
           {user?.id && <ContributionStats sponsorId={user.id} />}
 
-          {/* Sponsored Children Cards */}
           {sponsoredChildren?.map((sponsorship) => {
             const child = sponsorship.children;
             if (!child) return null;
 
             return (
               <div key={child.id} className="space-y-6">
-                <SponsoredChildCard
-                  child={child}
-                  sponsorshipId={sponsorship.id}
-                  onAddPhoto={() => handleAddPhoto(child.id)}
-                />
+                <div className="relative">
+                  <SponsoredChildCard
+                    child={child}
+                    sponsorshipId={sponsorship.id}
+                    onAddPhoto={() => handleAddPhoto(child.id)}
+                  />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={() => handleRemoveChild(child.id)}
+                  >
+                    <Minus className="w-4 h-4 mr-2" />
+                    {t.removeChild}
+                  </Button>
+                </div>
 
                 {selectedChild === child.id && (
                   <Card className="p-4">
@@ -158,7 +171,6 @@ const SponsorDashboard = () => {
             );
           })}
 
-          {/* Planned Visits */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">
               {t.plannedVisits}
@@ -166,21 +178,21 @@ const SponsorDashboard = () => {
             <div className="space-y-6">
               <PlannedVisitForm 
                 sponsorId={user.id} 
-                onVisitPlanned={() => refetchVisits()} 
+                onVisitPlanned={() => {}} 
               />
-              <VisitsSection visits={plannedVisits || []} onVisitDeleted={() => refetchVisits()} />
+              <VisitsSection visits={[]} onVisitDeleted={() => {}} />
             </div>
           </Card>
 
-          {/* Timeline */}
           <SponsorshipTimeline events={[]} />
-
-          {/* Notifications */}
-          {notifications?.map((notification) => (
-            <DetailedNotification key={notification.id} notification={notification} />
-          ))}
         </div>
       </div>
+
+      <AssignSponsorDialog
+        sponsorId={user.id}
+        isOpen={showAddDialog}
+        onClose={() => setShowAddDialog(false)}
+      />
     </div>
   );
 };
