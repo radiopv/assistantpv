@@ -11,6 +11,7 @@ import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSpo
 export default function SponsorshipManagementNew() {
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const { data: sponsorsData, refetch } = useQuery({
     queryKey: ["sponsors-with-children"],
@@ -62,9 +63,29 @@ export default function SponsorshipManagementNew() {
     setIsDialogOpen(true);
   };
 
+  const toggleSortOrder = () => {
+    setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+  };
+
+  const sortedSponsors = sponsorsData ? [...sponsorsData].sort((a, b) => {
+    const nameA = (a.name || '').toLowerCase();
+    const nameB = (b.name || '').toLowerCase();
+    return sortOrder === 'asc' 
+      ? nameA.localeCompare(nameB)
+      : nameB.localeCompare(nameA);
+  }) : [];
+
   const columns = [
     {
-      header: "Parrain",
+      header: () => (
+        <Button 
+          variant="ghost" 
+          onClick={toggleSortOrder}
+          className="flex items-center gap-2"
+        >
+          Parrain {sortOrder === 'asc' ? '↑' : '↓'}
+        </Button>
+      ),
       accessorKey: "name",
     },
     {
@@ -122,7 +143,7 @@ export default function SponsorshipManagementNew() {
       
       <DataTable
         columns={columns}
-        data={sponsorsData || []}
+        data={sortedSponsors}
       />
 
       {selectedChildId && (
