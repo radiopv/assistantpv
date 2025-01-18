@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
@@ -14,6 +13,7 @@ import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/Sponsorship
 import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
+import { SponsoredChildrenDisplay } from "@/components/Sponsors/SponsoredChildrenDisplay";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -57,6 +57,7 @@ const SponsorDashboard = () => {
           id,
           child_id,
           start_date,
+          status,
           children (
             id,
             name,
@@ -112,10 +113,6 @@ const SponsorDashboard = () => {
     setSelectedChild(childId);
   };
 
-  const handleAddTestimonial = (childId: string) => {
-    navigate(`/testimonials/new?childId=${childId}`);
-  };
-
   const handleUploadSuccess = async () => {
     if (selectedChild) {
       toast.success(t.uploadSuccess);
@@ -135,30 +132,7 @@ const SponsorDashboard = () => {
         <div className="grid gap-6">
           {user?.id && <ContributionStats sponsorId={user.id} />}
 
-          {sponsoredChildren?.map((sponsorship) => {
-            const child = sponsorship.children;
-            if (!child) return null;
-
-            return (
-              <div key={child.id} className="space-y-6">
-                <SponsoredChildCard
-                  child={child}
-                  sponsorshipId={sponsorship.id}
-                  onAddPhoto={() => handleAddPhoto(child.id)}
-                  onAddTestimonial={() => handleAddTestimonial(child.id)}
-                />
-
-                {selectedChild === child.id && (
-                  <Card className="p-4">
-                    <PhotoUploader
-                      childId={selectedChild}
-                      onUploadSuccess={handleUploadSuccess}
-                    />
-                  </Card>
-                )}
-              </div>
-            );
-          })}
+          <SponsoredChildrenDisplay sponsorships={sponsoredChildren || []} />
 
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">
