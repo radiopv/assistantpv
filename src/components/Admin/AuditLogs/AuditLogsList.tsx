@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { DataTable } from "@/components/ui/data-table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { ErrorAlert } from "@/components/ErrorAlert";
 
 interface AuditLog {
   id: string;
@@ -15,13 +14,14 @@ interface AuditLog {
 }
 
 export const AuditLogsList = () => {
-  const { data: logs, isLoading, error } = useQuery({
+  const { data: logs, isLoading } = useQuery({
     queryKey: ["audit-logs"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("children_audit_logs")
         .select(`
           *,
+          children(name),
           sponsors(name)
         `)
         .order("created_at", { ascending: false });
@@ -44,12 +44,7 @@ export const AuditLogsList = () => {
     },
     {
       header: "Enfant",
-      cell: ({ row }) => {
-        const changes = row.original.changes;
-        // Try to get child name from changes if available
-        const childName = changes?.new?.name || changes?.old?.name || "Enfant supprimé";
-        return <span>{childName}</span>;
-      },
+      cell: ({ row }) => <span>{row.original.children?.name || "N/A"}</span>,
     },
     {
       header: "Action",
@@ -118,10 +113,6 @@ export const AuditLogsList = () => {
 
   if (isLoading) {
     return <div>Chargement des logs...</div>;
-  }
-
-  if (error) {
-    return <ErrorAlert message="Erreur lors du chargement des logs" />;
   }
 
   return (

@@ -29,7 +29,6 @@ export default function AvailableChildren() {
           query = query.ilike('name', `%${searchTerm}%`);
         }
 
-        // Only get available children
         if (selectedStatus === "available") {
           query = query.eq("is_sponsored", false);
         } else if (selectedStatus === "urgent") {

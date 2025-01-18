@@ -14,7 +14,6 @@ import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/Sponsorship
 import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
-import { SponsoredChildrenDisplay } from "@/components/Sponsors/SponsoredChildrenDisplay";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -45,6 +44,7 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
+  // Vérifier si l'utilisateur est connecté
   if (!user?.id) {
     return <div className="text-center p-4">{t.noAccess}</div>;
   }
@@ -133,24 +133,30 @@ const SponsorDashboard = () => {
           {/* Contribution Stats */}
           {user?.id && <ContributionStats sponsorId={user.id} />}
 
-          {/* Sponsored Children Display */}
-          <SponsoredChildrenDisplay 
-            sponsorships={sponsoredChildren || []} 
-            isLoading={childrenLoading} 
-            onSponsorClick={(childId) => {
-              navigate(`/become-sponsor?child=${childId}`);
-            }} 
-          />
+          {/* Sponsored Children Cards */}
+          {sponsoredChildren?.map((sponsorship) => {
+            const child = sponsorship.children;
+            if (!child) return null;
 
-          {/* Photo Upload Section */}
-          {selectedChild && (
-            <Card className="p-4">
-              <PhotoUploader
-                childId={selectedChild}
-                onUploadSuccess={handleUploadSuccess}
-              />
-            </Card>
-          )}
+            return (
+              <div key={child.id} className="space-y-6">
+                <SponsoredChildCard
+                  child={child}
+                  sponsorshipId={sponsorship.id}
+                  onAddPhoto={() => handleAddPhoto(child.id)}
+                />
+
+                {selectedChild === child.id && (
+                  <Card className="p-4">
+                    <PhotoUploader
+                      childId={selectedChild}
+                      onUploadSuccess={handleUploadSuccess}
+                    />
+                  </Card>
+                )}
+              </div>
+            );
+          })}
 
           {/* Planned Visits */}
           <Card className="p-6">
