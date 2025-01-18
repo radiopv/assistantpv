@@ -20,7 +20,7 @@ const adminLinks = [
     icon: Users,
   },
   {
-    href: "/admin/sponsorship-management",
+    href: "/admin/sponsorship-management-new",
     label: "Gestion Parrainages",
     icon: UserPlus,
   },
