@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Plus, X, Check, Edit2, Save } from "lucide-react";
+import { toast } from "sonner";
 
 interface SponsorListItemProps {
   sponsor: any;
@@ -38,8 +39,20 @@ export const SponsorListItem = ({
   };
 
   const handleSave = async () => {
-    await onUpdate(sponsor.id, editedSponsor);
-    setIsEditing(false);
+    try {
+      await onUpdate(sponsor.id, {
+        name: editedSponsor.name,
+        email: editedSponsor.email,
+        phone: editedSponsor.phone,
+        city: editedSponsor.city,
+        facebook_url: editedSponsor.facebook_url
+      });
+      setIsEditing(false);
+      toast.success("Informations du parrain mises à jour");
+    } catch (error) {
+      console.error('Error updating sponsor:', error);
+      toast.error("Erreur lors de la mise à jour des informations");
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -61,30 +74,47 @@ export const SponsorListItem = ({
             <AvatarImage src={sponsor.photo_url} alt={sponsor.name} />
             <AvatarFallback>{sponsor.name?.charAt(0)}</AvatarFallback>
           </Avatar>
-          <div className="flex-1">
+          <div className="flex-1 space-y-2">
             {isEditing ? (
-              <div className="space-y-2">
+              <>
                 <Input
                   value={editedSponsor.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
+                  placeholder="Nom"
                   className="font-semibold"
                 />
                 <Input
                   value={editedSponsor.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="text-sm text-gray-500"
+                  placeholder="Email"
+                  className="text-sm"
                 />
                 <Input
                   value={editedSponsor.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="text-sm text-gray-500"
+                  placeholder="Téléphone"
+                  className="text-sm"
                 />
-              </div>
+                <Input
+                  value={editedSponsor.city}
+                  onChange={(e) => handleInputChange('city', e.target.value)}
+                  placeholder="Ville"
+                  className="text-sm"
+                />
+                <Input
+                  value={editedSponsor.facebook_url}
+                  onChange={(e) => handleInputChange('facebook_url', e.target.value)}
+                  placeholder="URL Facebook"
+                  className="text-sm"
+                />
+              </>
             ) : (
               <>
                 <h3 className="font-semibold">{sponsor.name}</h3>
                 <p className="text-sm text-gray-500">{sponsor.email}</p>
                 <p className="text-sm text-gray-500">{sponsor.phone}</p>
+                <p className="text-sm text-gray-500">{sponsor.city}</p>
+                <p className="text-sm text-gray-500">{sponsor.facebook_url}</p>
               </>
             )}
           </div>
@@ -123,22 +153,22 @@ export const SponsorListItem = ({
         </div>
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col space-y-2">
         {sponsor.sponsorships?.map((sponsorship: any) => (
           <div key={sponsorship.id} className="flex justify-between items-center">
-            <span>{sponsorship.child.name}</span>
+            <span>{sponsorship.child?.name}</span>
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onPauseSponsorship(sponsorship.id)}
+                onClick={() => onPauseSponsorship?.(sponsorship.id)}
               >
                 Pause
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onResumeSponsorship(sponsorship.id)}
+                onClick={() => onResumeSponsorship?.(sponsorship.id)}
               >
                 Reprendre
               </Button>

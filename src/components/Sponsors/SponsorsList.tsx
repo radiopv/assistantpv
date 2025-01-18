@@ -55,7 +55,6 @@ export const SponsorsList = ({
 
   const handleStatusChange = async (sponsorId: string, field: string, value: boolean) => {
     try {
-      // Mise à jour dans Supabase
       const { error } = await supabase
         .from('sponsors')
         .update({ [field]: value })
@@ -63,7 +62,6 @@ export const SponsorsList = ({
 
       if (error) throw error;
       
-      // Mise à jour locale de l'état
       setSponsors(prevSponsors =>
         prevSponsors.map(s =>
           s.id === sponsorId
@@ -161,36 +159,12 @@ export const SponsorsList = ({
     let filtered = sponsors.filter(sponsor => {
       const searchString = `${sponsor.name} ${sponsor.email}`.toLowerCase();
       const searchTermLower = searchTerm.toLowerCase();
-      
-      // Créer un Map pour stocker les enfants uniques par ID
-      const uniqueChildren = new Map();
-      
-      // Filtrer d'abord les parrainages actifs
-      const activeSponshorships = sponsor.sponsorships?.filter((s: any) => s.status === 'active') || [];
-      
-      // Pour chaque parrainage actif, ajouter l'enfant au Map s'il existe
-      activeSponshorships.forEach((s: any) => {
-        if (s.children && s.children.id) {
-          // Si l'enfant n'est pas déjà dans le Map, l'ajouter
-          if (!uniqueChildren.has(s.children.id)) {
-            uniqueChildren.set(s.children.id, s);
-          }
-        }
-      });
-      
-      // Convertir le Map en array et réassigner à sponsor.sponsorships
-      sponsor.sponsorships = Array.from(uniqueChildren.values());
-      
-      const hasActiveSponshorships = sponsor.sponsorships.length > 0;
-      return searchString.includes(searchTermLower) && 
-             (isActive ? hasActiveSponshorships : !hasActiveSponshorships);
+      return searchString.includes(searchTermLower);
     });
 
     return filtered.sort((a, b) => {
       if (sortOrder === "recent") {
-        const latestA = Math.max(...(a.sponsorships?.map((s: any) => new Date(s.start_date).getTime()) || [0]));
-        const latestB = Math.max(...(b.sponsorships?.map((s: any) => new Date(s.start_date).getTime()) || [0]));
-        return latestB - latestA;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       } else if (sortOrder === "name") {
         return a.name.localeCompare(b.name);
       }
