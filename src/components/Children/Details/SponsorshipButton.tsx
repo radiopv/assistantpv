@@ -18,6 +18,7 @@ export const SponsorshipButton = ({ childId, userId }: SponsorshipButtonProps) =
     }
 
     try {
+      // First, check for existing sponsorship
       const { data: existingSponsorship, error: sponsorshipError } = await supabase
         .from('sponsorships')
         .select('*')
@@ -32,6 +33,16 @@ export const SponsorshipButton = ({ childId, userId }: SponsorshipButtonProps) =
         return;
       }
 
+      // Get sponsor information
+      const { data: sponsorData, error: sponsorError } = await supabase
+        .from('sponsors')
+        .select('email, name')
+        .eq('id', userId)
+        .single();
+
+      if (sponsorError) throw sponsorError;
+
+      // Create sponsorship request with required fields
       const { error: requestError } = await supabase
         .from('sponsorship_requests')
         .insert({
@@ -39,7 +50,9 @@ export const SponsorshipButton = ({ childId, userId }: SponsorshipButtonProps) =
           sponsor_id: userId,
           status: 'pending',
           is_long_term: true,
-          terms_accepted: true
+          terms_accepted: true,
+          email: sponsorData.email,
+          full_name: sponsorData.name
         });
 
       if (requestError) throw requestError;
