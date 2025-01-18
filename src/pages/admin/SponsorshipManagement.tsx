@@ -170,7 +170,7 @@ export default function SponsorshipManagement() {
   }
 
   return (
-    <div className="w-full p-4 space-y-4">
+    <div className="w-full p-2 md:p-4 space-y-4">
       <h1 className="text-2xl font-bold mb-4">Gestion des Parrains</h1>
       
       <div className="relative mb-6">
@@ -202,10 +202,10 @@ export default function SponsorshipManagement() {
                 {sortData(filterBySearch(sponsors || [])).map((sponsor) => (
                   <React.Fragment key={sponsor.id}>
                     <TableRow>
-                      <TableCell className="font-medium">{sponsor.name}</TableCell>
+                      <TableCell className="font-medium break-words">{sponsor.name}</TableCell>
                       <TableCell className="break-all">{sponsor.email}</TableCell>
-                      <TableCell>{sponsor.password_hash || "Non défini"}</TableCell>
-                      <TableCell>
+                      <TableCell className="break-words">{sponsor.password_hash || "Non défini"}</TableCell>
+                      <TableCell className="break-words">
                         {sponsor.last_login 
                           ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
                           : "Jamais connecté"}
@@ -221,7 +221,7 @@ export default function SponsorshipManagement() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleEdit(sponsor)}
-                          className="w-full md:w-auto"
+                          className="w-full whitespace-nowrap"
                         >
                           Modifier
                         </Button>
@@ -264,19 +264,19 @@ export default function SponsorshipManagement() {
                               onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
                             />
 
-                            <div className="flex flex-col md:flex-row justify-end gap-2">
+                            <div className="flex flex-col sm:flex-row justify-end gap-2">
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => setEditingSponsorId(null)}
-                                className="w-full md:w-auto"
+                                className="w-full sm:w-auto"
                               >
                                 Annuler
                               </Button>
                               <Button
                                 size="sm"
                                 onClick={handleUpdate}
-                                className="w-full md:w-auto"
+                                className="w-full sm:w-auto"
                               >
                                 Sauvegarder
                               </Button>
