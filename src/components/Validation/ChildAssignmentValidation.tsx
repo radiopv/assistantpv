@@ -33,7 +33,11 @@ export const ChildAssignmentValidation = () => {
       childName: "Enfant",
       sponsorName: "Parrain potentiel",
       sponsorEmail: "Email",
-      city: "Ville"
+      city: "Ville",
+      requestType: "Type de demande",
+      addRequest: "Ajout d'enfant",
+      removeRequest: "Retrait d'enfant",
+      reason: "Raison"
     },
     es: {
       loading: "Cargando...",
@@ -63,14 +67,15 @@ export const ChildAssignmentValidation = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
+      console.log("Fetching requests...");
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select(`
           *,
-          children:child_id (
+          children (
             name
           ),
-          sponsors:sponsor_id (
+          sponsors (
             name,
             email,
             city
@@ -83,6 +88,7 @@ export const ChildAssignmentValidation = () => {
         throw error;
       }
       
+      console.log("Fetched requests:", data);
       return data;
     }
   });
@@ -163,10 +169,18 @@ export const ChildAssignmentValidation = () => {
         <Card key={request.id} className="p-4">
           <div className="flex justify-between items-start">
             <div className="space-y-2">
-              <h3 className="font-semibold">{t.childName}: {request.children?.name}</h3>
+              <h3 className="font-semibold">
+                {request.type === 'add' ? t.addRequest : t.removeRequest}
+              </h3>
+              <p className="text-sm text-gray-500">{t.childName}: {request.children?.name}</p>
               <p className="text-sm text-gray-500">{t.sponsorName}: {request.sponsors?.name}</p>
               <p className="text-sm text-gray-500">{t.sponsorEmail}: {request.sponsors?.email}</p>
               <p className="text-sm text-gray-500">{t.city}: {request.sponsors?.city}</p>
+              {request.notes && (
+                <p className="text-sm text-gray-500">
+                  {t.reason}: {request.notes}
+                </p>
+              )}
               <p className="text-sm text-gray-500">
                 {t.requestDate}: {new Date(request.created_at || '').toLocaleDateString()}
               </p>
