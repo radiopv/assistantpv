@@ -1,138 +1,76 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { SponsorsList } from "./SponsorsList";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { ChildrenList } from "./ChildrenList";
 
 interface AssignSponsorDialogProps {
+  sponsorId: string;
   isOpen: boolean;
   onClose: () => void;
-  childId: string;
-  onAssignComplete?: () => void;
 }
 
 export const AssignSponsorDialog = ({
+  sponsorId,
   isOpen,
-  onClose,
-  childId,
-  onAssignComplete
+  onClose
 }: AssignSponsorDialogProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const { t } = useLanguage();
-  const [isAssigning, setIsAssigning] = useState(false);
-
-  const { data: sponsors = [], isLoading: isLoadingSponsors } = useQuery({
-    queryKey: ['sponsors-for-assignment'],
+  const { data: children = [], isLoading } = useQuery({
+    queryKey: ["available-children"],
     queryFn: async () => {
-      console.log('Fetching sponsors for assignment');
       const { data, error } = await supabase
-        .from('sponsors')
-        .select('*')
-        .order('name');
-      
-      if (error) {
-        console.error('Error fetching sponsors:', error);
-        throw error;
-      }
-      console.log('Fetched sponsors:', data);
-      return data || [];
-    }
+        .from("children")
+        .select("*")
+        .eq("is_sponsored", false)
+        .order("name");
+
+      if (error) throw error;
+      return data;
+    },
   });
 
-  const handleSelectSponsor = async (sponsorId: string) => {
-    console.log('Starting sponsor assignment process:', { sponsorId, childId });
+  const handleSelectChild = async (childId: string) => {
     try {
-      setIsAssigning(true);
-
-      // First check if there's already a request
-      const { data: existingRequests, error: checkError } = await supabase
-        .from('child_assignment_requests')
-        .select('*')
-        .eq('child_id', childId)
-        .eq('sponsor_id', sponsorId)
-        .eq('status', 'pending');
-
-      if (checkError) {
-        console.error('Error checking existing requests:', checkError);
-        toast.error(t("errorAssigningSponsor"));
-        return;
-      }
-
-      console.log('Existing requests:', existingRequests);
-
-      if (existingRequests && existingRequests.length > 0) {
-        console.log('Found existing request');
-        toast.error(t("requestAlreadyExists"));
-        return;
-      }
-
-      // Create new request
-      console.log('Creating new assignment request');
-      const { error: insertError } = await supabase
-        .from('child_assignment_requests')
+      const { error } = await supabase
+        .from("sponsorships")
         .insert({
           sponsor_id: sponsorId,
           child_id: childId,
-          status: 'pending',
-          created_at: new Date().toISOString()
+          status: "active",
+          start_date: new Date().toISOString()
         });
 
-      if (insertError) {
-        console.error('Error creating assignment request:', insertError);
-        toast.error(t("errorAssigningSponsor"));
-        return;
-      }
+      if (error) throw error;
 
       // Update child status
-      console.log('Updating child status');
       const { error: updateError } = await supabase
-        .from('children')
-        .update({ 
-          status: 'pending',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', childId);
+        .from("children")
+        .update({ is_sponsored: true })
+        .eq("id", childId);
 
-      if (updateError) {
-        console.error('Error updating child status:', updateError);
-        toast.error(t("errorAssigningSponsor"));
-        return;
-      }
+      if (updateError) throw updateError;
 
-      console.log('Assignment process completed successfully');
-      toast.success(t("sponsorshipRequestCreated"));
-      onAssignComplete?.();
+      toast.success("Enfant ajouté avec succès");
       onClose();
     } catch (error) {
-      console.error('Error in assignment process:', error);
-      toast.error(t("errorAssigningSponsor"));
-    } finally {
-      setIsAssigning(false);
+      console.error("Error assigning child:", error);
+      toast.error("Erreur lors de l'ajout de l'enfant");
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-3xl">
         <DialogHeader>
-          <DialogTitle>{t("assignSponsor")}</DialogTitle>
+          <DialogTitle>Sélectionner un enfant</DialogTitle>
         </DialogHeader>
-        <SponsorsList
-          sponsors={sponsors}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onSelectSponsor={handleSelectSponsor}
-          isLoading={isLoadingSponsors || isAssigning}
+        <ChildrenList
+          children={children}
+          searchTerm=""
+          onSearchChange={() => {}}
+          onSelectChild={handleSelectChild}
         />
-        <div className="flex justify-end mt-4">
-          <Button variant="outline" onClick={onClose} disabled={isAssigning}>
-            {t("cancel")}
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );
-};
+}

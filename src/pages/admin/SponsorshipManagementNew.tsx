@@ -60,8 +60,8 @@ export default function SponsorshipManagementNew() {
     }
   };
 
-  const handleAddChild = (childId: string) => {
-    setSelectedChildId(childId);
+  const handleAddChild = (sponsorId: string) => {
+    setSelectedChildId(sponsorId);
     setIsDialogOpen(true);
   };
 
@@ -141,7 +141,6 @@ export default function SponsorshipManagementNew() {
   ];
 
   if (isMobile) {
-    // Supprimer la colonne email sur mobile
     columns.splice(1, 1);
   }
 
@@ -158,7 +157,7 @@ export default function SponsorshipManagementNew() {
 
       {selectedChildId && (
         <AssignSponsorDialog
-          childId={selectedChildId}
+          sponsorId={selectedChildId}
           isOpen={isDialogOpen}
           onClose={() => {
             setIsDialogOpen(false);
