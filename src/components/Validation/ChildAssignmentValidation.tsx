@@ -5,7 +5,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
-import { sendEmail } from "@/api/email";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 
 export const ChildAssignmentValidation = () => {
@@ -25,10 +24,6 @@ export const ChildAssignmentValidation = () => {
       approve: "Approuver",
       reject: "Rejeter",
       noChildRequestsPending: "Aucune demande en attente",
-      childRequestApprovedSubject: "Votre demande a été approuvée",
-      childRequestApprovedContent: "Votre demande pour {name} a été approuvée",
-      childRequestRejectedSubject: "Votre demande a été rejetée",
-      childRequestRejectedContent: "Votre demande pour {name} a été rejetée",
       requestDate: "Date de la demande",
       childName: "Enfant",
       sponsorName: "Parrain potentiel",
@@ -50,15 +45,15 @@ export const ChildAssignmentValidation = () => {
       approve: "Aprobar",
       reject: "Rechazar",
       noChildRequestsPending: "No hay solicitudes pendientes",
-      childRequestApprovedSubject: "Su solicitud ha sido aprobada",
-      childRequestApprovedContent: "Su solicitud para {name} ha sido aprobada",
-      childRequestRejectedSubject: "Su solicitud ha sido rechazada",
-      childRequestRejectedContent: "Su solicitud para {name} ha sido rechazada",
       requestDate: "Fecha de solicitud",
       childName: "Niño",
       sponsorName: "Padrino potencial",
       sponsorEmail: "Correo electrónico",
-      city: "Ciudad"
+      city: "Ciudad",
+      requestType: "Tipo de solicitud",
+      addRequest: "Agregar niño",
+      removeRequest: "Retirar niño",
+      reason: "Razón"
     }
   };
 
@@ -102,12 +97,6 @@ export const ChildAssignmentValidation = () => {
 
       if (updateError) throw updateError;
 
-      await sendEmail({
-        to: [request.sponsors.email],
-        subject: t.childRequestApprovedSubject,
-        html: t.childRequestApprovedContent.replace('{name}', request.children.name)
-      });
-
       toast({
         title: t.success,
         description: t.childRequestApproved
@@ -134,12 +123,6 @@ export const ChildAssignmentValidation = () => {
         .eq('id', request.id);
 
       if (updateError) throw updateError;
-
-      await sendEmail({
-        to: [request.sponsors.email],
-        subject: t.childRequestRejectedSubject,
-        html: t.childRequestRejectedContent.replace('{name}', request.children.name)
-      });
 
       toast({
         title: t.success,
