@@ -23,13 +23,13 @@ export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisp
         .from('child_assignment_requests')
         .insert({
           sponsorship_id: sponsorshipId,
-          type: 'removal',
+          type: 'remove',
           status: 'pending',
           notes: `Demande de retrait pour ${childName}`
         });
 
       if (error) throw error;
-      toast.success("Demande de retrait envoyée avec succès");
+      toast.success("Demande de retrait envoyée avec succès. Un administrateur examinera votre demande.");
     } catch (error) {
       console.error("Error requesting child removal:", error);
       toast.error("Erreur lors de la demande de retrait");
