@@ -44,7 +44,6 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
-  // Vérifier si l'utilisateur est connecté
   if (!user?.id) {
     return <div className="text-center p-4">{t.noAccess}</div>;
   }
@@ -113,6 +112,10 @@ const SponsorDashboard = () => {
     setSelectedChild(childId);
   };
 
+  const handleAddTestimonial = (childId: string) => {
+    navigate(`/testimonials/new?childId=${childId}`);
+  };
+
   const handleUploadSuccess = async () => {
     if (selectedChild) {
       toast.success(t.uploadSuccess);
@@ -130,10 +133,8 @@ const SponsorDashboard = () => {
         <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
 
         <div className="grid gap-6">
-          {/* Contribution Stats */}
           {user?.id && <ContributionStats sponsorId={user.id} />}
 
-          {/* Sponsored Children Cards */}
           {sponsoredChildren?.map((sponsorship) => {
             const child = sponsorship.children;
             if (!child) return null;
@@ -144,6 +145,7 @@ const SponsorDashboard = () => {
                   child={child}
                   sponsorshipId={sponsorship.id}
                   onAddPhoto={() => handleAddPhoto(child.id)}
+                  onAddTestimonial={() => handleAddTestimonial(child.id)}
                 />
 
                 {selectedChild === child.id && (
@@ -158,7 +160,6 @@ const SponsorDashboard = () => {
             );
           })}
 
-          {/* Planned Visits */}
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">
               {t.plannedVisits}
@@ -172,10 +173,8 @@ const SponsorDashboard = () => {
             </div>
           </Card>
 
-          {/* Timeline */}
           <SponsorshipTimeline events={[]} />
 
-          {/* Notifications */}
           {notifications?.map((notification) => (
             <DetailedNotification key={notification.id} notification={notification} />
           ))}
