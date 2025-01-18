@@ -55,6 +55,7 @@ export const SponsorsList = ({
 
   const handleStatusChange = async (sponsorId: string, field: string, value: boolean) => {
     try {
+      // Mise à jour dans Supabase
       const { error } = await supabase
         .from('sponsors')
         .update({ [field]: value })
@@ -62,6 +63,7 @@ export const SponsorsList = ({
 
       if (error) throw error;
       
+      // Mise à jour locale de l'état
       setSponsors(prevSponsors =>
         prevSponsors.map(s =>
           s.id === sponsorId
@@ -73,6 +75,29 @@ export const SponsorsList = ({
     } catch (error) {
       console.error('Error updating sponsor status:', error);
       toast.error("Erreur lors de la mise à jour du statut");
+    }
+  };
+
+  const handleSponsorUpdate = async (sponsorId: string, updatedData: any) => {
+    try {
+      const { error } = await supabase
+        .from('sponsors')
+        .update(updatedData)
+        .eq('id', sponsorId);
+
+      if (error) throw error;
+
+      setSponsors(prevSponsors =>
+        prevSponsors.map(s =>
+          s.id === sponsorId
+            ? { ...s, ...updatedData }
+            : s
+        )
+      );
+      toast.success("Informations du parrain mises à jour");
+    } catch (error) {
+      console.error('Error updating sponsor:', error);
+      toast.error("Erreur lors de la mise à jour des informations");
     }
   };
 
@@ -210,6 +235,7 @@ export const SponsorsList = ({
               onResumeSponsorship={handleResumeSponsorship}
               onSelect={handleSponsorSelect}
               isSelected={selectedSponsors.includes(sponsor.id)}
+              onUpdate={handleSponsorUpdate}
             />
           ))}
         </div>
@@ -226,6 +252,7 @@ export const SponsorsList = ({
               onVerificationChange={handleVerificationChange}
               onSelect={handleSponsorSelect}
               isSelected={selectedSponsors.includes(sponsor.id)}
+              onUpdate={handleSponsorUpdate}
             />
           ))}
         </div>

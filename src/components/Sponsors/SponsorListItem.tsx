@@ -1,20 +1,10 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  UserPlus, 
-  History, 
-  Pause, 
-  Play, 
-  Clock,
-  StickyNote,
-  ArrowRightLeft
-} from "lucide-react";
-import { useState } from "react";
-import { SponsorshipHistoryDialog } from "./SponsorshipManagement/SponsorshipHistoryDialog";
-import { NotesDialog } from "./SponsorshipManagement/NotesDialog";
-import { TemporaryStatusDialog } from "./SponsorshipManagement/TemporaryStatusDialog";
+import { Plus, X, Check, Edit2, Save } from "lucide-react";
 
 interface SponsorListItemProps {
   sponsor: any;
@@ -23,8 +13,9 @@ interface SponsorListItemProps {
   onVerificationChange: (sponsorId: string, checked: boolean) => void;
   onPauseSponsorship?: (sponsorshipId: string) => void;
   onResumeSponsorship?: (sponsorshipId: string) => void;
-  onSelect?: (sponsorId: string, selected: boolean) => void;
-  isSelected?: boolean;
+  onSelect: (sponsorId: string, selected: boolean) => void;
+  isSelected: boolean;
+  onUpdate: (sponsorId: string, updatedData: any) => void;
 }
 
 export const SponsorListItem = ({
@@ -35,136 +26,126 @@ export const SponsorListItem = ({
   onPauseSponsorship,
   onResumeSponsorship,
   onSelect,
-  isSelected
+  isSelected,
+  onUpdate
 }: SponsorListItemProps) => {
-  const [showHistory, setShowHistory] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
-  const [showTemporary, setShowTemporary] = useState(false);
-  const [selectedSponsorshipId, setSelectedSponsorshipId] = useState<string>("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedSponsor, setEditedSponsor] = useState(sponsor);
 
-  const handleHistoryClick = (sponsorshipId: string) => {
-    setSelectedSponsorshipId(sponsorshipId);
-    setShowHistory(true);
+  const handleEdit = () => {
+    setIsEditing(true);
+    setEditedSponsor(sponsor);
   };
 
-  const handleNotesClick = (sponsorshipId: string) => {
-    setSelectedSponsorshipId(sponsorshipId);
-    setShowNotes(true);
+  const handleSave = async () => {
+    await onUpdate(sponsor.id, editedSponsor);
+    setIsEditing(false);
   };
 
-  const handleTemporaryClick = (sponsorshipId: string) => {
-    setSelectedSponsorshipId(sponsorshipId);
-    setShowTemporary(true);
+  const handleInputChange = (field: string, value: string) => {
+    setEditedSponsor(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
-    <Card className="p-4 md:rounded-lg rounded-none">
-      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-        <div className="flex items-center gap-4 min-w-0">
-          {onSelect && (
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={(checked) => onSelect(sponsor.id, checked as boolean)}
-            />
-          )}
-          <Avatar className="h-12 w-12 shrink-0">
+    <Card className="p-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-4">
+          <Checkbox
+            checked={isSelected}
+            onCheckedChange={(checked) => onSelect(sponsor.id, checked as boolean)}
+          />
+          <Avatar className="h-12 w-12">
             <AvatarImage src={sponsor.photo_url} alt={sponsor.name} />
             <AvatarFallback>{sponsor.name?.charAt(0)}</AvatarFallback>
           </Avatar>
-          <div className="min-w-0">
-            <h3 className="text-lg font-semibold break-words">{sponsor.name}</h3>
-            <p className="text-sm text-gray-500 break-all">{sponsor.email}</p>
+          <div className="flex-1">
+            {isEditing ? (
+              <div className="space-y-2">
+                <Input
+                  value={editedSponsor.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  className="font-semibold"
+                />
+                <Input
+                  value={editedSponsor.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="text-sm text-gray-500"
+                />
+                <Input
+                  value={editedSponsor.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  className="text-sm text-gray-500"
+                />
+              </div>
+            ) : (
+              <>
+                <h3 className="font-semibold">{sponsor.name}</h3>
+                <p className="text-sm text-gray-500">{sponsor.email}</p>
+                <p className="text-sm text-gray-500">{sponsor.phone}</p>
+              </>
+            )}
           </div>
         </div>
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Vérifié</span>
-            <Checkbox
-              checked={sponsor.is_verified}
-              onCheckedChange={(checked) => onVerificationChange(sponsor.id, checked as boolean)}
-            />
-          </div>
+        <div className="flex items-center gap-2">
+          {isEditing ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSave}
+              className="flex items-center gap-1"
+            >
+              <Save className="h-4 w-4" />
+              Enregistrer
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleEdit}
+              className="flex items-center gap-1"
+            >
+              <Edit2 className="h-4 w-4" />
+              Modifier
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onAddChild(sponsor)}
+            className="flex items-center gap-1"
+          >
+            <Plus className="h-4 w-4" />
+            Ajouter un enfant
+          </Button>
         </div>
       </div>
 
-      <div className="space-y-4">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2 w-full md:w-auto"
-          onClick={() => onAddChild(sponsor)}
-        >
-          <UserPlus className="h-4 w-4" />
-          Ajouter un enfant
-        </Button>
-
-        {sponsor.sponsorships?.map((s: any) => (
-          <div key={s.id} className="flex justify-between items-center p-2 bg-gray-50 rounded flex-wrap gap-2">
-            <span className="break-words min-w-0">{s.child.name}</span>
-            <div className="flex gap-2 flex-wrap">
+      <div className="flex flex-col">
+        {sponsor.sponsorships?.map((sponsorship: any) => (
+          <div key={sponsorship.id} className="flex justify-between items-center">
+            <span>{sponsorship.child.name}</span>
+            <div className="flex items-center gap-2">
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={() => handleHistoryClick(s.id)}
+                onClick={() => onPauseSponsorship(sponsorship.id)}
               >
-                <History className="h-4 w-4" />
+                Pause
               </Button>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={() => handleNotesClick(s.id)}
+                onClick={() => onResumeSponsorship(sponsorship.id)}
               >
-                <StickyNote className="h-4 w-4" />
+                Reprendre
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleTemporaryClick(s.id)}
-              >
-                <Clock className="h-4 w-4" />
-              </Button>
-              {s.is_paused ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onResumeSponsorship?.(s.id)}
-                >
-                  <Play className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onPauseSponsorship?.(s.id)}
-                >
-                  <Pause className="h-4 w-4" />
-                </Button>
-              )}
             </div>
           </div>
         ))}
       </div>
-
-      <SponsorshipHistoryDialog
-        isOpen={showHistory}
-        onClose={() => setShowHistory(false)}
-        sponsorshipId={selectedSponsorshipId}
-      />
-
-      <NotesDialog
-        isOpen={showNotes}
-        onClose={() => setShowNotes(false)}
-        sponsorshipId={selectedSponsorshipId}
-      />
-
-      <TemporaryStatusDialog
-        isOpen={showTemporary}
-        onClose={() => setShowTemporary(false)}
-        sponsorshipId={selectedSponsorshipId}
-        onStatusChange={() => {
-          window.location.reload();
-        }}
-      />
     </Card>
   );
 };
