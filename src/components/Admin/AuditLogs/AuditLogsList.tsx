@@ -11,6 +11,12 @@ interface AuditLog {
   changes: any;
   performed_by: string;
   created_at: string;
+  children?: {
+    name: string;
+  } | null;
+  sponsors?: {
+    name: string;
+  } | null;
 }
 
 export const AuditLogsList = () => {
@@ -26,8 +32,11 @@ export const AuditLogsList = () => {
         `)
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching audit logs:", error);
+        throw error;
+      }
+      return data as AuditLog[];
     },
   });
 
@@ -44,7 +53,11 @@ export const AuditLogsList = () => {
     },
     {
       header: "Enfant",
-      cell: ({ row }) => <span>{row.original.children?.name || "N/A"}</span>,
+      cell: ({ row }) => (
+        <span>
+          {row.original.children?.name || "Enfant supprimé"}
+        </span>
+      ),
     },
     {
       header: "Action",
@@ -69,7 +82,11 @@ export const AuditLogsList = () => {
     },
     {
       header: "Effectué par",
-      cell: ({ row }) => <span>{row.original.sponsors?.name || "Système"}</span>,
+      cell: ({ row }) => (
+        <span>
+          {row.original.sponsors?.name || "Système"}
+        </span>
+      ),
     },
     {
       header: "Détails",
