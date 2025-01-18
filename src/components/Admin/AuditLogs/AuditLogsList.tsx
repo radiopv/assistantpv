@@ -6,10 +6,10 @@ import { fr } from "date-fns/locale";
 
 interface AuditLog {
   id: string;
-  child_id: string;
+  child_id: string | null;
   action: string;
   changes: any;
-  performed_by: string;
+  performed_by: string | null;
   created_at: string;
   children?: {
     name: string;
@@ -20,15 +20,18 @@ interface AuditLog {
 }
 
 export const AuditLogsList = () => {
-  const { data: logs, isLoading } = useQuery({
+  const { data: logs, isLoading, error } = useQuery({
     queryKey: ["audit-logs"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("children_audit_logs")
         .select(`
-          *,
-          children(name),
-          sponsors(name)
+          id,
+          child_id,
+          action,
+          changes,
+          performed_by,
+          created_at
         `)
         .order("created_at", { ascending: false });
 
@@ -36,7 +39,32 @@ export const AuditLogsList = () => {
         console.error("Error fetching audit logs:", error);
         throw error;
       }
-      return data as AuditLog[];
+
+      // Get child names and sponsor names in separate queries
+      const childIds = data.map(log => log.child_id).filter(Boolean);
+      const sponsorIds = data.map(log => log.performed_by).filter(Boolean);
+
+      const [childrenResponse, sponsorsResponse] = await Promise.all([
+        supabase
+          .from("children")
+          .select("id, name")
+          .in("id", childIds),
+        supabase
+          .from("sponsors")
+          .select("id, name")
+          .in("id", sponsorIds)
+      ]);
+
+      // Create lookup maps
+      const childrenMap = new Map(childrenResponse.data?.map(child => [child.id, child]) || []);
+      const sponsorsMap = new Map(sponsorsResponse.data?.map(sponsor => [sponsor.id, sponsor]) || []);
+
+      // Combine the data
+      return data.map(log => ({
+        ...log,
+        children: log.child_id ? { name: childrenMap.get(log.child_id)?.name || "Enfant supprimé" } : null,
+        sponsors: log.performed_by ? { name: sponsorsMap.get(log.performed_by)?.name || "Utilisateur inconnu" } : null
+      })) as AuditLog[];
     },
   });
 
@@ -130,6 +158,10 @@ export const AuditLogsList = () => {
 
   if (isLoading) {
     return <div>Chargement des logs...</div>;
+  }
+
+  if (error) {
+    return <div>Erreur lors du chargement des logs: {error.message}</div>;
   }
 
   return (
