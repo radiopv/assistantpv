@@ -7,82 +7,68 @@ import { StatisticsData } from "@/types/dashboard";
 import { Progress } from "@/components/ui/progress";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
+import { toast } from "sonner";
 
 const Statistics = () => {
   const { t } = useLanguage();
 
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ["statistics"],
+  const { data: sponsorshipStats, isLoading: isLoadingSponsorship, error: sponsorshipError } = useQuery({
+    queryKey: ['sponsorship-stats'],
     queryFn: async () => {
-      // Get sponsorship stats
-      const { data: sponsorships, error: sponsorshipsError } = await supabase
-        .from("sponsorships")
-        .select("status, sponsor_id");
-
-      if (sponsorshipsError) throw sponsorshipsError;
-
-      // Get children stats
-      const { data: children, error: childrenError } = await supabase
-        .from("children")
-        .select("id, is_sponsored");
-
-      if (childrenError) throw childrenError;
-
-      // Get donations stats
-      const { data: donations, error: donationsError } = await supabase
-        .from("donations")
-        .select("id, donation_date, people_helped");
-
-      if (donationsError) throw donationsError;
-
-      // Calculate stats
-      const active = sponsorships.filter((s) => s.status === "active").length;
-      const pending = sponsorships.filter((s) => s.status === "pending").length;
-      const totalChildren = children.length;
-      const sponsoredChildren = children.filter(c => c.is_sponsored).length;
-      const totalSponsors = new Set(sponsorships.map(s => s.sponsor_id)).size;
-      const totalPeopleHelped = donations.reduce((sum, d) => sum + (d.people_helped || 0), 0);
-
-      return {
-        active_sponsorships: active,
-        pending_sponsorships: pending,
-        total_donations: donations.length,
-        total_children: totalChildren,
-        sponsored_children: sponsoredChildren,
-        total_sponsors: totalSponsors,
-        total_people_helped: totalPeopleHelped,
-        monthly_trends: donations.map(d => ({
-          donation_date: d.donation_date
-        })),
-        city_distribution: []
-      } as StatisticsData;
+      try {
+        const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
+        if (error) throw error;
+        return data as unknown as SponsorshipConversionStats;
+      } catch (error) {
+        console.error('Error fetching sponsorship stats:', error);
+        toast.error("Erreur lors du chargement des statistiques de parrainage");
+        throw error;
+      }
     },
+    retry: 1
   });
 
-  if (isLoading) {
+  const { data: engagementStats, isLoading: isLoadingEngagement, error: engagementError } = useQuery({
+    queryKey: ['engagement-stats'],
+    queryFn: async () => {
+      try {
+        const { data, error } = await supabase.rpc('get_user_engagement_stats');
+        if (error) throw error;
+        return data as unknown as UserEngagementStats;
+      } catch (error) {
+        console.error('Error fetching engagement stats:', error);
+        toast.error("Erreur lors du chargement des statistiques d'engagement");
+        throw error;
+      }
+    },
+    retry: 1
+  });
+
+  if (sponsorshipError || engagementError) {
     return (
-      <div className="container mx-auto px-0 sm:px-8 space-y-8">
-        <Skeleton className="h-8 w-64 mx-auto" />
-        <div className="grid gap-6 md:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-40" />
-          ))}
-        </div>
+      <div className="container mx-auto p-4">
+        <Card className="p-6 bg-destructive/10">
+          <p className="text-destructive">Une erreur est survenue lors du chargement des statistiques.</p>
+        </Card>
       </div>
     );
   }
 
+  if (isLoadingSponsorship || isLoadingEngagement) {
+    return <Skeleton className="h-[400px] w-full" />;
+  }
+
   // Provide default values if stats is undefined
   const safeStats = {
-    active_sponsorships: stats?.active_sponsorships || 0,
-    pending_sponsorships: stats?.pending_sponsorships || 0,
-    total_donations: stats?.total_donations || 0,
-    total_children: stats?.total_children || 0,
-    sponsored_children: stats?.sponsored_children || 0,
-    total_sponsors: stats?.total_sponsors || 0,
-    total_people_helped: stats?.total_people_helped || 0,
-    monthly_trends: stats?.monthly_trends || [],
-    city_distribution: stats?.city_distribution || []
+    active_sponsorships: sponsorshipStats?.active_sponsorships || 0,
+    pending_sponsorships: sponsorshipStats?.pending_sponsorships || 0,
+    total_donations: sponsorshipStats?.total_donations || 0,
+    total_children: sponsorshipStats?.total_children || 0,
+    sponsored_children: sponsorshipStats?.sponsored_children || 0,
+    total_sponsors: sponsorshipStats?.total_sponsors || 0,
+    total_people_helped: sponsorshipStats?.total_people_helped || 0,
+    monthly_trends: sponsorshipStats?.monthly_trends || [],
+    city_distribution: sponsorshipStats?.city_distribution || []
   };
 
   const sponsorshipRate = safeStats.total_children > 0 
