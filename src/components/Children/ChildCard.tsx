@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { CardHeader } from "./CardHeader";
-import { ChildInfo } from "./ChildInfo";
-import { PhotoGallery } from "./PhotoGallery";
-import { ActionButtons } from "./ActionButtons";
-import { TerminationDialog } from "../TerminationDialog";
+import { CardHeader } from "./CardComponents/CardHeader";
+import { ChildInfo } from "./CardComponents/ChildInfo";
+import { PhotoGallery } from "./CardComponents/PhotoGallery";
+import { ActionButtons } from "./CardComponents/ActionButtons";
+import { TerminationDialog } from "./TerminationDialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface SponsoredChildCardProps {
   child: {
@@ -29,6 +30,7 @@ export const SponsoredChildCard = ({
   onAddPhoto,
 }: SponsoredChildCardProps) => {
   const [showTermination, setShowTermination] = useState(false);
+  const { t } = useLanguage();
 
   const { data: albumPhotos } = useQuery({
     queryKey: ['album-photos', child.id],
