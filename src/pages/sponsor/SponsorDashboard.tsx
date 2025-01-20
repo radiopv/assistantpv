@@ -15,7 +15,12 @@ import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -23,6 +28,7 @@ const SponsorDashboard = () => {
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [isListOpen, setIsListOpen] = useState(false);
 
   const translations = {
     fr: {
@@ -124,13 +130,31 @@ const SponsorDashboard = () => {
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
-          <Button 
-            onClick={() => setShowAddDialog(true)}
-            className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {t.addChild}
-          </Button>
+          <Collapsible open={isListOpen} onOpenChange={setIsListOpen} className="relative">
+            <CollapsibleTrigger asChild>
+              <Button className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90">
+                <Plus className="w-4 h-4 mr-2" />
+                {t.addChild}
+                {isListOpen ? (
+                  <ChevronUp className="w-4 h-4 ml-2" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 ml-2" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="absolute right-0 top-full mt-2 w-64 bg-white rounded-md shadow-lg z-50">
+              <div className="p-2">
+                <Button
+                  onClick={() => setShowAddDialog(true)}
+                  className="w-full text-left flex items-center px-4 py-2 hover:bg-gray-100 rounded-md"
+                  variant="ghost"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Choisir un enfant
+                </Button>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
 
         <div className="grid gap-6">
