@@ -59,5 +59,27 @@
     .touch-feedback:active {
       @apply bg-cuba-warmBeige/50 transition-colors duration-200;
     }
+
+    /* Admin dashboard specific mobile styles */
+    .admin-tabs {
+      @apply flex-col;
+    }
+
+    .admin-tab-content {
+      @apply p-2;
+    }
+
+    .admin-card {
+      @apply rounded-none border-x-0;
+    }
+
+    .admin-table {
+      @apply text-sm;
+    }
+
+    .admin-table td,
+    .admin-table th {
+      @apply px-2 py-3;
+    }
   }
 }
