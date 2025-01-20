@@ -26,7 +26,7 @@ interface ChildCardProps {
   onSponsorClick?: (child: any) => void;
 }
 
-export const ChildCard = ({ 
+const ChildCard = ({ 
   child, 
   sponsorshipId, 
   onAddPhoto,
@@ -55,10 +55,16 @@ export const ChildCard = ({
   const handleSponsorClick = async () => {
     try {
       // Logic to send sponsorship request
-      toast.success(t("sponsorshipRequestSent", { name: child.name }));
+      toast({
+        title: t("success"),
+        description: t("sponsorshipRequestSent", { name: child.name })
+      });
     } catch (error) {
       console.error("Error sending sponsorship request:", error);
-      toast.error(t("sponsorshipRequestError"));
+      toast({
+        title: t("error"),
+        description: t("sponsorshipRequestError")
+      });
     }
   };
 
@@ -105,8 +111,6 @@ export const ChildCard = ({
   );
 };
 
-// Also export as default for flexibility
+export { ChildCard };
 export default ChildCard;
-
-// For backward compatibility
 export const SponsoredChildCard = ChildCard;
