@@ -7,13 +7,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function SponsorshipManagementNew() {
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const isMobile = useIsMobile();
 
   const { data: sponsorsData, refetch } = useQuery({
     queryKey: ["sponsors-with-children"],
@@ -83,7 +81,7 @@ export default function SponsorshipManagementNew() {
         <Button 
           variant="ghost" 
           onClick={toggleSortOrder}
-          className="flex items-center gap-2 text-left"
+          className="flex items-center gap-2"
         >
           Parrain {sortOrder === 'asc' ? '↑' : '↓'}
         </Button>
@@ -93,7 +91,6 @@ export default function SponsorshipManagementNew() {
     {
       header: "Email",
       accessorKey: "email",
-      cell: isMobile ? undefined : ({ row }: { row: { original: any } }) => row.original.email,
     },
     {
       header: "Enfants parrainés",
@@ -102,8 +99,8 @@ export default function SponsorshipManagementNew() {
         return (
           <div className="space-y-1">
             {sponsorships.map((s: any) => (
-              <div key={s.id} className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'} gap-2`}>
-                <span className="text-sm">{s.children?.name}</span>
+              <div key={s.id} className="flex items-center justify-between gap-2">
+                <span>{s.children?.name}</span>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -111,7 +108,7 @@ export default function SponsorshipManagementNew() {
                     e.stopPropagation();
                     handleRemoveChild(s.id);
                   }}
-                  className={`h-8 ${isMobile ? 'w-full mt-1' : 'px-2 lg:px-3'}`}
+                  className="h-8 px-2 lg:px-3"
                 >
                   <UserMinus className="h-4 w-4" />
                   <span className="ml-2">Retirer</span>
@@ -130,7 +127,7 @@ export default function SponsorshipManagementNew() {
             variant="outline"
             size="sm"
             onClick={() => handleAddChild(row.original.id)}
-            className={`h-8 ${isMobile ? 'w-full' : 'px-2 lg:px-3'}`}
+            className="h-8 px-2 lg:px-3"
           >
             <UserPlus className="h-4 w-4" />
             <span className="ml-2">Ajouter un enfant</span>
@@ -140,21 +137,14 @@ export default function SponsorshipManagementNew() {
     },
   ];
 
-  if (isMobile) {
-    // Supprimer la colonne email sur mobile
-    columns.splice(1, 1);
-  }
-
   return (
     <Card className="w-full p-4 space-y-4">
       <h1 className="text-2xl font-bold">Gestion des Parrainages</h1>
       
-      <div className="overflow-x-auto">
-        <DataTable
-          columns={columns}
-          data={sortedSponsors}
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        data={sortedSponsors}
+      />
 
       {selectedChildId && (
         <AssignSponsorDialog
