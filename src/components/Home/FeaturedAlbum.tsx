@@ -9,13 +9,13 @@ import AutoplayPlugin from "embla-carousel-autoplay";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface FeaturedMedia {
-  id: string;
+  id: string | number;
   url: string;
   title: string | null;
   children?: {
     name: string;
   } | null;
-  sponsor_id: string | null;
+  sponsor_id?: string | null;
   created_at: string;
   source_table?: string;
 }
@@ -84,6 +84,7 @@ export const FeaturedAlbum = () => {
             url: item.url,
             title: item.title,
             created_at: item.created_at,
+            sponsor_id: null,
             source_table: 'donation_photos'
           })) || []),
           ...(highlights?.map(item => ({
@@ -91,6 +92,7 @@ export const FeaturedAlbum = () => {
             url: item.image_url,
             title: item.title,
             created_at: item.created_at,
+            sponsor_id: null,
             source_table: 'community_highlights'
           })) || [])
         ].sort((a, b) => 
