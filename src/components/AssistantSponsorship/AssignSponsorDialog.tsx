@@ -11,6 +11,12 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { Card } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AssignSponsorDialogProps {
   sponsorId: string;
@@ -87,29 +93,38 @@ export const AssignSponsorDialog = ({
 
   return (
     <Card className="w-full mb-6">
-      <Collapsible open={isOpen} onOpenChange={onClose}>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-between p-4"
-          >
-            <span>Ajouter un enfant</span>
-            {isOpen ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="p-4">
-          <ChildrenList
-            children={children}
-            searchTerm=""
-            onSearchChange={() => {}}
-            onSelectChild={handleSelectChild}
-          />
-        </CollapsibleContent>
-      </Collapsible>
+      <TooltipProvider>
+        <Collapsible open={isOpen} onOpenChange={onClose}>
+          <CollapsibleTrigger asChild>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-between p-4"
+                >
+                  <span>Ajouter un enfant</span>
+                  {isOpen ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Cliquez ici pour voir la liste des enfants disponibles pour le parrainage</p>
+              </TooltipContent>
+            </Tooltip>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="p-4">
+            <ChildrenList
+              children={children}
+              searchTerm=""
+              onSearchChange={() => {}}
+              onSelectChild={handleSelectChild}
+            />
+          </CollapsibleContent>
+        </Collapsible>
+      </TooltipProvider>
     </Card>
   );
 };
