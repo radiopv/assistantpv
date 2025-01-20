@@ -15,12 +15,18 @@ import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
-import { Plus, Minus, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Minus, ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -130,31 +136,22 @@ const SponsorDashboard = () => {
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
-          <Collapsible open={isListOpen} onOpenChange={setIsListOpen} className="relative">
-            <CollapsibleTrigger asChild>
-              <Button className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90">
-                <Plus className="w-4 h-4 mr-2" />
-                {t.addChild}
-                {isListOpen ? (
-                  <ChevronUp className="w-4 h-4 ml-2" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 ml-2" />
-                )}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="absolute right-0 top-full mt-2 w-64 bg-white rounded-md shadow-lg z-50">
-              <div className="p-2">
-                <Button
-                  onClick={() => setShowAddDialog(true)}
-                  className="w-full text-left flex items-center px-4 py-2 hover:bg-gray-100 rounded-md"
-                  variant="ghost"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Choisir un enfant
-                </Button>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+          <div className="flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
+                    Demande d'ajout d'enfant à mon espace parrain
+                    <HelpCircle className="w-4 h-4 ml-1" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p>Cette option vous permet d'ajouter un enfant que vous parrainez déjà mais qui n'apparaît pas dans votre espace parrain.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
 
         <div className="grid gap-6">
