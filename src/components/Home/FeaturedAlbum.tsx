@@ -6,6 +6,7 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 import AutoplayPlugin from "embla-carousel-autoplay";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AlbumMedia {
   id: string;
@@ -23,7 +24,7 @@ export const FeaturedAlbum = () => {
     queryKey: ["featured-photos"],
     queryFn: async () => {
       try {
-        console.log('Fetching featured photos...');
+        console.log('Fetching featured photos from album_media...');
         
         const { data, error } = await supabase
           .from("album_media")
@@ -33,9 +34,9 @@ export const FeaturedAlbum = () => {
           `)
           .eq("is_approved", true)
           .eq("type", "image")
-          .eq("is_featured", true)  // Added this filter
+          .eq("is_featured", true)
           .order("created_at", { ascending: false })
-          .limit(6);  // Using photosCount from settings
+          .limit(6);
 
         if (error) {
           console.error("Error fetching featured photos:", error);
@@ -49,9 +50,24 @@ export const FeaturedAlbum = () => {
         return [];
       }
     },
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 10 * 60 * 1000 // Keep in garbage collection for 10 minutes
   });
 
-  if (isLoading || !photos?.length) {
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-4xl mx-auto space-y-4">
+        <h2 className="text-2xl font-semibold text-center mb-6">Moments partagés</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-48 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!photos?.length) {
     return null;
   }
 
