@@ -9,10 +9,11 @@ import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -22,6 +23,7 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
@@ -153,9 +155,35 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
-  const handleSponsorClick = (childId: string) => {
-    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
-    navigate(`/become-sponsor?child=${childId}`);
+  const handleSponsorClick = async (childId: string) => {
+    if (!user) {
+      // If user is not logged in, redirect to become-sponsor form
+      navigate(`/become-sponsor?child=${childId}`);
+      return;
+    }
+
+    try {
+      // Create sponsorship request directly
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          sponsor_id: user.id,
+          status: 'pending',
+          is_long_term: true,
+          terms_accepted: true,
+          email: user.email,
+          full_name: user.name
+        });
+
+      if (error) throw error;
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+      navigate('/sponsor-dashboard');
+    } catch (error) {
+      console.error('Error creating sponsorship request:', error);
+      toast.error("Une erreur est survenue lors de la demande de parrainage");
+    }
   };
 
   return (
