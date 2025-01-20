@@ -75,38 +75,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     return acc;
   }, {} as Record<string, any[]>) || {};
 
-  useEffect(() => {
-    loadFaceDetectionModels()
-      .then(() => {
-        setModelsLoaded(true);
-        console.log('Face detection models loaded successfully');
-      })
-      .catch(error => {
-        console.error('Failed to load face detection models:', error);
-        toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger les modèles de détection faciale",
-        });
-      });
-  }, []);
-
-  const handleImageLoad = async (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
-    const imgElement = event.target as HTMLImageElement;
-    
-    if (processedImages.current.has(photoUrl) || !modelsLoaded) return;
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      const objectPosition = await detectFace(imgElement);
-      imgElement.style.objectPosition = objectPosition;
-      processedImages.current.add(photoUrl);
-    } catch (error) {
-      console.error('Error processing image:', error);
-      imgElement.style.objectPosition = '50% 20%';
-    }
-  };
-
   const formatAge = (birthDate: string) => {
     if (!birthDate) return "Âge non disponible";
     
@@ -154,7 +122,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   }
 
   const handleSponsorClick = (childId: string) => {
-    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
     navigate(`/become-sponsor?child=${childId}`);
   };
 
@@ -190,7 +157,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   src={child.photo_url || "/placeholder.svg"}
                   alt={child.name}
                   className="w-full h-full object-cover transition-transform duration-300"
-                  onLoad={(e) => handleImageLoad(e, child.photo_url)}
+                  style={{ objectPosition: '50% 20%' }}
                   crossOrigin="anonymous"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
@@ -222,6 +189,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                             src={photo.url}
                             alt="Photo album"
                             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                            style={{ objectPosition: '50% 20%' }}
                           />
                         </div>
                       ))}
