@@ -6,14 +6,7 @@ import { Toaster } from "./components/ui/toaster";
 import { AppRoutes } from "./components/Routes/AppRoutes";
 import "./App.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: false
-    }
-  }
-});
+const queryClient = new QueryClient();
 
 function App() {
   return (
