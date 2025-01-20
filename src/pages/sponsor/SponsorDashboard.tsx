@@ -15,7 +15,7 @@ import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Minus, Image } from "lucide-react";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -34,7 +34,9 @@ const SponsorDashboard = () => {
       plannedVisits: "Visites Planifiées",
       noAccess: "Accès non autorisé",
       addChild: "Ajouter un enfant",
-      removeChild: "Retirer un enfant"
+      removeChild: "Retirer un enfant",
+      totalPhotos: "Total des photos",
+      photos: "photos"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -45,15 +47,27 @@ const SponsorDashboard = () => {
       plannedVisits: "Visitas Planificadas",
       noAccess: "Acceso no autorizado",
       addChild: "Agregar un niño",
-      removeChild: "Retirar un niño"
+      removeChild: "Retirar un niño",
+      totalPhotos: "Total de fotos",
+      photos: "fotos"
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
-  if (!user?.id) {
-    return <div className="text-center p-4">{t.noAccess}</div>;
-  }
+  const { data: photoCount } = useQuery({
+    queryKey: ['sponsor-photos-count', user?.id],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('album_media')
+        .select('*', { count: 'exact', head: true })
+        .eq('sponsor_id', user?.id);
+
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!user?.id
+  });
 
   const { data: sponsoredChildren, isLoading: childrenLoading } = useQuery({
     queryKey: ["sponsored-children", user.id],
@@ -85,19 +99,8 @@ const SponsorDashboard = () => {
     enabled: !!user.id
   });
 
-  const handleAddPhoto = (childId: string) => {
-    setSelectedChild(childId);
-  };
-
-  const handleUploadSuccess = async () => {
-    if (selectedChild) {
-      toast.success(t.uploadSuccess);
-      setSelectedChild(null);
-    }
-  };
-
-  if (childrenLoading) {
-    return <div className="text-center p-4">{t.loading}</div>;
+  if (!user?.id) {
+    return <div className="text-center p-4">{t.noAccess}</div>;
   }
 
   return (
@@ -105,58 +108,65 @@ const SponsorDashboard = () => {
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
-          <Button 
-            onClick={() => setShowAddDialog(true)}
-            className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            {t.addChild}
-          </Button>
+          <div className="flex items-center gap-4">
+            <Card className="p-4 flex items-center gap-2 bg-cuba-warmBeige/10">
+              <Image className="w-5 h-5 text-cuba-warmGray" />
+              <span className="font-medium">{photoCount} {t.photos}</span>
+            </Card>
+            <Button 
+              onClick={() => setShowAddDialog(true)}
+              className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              {t.addChild}
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-6">
-          {user?.id && <ContributionStats sponsorId={user.id} />}
-
-          {sponsoredChildren?.map((sponsorship) => {
+        {childrenLoading ? (
+          <div className="text-center p-4">{t.loading}</div>
+        ) : (
+          sponsoredChildren?.map((sponsorship) => {
             const child = sponsorship.children;
             if (!child) return null;
 
             return (
               <div key={child.id} className="space-y-6">
-                <SponsoredChildCard
-                  child={child}
-                  sponsorshipId={sponsorship.id}
-                  onAddPhoto={() => handleAddPhoto(child.id)}
-                  onAddTestimonial={() => {}}
-                />
-
-                {selectedChild === child.id && (
-                  <Card className="p-4">
-                    <PhotoUploader
-                      childId={selectedChild}
-                      onUploadSuccess={handleUploadSuccess}
-                    />
-                  </Card>
-                )}
+                <div className="relative">
+                  <SponsoredChildCard
+                    child={child}
+                    sponsorshipId={sponsorship.id}
+                    onAddPhoto={() => handleAddPhoto(child.id)}
+                  />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={() => handleRemoveChild(child.id)}
+                  >
+                    <Minus className="w-4 h-4 mr-2" />
+                    {t.removeChild}
+                  </Button>
+                </div>
               </div>
             );
-          })}
+          })
+        )}
 
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              {t.plannedVisits}
-            </h3>
-            <div className="space-y-6">
-              <PlannedVisitForm 
-                sponsorId={user.id} 
-                onVisitPlanned={() => {}} 
-              />
-              <VisitsSection visits={[]} onVisitDeleted={() => {}} />
-            </div>
-          </Card>
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">
+            {t.plannedVisits}
+          </h3>
+          <div className="space-y-6">
+            <PlannedVisitForm 
+              sponsorId={user.id} 
+              onVisitPlanned={() => {}} 
+            />
+            <VisitsSection visits={[]} onVisitDeleted={() => {}} />
+          </div>
+        </Card>
 
-          <SponsorshipTimeline events={[]} />
-        </div>
+        <SponsorshipTimeline events={[]} />
       </div>
 
       <AssignSponsorDialog
