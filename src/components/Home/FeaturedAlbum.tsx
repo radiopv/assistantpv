@@ -106,15 +106,15 @@ export const FeaturedAlbum = () => {
         return [];
       }
     },
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 10 * 60 * 1000 // Keep in garbage collection for 10 minutes
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000
   });
 
   if (isLoading) {
     return (
-      <div className="w-full max-w-4xl mx-auto space-y-4">
-        <h2 className="text-2xl font-semibold text-center mb-6">Moments partagés</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="w-full max-w-4xl mx-auto py-2">
+        <h2 className="text-2xl font-semibold text-center mb-4">Moments partagés</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-48 w-full" />
           ))}
@@ -128,8 +128,8 @@ export const FeaturedAlbum = () => {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4">
-      <h2 className="text-2xl font-semibold text-center mb-6">Moments partagés</h2>
+    <div className="w-full max-w-4xl mx-auto py-2">
+      <h2 className="text-2xl font-semibold text-center mb-4">Moments partagés</h2>
       <Carousel
         opts={{
           align: "start",
