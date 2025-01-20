@@ -3,6 +3,10 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { convertJsonToNeeds } from "@/types/needs";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface ChildCardProps {
   child: any;
@@ -12,6 +16,39 @@ interface ChildCardProps {
 
 export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSponsorClick = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      navigate(`/become-sponsor?child=${child.id}`);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: child.id,
+          full_name: user.name,
+          email: user.email,
+          status: 'pending',
+          sponsor_id: user.id,
+          is_long_term: true,
+          terms_accepted: true
+        });
+
+      if (error) throw error;
+
+      toast.success(t("sponsorshipRequestSent", { name: child.name }));
+      onSponsorClick(child);
+    } catch (error) {
+      console.error('Error submitting sponsorship request:', error);
+      toast.error(t("errorSendingRequest"));
+    }
+  };
 
   return (
     <Card className="overflow-hidden h-full flex flex-col">
@@ -54,7 +91,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           </Button>
           {!child.is_sponsored && (
             <Button
-              onClick={() => onSponsorClick(child)}
+              onClick={handleSponsorClick}
               className="w-full"
             >
               {t("sponsor")}
