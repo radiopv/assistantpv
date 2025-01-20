@@ -4,7 +4,8 @@ import { AuthProvider } from "./components/Auth/AuthProvider";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { Toaster } from "./components/ui/toaster";
 import { AppRoutes } from "./components/Routes/AppRoutes";
-import { Sonner } from "./components/ui/sonner";
+import { ThemeProvider } from "next-themes";
+import { Toaster as SonnerToaster } from "./components/ui/sonner";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -21,15 +22,17 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <LanguageProvider>
-          <AuthProvider>
-            <div className="relative">
-              <AppRoutes />
-              <Toaster />
-              <Sonner />
-            </div>
-          </AuthProvider>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <div className="relative">
+                <AppRoutes />
+                <Toaster />
+                <SonnerToaster />
+              </div>
+            </AuthProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );
