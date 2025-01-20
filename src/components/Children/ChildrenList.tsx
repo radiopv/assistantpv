@@ -233,4 +233,3 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
     </div>
   );
 };
-

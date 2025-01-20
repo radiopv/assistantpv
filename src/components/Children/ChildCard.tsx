@@ -20,12 +20,19 @@ interface ChildCardProps {
     needs?: any;
     age?: number;
   };
-  sponsorshipId: string;
-  onAddPhoto: () => void;
+  sponsorshipId?: string;
+  onAddPhoto?: () => void;
+  onViewProfile?: (id: string) => void;
+  onSponsorClick?: (child: any) => void;
 }
 
-// Export both as default and named export for backward compatibility
-export const ChildCard = ({ child, sponsorshipId, onAddPhoto }: ChildCardProps) => {
+export const ChildCard = ({ 
+  child, 
+  sponsorshipId, 
+  onAddPhoto,
+  onViewProfile,
+  onSponsorClick 
+}: ChildCardProps) => {
   const [showTermination, setShowTermination] = useState(false);
   const { t } = useLanguage();
 
@@ -60,20 +67,40 @@ export const ChildCard = ({ child, sponsorshipId, onAddPhoto }: ChildCardProps) 
       <CardHeader child={child} />
       <ChildInfo description={child.description} needs={child.needs} />
       <PhotoGallery photos={albumPhotos} childName={child.name} />
-      <ActionButtons
-        onAddPhoto={onAddPhoto}
-        childId={child.id}
-        sponsorshipId={sponsorshipId}
-        onShowTermination={() => setShowTermination(true)}
-      />
+      {sponsorshipId && onAddPhoto && (
+        <ActionButtons
+          onAddPhoto={onAddPhoto}
+          childId={child.id}
+          sponsorshipId={sponsorshipId}
+          onShowTermination={() => setShowTermination(true)}
+        />
+      )}
+      {onViewProfile && (
+        <button
+          onClick={() => onViewProfile(child.id)}
+          className="w-full mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+        >
+          {t("viewProfile")}
+        </button>
+      )}
+      {onSponsorClick && (
+        <button
+          onClick={() => onSponsorClick(child)}
+          className="w-full mt-2 px-4 py-2 bg-secondary text-white rounded hover:bg-secondary/90"
+        >
+          {t("sponsor")}
+        </button>
+      )}
 
-      <TerminationDialog
-        isOpen={showTermination}
-        onClose={() => setShowTermination(false)}
-        sponsorshipId={sponsorshipId}
-        childName={child.name}
-        onTerminationComplete={() => window.location.reload()}
-      />
+      {showTermination && sponsorshipId && (
+        <TerminationDialog
+          isOpen={showTermination}
+          onClose={() => setShowTermination(false)}
+          sponsorshipId={sponsorshipId}
+          childName={child.name}
+          onTerminationComplete={() => window.location.reload()}
+        />
+      )}
     </Card>
   );
 };
