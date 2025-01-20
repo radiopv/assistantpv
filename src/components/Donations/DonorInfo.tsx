@@ -14,18 +14,31 @@ export const DonorInfo = ({ donors }: DonorInfoProps) => {
     fr: {
       donorInfo: "Information du donateur",
       anonymous: "Anonyme",
-      noDonors: "Aucun donateur enregistré"
+      noDonors: "Aucun donateur enregistré",
+      error: "Impossible de charger les informations du donateur"
     },
     es: {
       donorInfo: "Información del donante",
       anonymous: "Anónimo",
-      noDonors: "Sin donantes registrados"
+      noDonors: "Sin donantes registrados",
+      error: "No se pudieron cargar los datos del donante"
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
-  if (!donors || donors.length === 0) {
+  // Handle case where donors is undefined or null
+  if (!donors) {
+    return (
+      <div className="space-y-2">
+        <h4 className="font-medium">{t.donorInfo}</h4>
+        <p className="text-sm text-gray-600">{t.noDonors}</p>
+      </div>
+    );
+  }
+
+  // Handle empty donors array
+  if (donors.length === 0) {
     return (
       <div className="space-y-2">
         <h4 className="font-medium">{t.donorInfo}</h4>
