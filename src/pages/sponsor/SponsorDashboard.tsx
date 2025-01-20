@@ -15,7 +15,7 @@ import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
-import { Plus, Minus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -33,8 +33,7 @@ const SponsorDashboard = () => {
       uploadError: "Erreur lors de l'ajout de la photo",
       plannedVisits: "Visites Planifiées",
       noAccess: "Accès non autorisé",
-      addChild: "Ajouter un enfant",
-      removeChild: "Retirer un enfant"
+      addChild: "Ajouter un enfant"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -44,8 +43,7 @@ const SponsorDashboard = () => {
       uploadError: "Error al agregar la foto",
       plannedVisits: "Visitas Planificadas",
       noAccess: "Acceso no autorizado",
-      addChild: "Agregar un niño",
-      removeChild: "Retirar un niño"
+      addChild: "Agregar un niño"
     }
   };
 
@@ -80,6 +78,7 @@ const SponsorDashboard = () => {
         .eq('status', 'active');
 
       if (error) throw error;
+      console.log("Sponsorship data found:", sponsorships);
       return sponsorships || [];
     },
     enabled: !!user.id

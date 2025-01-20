@@ -1,136 +1,170 @@
 import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { Eye, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { convertJsonToNeeds } from "@/types/needs";
+import { Camera, FileEdit, Clock } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { SponsoredChildCardProps } from "@/integrations/supabase/types/sponsorship";
+
+interface SponsoredChildCardProps {
+  child: {
+    id: string;
+    name: string;
+    photo_url: string | null;
+    city: string | null;
+    birth_date: string;
+    description: string | null;
+    story: string | null;
+    needs: any;
+    age: number;
+  };
+  sponsorshipId: string;
+  onAddPhoto: () => void;
+  onAddTestimonial: () => void;
+}
 
 export const SponsoredChildCard = ({ child, sponsorshipId, onAddPhoto }: SponsoredChildCardProps) => {
-  const navigate = useNavigate();
-  const [selectedSponsorship, setSelectedSponsorship] = useState<{id: string, childName: string} | null>(null);
-  const [removalReason, setRemovalReason] = useState("");
+  const [showTestimonialDialog, setShowTestimonialDialog] = useState(false);
+  const [testimonialContent, setTestimonialContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAddChildOpen, setIsAddChildOpen] = useState(false);
-  const [availableChildren, setAvailableChildren] = useState<any[]>([]);
 
-  const viewAlbum = () => {
-    navigate(`/children/${child.id}/album`);
-  };
-
-  const openRemovalDialog = () => {
-    if (sponsorshipId) {
-      setSelectedSponsorship({ id: sponsorshipId, childName: child.name });
-    }
-  };
-
-  const closeRemovalDialog = () => {
-    setSelectedSponsorship(null);
-    setRemovalReason("");
-  };
-
-  const requestRemoveChild = async () => {
-    if (!selectedSponsorship) return;
-    if (!removalReason.trim()) {
-      toast.error("Veuillez indiquer la raison du retrait");
+  const handleSubmitTestimonial = async () => {
+    if (!testimonialContent.trim()) {
+      toast.error("Le témoignage ne peut pas être vide");
       return;
     }
 
     setIsSubmitting(true);
     try {
       const { error } = await supabase
-        .from('child_assignment_requests')
+        .from('temoignage')
         .insert({
-          sponsorship_id: selectedSponsorship.id,
-          type: 'remove',
-          status: 'pending',
-          notes: removalReason
+          content: testimonialContent,
+          child_id: child.id,
+          is_approved: false
         });
 
       if (error) throw error;
-      toast.success("Demande de retrait envoyée avec succès. Un administrateur examinera votre demande.");
-      closeRemovalDialog();
+
+      toast.success("Témoignage envoyé avec succès");
+      setShowTestimonialDialog(false);
+      setTestimonialContent("");
     } catch (error) {
-      console.error("Error requesting child removal:", error);
-      toast.error("Erreur lors de la demande de retrait");
+      console.error("Error submitting testimonial:", error);
+      toast.error("Erreur lors de l'envoi du témoignage");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Card className="p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={child.photo_url || ""} alt={child.name} />
-            <AvatarFallback>{child.name.charAt(0)}</AvatarFallback>
-          </Avatar>
+    <Card className="overflow-hidden">
+      <div className="aspect-video relative rounded-lg overflow-hidden">
+        <img
+          src={child.photo_url || "/placeholder.svg"}
+          alt={child.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <div className="p-6 space-y-4">
+        <div className="flex justify-between items-start">
           <div>
-            <p className="text-sm font-medium">{child.name}</p>
-            <p className="text-xs text-gray-500">{child.city}</p>
+            <h3 className="text-xl font-semibold">{child.name}</h3>
+            <p className="text-sm text-gray-600">{child.age} ans</p>
+            {child.city && <p className="text-sm text-gray-600">{child.city}</p>}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+
+        {child.description && (
+          <div>
+            <h4 className="font-medium mb-2">Description</h4>
+            <p className="text-sm text-gray-600">{child.description}</p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <h4 className="font-medium">Besoins</h4>
+          <ScrollArea className="h-[100px]">
+            <div className="space-y-2">
+              {convertJsonToNeeds(child.needs).map((need: any, index: number) => (
+                <div
+                  key={`${need.category}-${index}`}
+                  className={`p-2 rounded-lg ${
+                    need.is_urgent
+                      ? "bg-red-50 border border-red-200"
+                      : "bg-gray-50 border border-gray-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <Badge
+                      variant={need.is_urgent ? "destructive" : "secondary"}
+                    >
+                      {need.category}
+                      {need.is_urgent && " (!)"} 
+                    </Badge>
+                  </div>
+                  {need.description && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {need.description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+
+        <div className="flex flex-col space-y-2">
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={viewAlbum}
+            variant="outline"
+            className="w-full flex items-center justify-center gap-2"
+            onClick={onAddPhoto}
           >
-            <Eye className="h-4 w-4" />
+            <Camera className="w-4 h-4" />
+            Ajouter une photo
           </Button>
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={openRemovalDialog}
-            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+            variant="outline"
+            className="w-full flex items-center justify-center gap-2"
+            onClick={() => setShowTestimonialDialog(true)}
           >
-            <Minus className="h-4 w-4" />
+            <FileEdit className="w-4 h-4" />
+            Ajouter un témoignage
           </Button>
         </div>
       </div>
 
-      <Dialog open={!!selectedSponsorship} onOpenChange={() => selectedSponsorship && closeRemovalDialog()}>
+      <Dialog open={showTestimonialDialog} onOpenChange={setShowTestimonialDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Demande de retrait de parrainage</DialogTitle>
+            <DialogTitle>Nouveau témoignage pour {child.name}</DialogTitle>
             <DialogDescription>
-              Veuillez indiquer la raison pour laquelle vous souhaitez arrêter le parrainage de {selectedSponsorship?.childName}
+              Partagez votre expérience et vos sentiments
             </DialogDescription>
           </DialogHeader>
           <Textarea
-            placeholder="Raison du retrait..."
-            value={removalReason}
-            onChange={(e) => setRemovalReason(e.target.value)}
-            className="min-h-[100px]"
+            placeholder="Écrivez votre témoignage ici..."
+            value={testimonialContent}
+            onChange={(e) => setTestimonialContent(e.target.value)}
+            className="min-h-[150px]"
           />
-          <DialogFooter className="flex gap-2">
-            <Button variant="outline" onClick={closeRemovalDialog}>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowTestimonialDialog(false)}
+            >
               Annuler
             </Button>
             <Button 
-              onClick={requestRemoveChild}
-              disabled={isSubmitting || !removalReason.trim()}
+              onClick={handleSubmitTestimonial}
+              disabled={isSubmitting || !testimonialContent.trim()}
             >
-              {isSubmitting ? "Envoi..." : "Envoyer la demande"}
+              {isSubmitting ? "Envoi..." : "Envoyer"}
             </Button>
           </DialogFooter>
         </DialogContent>
