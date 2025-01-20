@@ -99,19 +99,29 @@ const SponsorDashboard = () => {
     return <div className="text-center p-4">{t.loading}</div>;
   }
 
+  if (!user?.id) {
+    return <div className="text-center p-4">{t.noAccess}</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-4">
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
           <Button 
-            onClick={() => setShowAddDialog(true)}
+            onClick={() => setShowAddDialog(!showAddDialog)}
             className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90"
           >
             <Plus className="w-4 h-4 mr-2" />
             {t.addChild}
           </Button>
         </div>
+
+        <AssignSponsorDialog
+          sponsorId={user.id}
+          isOpen={showAddDialog}
+          onClose={() => setShowAddDialog(false)}
+        />
 
         <div className="grid gap-6">
           {user?.id && <ContributionStats sponsorId={user.id} />}
@@ -157,12 +167,6 @@ const SponsorDashboard = () => {
           <SponsorshipTimeline events={[]} />
         </div>
       </div>
-
-      <AssignSponsorDialog
-        sponsorId={user.id}
-        isOpen={showAddDialog}
-        onClose={() => setShowAddDialog(false)}
-      />
     </div>
   );
 };
