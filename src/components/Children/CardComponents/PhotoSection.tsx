@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ProfilePhotoSection } from "../ProfilePhoto/ProfilePhotoSection";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface PhotoSectionProps {
   child: any;
