@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload } from "lucide-react";
 import { ImageCropDialog } from "@/components/ImageCrop/ImageCropDialog";
@@ -17,7 +17,6 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
   const [uploading, setUploading] = useState(false);
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
-  const { toast } = useToast();
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -26,6 +25,11 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
       }
 
       const file = event.target.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Le fichier ne doit pas dépasser 5MB");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedImage(reader.result as string);
@@ -34,6 +38,7 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("Erreur lors de la lecture du fichier:", error);
+      toast.error("Erreur lors de la lecture du fichier");
     }
   };
 
@@ -45,7 +50,6 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
       const fileExt = "jpg";
       const filePath = `${childId}/${Math.random()}.${fileExt}`;
 
-      // Si une photo existe déjà, on la supprime
       if (currentPhotoUrl) {
         const oldPath = currentPhotoUrl.split('/').pop();
         if (oldPath) {
@@ -55,7 +59,6 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         }
       }
 
-      console.log("1. Upload de la photo...");
       const { error: uploadError } = await supabase.storage
         .from('children-photos')
         .upload(filePath, croppedImageBlob);
@@ -65,82 +68,16 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         throw uploadError;
       }
 
-      console.log("2. Récupération URL publique...");
       const { data: { publicUrl } } = supabase.storage
         .from('children-photos')
         .getPublicUrl(filePath);
 
-      console.log("3. Récupération des données de l'enfant...");
-      const { data: child, error: childError } = await supabase
-        .from('children')
-        .select(`
-          name,
-          sponsorships!inner(
-            sponsor_id,
-            status
-          )
-        `)
-        .eq('id', childId)
-        .single();
-
-      if (childError) {
-        console.error("Erreur données enfant:", childError);
-        throw childError;
-      }
-
-      console.log("4. Données enfant récupérées:", child);
-
-      if (child?.sponsorships && child.sponsorships.length > 0) {
-        const activeSponsors = child.sponsorships.filter(s => s.status === 'active');
-        console.log("5. Parrains actifs trouvés:", activeSponsors);
-
-        for (const sponsorship of activeSponsors) {
-          console.log("6. Création notification pour:", sponsorship.sponsor_id);
-          
-          const notificationData = {
-            recipient_id: sponsorship.sponsor_id,
-            type: 'photo_added',
-            title: `Nouvelle photo de ${child.name}`,
-            content: `Une nouvelle photo a été ajoutée à l'album de ${child.name}.`,
-            link: `/children/${childId}/album`,
-            is_read: false
-          };
-
-          console.log("7. Données notification:", notificationData);
-
-          const { data: notification, error: notifError } = await supabase
-            .from('notifications')
-            .insert(notificationData)
-            .select()
-            .single();
-
-          if (notifError) {
-            console.error("Erreur création notification:", {
-              error: notifError,
-              data: notificationData
-            });
-            throw notifError;
-          }
-
-          console.log("8. Notification créée:", notification);
-        }
-      } else {
-        console.log("Aucun parrainage actif trouvé");
-      }
-
       onUploadComplete(publicUrl);
 
-      toast({
-        title: "Photo mise à jour",
-        description: "La photo de profil a été mise à jour avec succès.",
-      });
-    } catch (error: any) {
+      toast.success("Photo mise à jour avec succès");
+    } catch (error) {
       console.error("Erreur complète:", error);
-      toast({
-        variant: "destructive",
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'upload de la photo.",
-      });
+      toast.error("Une erreur est survenue lors de l'upload de la photo");
     } finally {
       setUploading(false);
     }
@@ -166,6 +103,7 @@ export const ProfilePhotoUpload = ({ childId, currentPhotoUrl, onUploadComplete 
         onClose={() => setCropDialogOpen(false)}
         imageSrc={selectedImage}
         onCropComplete={handleUpload}
+        aspectRatio={1}
       />
     </div>
   );
