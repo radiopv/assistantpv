@@ -15,4 +15,3 @@ export const InfoCard = () => (
       </div>
     </div>
   </Card>
-);
