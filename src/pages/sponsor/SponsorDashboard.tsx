@@ -17,16 +17,16 @@ import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitFo
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
 import { Plus, Minus, ChevronDown, ChevronUp, HelpCircle } from "lucide-react";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -34,7 +34,6 @@ const SponsorDashboard = () => {
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [isListOpen, setIsListOpen] = useState(false);
 
   const translations = {
     fr: {
@@ -140,11 +139,27 @@ const SponsorDashboard = () => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    Demande d'ajout d'enfant à mon espace parrain
-                    <HelpCircle className="w-4 h-4 ml-1" />
-                  </Button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 flex items-center gap-2">
+                        <Plus className="w-4 h-4" />
+                        Demande d'ajout d'enfant à mon espace parrain
+                        <HelpCircle className="w-4 h-4 ml-1" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-72">
+                      <div className="p-2">
+                        <Button
+                          onClick={() => setShowAddDialog(true)}
+                          className="w-full text-left flex items-center px-4 py-2 hover:bg-gray-100 rounded-md"
+                          variant="ghost"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Choisir un enfant
+                        </Button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs">
                   <p>Cette option vous permet d'ajouter un enfant que vous parrainez déjà mais qui n'apparaît pas dans votre espace parrain.</p>
