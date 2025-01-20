@@ -7,6 +7,7 @@ import { HelpCircle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
@@ -86,16 +87,18 @@ export const ChildrenList = ({
                 >
                   {t("select")}
                 </Button>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <HelpCircle className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-[300px] p-3">
-                    <p>Ce bouton permet soit d'ajouter un enfant que vous parrainez déjà mais qui n'apparaît pas dans votre liste, soit de faire une nouvelle demande de parrainage.</p>
-                  </TooltipContent>
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <HelpCircle className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-[300px] p-3">
+                      <p>Ce bouton permet soit d'ajouter un enfant que vous parrainez déjà mais qui n'apparaît pas dans votre liste, soit de faire une nouvelle demande de parrainage.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
           </Card>
