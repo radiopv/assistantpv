@@ -1,32 +1,27 @@
 export const spanishTranslations = {
-  welcomeMessage: "Bienvenido",
-  inviteFriends: "Invitar amigos",
-  viewAlbum: "Ver álbum",
-  noPhotos: "No hay fotos disponibles",
-  loading: "Cargando...",
-  error: "Error al cargar las fotos",
-  sponsorshipRequestSent: "Su solicitud de patrocinio para {{name}} ha sido enviada con éxito",
-  errorSendingRequest: "Se produjo un error al enviar su solicitud de patrocinio",
-  
-  // Navigation
-  home: "Inicio",
   dashboard: "Panel de control",
-  children: "Niños",
-  donations: "Donaciones",
-  settings: "Configuración",
-  profile: "Perfil",
-  
-  // Actions
-  sponsor: "Apadrinar",
-  viewProfile: "Ver perfil",
-  
-  // Messages
-  errorLoadingChildren: "Error al cargar los niños",
-  noChildrenFound: "No se encontraron niños",
-  
-  // Views
-  gridView: "Vista cuadrícula",
-  tableView: "Vista tabla"
-} as const;
-
-export type SpanishTranslations = typeof spanishTranslations;
+  bonjour: "Hola",
+  utilisateur: "usuario",
+  recentMessages: "Mensajes recientes",
+  checkMessages: "Consulte sus mensajes y notificaciones en la pestaña Mensajes.",
+  upcomingBirthdays: "Próximos cumpleaños",
+  today: "¡Hoy!",
+  days: "días",
+  willCelebrate: "Cumplirá",
+  years: "años",
+  validation: "Validación",
+  history: "Historial",
+  sponsorships: "Patrocinios",
+  photos: "Fotos",
+  testimonials: "Testimonios",
+  childRequests: "Solicitudes de niños",
+  endSponsorship: "Finalizar el patrocinio",
+  endingSponsorshipFor: "Está a punto de finalizar el patrocinio de",
+  selectEndDate: "Por favor seleccione una fecha de finalización",
+  provideReason: "Por favor indique una razón",
+  terminationReason: "Razón de la finalización",
+  sponsorshipTerminated: "El patrocinio ha sido terminado con éxito",
+  errorTerminatingSponsorship: "Ha ocurrido un error al finalizar el patrocinio",
+  confirmTermination: "Confirmar finalización",
+  processing: "Procesando...",
+};

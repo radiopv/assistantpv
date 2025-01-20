@@ -19,6 +19,7 @@ const PublicDonations = () => {
   const { data: donations, isLoading, error, refetch } = useQuery({
     queryKey: ['public-donations'],
     queryFn: async () => {
+      // First get donations
       const { data: donationsData, error: donationsError } = await supabase
         .from('donations')
         .select('*')
@@ -27,25 +28,23 @@ const PublicDonations = () => {
       
       if (donationsError) throw donationsError;
 
+      // Then get donors for each donation
       const donationsWithDonors = await Promise.all(
         donationsData.map(async (donation) => {
           const { data: donors } = await supabase
             .from('donors')
             .select('name, is_anonymous')
-            .eq('donation_id', donation.id)
-            .single();
+            .eq('donation_id', donation.id);
 
           return {
             ...donation,
-            donors: donors ? [donors] : []
+            donors: donors || []
           };
         })
       );
       
       return donationsWithDonors;
-    },
-    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    gcTime: 10 * 60 * 1000 // Keep data in cache for 10 minutes
+    }
   });
 
   const filteredDonations = donations?.filter(donation => {

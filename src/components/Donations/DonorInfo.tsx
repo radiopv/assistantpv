@@ -1,5 +1,4 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { toast } from "sonner";
 
 interface DonorInfoProps {
   donors: Array<{
@@ -15,14 +14,12 @@ export const DonorInfo = ({ donors }: DonorInfoProps) => {
     fr: {
       donorInfo: "Information du donateur",
       anonymous: "Anonyme",
-      noDonors: "Aucun donateur enregistré",
-      error: "Erreur lors du chargement des donateurs"
+      noDonors: "Aucun donateur enregistré"
     },
     es: {
       donorInfo: "Información del donante",
       anonymous: "Anónimo",
-      noDonors: "Sin donantes registrados",
-      error: "Error al cargar los donantes"
+      noDonors: "Sin donantes registrados"
     }
   };
 

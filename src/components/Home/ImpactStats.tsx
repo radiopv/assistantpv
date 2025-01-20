@@ -46,24 +46,24 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
   });
 
   return (
-    <section className="py-8 bg-gradient-to-r from-[#0072BB] to-[#F9B612]">
+    <section className="py-16 bg-gradient-to-r from-[#0072BB] to-[#F9B612]">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-bold text-center text-white mb-8">
+        <h2 className="text-4xl font-bold text-center text-white mb-12">
           {settings.title || "Notre Impact"}
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {settings.showTotalSponsors && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-center p-4 bg-white/10 backdrop-blur-md rounded-lg"
+              className="text-center p-6 bg-white/10 backdrop-blur-md rounded-lg"
             >
-              <p className="text-4xl font-bold text-white mb-2">
+              <p className="text-5xl font-bold text-white mb-2">
                 {stats?.totalSponsors || 0}
               </p>
-              <p className="text-lg text-white/90">Parrains Actifs</p>
+              <p className="text-xl text-white/90">Parrains Actifs</p>
             </motion.div>
           )}
 
@@ -72,12 +72,12 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-center p-4 bg-white/10 backdrop-blur-md rounded-lg"
+              className="text-center p-6 bg-white/10 backdrop-blur-md rounded-lg"
             >
-              <p className="text-4xl font-bold text-white mb-2">
+              <p className="text-5xl font-bold text-white mb-2">
                 {stats?.totalChildren || 0}
               </p>
-              <p className="text-lg text-white/90">Enfants Parrainés</p>
+              <p className="text-xl text-white/90">Enfants Parrainés</p>
             </motion.div>
           )}
 
@@ -86,12 +86,12 @@ export const ImpactStats = ({ settings }: ImpactStatsProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-center p-4 bg-white/10 backdrop-blur-md rounded-lg"
+              className="text-center p-6 bg-white/10 backdrop-blur-md rounded-lg"
             >
-              <p className="text-4xl font-bold text-white mb-2">
+              <p className="text-5xl font-bold text-white mb-2">
                 {stats?.totalPeopleHelped || 0}
               </p>
-              <p className="text-lg text-white/90">Personnes Aidées</p>
+              <p className="text-xl text-white/90">Personnes Aidées</p>
             </motion.div>
           )}
         </div>

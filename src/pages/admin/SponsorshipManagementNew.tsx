@@ -2,17 +2,16 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserMinus, ChevronDown, ChevronUp } from "lucide-react";
+import { UserPlus, UserMinus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export default function SponsorshipManagementNew() {
-  const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
-  const [expandedSponsors, setExpandedSponsors] = useState<string[]>([]);
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const isMobile = useIsMobile();
 
@@ -41,31 +40,6 @@ export default function SponsorshipManagementNew() {
     },
   });
 
-  const { data: availableChildren = [], isLoading: isLoadingChildren } = useQuery({
-    queryKey: ["available-children"],
-    queryFn: async () => {
-      const { data: childrenData, error } = await supabase
-        .from("children")
-        .select(`
-          id,
-          name,
-          age,
-          birth_date,
-          city,
-          comments,
-          created_at,
-          description,
-          end_date,
-          gender
-        `)
-        .eq("is_sponsored", false)
-        .order("name");
-
-      if (error) throw error;
-      return childrenData;
-    },
-  });
-
   const handleRemoveChild = async (sponsorshipId: string) => {
     try {
       const { error } = await supabase
@@ -86,45 +60,13 @@ export default function SponsorshipManagementNew() {
     }
   };
 
-  const handleAddChild = async (sponsorId: string, childId: string) => {
-    try {
-      const { error } = await supabase
-        .from("sponsorships")
-        .insert({
-          sponsor_id: sponsorId,
-          child_id: childId,
-          status: "active",
-          start_date: new Date().toISOString()
-        });
-
-      if (error) throw error;
-
-      // Update child status
-      const { error: updateError } = await supabase
-        .from("children")
-        .update({ is_sponsored: true })
-        .eq("id", childId);
-
-      if (updateError) throw updateError;
-
-      toast.success("Enfant ajouté avec succès");
-      refetch();
-    } catch (error) {
-      console.error("Error adding child:", error);
-      toast.error("Erreur lors de l'ajout de l'enfant");
-    }
+  const handleAddChild = (childId: string) => {
+    setSelectedChildId(childId);
+    setIsDialogOpen(true);
   };
 
   const toggleSortOrder = () => {
     setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
-  };
-
-  const toggleSponsorExpanded = (sponsorId: string) => {
-    setExpandedSponsors(prev => 
-      prev.includes(sponsorId) 
-        ? prev.filter(id => id !== sponsorId)
-        : [...prev, sponsorId]
-    );
   };
 
   const sortedSponsors = sponsorsData ? [...sponsorsData].sort((a, b) => {
@@ -156,12 +98,9 @@ export default function SponsorshipManagementNew() {
     {
       header: "Enfants parrainés",
       cell: ({ row }: { row: { original: any } }) => {
-        const sponsorId = row.original.id;
         const sponsorships = row.original.sponsorships || [];
-        const isExpanded = expandedSponsors.includes(sponsorId);
-
         return (
-          <div className="space-y-2">
+          <div className="space-y-1">
             {sponsorships.map((s: any) => (
               <div key={s.id} className={`flex ${isMobile ? 'flex-col' : 'items-center justify-between'} gap-2`}>
                 <span className="text-sm">{s.children?.name}</span>
@@ -179,59 +118,30 @@ export default function SponsorshipManagementNew() {
                 </Button>
               </div>
             ))}
-            <Collapsible
-              open={isExpanded}
-              onOpenChange={() => toggleSponsorExpanded(sponsorId)}
-            >
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`w-full flex items-center justify-between ${isMobile ? 'mt-2' : ''}`}
-                >
-                  <span className="flex items-center">
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Ajouter un enfant
-                  </span>
-                  {isExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )}
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <ScrollArea className="h-[300px] mt-4">
-                  <div className="space-y-2">
-                    {availableChildren.map((child: any) => (
-                      <Card 
-                        key={child.id} 
-                        className="p-4 cursor-pointer hover:bg-gray-50"
-                        onClick={() => handleAddChild(sponsorId, child.id)}
-                      >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <p className="font-medium">{child.name}</p>
-                            <p className="text-sm text-gray-500">{child.city}</p>
-                            {child.age && (
-                              <p className="text-sm text-gray-500">{child.age} ans</p>
-                            )}
-                          </div>
-                          <UserPlus className="h-4 w-4 text-gray-400" />
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </CollapsibleContent>
-            </Collapsible>
           </div>
+        );
+      },
+    },
+    {
+      header: "Actions",
+      cell: ({ row }: { row: { original: any } }) => {
+        return (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleAddChild(row.original.id)}
+            className={`h-8 ${isMobile ? 'w-full' : 'px-2 lg:px-3'}`}
+          >
+            <UserPlus className="h-4 w-4" />
+            <span className="ml-2">Ajouter un enfant</span>
+          </Button>
         );
       },
     },
   ];
 
   if (isMobile) {
+    // Supprimer la colonne email sur mobile
     columns.splice(1, 1);
   }
 
@@ -245,6 +155,18 @@ export default function SponsorshipManagementNew() {
           data={sortedSponsors}
         />
       </div>
+
+      {selectedChildId && (
+        <AssignSponsorDialog
+          childId={selectedChildId}
+          isOpen={isDialogOpen}
+          onClose={() => {
+            setIsDialogOpen(false);
+            setSelectedChildId(null);
+            refetch();
+          }}
+        />
+      )}
     </Card>
   );
 }

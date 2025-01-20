@@ -52,6 +52,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-autoplay": "^8.5.2",
     "embla-carousel-react": "^8.5.2",
+    "face-api.js": "^0.22.2",
     "framer-motion": "^11.16.1",
     "i18next": "^23.10.1",
     "lucide-react": "^0.462.0",

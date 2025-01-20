@@ -1,12 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Calendar, Info, AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Need, convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
 import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
@@ -20,6 +22,8 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
+  const processedImages = useRef<Set<string>>(new Set());
+  const [modelsLoaded, setModelsLoaded] = useState(false);
 
   // Sort children by needs urgency and waiting time
   const sortedChildren = useMemo(() => {
@@ -71,6 +75,38 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     return acc;
   }, {} as Record<string, any[]>) || {};
 
+  useEffect(() => {
+    loadFaceDetectionModels()
+      .then(() => {
+        setModelsLoaded(true);
+        console.log('Face detection models loaded successfully');
+      })
+      .catch(error => {
+        console.error('Failed to load face detection models:', error);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger les modèles de détection faciale",
+        });
+      });
+  }, []);
+
+  const handleImageLoad = async (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
+    const imgElement = event.target as HTMLImageElement;
+    
+    if (processedImages.current.has(photoUrl) || !modelsLoaded) return;
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const objectPosition = await detectFace(imgElement);
+      imgElement.style.objectPosition = objectPosition;
+      processedImages.current.add(photoUrl);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      imgElement.style.objectPosition = '50% 20%';
+    }
+  };
+
   const formatAge = (birthDate: string) => {
     if (!birthDate) return "Âge non disponible";
     
@@ -118,6 +154,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   }
 
   const handleSponsorClick = (childId: string) => {
+    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
     navigate(`/become-sponsor?child=${childId}`);
   };
 
@@ -152,7 +189,8 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 <img
                   src={child.photo_url || "/placeholder.svg"}
                   alt={child.name}
-                  className="w-full h-full object-cover object-center transition-transform duration-300"
+                  className="w-full h-full object-cover transition-transform duration-300"
+                  onLoad={(e) => handleImageLoad(e, child.photo_url)}
                   crossOrigin="anonymous"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
