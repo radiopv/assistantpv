@@ -21,7 +21,7 @@ const Statistics = () => {
           console.error('Supabase error:', error);
           throw error;
         }
-        return data as SponsorshipConversionStats;
+        return data as unknown as SponsorshipConversionStats;
       } catch (error) {
         console.error('Error fetching sponsorship stats:', error);
         toast.error("Erreur lors du chargement des statistiques de parrainage");
@@ -41,7 +41,7 @@ const Statistics = () => {
           console.error('Supabase error:', error);
           throw error;
         }
-        return data as UserEngagementStatsType;
+        return data as unknown as UserEngagementStatsType;
       } catch (error) {
         console.error('Error fetching engagement stats:', error);
         toast.error("Erreur lors du chargement des statistiques d'engagement");
