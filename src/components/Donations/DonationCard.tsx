@@ -28,13 +28,18 @@ export const DonationCard = ({ donation, onDelete, canDelete = false, isPublicVi
 
   return (
     <>
-      <Card className="overflow-hidden rounded-none md:rounded-lg break-words">
+      <Card className="overflow-hidden rounded-none md:rounded-lg break-words bg-white/80 backdrop-blur-sm border border-cuba-warmBeige hover:shadow-lg transition-all duration-300">
         <DonationCardHeader 
           donation={donation} 
           onDeleteClick={canDelete ? () => setShowDeleteDialog(true) : undefined}
         />
         <div className="p-4 md:p-6 space-y-6">
-          <DonationDetails donation={donation} />
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <DonationDetails donation={donation} />
+              <DonorInfo donors={donation.donors || []} />
+            </div>
+          </div>
           <DonationCardMedia
             donationId={donation.id}
             donationPhotos={donation.photos || []}
@@ -42,7 +47,6 @@ export const DonationCard = ({ donation, onDelete, canDelete = false, isPublicVi
             onPhotosUpdate={() => {}}
             isPublicView={isPublicView}
           />
-          <DonorInfo donors={donation.donors || []} />
         </div>
       </Card>
 

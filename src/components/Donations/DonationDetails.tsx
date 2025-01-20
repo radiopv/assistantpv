@@ -25,7 +25,7 @@ export const DonationDetails = ({ donation }: DonationDetailsProps) => {
   const t = translations[language as keyof typeof translations];
 
   return (
-    <div className="grid grid-cols-2 gap-6">
+    <div className="grid grid-cols-2 gap-6 bg-white/50 rounded-lg p-4 mb-4">
       <div className="flex items-center space-x-2">
         <MapPin className="h-4 w-4 text-cuba-turquoise" />
         <div>
