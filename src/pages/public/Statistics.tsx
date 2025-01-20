@@ -12,7 +12,7 @@ import { SponsorshipConversionStats } from "@/types/statistics";
 const Statistics = () => {
   const { t } = useLanguage();
 
-  const { data: sponsorshipStats, isLoading: isLoadingSponsorship, error: sponsorshipError } = useQuery({
+  const { data: sponsorshipStats, isLoading: isLoadingSponsorship, error: sponsorshipError } = useQuery<SponsorshipConversionStats>({
     queryKey: ['sponsorship-stats'],
     queryFn: async () => {
       try {
