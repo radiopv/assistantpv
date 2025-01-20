@@ -6,30 +6,20 @@ import { Toaster } from "./components/ui/toaster";
 import { AppRoutes } from "./components/Routes/AppRoutes";
 import "./App.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      retry: false,
-      staleTime: 5 * 60 * 1000,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
         <LanguageProvider>
           <AuthProvider>
             <AppRoutes />
             <Toaster />
           </AuthProvider>
         </LanguageProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
