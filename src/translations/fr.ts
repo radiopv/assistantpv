@@ -1,4 +1,4 @@
-export const fr = {
+export const frenchTranslations = {
   // Auth
   login: "Connexion",
   logout: "Déconnexion",
@@ -101,3 +101,5 @@ export const fr = {
   finish: "Terminer",
   close: "Fermer"
 } as const;
+
+export type FrenchTranslations = typeof frenchTranslations;

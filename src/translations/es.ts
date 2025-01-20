@@ -1,4 +1,4 @@
-export const es = {
+export const spanishTranslations = {
   welcomeMessage: "Bienvenido",
   inviteFriends: "Invitar amigos",
   viewAlbum: "Ver álbum",
@@ -8,3 +8,5 @@ export const es = {
   sponsorshipRequestSent: "Su solicitud de patrocinio para {{name}} ha sido enviada con éxito",
   errorSendingRequest: "Se produjo un error al enviar su solicitud de patrocinio",
 } as const;
+
+export type SpanishTranslations = typeof spanishTranslations;
