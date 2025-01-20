@@ -20,35 +20,26 @@ export const TranslationAndAnalysisExample = () => {
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Entrez du texte à traduire..."
+            placeholder="La traduction automatique est temporairement désactivée..."
             className="min-h-[100px]"
+            disabled
           />
-          <AutoTranslate
-            text={text}
-            targetLanguage="fr"
-            onTranslationComplete={(translatedText) => setText(translatedText)}
-          />
+          <Button 
+            variant="outline" 
+            disabled
+            className="opacity-50"
+          >
+            Traduction temporairement désactivée
+          </Button>
         </div>
       </Card>
 
       {/* Section Analyse de Photos */}
       <Card className="p-6">
         <h2 className="text-xl font-semibold mb-4">Analyse de Photos</h2>
-        {imageUrl ? (
-          <PhotoUpload
-            imageUrl={imageUrl}
-            description={description}
-            onDescriptionChange={setDescription}
-          />
-        ) : (
-          <div className="text-center p-8 border-2 border-dashed rounded-lg">
-            <p>Téléchargez une photo pour l'analyser</p>
-          </div>
-        )}
-        <PhotoAnalysis
-          imageUrl={imageUrl}
-          onAnalysisComplete={(analysis) => setDescription(analysis)}
-        />
+        <div className="text-center p-8 border-2 border-dashed rounded-lg">
+          <p>L'analyse de photos est temporairement désactivée</p>
+        </div>
       </Card>
     </div>
   );
