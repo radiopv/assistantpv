@@ -12,7 +12,6 @@ import {
   LogIn,
   LogOut,
   HelpCircle,
-  BarChart,
   Menu,
   ChevronDown,
   ChevronUp,
@@ -42,11 +41,6 @@ const publicLinks = [
     href: "/public-donations",
     label: "Donations",
     icon: Gift,
-  },
-  {
-    href: "/statistics",
-    label: "Statistiques",
-    icon: BarChart,
   },
   {
     href: "/faq",
