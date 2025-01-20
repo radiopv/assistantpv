@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { toast } from "sonner";
-import { SponsorshipConversionStats, UserEngagementStats as UserEngagementStatsType } from "@/types/statistics";
+import { SponsorshipConversionStats } from "@/types/statistics";
 
 const Statistics = () => {
   const { t } = useLanguage();
@@ -21,38 +21,28 @@ const Statistics = () => {
           console.error('Supabase error:', error);
           throw error;
         }
-        return data as unknown as SponsorshipConversionStats;
+        return {
+          active_sponsorships: data?.active_sponsorships || 0,
+          pending_sponsorships: data?.pending_sponsorships || 0,
+          total_donations: data?.total_donations || 0,
+          total_children: data?.total_children || 0,
+          sponsored_children: data?.sponsored_children || 0,
+          total_sponsors: data?.total_sponsors || 0,
+          total_people_helped: data?.total_people_helped || 0,
+          conversion_rate: data?.conversion_rate || 0,
+          avg_duration_days: data?.avg_duration_days || 0
+        } as SponsorshipConversionStats;
       } catch (error) {
         console.error('Error fetching sponsorship stats:', error);
         toast.error("Erreur lors du chargement des statistiques de parrainage");
         throw error;
       }
     },
-    retry: 1,
+    retry: 2,
     staleTime: 30000
   });
 
-  const { data: engagementStats, isLoading: isLoadingEngagement, error: engagementError } = useQuery({
-    queryKey: ['engagement-stats'],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase.rpc('get_user_engagement_stats');
-        if (error) {
-          console.error('Supabase error:', error);
-          throw error;
-        }
-        return data as unknown as UserEngagementStatsType;
-      } catch (error) {
-        console.error('Error fetching engagement stats:', error);
-        toast.error("Erreur lors du chargement des statistiques d'engagement");
-        throw error;
-      }
-    },
-    retry: 1,
-    staleTime: 30000
-  });
-
-  if (sponsorshipError || engagementError) {
+  if (sponsorshipError) {
     return (
       <div className="container mx-auto p-4">
         <Card className="p-6 bg-destructive/10">
@@ -62,11 +52,10 @@ const Statistics = () => {
     );
   }
 
-  if (isLoadingSponsorship || isLoadingEngagement) {
+  if (isLoadingSponsorship) {
     return <Skeleton className="h-[400px] w-full" />;
   }
 
-  // Provide default values if stats is undefined
   const safeStats = {
     active_sponsorships: sponsorshipStats?.active_sponsorships || 0,
     pending_sponsorships: sponsorshipStats?.pending_sponsorships || 0,
@@ -74,14 +63,12 @@ const Statistics = () => {
     total_children: sponsorshipStats?.total_children || 0,
     sponsored_children: sponsorshipStats?.sponsored_children || 0,
     total_sponsors: sponsorshipStats?.total_sponsors || 0,
-    total_people_helped: sponsorshipStats?.total_people_helped || 0,
-    monthly_trends: sponsorshipStats?.monthly_trends || [],
-    city_distribution: sponsorshipStats?.city_distribution || []
+    total_people_helped: sponsorshipStats?.total_people_helped || 0
   };
 
   const sponsorshipRate = safeStats.total_children > 0 
     ? (safeStats.sponsored_children / safeStats.total_children * 100).toFixed(1) 
-    : 0;
+    : "0";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite">
