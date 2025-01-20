@@ -8,7 +8,7 @@ import {
 import AutoplayPlugin from "embla-carousel-autoplay";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface AlbumMedia {
+interface FeaturedMedia {
   id: string;
   url: string;
   title: string | null;
@@ -17,36 +17,90 @@ interface AlbumMedia {
   } | null;
   sponsor_id: string | null;
   created_at: string;
+  source_table?: string;
 }
 
 export const FeaturedAlbum = () => {
-  const { data: photos, isLoading } = useQuery({
-    queryKey: ["featured-photos"],
+  const { data: featuredMedia, isLoading } = useQuery({
+    queryKey: ["featured-media"],
     queryFn: async () => {
       try {
-        console.log('Fetching featured photos from album_media...');
+        console.log('Fetching featured media from multiple sources...');
         
-        const { data, error } = await supabase
+        // Fetch from album_media
+        const { data: albumMedia, error: albumError } = await supabase
           .from("album_media")
           .select(`
-            *,
-            children (name)
+            id,
+            url,
+            title,
+            children (name),
+            sponsor_id,
+            created_at
           `)
           .eq("is_approved", true)
           .eq("type", "image")
           .eq("is_featured", true)
-          .order("created_at", { ascending: false })
-          .limit(6);
+          .order("created_at", { ascending: false });
 
-        if (error) {
-          console.error("Error fetching featured photos:", error);
-          throw error;
-        }
+        if (albumError) throw albumError;
 
-        console.log('Photos récupérées:', data);
-        return data as AlbumMedia[];
+        // Fetch from donation_photos
+        const { data: donationPhotos, error: donationError } = await supabase
+          .from("donation_photos")
+          .select(`
+            id,
+            url,
+            title,
+            created_at
+          `)
+          .eq("is_featured", true)
+          .order("created_at", { ascending: false });
+
+        if (donationError) throw donationError;
+
+        // Fetch from community_highlights
+        const { data: highlights, error: highlightsError } = await supabase
+          .from("community_highlights")
+          .select(`
+            id,
+            image_url,
+            title,
+            created_at
+          `)
+          .eq("is_featured", true)
+          .order("created_at", { ascending: false });
+
+        if (highlightsError) throw highlightsError;
+
+        // Combine and format all media
+        const allMedia: FeaturedMedia[] = [
+          ...(albumMedia?.map(item => ({
+            ...item,
+            source_table: 'album_media'
+          })) || []),
+          ...(donationPhotos?.map(item => ({
+            id: item.id,
+            url: item.url,
+            title: item.title,
+            created_at: item.created_at,
+            source_table: 'donation_photos'
+          })) || []),
+          ...(highlights?.map(item => ({
+            id: item.id,
+            url: item.image_url,
+            title: item.title,
+            created_at: item.created_at,
+            source_table: 'community_highlights'
+          })) || [])
+        ].sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+
+        console.log('Combined featured media:', allMedia);
+        return allMedia;
       } catch (error) {
-        console.error("Error in featured photos query:", error);
+        console.error("Error fetching featured media:", error);
         return [];
       }
     },
@@ -67,7 +121,7 @@ export const FeaturedAlbum = () => {
     );
   }
 
-  if (!photos?.length) {
+  if (!featuredMedia?.length) {
     return null;
   }
 
@@ -87,17 +141,17 @@ export const FeaturedAlbum = () => {
         className="w-full"
       >
         <CarouselContent>
-          {photos.map((photo) => (
-            <CarouselItem key={photo.id} className="md:basis-1/3 lg:basis-1/4">
+          {featuredMedia.map((media) => (
+            <CarouselItem key={media.id} className="md:basis-1/3 lg:basis-1/4">
               <div className="relative aspect-square overflow-hidden rounded-lg">
                 <img
-                  src={photo.url}
-                  alt={photo.title || "Photo souvenir"}
+                  src={media.url}
+                  alt={media.title || "Photo souvenir"}
                   className="object-cover w-full h-full hover:scale-110 transition-transform duration-300"
                 />
-                {photo.children?.name && (
+                {media.children?.name && (
                   <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/50 text-white">
-                    <p className="text-xs truncate">{photo.children.name}</p>
+                    <p className="text-xs truncate">{media.children.name}</p>
                   </div>
                 )}
               </div>
