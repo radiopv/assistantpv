@@ -39,6 +39,7 @@ export const AssignSponsorDialog = ({
           description,
           end_date,
           gender,
+          photo_url,
           sponsorships:sponsorships(
             id,
             sponsor:sponsors(
