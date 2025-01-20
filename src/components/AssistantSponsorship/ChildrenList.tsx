@@ -3,6 +3,12 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { differenceInYears, parseISO } from "date-fns";
+import { HelpCircle } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ChildrenListProps {
   children: Array<{
@@ -72,13 +78,25 @@ export const ChildrenList = ({
                   <span className="text-sm text-gray-500 ml-2">• {child.city}</span>
                 </div>
               </div>
-              <Button 
-                onClick={() => onSelectChild(child.id)}
-                size="sm"
-                variant="outline"
-              >
-                {t("select")}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button 
+                  onClick={() => onSelectChild(child.id)}
+                  size="sm"
+                  variant="outline"
+                >
+                  {t("select")}
+                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <HelpCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-[300px] p-3">
+                    <p>Ce bouton permet soit d'ajouter un enfant que vous parrainez déjà mais qui n'apparaît pas dans votre liste, soit de faire une nouvelle demande de parrainage.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           </Card>
         ))}
