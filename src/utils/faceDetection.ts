@@ -3,7 +3,8 @@ import * as faceapi from 'face-api.js';
 let modelsLoaded = false;
 let loadingPromise: Promise<void> | null = null;
 
-const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+// Update to use local model URLs
+const MODEL_URL = '/models';
 
 export async function loadFaceDetectionModels() {
   if (modelsLoaded) return;
@@ -11,7 +12,7 @@ export async function loadFaceDetectionModels() {
   // If already loading, return the existing promise
   if (loadingPromise) return loadingPromise;
   
-  console.log('Starting to load face detection models from CDN...');
+  console.log('Starting to load face detection models locally...');
   
   loadingPromise = Promise.all([
     faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
@@ -19,7 +20,7 @@ export async function loadFaceDetectionModels() {
     faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
   ]).then(() => {
     modelsLoaded = true;
-    console.log('Face detection models loaded successfully from CDN');
+    console.log('Face detection models loaded successfully from local files');
   }).catch((error) => {
     console.error('Detailed error loading face detection models:', error);
     modelsLoaded = false;
@@ -33,7 +34,7 @@ export async function loadFaceDetectionModels() {
 export async function detectFace(imgElement: HTMLImageElement): Promise<string> {
   try {
     if (!modelsLoaded) {
-      console.log('Models not loaded, attempting to load from CDN...');
+      console.log('Models not loaded, attempting to load locally...');
       await loadFaceDetectionModels();
     }
 
