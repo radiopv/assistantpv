@@ -55,7 +55,7 @@ const ChildCard = ({
   const handleSponsorClick = async () => {
     try {
       // Logic to send sponsorship request
-      toast(t("sponsorshipRequestSent", { name: child.name }));
+      toast(t("sponsorshipRequestSent"));
     } catch (error) {
       console.error("Error sending sponsorship request:", error);
       toast(t("sponsorshipRequestError"));
