@@ -3,11 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatisticsData } from "@/types/dashboard";
 import { Progress } from "@/components/ui/progress";
 import { SponsorshipStats } from "@/components/Dashboard/AdvancedStats/SponsorshipStats";
 import { UserEngagementStats } from "@/components/Dashboard/AdvancedStats/UserEngagementStats";
 import { toast } from "sonner";
+import { SponsorshipConversionStats, UserEngagementStats as UserEngagementStatsType } from "@/types/statistics";
 
 const Statistics = () => {
   const { t } = useLanguage();
@@ -17,15 +17,19 @@ const Statistics = () => {
     queryFn: async () => {
       try {
         const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
-        if (error) throw error;
-        return data as unknown as SponsorshipConversionStats;
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
+        return data as SponsorshipConversionStats;
       } catch (error) {
         console.error('Error fetching sponsorship stats:', error);
         toast.error("Erreur lors du chargement des statistiques de parrainage");
         throw error;
       }
     },
-    retry: 1
+    retry: 1,
+    staleTime: 30000
   });
 
   const { data: engagementStats, isLoading: isLoadingEngagement, error: engagementError } = useQuery({
@@ -33,15 +37,19 @@ const Statistics = () => {
     queryFn: async () => {
       try {
         const { data, error } = await supabase.rpc('get_user_engagement_stats');
-        if (error) throw error;
-        return data as unknown as UserEngagementStats;
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
+        return data as UserEngagementStatsType;
       } catch (error) {
         console.error('Error fetching engagement stats:', error);
         toast.error("Erreur lors du chargement des statistiques d'engagement");
         throw error;
       }
     },
-    retry: 1
+    retry: 1,
+    staleTime: 30000
   });
 
   if (sponsorshipError || engagementError) {
