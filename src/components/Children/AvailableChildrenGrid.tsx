@@ -1,16 +1,14 @@
-import { Card } from "@/components/ui/card";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, MapPin, Calendar, Info, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Need, convertJsonToNeeds } from "@/types/needs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { convertJsonToNeeds } from "@/types/needs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState, useMemo } from "react";
-import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
-import { toast } from "@/components/ui/use-toast";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Camera, FileEdit, Clock } from "lucide-react";
+import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,8 +20,7 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
-  const processedImages = useRef<Set<string>>(new Set());
-  const [modelsLoaded, setModelsLoaded] = useState(false);
+  const [processedImages, setProcessedImages] = useState<Set<string>>(new Set());
 
   // Sort children by needs urgency and waiting time
   const sortedChildren = useMemo(() => {
@@ -75,38 +72,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     return acc;
   }, {} as Record<string, any[]>) || {};
 
-  useEffect(() => {
-    loadFaceDetectionModels()
-      .then(() => {
-        setModelsLoaded(true);
-        console.log('Face detection models loaded successfully');
-      })
-      .catch(error => {
-        console.error('Failed to load face detection models:', error);
-        toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger les modèles de détection faciale",
-        });
-      });
-  }, []);
-
-  const handleImageLoad = async (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
-    const imgElement = event.target as HTMLImageElement;
-    
-    if (processedImages.current.has(photoUrl) || !modelsLoaded) return;
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      const objectPosition = await detectFace(imgElement);
-      imgElement.style.objectPosition = objectPosition;
-      processedImages.current.add(photoUrl);
-    } catch (error) {
-      console.error('Error processing image:', error);
-      imgElement.style.objectPosition = '50% 20%';
-    }
-  };
-
   const formatAge = (birthDate: string) => {
     if (!birthDate) return "Âge non disponible";
     
@@ -131,6 +96,16 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     }
   };
 
+  const handleImageLoad = (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
+    const imgElement = event.target as HTMLImageElement;
+    
+    if (processedImages.has(photoUrl)) return;
+    
+    // Set default face-focused positioning
+    imgElement.style.objectPosition = '50% 20%';
+    setProcessedImages(prev => new Set([...prev, photoUrl]));
+  };
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
@@ -145,135 +120,27 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
-  if (!children.length) {
-    return (
-      <div className="text-center py-6 text-gray-500">
-        Aucun enfant disponible
-      </div>
-    );
-  }
-
-  const handleSponsorClick = (childId: string) => {
-    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
-    navigate(`/become-sponsor?child=${childId}`);
-  };
-
   return (
-    <div className="space-y-6">
-      {/* Information Card */}
-      <Card className="p-4 bg-orange-50 border-orange-200">
-        <div className="flex gap-3">
-          <AlertTriangle className="h-5 w-5 text-orange-500 flex-shrink-0 mt-1" />
-          <div className="space-y-2">
-            <h3 className="font-semibold text-orange-800">À propos du parrainage</h3>
-            <p className="text-orange-700 text-sm">
-              Le parrainage n'est pas un engagement à long terme. Vous pouvez y mettre fin à tout moment depuis votre espace parrain, 
-              sans justification nécessaire. Les enfants affichés en premier sont ceux qui ont les besoins les plus urgents 
-              ou qui attendent un parrain depuis le plus longtemps.
-            </p>
-          </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sortedChildren.map((child) => (
+        <div key={child.id} className="relative group">
+          <img
+            src={child.photo_url || "/placeholder.svg"}
+            alt={child.name}
+            className="w-full aspect-square object-cover rounded-lg"
+            onLoad={(e) => handleImageLoad(e, child.photo_url)}
+            crossOrigin="anonymous"
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={() => onSponsorClick(child.id)}
+          >
+            <Clock className="w-4 h-4" />
+          </Button>
         </div>
-      </Card>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-0 sm:px-4">
-        {sortedChildren.map((child) => {
-          const childNeeds = convertJsonToNeeds(child.needs);
-          const hasUrgentNeeds = Array.isArray(childNeeds) && childNeeds.some(need => need.is_urgent);
-
-          return (
-            <Card 
-              key={child.id} 
-              className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
-            >
-              <div className="aspect-video relative">
-                <img
-                  src={child.photo_url || "/placeholder.svg"}
-                  alt={child.name}
-                  className="w-full h-full object-cover transition-transform duration-300"
-                  onLoad={(e) => handleImageLoad(e, child.photo_url)}
-                  crossOrigin="anonymous"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
-                {hasUrgentNeeds && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-semibold animate-pulse">
-                    BESOIN URGENT
-                  </div>
-                )}
-                <div className="absolute bottom-0 left-0 right-0 p-2">
-                  <h3 className="text-lg font-title font-bold text-white truncate">{child.name}</h3>
-                  <div className="flex items-center gap-1 text-sm text-white/90">
-                    <Calendar className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{formatAge(child.birth_date)}</span>
-                    <MapPin className="w-4 h-4 flex-shrink-0 ml-1" />
-                    <span className="truncate">{child.city}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-2 space-y-2">
-                {/* Album Photos Grid */}
-                {photosByChild[child.id]?.length > 0 && (
-                  <div className="bg-white/80 rounded-lg p-2">
-                    <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
-                    <div className="grid grid-cols-3 gap-2">
-                      {photosByChild[child.id].slice(0, 3).map((photo: any) => (
-                        <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
-                          <img
-                            src={photo.url}
-                            alt="Photo album"
-                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {child.description && (
-                  <div className="bg-white/80 rounded-lg p-2">
-                    <p className="text-sm text-gray-700 line-clamp-2">{child.description}</p>
-                  </div>
-                )}
-
-                {Array.isArray(childNeeds) && childNeeds.length > 0 && (
-                  <div className="space-y-1">
-                    {childNeeds.map((need: Need, index: number) => (
-                      <div
-                        key={`${need.category}-${index}`}
-                        className={`p-2 rounded-lg ${
-                          need.is_urgent
-                            ? "bg-[#ea384c] text-white font-medium"
-                            : "bg-orange-50 border border-orange-200 text-orange-700"
-                        }`}
-                      >
-                        <div className="text-sm font-medium truncate">
-                          {need.category}
-                          {need.is_urgent && " (!)"} 
-                        </div>
-                        {need.description && (
-                          <p className="text-sm opacity-90 mt-1">{need.description}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <Button 
-                  onClick={() => handleSponsorClick(child.id)}
-                  className={`w-full ${
-                    hasUrgentNeeds
-                      ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
-                      : "bg-gradient-to-r from-cuba-coral to-cuba-gold hover:from-cuba-coral/90 hover:to-cuba-gold/90 text-white"
-                  } group-hover:scale-105 transition-all duration-300`}
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Parrainer
-                </Button>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+      ))}
     </div>
   );
 };
