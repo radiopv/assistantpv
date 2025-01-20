@@ -157,7 +157,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   src={child.photo_url || "/placeholder.svg"}
                   alt={child.name}
                   className="w-full h-full object-cover transition-transform duration-300"
-                  style={{ objectPosition: '50% 20%' }}
+                  style={{ objectPosition: '50% 30%' }}
                   crossOrigin="anonymous"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
@@ -189,7 +189,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                             src={photo.url}
                             alt="Photo album"
                             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                            style={{ objectPosition: '50% 20%' }}
+                            style={{ objectPosition: '50% 30%' }}
                           />
                         </div>
                       ))}
