@@ -26,7 +26,7 @@ export const PhotoCard = ({
 
   return (
     <Card 
-      className="relative group overflow-hidden aspect-[3/2] cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg"
+      className="relative group overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onPhotoClick(photo.url)}

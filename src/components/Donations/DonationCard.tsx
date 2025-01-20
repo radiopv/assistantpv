@@ -33,13 +33,13 @@ export const DonationCard = ({
 
   return (
     <>
-      <Card className="overflow-hidden rounded-none md:rounded-lg break-words bg-white/80 backdrop-blur-sm border border-cuba-warmBeige hover:shadow-lg transition-all duration-300">
+      <Card className="overflow-hidden rounded-lg break-words bg-white/80 backdrop-blur-sm border border-cuba-warmBeige hover:shadow-lg transition-all duration-300">
         <DonationCardHeader 
           donation={donation} 
           onDeleteClick={canDelete ? () => setShowDeleteDialog(true) : undefined}
         />
-        <div className="p-4 md:p-6 space-y-6">
-          <div className="flex flex-col md:flex-row gap-4">
+        <div className="p-6 space-y-8">
+          <div className="flex flex-col gap-6">
             <div className="flex-1">
               <DonationDetails donation={donation} />
               <DonorInfo donors={donation.donors || []} />
