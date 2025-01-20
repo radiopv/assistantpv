@@ -52,7 +52,9 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       
       if (error) throw error;
       return data;
-    }
+    },
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    cacheTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
   });
 
   const handleAssignSponsor = (childId: string) => {
@@ -121,7 +123,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         {!isMobile && (
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full">
