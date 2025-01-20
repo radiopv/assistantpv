@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +10,6 @@ import { Camera, FileEdit, Clock } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 interface SponsoredChildCardProps {
   child: {
@@ -31,6 +32,22 @@ export const SponsoredChildCard = ({ child, sponsorshipId, onAddPhoto }: Sponsor
   const [showTestimonialDialog, setShowTestimonialDialog] = useState(false);
   const [testimonialContent, setTestimonialContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch album photos
+  const { data: albumPhotos } = useQuery({
+    queryKey: ['album-photos', child.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .eq('child_id', child.id)
+        .eq('type', 'image')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   const handleSubmitTestimonial = async () => {
     if (!testimonialContent.trim()) {
@@ -63,13 +80,36 @@ export const SponsoredChildCard = ({ child, sponsorshipId, onAddPhoto }: Sponsor
 
   return (
     <Card className="overflow-hidden">
-      <div className="aspect-video relative rounded-lg overflow-hidden">
+      {/* Photo principale avec taille réduite */}
+      <div className="aspect-[4/3] relative rounded-lg overflow-hidden">
         <img
           src={child.photo_url || "/placeholder.svg"}
           alt={child.name}
           className="w-full h-full object-cover"
         />
       </div>
+
+      {/* Album photos */}
+      {albumPhotos && albumPhotos.length > 0 && (
+        <div className="p-4 border-t">
+          <h4 className="text-sm font-medium mb-2">Album photos</h4>
+          <div className="grid grid-cols-4 gap-2">
+            {albumPhotos.map((photo) => (
+              <div 
+                key={photo.id} 
+                className="aspect-square rounded-lg overflow-hidden"
+                onClick={() => window.open(photo.url, '_blank')}
+              >
+                <img
+                  src={photo.url}
+                  alt={`Photo de ${child.name}`}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="p-6 space-y-4">
         <div className="flex justify-between items-start">
