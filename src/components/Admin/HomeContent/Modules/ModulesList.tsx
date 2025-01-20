@@ -143,27 +143,67 @@ export const ModulesList = ({
 }: ModulesListProps) => {
   const queryClient = useQueryClient();
 
+  const { data: fetchedModules, isLoading, error } = useQuery({
+    queryKey: ['homepage-modules'],
+    queryFn: async () => {
+      console.log('Fetching homepage modules...'); 
+
+      try {
+        const { data, error } = await supabase
+          .from('homepage_modules')
+          .select('*')
+          .eq('is_active', true)
+          .order('order_index');
+
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
+
+        if (!data) {
+          console.log('No data returned from Supabase');
+          return [];
+        }
+
+        console.log('Raw data from Supabase:', data);
+        return data;
+      } catch (err) {
+        console.error('Failed to fetch modules:', err);
+        toast.error("Erreur lors du chargement des modules", {
+          description: "Veuillez réessayer plus tard"
+        });
+        throw err;
+      }
+    },
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+  });
+
   const updateModuleStatus = useMutation({
     mutationFn: async ({ id, isActive }: { id: string; isActive: boolean }) => {
-      const { error } = await supabase
-        .from('homepage_modules')
-        .update({ is_active: isActive })
-        .eq('id', id);
+      try {
+        const { error } = await supabase
+          .from('homepage_modules')
+          .update({ is_active: isActive })
+          .eq('id', id);
 
-      if (error) throw error;
-      return { id, isActive };
+        if (error) throw error;
+        return { id, isActive };
+      } catch (err) {
+        console.error('Error updating module status:', err);
+        throw err;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['homepage-modules'] });
-      toast("Module mis à jour", {
+      toast.success("Module mis à jour", {
         description: "Le statut du module a été mis à jour avec succès"
       });
     },
     onError: (error) => {
       console.error('Error updating module status:', error);
-      toast("Erreur", {
-        description: "Une erreur est survenue lors de la mise à jour du statut",
-        style: { backgroundColor: 'red', color: 'white' }
+      toast.error("Erreur", {
+        description: "Une erreur est survenue lors de la mise à jour du statut"
       });
     }
   });
@@ -173,44 +213,27 @@ export const ModulesList = ({
     onToggle(moduleId, currentState);
   };
 
-  if (!modules || modules.length === 0) {
+  if (isLoading) {
     return (
       <Card className="p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Modules de la page d'accueil</h2>
-          <Button variant="outline" onClick={onNewModuleClick} className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Ajouter un module
-          </Button>
+          <h2 className="text-xl font-semibold">Chargement des modules...</h2>
         </div>
-        
-        <div className="space-y-6">
-          <div className="text-center py-4 text-gray-500 mb-8">
-            Voici les modules disponibles que vous pouvez ajouter à votre page d'accueil :
-          </div>
+      </Card>
+    );
+  }
 
-          <div className="space-y-4">
-            {moduleExamples.map((example) => (
-              <div key={example.id} className="p-4 border rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                <h3 className="font-medium text-lg mb-2">{example.name}</h3>
-                <p className="text-sm text-gray-600 mb-2">Type: {example.module_type}</p>
-                <div className="bg-white p-3 rounded-md">
-                  <p className="text-sm font-medium mb-2">Paramètres disponibles :</p>
-                  <pre className="text-xs bg-gray-50 p-2 rounded overflow-x-auto">
-                    {JSON.stringify(example.settings, null, 2)}
-                  </pre>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
-            <Button onClick={onNewModuleClick} className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Créer mon premier module
-            </Button>
-          </div>
+  if (error) {
+    return (
+      <Card className="p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold text-red-600">
+            Erreur lors du chargement des modules
+          </h2>
         </div>
+        <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['homepage-modules'] })}>
+          Réessayer
+        </Button>
       </Card>
     );
   }
