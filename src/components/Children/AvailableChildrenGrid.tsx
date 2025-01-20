@@ -9,12 +9,10 @@ import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { formatAge } from "@/utils/dates";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -24,7 +22,6 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
@@ -86,7 +83,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       })
       .catch(error => {
         console.error('Failed to load face detection models:', error);
-        toast.error("Impossible de charger les modèles de détection faciale");
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger les modèles de détection faciale",
+        });
       });
   }, []);
 
@@ -103,6 +104,30 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     } catch (error) {
       console.error('Error processing image:', error);
       imgElement.style.objectPosition = '50% 20%';
+    }
+  };
+
+  const formatAge = (birthDate: string) => {
+    if (!birthDate) return "Âge non disponible";
+    
+    try {
+      const today = new Date();
+      const birth = parseISO(birthDate);
+      const years = differenceInYears(today, birth);
+      const months = differenceInMonths(today, birth) % 12;
+      
+      if (years === 0) {
+        return `${months} mois`;
+      }
+      
+      if (months === 0) {
+        return `${years} ans`;
+      }
+      
+      return `${years} ans ${months} mois`;
+    } catch (error) {
+      console.error('Error calculating age:', error);
+      return "Âge non disponible";
     }
   };
 
@@ -127,6 +152,11 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       </div>
     );
   }
+
+  const handleSponsorClick = (childId: string) => {
+    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
+    navigate(`/become-sponsor?child=${childId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -229,7 +259,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 )}
 
                 <Button 
-                  onClick={() => onSponsorClick(child.id)}
+                  onClick={() => handleSponsorClick(child.id)}
                   className={`w-full ${
                     hasUrgentNeeds
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
