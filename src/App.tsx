@@ -4,6 +4,7 @@ import { AuthProvider } from "./components/Auth/AuthProvider";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { Toaster } from "./components/ui/toaster";
 import { AppRoutes } from "./components/Routes/AppRoutes";
+import { Sonner } from "./components/ui/sonner";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -11,6 +12,7 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       retry: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
@@ -21,8 +23,11 @@ function App() {
       <BrowserRouter>
         <LanguageProvider>
           <AuthProvider>
-            <AppRoutes />
-            <Toaster />
+            <div className="relative">
+              <AppRoutes />
+              <Toaster />
+              <Sonner />
+            </div>
           </AuthProvider>
         </LanguageProvider>
       </BrowserRouter>
