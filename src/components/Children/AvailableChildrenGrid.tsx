@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { formatAge } from "@/utils/dates";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -85,11 +86,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       })
       .catch(error => {
         console.error('Failed to load face detection models:', error);
-        toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger les modèles de détection faciale",
-        });
+        toast.error("Impossible de charger les modèles de détection faciale");
       });
   }, []);
 
@@ -106,30 +103,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     } catch (error) {
       console.error('Error processing image:', error);
       imgElement.style.objectPosition = '50% 20%';
-    }
-  };
-
-  const formatAge = (birthDate: string) => {
-    if (!birthDate) return "Âge non disponible";
-    
-    try {
-      const today = new Date();
-      const birth = parseISO(birthDate);
-      const years = differenceInYears(today, birth);
-      const months = differenceInMonths(today, birth) % 12;
-      
-      if (years === 0) {
-        return `${months} mois`;
-      }
-      
-      if (months === 0) {
-        return `${years} ans`;
-      }
-      
-      return `${years} ans ${months} mois`;
-    } catch (error) {
-      console.error('Error calculating age:', error);
-      return "Âge non disponible";
     }
   };
 
@@ -154,37 +127,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       </div>
     );
   }
-
-  const handleSponsorClick = async (childId: string) => {
-    if (!user) {
-      // If user is not logged in, redirect to become-sponsor form
-      navigate(`/become-sponsor?child=${childId}`);
-      return;
-    }
-
-    try {
-      // Create sponsorship request directly
-      const { error } = await supabase
-        .from('sponsorship_requests')
-        .insert({
-          child_id: childId,
-          sponsor_id: user.id,
-          status: 'pending',
-          is_long_term: true,
-          terms_accepted: true,
-          email: user.email,
-          full_name: user.name
-        });
-
-      if (error) throw error;
-
-      toast.success("Votre demande de parrainage a été envoyée avec succès");
-      navigate('/sponsor-dashboard');
-    } catch (error) {
-      console.error('Error creating sponsorship request:', error);
-      toast.error("Une erreur est survenue lors de la demande de parrainage");
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -287,7 +229,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                 )}
 
                 <Button 
-                  onClick={() => handleSponsorClick(child.id)}
+                  onClick={() => onSponsorClick(child.id)}
                   className={`w-full ${
                     hasUrgentNeeds
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
