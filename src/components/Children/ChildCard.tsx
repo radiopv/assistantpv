@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-interface SponsoredChildCardProps {
+interface ChildCardProps {
   child: {
     id: string;
     name: string;
@@ -24,11 +24,8 @@ interface SponsoredChildCardProps {
   onAddPhoto: () => void;
 }
 
-export const SponsoredChildCard = ({
-  child,
-  sponsorshipId,
-  onAddPhoto,
-}: SponsoredChildCardProps) => {
+// Export both as default and named export for backward compatibility
+export const ChildCard = ({ child, sponsorshipId, onAddPhoto }: ChildCardProps) => {
   const [showTermination, setShowTermination] = useState(false);
   const { t } = useLanguage();
 
@@ -80,3 +77,9 @@ export const SponsoredChildCard = ({
     </Card>
   );
 };
+
+// Also export as default for flexibility
+export default ChildCard;
+
+// For backward compatibility
+export const SponsoredChildCard = ChildCard;
