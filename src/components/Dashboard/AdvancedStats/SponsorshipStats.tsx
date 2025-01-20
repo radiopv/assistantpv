@@ -20,7 +20,10 @@ export const SponsorshipStats = () => {
     queryFn: async () => {
       try {
         const { data, error } = await supabase.rpc('get_sponsorship_conversion_stats');
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
         return {
           conversion_rate: data?.conversion_rate || 0,
           avg_duration_days: data?.avg_duration_days || 0,
@@ -38,7 +41,8 @@ export const SponsorshipStats = () => {
         throw error;
       }
     },
-    retry: 2
+    retry: 2,
+    staleTime: 30000
   });
 
   const { data: topCities, isLoading: citiesLoading } = useQuery<TopCityStats[]>({
@@ -46,7 +50,11 @@ export const SponsorshipStats = () => {
     queryFn: async () => {
       try {
         const { data, error } = await supabase.rpc('get_top_sponsorship_cities');
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching top cities:', error);
+          toast.error("Erreur lors du chargement des statistiques par ville");
+          throw error;
+        }
         return (data || []) as TopCityStats[];
       } catch (error) {
         console.error('Error fetching top cities:', error);
