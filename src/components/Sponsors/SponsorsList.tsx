@@ -10,6 +10,7 @@ import { SponsorshipAssociationDialog } from "./SponsorshipAssociationDialog";
 import { BulkOperationsDialog } from "./SponsorshipManagement/BulkOperationsDialog";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface SponsorsListProps {
   sponsors: any[];
@@ -196,41 +197,43 @@ export const SponsorsList = ({
         )}
       </div>
 
-      <TabsContent value="active">
-        <div className="space-y-6">
-          {filterAndSortSponsors(sponsors, true).map((sponsor) => (
-            <SponsorListItem
-              key={sponsor.id}
-              sponsor={sponsor}
-              onAddChild={handleAddChildClick}
-              onStatusChange={handleStatusChange}
-              onVerificationChange={handleVerificationChange}
-              onPauseSponsorship={handlePauseSponsorship}
-              onResumeSponsorship={handleResumeSponsorship}
-              onSelect={handleSponsorSelect}
-              isSelected={selectedSponsors.includes(sponsor.id)}
-              onUpdate={handleSponsorUpdate}
-            />
-          ))}
-        </div>
-      </TabsContent>
+      <TooltipProvider>
+        <TabsContent value="active">
+          <div className="space-y-6">
+            {filterAndSortSponsors(sponsors, true).map((sponsor) => (
+              <SponsorListItem
+                key={sponsor.id}
+                sponsor={sponsor}
+                onAddChild={handleAddChildClick}
+                onStatusChange={handleStatusChange}
+                onVerificationChange={handleVerificationChange}
+                onPauseSponsorship={handlePauseSponsorship}
+                onResumeSponsorship={handleResumeSponsorship}
+                onSelect={handleSponsorSelect}
+                isSelected={selectedSponsors.includes(sponsor.id)}
+                onUpdate={handleSponsorUpdate}
+              />
+            ))}
+          </div>
+        </TabsContent>
 
-      <TabsContent value="inactive">
-        <div className="space-y-6">
-          {filterAndSortSponsors(sponsors, false).map((sponsor) => (
-            <SponsorListItem
-              key={sponsor.id}
-              sponsor={sponsor}
-              onAddChild={handleAddChildClick}
-              onStatusChange={handleStatusChange}
-              onVerificationChange={handleVerificationChange}
-              onSelect={handleSponsorSelect}
-              isSelected={selectedSponsors.includes(sponsor.id)}
-              onUpdate={handleSponsorUpdate}
-            />
-          ))}
-        </div>
-      </TabsContent>
+        <TabsContent value="inactive">
+          <div className="space-y-6">
+            {filterAndSortSponsors(sponsors, false).map((sponsor) => (
+              <SponsorListItem
+                key={sponsor.id}
+                sponsor={sponsor}
+                onAddChild={handleAddChildClick}
+                onStatusChange={handleStatusChange}
+                onVerificationChange={handleVerificationChange}
+                onSelect={handleSponsorSelect}
+                isSelected={selectedSponsors.includes(sponsor.id)}
+                onUpdate={handleSponsorUpdate}
+              />
+            ))}
+          </div>
+        </TabsContent>
+      </TooltipProvider>
 
       {selectedSponsor && (
         <SponsorshipAssociationDialog
