@@ -147,21 +147,21 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       if (childError) {
         console.error('Erreur lors de la vérification du statut de l\'enfant:', childError);
         toast("Une erreur est survenue lors de la vérification du statut de l'enfant", {
-          type: "error"
+          description: "Veuillez réessayer plus tard"
         });
         return;
       }
 
       if (!childData) {
         toast("Impossible de trouver les informations de l'enfant", {
-          type: "error"
+          description: "L'enfant n'existe plus dans la base de données"
         });
         return;
       }
 
       if (childData.is_sponsored) {
         toast("Cet enfant est déjà parrainé", {
-          type: "error"
+          description: "Veuillez choisir un autre enfant"
         });
         return;
       }
@@ -176,7 +176,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       if (requestError) {
         console.error('Erreur lors de la vérification des demandes existantes:', requestError);
         toast("Une erreur est survenue lors de la vérification des demandes existantes", {
-          type: "error"
+          description: "Veuillez réessayer plus tard"
         });
         return;
       }
@@ -184,7 +184,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       const pendingRequest = existingRequests?.find(req => req.status === 'pending');
       if (pendingRequest) {
         toast("Vous avez déjà une demande de parrainage en cours pour cet enfant", {
-          type: "error"
+          description: "Veuillez attendre la réponse à votre demande"
         });
         return;
       }
@@ -192,7 +192,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       const approvedRequest = existingRequests?.find(req => req.status === 'approved');
       if (approvedRequest) {
         toast("Vous avez déjà parrainé cet enfant", {
-          type: "error"
+          description: "Vous ne pouvez pas parrainer le même enfant deux fois"
         });
         return;
       }
@@ -214,19 +214,19 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       if (createError) {
         console.error('Erreur lors de la création de la demande:', createError);
         toast("Une erreur est survenue lors de la demande de parrainage", {
-          type: "error"
+          description: "Veuillez réessayer plus tard"
         });
         return;
       }
 
       toast("Votre demande de parrainage a été envoyée avec succès", {
-        type: "success"
+        description: "Nous vous contacterons dès que possible"
       });
       
     } catch (error) {
       console.error('Erreur lors de la demande de parrainage:', error);
       toast("Une erreur est survenue lors de la demande de parrainage", {
-        type: "error"
+        description: "Une erreur inattendue s'est produite"
       });
     }
   };
