@@ -19,41 +19,33 @@ export const SponsorshipButton = ({ childId }: SponsorshipButtonProps) => {
     }
 
     try {
-      // Get child information
-      const { data: childData, error: childError } = await supabase
+      // Vérifier si l'enfant est déjà parrainé
+      const { data: child, error: childError } = await supabase
         .from('children')
-        .select('name')
+        .select('is_sponsored, name')
         .eq('id', childId)
         .maybeSingle();
 
       if (childError) throw childError;
-      if (!childData) {
-        toast.error("Impossible de récupérer les informations de l'enfant");
+      if (!child) {
+        toast.error("Impossible de trouver les informations de l'enfant");
         return;
       }
 
-      // Get sponsor information
-      const { data: sponsorData, error: sponsorError } = await supabase
-        .from('sponsors')
-        .select('email, name, city')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (sponsorError) throw sponsorError;
-      if (!sponsorData) {
-        toast.error("Impossible de récupérer vos informations");
+      if (child.is_sponsored) {
+        toast.error("Cet enfant est déjà parrainé");
         return;
       }
 
-      // Check if a request already exists
-      const { data: existingRequest, error: checkError } = await supabase
+      // Vérifier si une demande existe déjà
+      const { data: existingRequest, error: requestError } = await supabase
         .from('sponsorship_requests')
         .select('id, status')
         .eq('child_id', childId)
         .eq('sponsor_id', user.id)
         .maybeSingle();
 
-      if (checkError) throw checkError;
+      if (requestError) throw requestError;
 
       if (existingRequest) {
         if (existingRequest.status === 'pending') {
@@ -64,8 +56,8 @@ export const SponsorshipButton = ({ childId }: SponsorshipButtonProps) => {
         return;
       }
 
-      // Create sponsorship request
-      const { error: requestError } = await supabase
+      // Créer la demande de parrainage
+      const { error: createError } = await supabase
         .from('sponsorship_requests')
         .insert({
           child_id: childId,
@@ -73,14 +65,15 @@ export const SponsorshipButton = ({ childId }: SponsorshipButtonProps) => {
           status: 'pending',
           is_long_term: true,
           terms_accepted: true,
-          full_name: sponsorData.name,
-          email: sponsorData.email,
-          city: sponsorData.city
+          full_name: user.name,
+          email: user.email,
+          city: user.city
         });
 
-      if (requestError) throw requestError;
+      if (createError) throw createError;
 
       toast.success("Votre demande de parrainage a été envoyée avec succès");
+      
     } catch (error) {
       console.error('Erreur lors de la demande de parrainage:', error);
       toast.error("Une erreur est survenue lors de la demande de parrainage");
