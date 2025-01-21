@@ -1,15 +1,15 @@
+import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Calendar, Info, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Need, convertJsonToNeeds } from "@/types/needs";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState, useMemo } from "react";
-import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
-import { toast } from "@/components/ui/use-toast";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,80 +22,69 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
-  const processedImages = useRef<Set<string>>(new Set());
-  const [modelsLoaded, setModelsLoaded] = useState(false);
+  const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Sort children by needs urgency and waiting time
-  const sortedChildren = useMemo(() => {
-    return [...children].sort((a, b) => {
-      // Count urgent needs
-      const aUrgentNeeds = convertJsonToNeeds(a.needs).filter(need => need.is_urgent).length;
-      const bUrgentNeeds = convertJsonToNeeds(b.needs).filter(need => need.is_urgent).length;
-      
-      // Compare urgent needs first
-      if (aUrgentNeeds !== bUrgentNeeds) {
-        return bUrgentNeeds - aUrgentNeeds;
-      }
-      
-      // If urgent needs are equal, compare waiting time
-      const aCreatedAt = parseISO(a.created_at);
-      const bCreatedAt = parseISO(b.created_at);
-      return aCreatedAt.getTime() - bCreatedAt.getTime();
-    });
-  }, [children]);
-
-  const { data: albumPhotos } = useQuery({
-    queryKey: ['album-photos', children.map(child => child.id)],
-    queryFn: async () => {
-      if (!children.length) return [];
-      
-      const { data, error } = await supabase
-        .from('album_media')
-        .select('*')
-        .in('child_id', children.map(child => child.id))
-        .eq('type', 'image')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching album photos:', error);
-        return [];
-      }
-
-      return data || [];
-    },
-    enabled: children.length > 0
+  const sortedChildren = [...children].sort((a, b) => {
+    // Count urgent needs
+    const aUrgentNeeds = convertJsonToNeeds(a.needs).filter(need => need.is_urgent).length;
+    const bUrgentNeeds = convertJsonToNeeds(b.needs).filter(need => need.is_urgent).length;
+    
+    // Compare urgent needs first
+    if (aUrgentNeeds !== bUrgentNeeds) {
+      return bUrgentNeeds - aUrgentNeeds;
+    }
+    
+    // If urgent needs are equal, compare waiting time
+    const aCreatedAt = parseISO(a.created_at);
+    const bCreatedAt = parseISO(b.created_at);
+    return aCreatedAt.getTime() - bCreatedAt.getTime();
   });
 
-  // Group photos by child
-  const photosByChild = albumPhotos?.reduce((acc, photo) => {
-    if (!acc[photo.child_id]) {
-      acc[photo.child_id] = [];
+  const handleSponsorClick = async (childId: string) => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${childId}`);
+      return;
     }
-    acc[photo.child_id].push(photo);
-    return acc;
-  }, {} as Record<string, any[]>) || {};
 
-  const formatAge = (birthDate: string) => {
-    if (!birthDate) return "Âge non disponible";
-    
+    setIsSubmitting(true);
     try {
-      const today = new Date();
-      const birth = parseISO(birthDate);
-      const years = differenceInYears(today, birth);
-      const months = differenceInMonths(today, birth) % 12;
-      
-      if (years === 0) {
-        return `${months} mois`;
+      // Get user profile
+      const { data: profile } = await supabase
+        .from('sponsors')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) {
+        throw new Error("Profil non trouvé");
       }
-      
-      if (months === 0) {
-        return `${years} ans`;
-      }
-      
-      return `${years} ans ${months} mois`;
-    } catch (error) {
-      console.error('Error calculating age:', error);
-      return "Âge non disponible";
+
+      // Create sponsorship request
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          sponsor_id: user.id,
+          full_name: profile.name,
+          email: profile.email,
+          phone: profile.phone,
+          facebook_url: profile.facebook_url,
+          city: profile.city,
+          is_long_term: true,
+          terms_accepted: true,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+    } catch (error: any) {
+      console.error('Error creating sponsorship request:', error);
+      toast.error(error.message || "Une erreur est survenue lors de la demande de parrainage");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,10 +109,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       </div>
     );
   }
-
-  const handleSponsorClick = (childId: string) => {
-    navigate(`/become-sponsor?child=${childId}`);
-  };
 
   return (
     <div className="space-y-6">
@@ -228,6 +213,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
                 <Button 
                   onClick={() => handleSponsorClick(child.id)}
+                  disabled={isSubmitting}
                   className={`w-full ${
                     hasUrgentNeeds
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
@@ -235,7 +221,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   } group-hover:scale-105 transition-all duration-300`}
                 >
                   <Heart className="w-4 h-4 mr-2" />
-                  Parrainer
+                  {isSubmitting ? "Envoi en cours..." : "Parrainer"}
                 </Button>
               </div>
             </Card>
