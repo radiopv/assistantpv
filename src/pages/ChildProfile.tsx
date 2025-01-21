@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -10,23 +9,35 @@ import { toast } from "sonner";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { convertJsonToNeeds } from "@/types/needs";
+import { Badge } from "@/components/ui/badge";
+
+const NEED_CATEGORIES = {
+  education: "Éducation",
+  jouet: "Jouets",
+  vetement: "Vêtements",
+  nourriture: "Nourriture",
+  medicament: "Médicaments",
+  hygiene: "Hygiène",
+  autre: "Autre"
+};
 
 const ChildProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: child, isLoading } = useQuery({
+  const { data: child, isLoading, error } = useQuery({
     queryKey: ["child", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("children")
         .select("*")
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) throw new Error("Enfant non trouvé");
+
       return {
         ...data,
         needs: convertJsonToNeeds(data.needs)
@@ -41,27 +52,49 @@ const ChildProfile = () => {
     }
 
     try {
-      setIsSubmitting(true);
-      const { error } = await supabase
+      // Get sponsor information
+      const { data: sponsorData, error: sponsorError } = await supabase
+        .from("sponsors")
+        .select("email, name")
+        .eq("id", user.id)
+        .single();
+
+      if (sponsorError) throw sponsorError;
+
+      // Create sponsorship request
+      const { error: requestError } = await supabase
         .from("sponsorship_requests")
         .insert({
           child_id: id,
           sponsor_id: user.id,
           status: "pending",
-          terms_accepted: true
+          terms_accepted: true,
+          email: sponsorData.email,
+          full_name: sponsorData.name
         });
 
-      if (error) throw error;
+      if (requestError) throw requestError;
 
       toast.success("Votre demande de parrainage a été envoyée avec succès");
       navigate("/sponsor-dashboard");
     } catch (error) {
       console.error("Error submitting sponsorship request:", error);
       toast.error("Une erreur est survenue lors de la demande de parrainage");
-    } finally {
-      setIsSubmitting(false);
     }
   };
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="p-6 text-center">
+          <p className="text-gray-500">Une erreur est survenue lors du chargement des informations</p>
+          <Button onClick={() => navigate(-1)} className="mt-4">
+            Retour
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -78,13 +111,16 @@ const ChildProfile = () => {
       <div className="container mx-auto p-4">
         <Card className="p-6 text-center">
           <p className="text-gray-500">Enfant non trouvé</p>
+          <Button onClick={() => navigate(-1)} className="mt-4">
+            Retour
+          </Button>
         </Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
+    <div className="container mx-auto p-4 space-y-8 animate-fade-in">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row gap-8">
         <Card className="overflow-hidden w-full md:w-1/3">
@@ -99,17 +135,16 @@ const ChildProfile = () => {
           <h1 className="text-3xl font-bold">{child.name}</h1>
           <div className="space-y-2">
             <p className="text-lg">
-              {format(new Date(child.birth_date), "dd/MM/yyyy")}
+              {format(new Date(child.birth_date), "dd/MM/yyyy")} ({child.age} ans)
             </p>
             <p className="text-gray-600">{child.city}</p>
           </div>
           
           <Button
             onClick={handleSponsorshipRequest}
-            disabled={isSubmitting}
             className="w-full md:w-auto"
           >
-            {isSubmitting ? "Envoi en cours..." : "Parrainer cet enfant"}
+            Parrainer cet enfant
           </Button>
         </div>
       </div>
@@ -134,18 +169,27 @@ const ChildProfile = () => {
       {/* Needs Section */}
       <Card className="p-6">
         <h2 className="text-xl font-semibold mb-4">Besoins</h2>
-        <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2">
           {child.needs?.map((need, index) => (
-            <div key={index} className="flex items-start gap-2">
-              <div className="flex-1">
-                <h3 className="font-medium">{need.category}</h3>
-                <p className="text-gray-600">{need.description}</p>
+            <div 
+              key={index} 
+              className={`p-4 rounded-lg border ${need.is_urgent ? 'border-red-200 bg-red-50' : 'border-gray-200 bg-gray-50'}`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-medium">
+                    {NEED_CATEGORIES[need.category as keyof typeof NEED_CATEGORIES]}
+                  </h3>
+                  {need.description && (
+                    <p className="text-sm text-gray-600 mt-1">{need.description}</p>
+                  )}
+                </div>
+                {need.is_urgent && (
+                  <Badge variant="destructive" className="ml-2">
+                    Urgent
+                  </Badge>
+                )}
               </div>
-              {need.is_urgent && (
-                <span className="inline-block px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full">
-                  Urgent
-                </span>
-              )}
             </div>
           ))}
         </div>
