@@ -23,9 +23,13 @@ export const SponsorshipButton = ({ childId, userId }: SponsorshipButtonProps) =
         .from('sponsors')
         .select('email, name')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (sponsorError) throw sponsorError;
+      if (!sponsorData) {
+        toast.error("Impossible de récupérer vos informations");
+        return;
+      }
 
       // Create sponsorship request
       const { error: requestError } = await supabase
@@ -36,8 +40,8 @@ export const SponsorshipButton = ({ childId, userId }: SponsorshipButtonProps) =
           status: 'pending',
           is_long_term: true,
           terms_accepted: true,
-          email: sponsorData.email,
-          full_name: sponsorData.name
+          full_name: sponsorData.name,
+          email: sponsorData.email
         });
 
       if (requestError) throw requestError;
