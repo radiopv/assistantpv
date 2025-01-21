@@ -44,6 +44,7 @@ export function useSupabaseList<T extends TableNames>(
 
       const { data, error } = await query;
       if (error) throw error;
+      if (!data) return [];
       return data;
     }
   );
