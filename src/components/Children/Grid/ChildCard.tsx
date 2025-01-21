@@ -4,6 +4,7 @@ import { Heart, MapPin, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Need } from "@/types/needs";
 import { formatAge } from "@/utils/dates";
+import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface ChildCardProps {
   child: any;
@@ -26,7 +27,7 @@ export const ChildCard = ({
       className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
     >
       <div className="aspect-video relative">
-        <img
+        <OptimizedImage
           src={child.photo_url || "/placeholder.svg"}
           alt={child.name}
           className="w-full h-full object-cover transition-transform duration-300"
@@ -51,9 +52,21 @@ export const ChildCard = ({
       </div>
 
       <div className="p-2 space-y-2">
-        {/* Album Photos Grid */}
         {photosByChild[child.id]?.length > 0 && (
-          <AlbumPhotosGrid photos={photosByChild[child.id].slice(0, 3)} />
+          <div className="bg-white/80 rounded-lg p-2">
+            <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
+            <div className="grid grid-cols-3 gap-2">
+              {photosByChild[child.id].slice(0, 3).map((photo: any) => (
+                <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
+                  <OptimizedImage
+                    src={photo.url}
+                    alt="Photo album"
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {child.description && (
@@ -79,23 +92,6 @@ export const ChildCard = ({
     </Card>
   );
 };
-
-const AlbumPhotosGrid = ({ photos }: { photos: any[] }) => (
-  <div className="bg-white/80 rounded-lg p-2">
-    <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
-    <div className="grid grid-cols-3 gap-2">
-      {photos.map((photo: any) => (
-        <div key={photo.id} className="aspect-square rounded-md overflow-hidden">
-          <img
-            src={photo.url}
-            alt="Photo album"
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-          />
-        </div>
-      ))}
-    </div>
-  </div>
-);
 
 const NeedsList = ({ needs }: { needs: Need[] }) => (
   <div className="space-y-1">
