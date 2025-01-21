@@ -167,12 +167,11 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       }
 
       // Vérifier si une demande existe déjà
-      const { data: existingRequest, error: requestError } = await supabase
+      const { data: existingRequests, error: requestError } = await supabase
         .from('sponsorship_requests')
         .select('status')
         .eq('child_id', childId)
-        .eq('sponsor_id', user.id)
-        .maybeSingle();
+        .eq('sponsor_id', user.id);
 
       if (requestError) {
         console.error('Erreur lors de la vérification des demandes existantes:', requestError);
@@ -182,16 +181,19 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
         return;
       }
 
-      if (existingRequest) {
-        if (existingRequest.status === 'pending') {
-          toast("Vous avez déjà une demande de parrainage en cours pour cet enfant", {
-            type: "error"
-          });
-        } else {
-          toast("Vous avez déjà parrainé cet enfant", {
-            type: "error"
-          });
-        }
+      const pendingRequest = existingRequests?.find(req => req.status === 'pending');
+      if (pendingRequest) {
+        toast("Vous avez déjà une demande de parrainage en cours pour cet enfant", {
+          type: "error"
+        });
+        return;
+      }
+
+      const approvedRequest = existingRequests?.find(req => req.status === 'approved');
+      if (approvedRequest) {
+        toast("Vous avez déjà parrainé cet enfant", {
+          type: "error"
+        });
         return;
       }
 
