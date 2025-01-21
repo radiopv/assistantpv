@@ -9,11 +9,11 @@ import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState, useMemo } from "react";
 import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
-import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { toast } from "sonner";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -84,10 +84,8 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       })
       .catch(error => {
         console.error('Failed to load face detection models:', error);
-        toast({
-          variant: "destructive",
-          title: "Erreur",
-          description: "Impossible de charger les modèles de détection faciale",
+        toast("Impossible de charger les modèles de détection faciale", {
+          type: "error"
         });
       });
   }, []);
@@ -148,17 +146,23 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
 
       if (childError) {
         console.error('Erreur lors de la vérification du statut de l\'enfant:', childError);
-        toast.error("Une erreur est survenue lors de la vérification du statut de l'enfant");
+        toast("Une erreur est survenue lors de la vérification du statut de l'enfant", {
+          type: "error"
+        });
         return;
       }
 
       if (!childData) {
-        toast.error("Impossible de trouver les informations de l'enfant");
+        toast("Impossible de trouver les informations de l'enfant", {
+          type: "error"
+        });
         return;
       }
 
       if (childData.is_sponsored) {
-        toast.error("Cet enfant est déjà parrainé");
+        toast("Cet enfant est déjà parrainé", {
+          type: "error"
+        });
         return;
       }
 
@@ -172,15 +176,21 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
 
       if (requestError) {
         console.error('Erreur lors de la vérification des demandes existantes:', requestError);
-        toast.error("Une erreur est survenue lors de la vérification des demandes existantes");
+        toast("Une erreur est survenue lors de la vérification des demandes existantes", {
+          type: "error"
+        });
         return;
       }
 
       if (existingRequest) {
         if (existingRequest.status === 'pending') {
-          toast.error("Vous avez déjà une demande de parrainage en cours pour cet enfant");
+          toast("Vous avez déjà une demande de parrainage en cours pour cet enfant", {
+            type: "error"
+          });
         } else {
-          toast.error("Vous avez déjà parrainé cet enfant");
+          toast("Vous avez déjà parrainé cet enfant", {
+            type: "error"
+          });
         }
         return;
       }
@@ -201,15 +211,21 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
 
       if (createError) {
         console.error('Erreur lors de la création de la demande:', createError);
-        toast.error("Une erreur est survenue lors de la demande de parrainage");
+        toast("Une erreur est survenue lors de la demande de parrainage", {
+          type: "error"
+        });
         return;
       }
 
-      toast.success("Votre demande de parrainage a été envoyée avec succès");
+      toast("Votre demande de parrainage a été envoyée avec succès", {
+        type: "success"
+      });
       
     } catch (error) {
       console.error('Erreur lors de la demande de parrainage:', error);
-      toast.error("Une erreur est survenue lors de la demande de parrainage");
+      toast("Une erreur est survenue lors de la demande de parrainage", {
+        type: "error"
+      });
     }
   };
 
