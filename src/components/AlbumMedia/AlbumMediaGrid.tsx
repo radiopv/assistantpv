@@ -42,7 +42,7 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
           throw error;
         }
 
-        return data;
+        return data as AlbumMedia[];
       } catch (err) {
         console.error("Error in album media query:", err);
         toast.error("Erreur lors du chargement des photos");

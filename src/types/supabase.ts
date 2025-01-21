@@ -11,7 +11,13 @@ export type UpdateDto<T extends keyof Database['public']['Tables']> = Database['
 // Table specific types
 export type Child = Row<'children'>;
 export type Sponsor = Row<'sponsors'>;
-export type AlbumMedia = Row<'album_media'>;
+export type AlbumMedia = Row<'album_media'> & {
+  sponsors?: {
+    name: string;
+    role: string;
+    is_anonymous: boolean;
+  } | null;
+};
 export type Sponsorship = Row<'sponsorships'>;
 export type Donation = Row<'donations'>;
 export type Notification = Row<'notifications'>;

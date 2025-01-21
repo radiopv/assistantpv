@@ -1,7 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { PostgrestError } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { SupabaseResponse } from '@/types/supabase';
+import { Tables } from '@/types/supabase';
+
+type TableNames = keyof Tables;
 
 export function useSupabaseQuery<T>(
   key: string[],
@@ -15,16 +17,16 @@ export function useSupabaseQuery<T>(
   });
 }
 
-export function useSupabaseList<T>(
-  table: string,
+export function useSupabaseList<T extends TableNames>(
+  table: T,
   options?: {
     select?: string;
-    filter?: Record<string, any>;
+    filter?: Record<string, unknown>;
     orderBy?: { column: string; ascending?: boolean };
   }
 ) {
-  return useSupabaseQuery<SupabaseResponse<T>>(
-    [table, options?.select, options?.filter, options?.orderBy],
+  return useSupabaseQuery<Tables[T]['Row'][]>(
+    [table, options?.select, JSON.stringify(options?.filter), JSON.stringify(options?.orderBy)],
     async () => {
       let query = supabase.from(table).select(options?.select || '*');
 
