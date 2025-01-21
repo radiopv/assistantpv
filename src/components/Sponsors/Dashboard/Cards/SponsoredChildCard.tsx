@@ -26,9 +26,16 @@ interface SponsoredChildCardProps {
   sponsorshipId: string;
   onAddPhoto: () => void;
   onAddTestimonial: () => void;
+  photoCount?: number;
 }
 
-export const SponsoredChildCard = ({ child, sponsorshipId, onAddPhoto }: SponsoredChildCardProps) => {
+export const SponsoredChildCard = ({ 
+  child, 
+  sponsorshipId, 
+  onAddPhoto,
+  onAddTestimonial,
+  photoCount = 0
+}: SponsoredChildCardProps) => {
   const [showTestimonialDialog, setShowTestimonialDialog] = useState(false);
   const [testimonialContent, setTestimonialContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,9 +97,8 @@ export const SponsoredChildCard = ({ child, sponsorshipId, onAddPhoto }: Sponsor
       </div>
 
       {/* Album photos */}
-      {albumPhotos && albumPhotos.length > 0 && (
-        <div className="p-4 border-t">
-          <h4 className="text-sm font-medium mb-2">Album photos</h4>
+      <div className="p-4 border-t">
+        <h4 className="text-sm font-medium mb-2">Album photos ({photoCount})</h4>
           <div className="grid grid-cols-4 gap-2">
             {albumPhotos.map((photo) => (
               <div 
@@ -109,7 +115,7 @@ export const SponsoredChildCard = ({ child, sponsorshipId, onAddPhoto }: Sponsor
             ))}
           </div>
         </div>
-      )}
+      </div>
 
       <div className="p-6 space-y-4">
         <div className="flex justify-between items-start">

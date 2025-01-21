@@ -49,12 +49,8 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
-  if (!user?.id) {
-    return <div className="text-center p-4">{t.noAccess}</div>;
-  }
-
   const { data: sponsoredChildren, isLoading: childrenLoading } = useQuery({
-    queryKey: ["sponsored-children", user.id],
+    queryKey: ["sponsored-children", user?.id],
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
         .from('sponsorships')
@@ -74,14 +70,40 @@ const SponsorDashboard = () => {
             age
           )
         `)
-        .eq('sponsor_id', user.id)
+        .eq('sponsor_id', user?.id)
         .eq('status', 'active');
 
       if (error) throw error;
       console.log("Sponsorship data found:", sponsorships);
       return sponsorships || [];
     },
-    enabled: !!user.id
+    enabled: !!user?.id
+  });
+
+  // Fetch photos count for each child
+  const { data: photosCount } = useQuery({
+    queryKey: ["photos-count", sponsoredChildren?.map(s => s.child_id)],
+    queryFn: async () => {
+      if (!sponsoredChildren?.length) return {};
+      
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('child_id, id')
+        .in('child_id', sponsoredChildren.map(s => s.child_id));
+
+      if (error) throw error;
+
+      // Group photos by child_id and count them
+      const counts: Record<string, number> = {};
+      data?.forEach(photo => {
+        if (photo.child_id) {
+          counts[photo.child_id] = (counts[photo.child_id] || 0) + 1;
+        }
+      });
+
+      return counts;
+    },
+    enabled: !!sponsoredChildren?.length
   });
 
   const handleAddPhoto = (childId: string) => {
@@ -130,6 +152,8 @@ const SponsorDashboard = () => {
             const child = sponsorship.children;
             if (!child) return null;
 
+            const photoCount = photosCount?.[child.id] || 0;
+
             return (
               <div key={child.id} className="space-y-6">
                 <SponsoredChildCard
@@ -137,6 +161,7 @@ const SponsorDashboard = () => {
                   sponsorshipId={sponsorship.id}
                   onAddPhoto={() => handleAddPhoto(child.id)}
                   onAddTestimonial={() => {}}
+                  photoCount={photoCount}
                 />
 
                 {selectedChild === child.id && (
