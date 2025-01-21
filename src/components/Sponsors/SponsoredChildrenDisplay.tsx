@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { Eye, Plus, Minus, Clock } from "lucide-react";
+import { Eye, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -15,13 +15,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface SponsoredChildrenDisplayProps {
   sponsorships: any[];
@@ -32,48 +25,44 @@ export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisp
   const [selectedSponsorship, setSelectedSponsorship] = useState<{id: string, childName: string} | null>(null);
   const [removalReason, setRemovalReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [terminationDate, setTerminationDate] = useState<Date>();
 
   const viewAlbum = (childId: string) => {
     navigate(`/children/${childId}/album`);
   };
 
-  const openTerminationDialog = (sponsorshipId: string, childName: string) => {
+  const openRemovalDialog = (sponsorshipId: string, childName: string) => {
     setSelectedSponsorship({ id: sponsorshipId, childName });
   };
 
-  const closeTerminationDialog = () => {
+  const closeRemovalDialog = () => {
     setSelectedSponsorship(null);
     setRemovalReason("");
-    setTerminationDate(undefined);
   };
 
-  const handleTermination = async () => {
-    if (!selectedSponsorship || !terminationDate) {
-      toast.error("Veuillez sélectionner une date de fin");
-      return;
-    }
+  const requestRemoveChild = async () => {
+    if (!selectedSponsorship) return;
     if (!removalReason.trim()) {
-      toast.error("Veuillez indiquer la raison de la fin du parrainage");
+      toast.error("Veuillez indiquer la raison du retrait");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.rpc('terminate_sponsorship', {
-        p_sponsorship_id: selectedSponsorship.id,
-        p_termination_date: terminationDate.toISOString().split('T')[0],
-        p_termination_reason: removalReason,
-        p_termination_comment: removalReason,
-        p_performed_by: (await supabase.auth.getUser()).data.user?.id
-      });
+      const { error } = await supabase
+        .from('child_assignment_requests')
+        .insert({
+          sponsorship_id: selectedSponsorship.id,
+          type: 'remove',
+          status: 'pending',
+          notes: removalReason
+        });
 
       if (error) throw error;
-      toast.success("Demande de fin de parrainage envoyée avec succès");
-      closeTerminationDialog();
+      toast.success("Demande de retrait envoyée avec succès. Un administrateur examinera votre demande.");
+      closeRemovalDialog();
     } catch (error) {
-      console.error("Error terminating sponsorship:", error);
-      toast.error("Erreur lors de la demande de fin de parrainage");
+      console.error("Error requesting child removal:", error);
+      toast.error("Erreur lors de la demande de retrait");
     } finally {
       setIsSubmitting(false);
     }
@@ -110,46 +99,34 @@ export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisp
       <div className="grid gap-4">
         {activeSponshorships?.map((sponsorship: any) => (
           <Card key={sponsorship.id} className="p-4">
-            <div className="flex flex-col space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={sponsorship.children.photo_url} alt={sponsorship.children.name} />
-                    <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-medium">{sponsorship.children.name}</p>
-                    <p className="text-xs text-gray-500">{sponsorship.children.city}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => viewAlbum(sponsorship.children.id)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Voir l'album photo</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={sponsorship.children.photo_url} alt={sponsorship.children.name} />
+                  <AvatarFallback>{sponsorship.children.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="text-sm font-medium">{sponsorship.children.name}</p>
+                  <p className="text-xs text-gray-500">{sponsorship.children.city}</p>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => openTerminationDialog(sponsorship.id, sponsorship.children.name)}
-                className="w-full flex items-center justify-center gap-2 text-red-500 hover:text-red-600 hover:bg-red-50"
-              >
-                <Clock className="h-4 w-4" />
-                Mettre fin au parrainage
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => viewAlbum(sponsorship.children.id)}
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => openRemovalDialog(sponsorship.id, sponsorship.children.name)}
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </Card>
         ))}
@@ -158,45 +135,29 @@ export const SponsoredChildrenDisplay = ({ sponsorships }: SponsoredChildrenDisp
         )}
       </div>
 
-      <Dialog open={!!selectedSponsorship} onOpenChange={() => selectedSponsorship && closeTerminationDialog()}>
+      <Dialog open={!!selectedSponsorship} onOpenChange={() => selectedSponsorship && closeRemovalDialog()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Mettre fin au parrainage</DialogTitle>
+            <DialogTitle>Demande de retrait de parrainage</DialogTitle>
             <DialogDescription>
-              Vous êtes sur le point de mettre fin au parrainage de {selectedSponsorship?.childName}
+              Veuillez indiquer la raison pour laquelle vous souhaitez arrêter le parrainage de {selectedSponsorship?.childName}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm font-medium">Date de fin</label>
-              <Calendar
-                mode="single"
-                selected={terminationDate}
-                onSelect={setTerminationDate}
-                disabled={(date) => date < new Date()}
-                className="rounded-md border"
-              />
-            </div>
-            <div className="flex flex-col space-y-2">
-              <label className="text-sm font-medium">Raison de la fin du parrainage</label>
-              <Textarea
-                placeholder="Veuillez indiquer la raison..."
-                value={removalReason}
-                onChange={(e) => setRemovalReason(e.target.value)}
-                className="min-h-[100px]"
-              />
-            </div>
-          </div>
+          <Textarea
+            placeholder="Raison du retrait..."
+            value={removalReason}
+            onChange={(e) => setRemovalReason(e.target.value)}
+            className="min-h-[100px]"
+          />
           <DialogFooter className="flex gap-2">
-            <Button variant="outline" onClick={closeTerminationDialog}>
+            <Button variant="outline" onClick={closeRemovalDialog}>
               Annuler
             </Button>
             <Button 
-              onClick={handleTermination}
-              disabled={isSubmitting || !removalReason.trim() || !terminationDate}
-              variant="destructive"
+              onClick={requestRemoveChild}
+              disabled={isSubmitting || !removalReason.trim()}
             >
-              {isSubmitting ? "Envoi..." : "Confirmer la fin du parrainage"}
+              {isSubmitting ? "Envoi..." : "Envoyer la demande"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -36,7 +36,7 @@ export const PhotoGrid = ({
 
   return (
     <>
-      <div className={`grid gap-6 ${className}`}>
+      <div className={`grid gap-2 md:gap-4 ${className}`}>
         {photos.map((photo) => (
           <PhotoCard
             key={photo.id}
@@ -50,12 +50,12 @@ export const PhotoGrid = ({
       </div>
 
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] bg-white p-0">
+        <DialogContent className="max-w-6xl bg-white p-0">
           {selectedPhoto && (
             <img 
               src={selectedPhoto} 
               alt="Photo agrandie"
-              className="w-full h-full object-contain rounded-lg"
+              className="w-full h-auto object-contain rounded-lg"
             />
           )}
         </DialogContent>

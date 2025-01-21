@@ -1,16 +1,8 @@
-import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ChildrenList } from "./ChildrenList";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Card } from "@/components/ui/card";
 
 interface AssignSponsorDialogProps {
   sponsorId: string;
@@ -39,7 +31,6 @@ export const AssignSponsorDialog = ({
           description,
           end_date,
           gender,
-          photo_url,
           sponsorships:sponsorships(
             id,
             sponsor:sponsors(
@@ -86,30 +77,18 @@ export const AssignSponsorDialog = ({
   };
 
   return (
-    <Card className="w-full mb-6">
-      <Collapsible open={isOpen} onOpenChange={onClose}>
-        <CollapsibleTrigger asChild>
-          <Button
-            variant="outline"
-            className="w-full flex items-center justify-between p-4"
-          >
-            <span>Ajouter un enfant</span>
-            {isOpen ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent className="p-4">
-          <ChildrenList
-            children={children}
-            searchTerm=""
-            onSearchChange={() => {}}
-            onSelectChild={handleSelectChild}
-          />
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Sélectionner un enfant</DialogTitle>
+        </DialogHeader>
+        <ChildrenList
+          children={children}
+          searchTerm=""
+          onSearchChange={() => {}}
+          onSelectChild={handleSelectChild}
+        />
+      </DialogContent>
+    </Dialog>
   );
 };

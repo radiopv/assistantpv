@@ -6,11 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useEffect } from "react";
-import { useAuth } from "@/components/Auth/AuthProvider";
 
 export const NotificationBar = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const { data: notifications, refetch: refetchNotifications } = useQuery({
     queryKey: ['unread-notifications'],
@@ -20,8 +18,7 @@ export const NotificationBar = () => {
         const { count, error } = await supabase
           .from('notifications')
           .select('*', { count: 'exact', head: true })
-          .eq('is_read', false)
-          .eq('recipient_id', user?.id);
+          .eq('is_read', false);
         
         if (error) {
           console.error('Error fetching notifications:', error);
@@ -35,39 +32,11 @@ export const NotificationBar = () => {
         return 0;
       }
     },
-    enabled: !!user?.id,
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
-
-  const { data: messages } = useQuery({
-    queryKey: ['unread-messages'],
-    queryFn: async () => {
-      try {
-        const { count, error } = await supabase
-          .from('messages')
-          .select('*', { count: 'exact' })
-          .eq('is_read', false)
-          .eq('recipient_id', user?.id);
-        
-        if (error) {
-          console.error('Error fetching messages:', error);
-          return 0;
-        }
-        
-        return count || 0;
-      } catch (error) {
-        console.error('Error in messages query:', error);
-        return 0;
-      }
-    },
-    enabled: !!user?.id,
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   // Listen for real-time changes on the notifications table
   useEffect(() => {
-    if (!user?.id) return;
-
     const channel = supabase
       .channel('notification-changes')
       .on(
@@ -75,8 +44,7 @@ export const NotificationBar = () => {
         {
           event: '*',
           schema: 'public',
-          table: 'notifications',
-          filter: `recipient_id=eq.${user.id}`
+          table: 'notifications'
         },
         () => {
           console.log("Notification change detected, refetching...");
@@ -88,7 +56,30 @@ export const NotificationBar = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [refetchNotifications, user?.id]);
+  }, [refetchNotifications]);
+
+  const { data: messages } = useQuery({
+    queryKey: ['unread-messages'],
+    queryFn: async () => {
+      try {
+        const { count, error } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('is_read', false);
+        
+        if (error) {
+          console.warn('Messages table not accessible:', error.message);
+          return 0;
+        }
+        
+        return count || 0;
+      } catch (error) {
+        console.warn('Error fetching messages:', error);
+        return 0;
+      }
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
 
   const handleNotificationsClick = () => {
     navigate('/notifications');

@@ -2,62 +2,45 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
-import { AlbumMedia } from "@/types/supabase";
 
 interface AlbumMediaGridProps {
   childId: string;
 }
 
 export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
-  const { data: media, isLoading, error } = useQuery<AlbumMedia[]>({
+  const { data: media, isLoading } = useQuery({
     queryKey: ["album-media", childId],
     queryFn: async () => {
-      try {
-        console.log("Fetching media for child:", childId);
-        const { data, error } = await supabase
-          .from("album_media")
-          .select(`
-            id,
-            url,
-            type,
-            title,
-            description,
-            is_featured,
-            created_at,
-            sponsor_id,
-            sponsors (
-              name,
-              role,
-              is_anonymous
-            )
-          `)
-          .eq("child_id", childId)
-          .eq("is_approved", true)
-          .order("created_at", { ascending: false });
+      console.log("Fetching media for child:", childId);
+      const { data, error } = await supabase
+        .from("album_media")
+        .select(`
+          id,
+          url,
+          type,
+          title,
+          description,
+          is_featured,
+          created_at,
+          sponsor_id,
+          sponsors (
+            name,
+            role,
+            is_anonymous
+          )
+        `)
+        .eq("child_id", childId)
+        .eq("is_approved", true)
+        .order("created_at", { ascending: false });
 
-        if (error) {
-          console.error("Error fetching album media:", error);
-          toast.error("Erreur lors du chargement des photos");
-          throw error;
-        }
-
-        return data as AlbumMedia[];
-      } catch (err) {
-        console.error("Error in album media query:", err);
-        toast.error("Erreur lors du chargement des photos");
-        throw err;
+      if (error) {
+        console.error("Error fetching album media:", error);
+        throw error;
       }
+
+      return data;
     },
   });
-
-  if (error) {
-    return (
-      <Card className="p-4 text-center text-red-500">
-        Une erreur est survenue lors du chargement des photos
-      </Card>
-    );
-  }
 
   if (isLoading) {
     return (

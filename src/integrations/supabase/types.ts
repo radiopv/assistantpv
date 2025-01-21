@@ -251,24 +251,6 @@ export type Database = {
           },
         ]
       }
-      categories: {
-        Row: {
-          category_name: string
-          description: string | null
-          id: string
-        }
-        Insert: {
-          category_name: string
-          description?: string | null
-          id?: string
-        }
-        Update: {
-          category_name?: string
-          description?: string | null
-          id?: string
-        }
-        Relationships: []
-      }
       child_assignment_requests: {
         Row: {
           child_id: string | null

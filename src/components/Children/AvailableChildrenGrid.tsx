@@ -1,18 +1,19 @@
-import { useState } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, MapPin, Calendar, Info, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Need, convertJsonToNeeds } from "@/types/needs";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/components/Auth/AuthProvider";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { detectFace, loadFaceDetectionModels } from "@/utils/faceDetection";
 import { toast } from "sonner";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -20,25 +21,31 @@ interface AvailableChildrenGridProps {
   onSponsorClick: (childId: string) => void;
 }
 
-const formatAge = (birthDate: string) => {
-  const today = new Date();
-  const birth = parseISO(birthDate);
-  const years = differenceInYears(today, birth);
-  
-  if (years === 0) {
-    const months = differenceInMonths(today, birth);
-    return `${months} mois`;
-  }
-  
-  return `${years} ans`;
-};
-
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [submittingChildId, setSubmittingChildId] = useState<string | null>(null);
+  const processedImages = useRef<Set<string>>(new Set());
+  const [modelsLoaded, setModelsLoaded] = useState(false);
 
-  // Fetch album photos for all children
+  // Sort children by needs urgency and waiting time
+  const sortedChildren = useMemo(() => {
+    return [...children].sort((a, b) => {
+      // Count urgent needs
+      const aUrgentNeeds = convertJsonToNeeds(a.needs).filter(need => need.is_urgent).length;
+      const bUrgentNeeds = convertJsonToNeeds(b.needs).filter(need => need.is_urgent).length;
+      
+      // Compare urgent needs first
+      if (aUrgentNeeds !== bUrgentNeeds) {
+        return bUrgentNeeds - aUrgentNeeds;
+      }
+      
+      // If urgent needs are equal, compare waiting time
+      const aCreatedAt = parseISO(a.created_at);
+      const bCreatedAt = parseISO(b.created_at);
+      return aCreatedAt.getTime() - bCreatedAt.getTime();
+    });
+  }, [children]);
+
   const { data: albumPhotos } = useQuery({
     queryKey: ['album-photos', children.map(child => child.id)],
     queryFn: async () => {
@@ -70,66 +77,59 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     return acc;
   }, {} as Record<string, any[]>) || {};
 
-  // Sort children by needs urgency and waiting time
-  const sortedChildren = [...children].sort((a, b) => {
-    // Count urgent needs
-    const aUrgentNeeds = convertJsonToNeeds(a.needs).filter(need => need.is_urgent).length;
-    const bUrgentNeeds = convertJsonToNeeds(b.needs).filter(need => need.is_urgent).length;
-    
-    // Compare urgent needs first
-    if (aUrgentNeeds !== bUrgentNeeds) {
-      return bUrgentNeeds - aUrgentNeeds;
-    }
-    
-    // If urgent needs are equal, compare waiting time
-    const aCreatedAt = parseISO(a.created_at);
-    const bCreatedAt = parseISO(b.created_at);
-    return aCreatedAt.getTime() - bCreatedAt.getTime();
-  });
-
-  const handleSponsorClick = async (childId: string) => {
-    if (!user) {
-      navigate(`/become-sponsor?child=${childId}`);
-      return;
-    }
-
-    setSubmittingChildId(childId);
-    try {
-      // Get user profile
-      const { data: profile } = await supabase
-        .from('sponsors')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-      if (!profile) {
-        throw new Error("Profil non trouvé");
-      }
-
-      // Create sponsorship request
-      const { error } = await supabase
-        .from('sponsorship_requests')
-        .insert({
-          child_id: childId,
-          sponsor_id: user.id,
-          full_name: profile.name,
-          email: profile.email,
-          phone: profile.phone,
-          facebook_url: profile.facebook_url,
-          city: profile.city,
-          is_long_term: true,
-          terms_accepted: true,
-          status: 'pending'
+  useEffect(() => {
+    loadFaceDetectionModels()
+      .then(() => {
+        setModelsLoaded(true);
+        console.log('Face detection models loaded successfully');
+      })
+      .catch(error => {
+        console.error('Failed to load face detection models:', error);
+        toast({
+          variant: "destructive",
+          title: "Erreur",
+          description: "Impossible de charger les modèles de détection faciale",
         });
+      });
+  }, []);
 
-      if (error) throw error;
+  const handleImageLoad = async (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
+    const imgElement = event.target as HTMLImageElement;
+    
+    if (processedImages.current.has(photoUrl) || !modelsLoaded) return;
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const objectPosition = await detectFace(imgElement);
+      imgElement.style.objectPosition = objectPosition;
+      processedImages.current.add(photoUrl);
+    } catch (error) {
+      console.error('Error processing image:', error);
+      imgElement.style.objectPosition = '50% 20%';
+    }
+  };
 
-      toast.success("Votre demande de parrainage a été envoyée avec succès");
-    } catch (error: any) {
-      console.error('Error creating sponsorship request:', error);
-      toast.error(error.message || "Une erreur est survenue lors de la demande de parrainage");
-    } finally {
-      setSubmittingChildId(null);
+  const formatAge = (birthDate: string) => {
+    if (!birthDate) return "Âge non disponible";
+    
+    try {
+      const today = new Date();
+      const birth = parseISO(birthDate);
+      const years = differenceInYears(today, birth);
+      const months = differenceInMonths(today, birth) % 12;
+      
+      if (years === 0) {
+        return `${months} mois`;
+      }
+      
+      if (months === 0) {
+        return `${years} ans`;
+      }
+      
+      return `${years} ans ${months} mois`;
+    } catch (error) {
+      console.error('Error calculating age:', error);
+      return "Âge non disponible";
     }
   };
 
@@ -154,6 +154,37 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       </div>
     );
   }
+
+  const handleSponsorClick = async (childId: string) => {
+    if (!user) {
+      // If user is not logged in, redirect to become-sponsor form
+      navigate(`/become-sponsor?child=${childId}`);
+      return;
+    }
+
+    try {
+      // Create sponsorship request directly
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          sponsor_id: user.id,
+          status: 'pending',
+          is_long_term: true,
+          terms_accepted: true,
+          email: user.email,
+          full_name: user.name
+        });
+
+      if (error) throw error;
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+      navigate('/sponsor-dashboard');
+    } catch (error) {
+      console.error('Error creating sponsorship request:', error);
+      toast.error("Une erreur est survenue lors de la demande de parrainage");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -187,7 +218,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   src={child.photo_url || "/placeholder.svg"}
                   alt={child.name}
                   className="w-full h-full object-cover transition-transform duration-300"
-                  style={{ objectPosition: '50% 30%' }}
+                  onLoad={(e) => handleImageLoad(e, child.photo_url)}
                   crossOrigin="anonymous"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
@@ -219,7 +250,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                             src={photo.url}
                             alt="Photo album"
                             className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                            style={{ objectPosition: '50% 30%' }}
                           />
                         </div>
                       ))}
@@ -258,7 +288,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
                 <Button 
                   onClick={() => handleSponsorClick(child.id)}
-                  disabled={submittingChildId === child.id}
                   className={`w-full ${
                     hasUrgentNeeds
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
@@ -266,7 +295,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   } group-hover:scale-105 transition-all duration-300`}
                 >
                   <Heart className="w-4 h-4 mr-2" />
-                  {submittingChildId === child.id ? "Envoi en cours..." : "Parrainer"}
+                  Parrainer
                 </Button>
               </div>
             </Card>

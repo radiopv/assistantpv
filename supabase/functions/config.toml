@@ -1,4 +1,4 @@
 project_id = "pedwjkjpckjlwbxfsmth"
 
-[send-notification-email]
-verify_jwt = true
+[api]
+enabled = true

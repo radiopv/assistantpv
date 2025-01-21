@@ -14,7 +14,7 @@ interface DonationCardHeaderProps {
 export const DonationCardHeader = ({ donation, onDeleteClick }: DonationCardHeaderProps) => {
   return (
     <div className="p-6 bg-gray-50 border-b flex justify-between items-start">
-      <div className="flex-1 text-center">
+      <div>
         <h3 className="font-semibold text-lg">{donation.assistant_name}</h3>
         <div className="text-sm text-gray-500 space-y-1">
           <p>{donation.city}</p>

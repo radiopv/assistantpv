@@ -15,7 +15,7 @@ import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
-import { Plus } from "lucide-react";
+import { Plus, Minus } from "lucide-react";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -33,7 +33,8 @@ const SponsorDashboard = () => {
       uploadError: "Erreur lors de l'ajout de la photo",
       plannedVisits: "Visites Planifiées",
       noAccess: "Accès non autorisé",
-      addChild: "Ajouter un enfant"
+      addChild: "Ajouter un enfant",
+      removeChild: "Retirer un enfant"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -43,14 +44,19 @@ const SponsorDashboard = () => {
       uploadError: "Error al agregar la foto",
       plannedVisits: "Visitas Planificadas",
       noAccess: "Acceso no autorizado",
-      addChild: "Agregar un niño"
+      addChild: "Agregar un niño",
+      removeChild: "Retirar un niño"
     }
   };
 
   const t = translations[language as keyof typeof translations];
 
+  if (!user?.id) {
+    return <div className="text-center p-4">{t.noAccess}</div>;
+  }
+
   const { data: sponsoredChildren, isLoading: childrenLoading } = useQuery({
-    queryKey: ["sponsored-children", user?.id],
+    queryKey: ["sponsored-children", user.id],
     queryFn: async () => {
       const { data: sponsorships, error } = await supabase
         .from('sponsorships')
@@ -70,14 +76,13 @@ const SponsorDashboard = () => {
             age
           )
         `)
-        .eq('sponsor_id', user?.id)
+        .eq('sponsor_id', user.id)
         .eq('status', 'active');
 
       if (error) throw error;
-      console.log("Sponsorship data found:", sponsorships);
       return sponsorships || [];
     },
-    enabled: !!user?.id
+    enabled: !!user.id
   });
 
   const handleAddPhoto = (childId: string) => {
@@ -95,29 +100,19 @@ const SponsorDashboard = () => {
     return <div className="text-center p-4">{t.loading}</div>;
   }
 
-  if (!user?.id) {
-    return <div className="text-center p-4">{t.noAccess}</div>;
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-4">
       <div className="container mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
           <Button 
-            onClick={() => setShowAddDialog(!showAddDialog)}
+            onClick={() => setShowAddDialog(true)}
             className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90"
           >
             <Plus className="w-4 h-4 mr-2" />
             {t.addChild}
           </Button>
         </div>
-
-        <AssignSponsorDialog
-          sponsorId={user.id}
-          isOpen={showAddDialog}
-          onClose={() => setShowAddDialog(false)}
-        />
 
         <div className="grid gap-6">
           {user?.id && <ContributionStats sponsorId={user.id} />}
@@ -163,6 +158,12 @@ const SponsorDashboard = () => {
           <SponsorshipTimeline events={[]} />
         </div>
       </div>
+
+      <AssignSponsorDialog
+        sponsorId={user.id}
+        isOpen={showAddDialog}
+        onClose={() => setShowAddDialog(false)}
+      />
     </div>
   );
 };
