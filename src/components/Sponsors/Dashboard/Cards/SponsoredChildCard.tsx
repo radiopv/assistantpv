@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Camera, FileEdit } from "lucide-react";
+import { Star, Camera, FileEdit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   Tooltip,
@@ -37,7 +37,7 @@ export const SponsoredChildCard = ({
 }: SponsoredChildCardProps) => {
   const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
-  const { data: albumPhotos = [], isLoading } = useQuery({
+  const { data: albumPhotos = [], isLoading, refetch } = useQuery({
     queryKey: ['album-photos', child.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -61,9 +61,31 @@ export const SponsoredChildCard = ({
       if (error) throw error;
 
       toast.success(currentStatus ? "Photo retirée des favoris" : "Photo ajoutée aux favoris");
+      refetch();
     } catch (error) {
       console.error('Error toggling feature status:', error);
       toast.error("Erreur lors de la modification du statut de la photo");
+    }
+  };
+
+  const handleDeletePhoto = async (photoId: string) => {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette photo ?")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('album_media')
+        .delete()
+        .eq('id', photoId);
+
+      if (error) throw error;
+
+      toast.success("Photo supprimée avec succès");
+      refetch();
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+      toast.error("Erreur lors de la suppression de la photo");
     }
   };
 
@@ -105,24 +127,40 @@ export const SponsoredChildCard = ({
                     alt={`Photo de ${child.name}`}
                     className="w-full aspect-square object-cover rounded-lg"
                   />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => handleToggleFeature(photo.id, photo.is_featured)}
-                          className={`absolute top-2 right-2 p-1 rounded-full transition-opacity 
-                            ${photo.is_featured ? 'bg-yellow-400 text-black' : 'bg-white/80 text-gray-600'} 
-                            opacity-0 group-hover:opacity-100`}
-                        >
-                          <Star className="w-4 h-4" />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Cliquez pour {photo.is_featured ? "retirer des" : "ajouter aux"} favoris</p>
-                        <p className="text-xs text-gray-500">Les photos favorites apparaîtront sur la page d'accueil</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <div className="absolute top-2 right-2 flex gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => handleToggleFeature(photo.id, photo.is_featured)}
+                            className={`p-1 rounded-full bg-white/80 ${photo.is_featured ? 'text-yellow-400' : 'text-gray-600'}`}
+                          >
+                            <Star className={`w-4 h-4 ${photo.is_featured ? 'fill-yellow-400' : ''}`} />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Cliquez pour {photo.is_featured ? "retirer des" : "ajouter aux"} favoris</p>
+                          <p className="text-xs text-gray-500">Les photos favorites apparaîtront sur la page d'accueil</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => handleDeletePhoto(photo.id)}
+                            className="p-1 rounded-full bg-white/80 text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Supprimer cette photo</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
               ))}
             </div>
