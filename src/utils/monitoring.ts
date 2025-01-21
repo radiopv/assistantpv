@@ -3,10 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 export const logError = async (error: Error, context: string) => {
   console.error(`Error in ${context}:`, error);
 
+  const user = await supabase.auth.getUser();
+  const userId = user.data.user?.id;
+
+  if (!userId) {
+    console.warn('No user ID available for error logging');
+    return;
+  }
+
   try {
     await supabase
       .from('activity_logs')
       .insert({
+        user_id: userId,
         action: 'error',
         details: {
           message: error.message,
@@ -22,9 +31,18 @@ export const logError = async (error: Error, context: string) => {
 
 export const trackPerformance = async (action: string, duration: number) => {
   try {
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+
+    if (!userId) {
+      console.warn('No user ID available for performance tracking');
+      return;
+    }
+
     await supabase
-      .from('performance_metrics')
+      .from('performance_logs')
       .insert({
+        user_id: userId,
         action,
         duration,
         timestamp: new Date().toISOString()

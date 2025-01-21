@@ -4,6 +4,9 @@ import { supabase } from '@/integrations/supabase/client';
 
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
+    auth: {
+      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test-user-id' } } })
+    },
     from: vi.fn(() => ({
       insert: vi.fn().mockResolvedValue({ data: null, error: null })
     }))
@@ -21,7 +24,7 @@ describe('Monitoring Utils', () => {
   it('tracks performance metrics', async () => {
     await trackPerformance('test-action', 100);
     
-    expect(supabase.from).toHaveBeenCalledWith('performance_metrics');
+    expect(supabase.from).toHaveBeenCalledWith('performance_logs');
   });
 
   it('monitors API calls', async () => {
@@ -29,5 +32,11 @@ describe('Monitoring Utils', () => {
     const result = await monitorApiCall(mockApi, 'test-api');
     
     expect(result).toEqual({ data: 'test' });
+  });
+
+  it('handles errors in API calls', async () => {
+    const mockApi = vi.fn().mockRejectedValue(new Error('API Error'));
+    
+    await expect(monitorApiCall(mockApi, 'test-api')).rejects.toThrow('API Error');
   });
 });
