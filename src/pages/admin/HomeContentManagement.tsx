@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ModulesList } from "@/components/Admin/HomeContent/Modules/ModulesList";
-import { Module, ModuleType } from "@/types/module";
+import { Module, ModuleType } from "@/components/Admin/HomeContent/types";
 import { toast } from "sonner";
 
 export default function HomeContentManagement() {
@@ -21,10 +21,11 @@ export default function HomeContentManagement() {
 
       if (error) throw error;
 
-      // Cast the module_type to ModuleType
       const typedModules = data.map(module => ({
         ...module,
-        module_type: module.module_type as ModuleType
+        module_type: module.module_type as ModuleType,
+        content: module.content || {},
+        settings: module.settings || {}
       }));
 
       setModules(typedModules);
@@ -38,9 +39,20 @@ export default function HomeContentManagement() {
 
   const handleAddModule = async (moduleData: Partial<Module>) => {
     try {
+      if (!moduleData.name || !moduleData.module_type) {
+        throw new Error("Le nom et le type du module sont requis");
+      }
+
       const { data, error } = await supabase
         .from('homepage_modules')
-        .insert([moduleData])
+        .insert({
+          name: moduleData.name,
+          module_type: moduleData.module_type,
+          is_active: moduleData.is_active ?? true,
+          content: moduleData.content || {},
+          settings: moduleData.settings || {},
+          order_index: moduleData.order_index
+        })
         .select()
         .single();
 
@@ -68,7 +80,9 @@ export default function HomeContentManagement() {
 
       if (error) throw error;
 
-      setModules(prev => prev.map(module => module.id === moduleId ? { ...module, is_active: data.is_active } : module));
+      setModules(prev => prev.map(module => 
+        module.id === moduleId ? { ...module, is_active: data.is_active } : module
+      ));
       toast.success("Module mis à jour avec succès");
     } catch (error) {
       console.error('Error toggling module:', error);

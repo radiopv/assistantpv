@@ -40,6 +40,7 @@ export type ModuleType =
   | "testimonials"
   | "featured-album"
   | "impact-stats"
+  | "impact"
   | "journey"
   | "events"
   | "needs"
@@ -55,4 +56,6 @@ export interface Module {
   settings: ModuleSettings;
   content: ModuleContent;
   order_index: number;
+  created_at?: string;
+  updated_at?: string;
 }
