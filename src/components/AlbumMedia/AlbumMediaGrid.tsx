@@ -3,13 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { AlbumMedia } from "@/types/supabase";
 
 interface AlbumMediaGridProps {
   childId: string;
 }
 
 export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
-  const { data: media, isLoading, error } = useQuery({
+  const { data: media, isLoading, error } = useQuery<AlbumMedia[]>({
     queryKey: ["album-media", childId],
     queryFn: async () => {
       try {
@@ -48,8 +49,6 @@ export const AlbumMediaGrid = ({ childId }: AlbumMediaGridProps) => {
         throw err;
       }
     },
-    retry: 2,
-    retryDelay: 1000,
   });
 
   if (error) {
