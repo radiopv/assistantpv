@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
-import { differenceInYears, differenceInMonths, parseISO } from "date-fns";
+import { differenceInYears, parseISO } from "date-fns";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,21 +14,13 @@ import {
 } from "@/components/ui/carousel";
 import { Info, Heart } from "lucide-react";
 
-type Child = Database["public"]["Tables"]["children"]["Row"];
-
-const formatAge = (birthDate: string | null) => {
-  if (!birthDate) return null;
-  
-  const today = new Date();
-  const birth = parseISO(birthDate);
-  const years = differenceInYears(today, birth);
-  
-  if (years === 0) {
-    const months = differenceInMonths(today, birth);
-    return `${months} mois`;
-  }
-  
-  return `${years} ans`;
+type Child = {
+  id: string;
+  name: string;
+  photo_url: string | null;
+  birth_date: string;
+  city: string;
+  needs: any[];
 };
 
 export const FeaturedChildren = () => {
@@ -70,15 +61,17 @@ export const FeaturedChildren = () => {
   }
 
   return (
-    <section className="py-12 bg-white">
+    <section className="py-8 bg-white">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-8">Enfants en attente de parrainage</h2>
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
+          Enfants en attente de parrainage
+        </h2>
         
         <Carousel className="w-full max-w-5xl mx-auto">
           <CarouselContent>
             {children.map((child) => (
-              <CarouselItem key={child.id} className="md:basis-1/2 lg:basis-1/3">
-                <Card className="overflow-hidden mx-2 h-full">
+              <CarouselItem key={child.id} className="md:basis-1/2 lg:basis-1/3 p-2">
+                <Card className="overflow-hidden h-full">
                   <div className="aspect-square relative">
                     <img
                       src={child.photo_url || "/placeholder.svg"}
@@ -89,7 +82,7 @@ export const FeaturedChildren = () => {
                     <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
                       <h3 className="font-semibold text-lg">{child.name}</h3>
                       <div className="mt-2 space-y-1 text-sm">
-                        <p>{formatAge(child.birth_date)}</p>
+                        <p>{differenceInYears(new Date(), parseISO(child.birth_date))} ans</p>
                         <p>{child.city}</p>
                       </div>
                     </div>

@@ -14,24 +14,24 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-[70vh] bg-cuba-gradient overflow-hidden">
+    <section className="relative min-h-[60vh] md:min-h-[70vh] bg-cuba-gradient overflow-hidden">
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         className="absolute inset-0 bg-golden-shimmer animate-golden-light"
       />
-      <div className="container mx-auto h-full relative z-10 py-8">
-        <div className="flex flex-col items-center justify-center h-full gap-8 px-4">
+      <div className="container mx-auto h-full relative z-10 py-4 md:py-8">
+        <div className="flex flex-col items-center justify-center h-full gap-4 md:gap-8 px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             className="text-center max-w-2xl"
           >
-            <h1 className="text-4xl lg:text-5xl font-bold text-white font-title mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white font-title mb-3 md:mb-4">
               {heroSection?.title || "Parrainez un enfant cubain"}
             </h1>
-            <p className="text-xl text-white/90 mb-6">
+            <p className="text-lg md:text-xl text-white/90 mb-4 md:mb-6">
               {heroSection?.subtitle || "Aidez-nous à changer des vies en parrainant un enfant cubain dans le besoin"}
             </p>
             <motion.div
@@ -53,12 +53,12 @@ export const HeroSection = ({ heroSection, onImageClick }: HeroSectionProps) => 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="w-full max-w-4xl mx-auto relative"
+            className="w-full max-w-3xl mx-auto relative"
           >
             <img 
               src="/lovable-uploads/c0c5a7da-df66-4f94-91c4-b5428f6fcc0d.png"
               alt="Enfant cubain"
-              className="w-full h-auto object-contain cursor-pointer rounded-lg shadow-2xl transform transition-transform duration-300 hover:scale-105"
+              className="w-full h-auto object-contain cursor-pointer rounded-lg shadow-xl transform transition-transform duration-300 hover:scale-105"
               onClick={onImageClick}
             />
           </motion.div>
