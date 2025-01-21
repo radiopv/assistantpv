@@ -18,21 +18,6 @@ export const SponsorshipButton = ({ childId, userId }: SponsorshipButtonProps) =
     }
 
     try {
-      // First, check for existing sponsorship
-      const { data: existingSponsorship, error: sponsorshipError } = await supabase
-        .from('sponsorships')
-        .select('*')
-        .eq('sponsor_id', userId)
-        .eq('status', 'active')
-        .maybeSingle();
-
-      if (sponsorshipError) throw sponsorshipError;
-
-      if (!existingSponsorship) {
-        navigate(`/become-sponsor?child=${childId}`);
-        return;
-      }
-
       // Get sponsor information
       const { data: sponsorData, error: sponsorError } = await supabase
         .from('sponsors')
@@ -42,7 +27,7 @@ export const SponsorshipButton = ({ childId, userId }: SponsorshipButtonProps) =
 
       if (sponsorError) throw sponsorError;
 
-      // Create sponsorship request with required fields
+      // Create sponsorship request
       const { error: requestError } = await supabase
         .from('sponsorship_requests')
         .insert({

@@ -13,15 +13,16 @@ import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { SponsorshipButton } from "./Details/SponsorshipButton";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface AvailableChildrenGridProps {
   children: any[];
   isLoading: boolean;
-  onSponsorClick: (childId: string) => void;
 }
 
-export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
-  const navigate = useNavigate();
+export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildrenGridProps) => {
+  const { user } = useAuth();
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
@@ -153,11 +154,6 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
-  const handleSponsorClick = (childId: string) => {
-    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
-    navigate(`/become-sponsor?child=${childId}`);
-  };
-
   return (
     <div className="space-y-6">
       {/* Information Card */}
@@ -258,17 +254,10 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   </div>
                 )}
 
-                <Button 
-                  onClick={() => handleSponsorClick(child.id)}
-                  className={`w-full ${
-                    hasUrgentNeeds
-                      ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
-                      : "bg-gradient-to-r from-cuba-coral to-cuba-gold hover:from-cuba-coral/90 hover:to-cuba-gold/90 text-white"
-                  } group-hover:scale-105 transition-all duration-300`}
-                >
-                  <Heart className="w-4 h-4 mr-2" />
-                  Parrainer
-                </Button>
+                <SponsorshipButton 
+                  childId={child.id}
+                  userId={user?.id}
+                />
               </div>
             </Card>
           );
