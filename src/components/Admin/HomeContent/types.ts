@@ -33,16 +33,6 @@ export interface ModuleSettings {
   enableJoinButton?: boolean;
 }
 
-export interface Module {
-  id: string;
-  name: string;
-  module_type: ModuleType;
-  is_active: boolean;
-  settings: ModuleSettings;
-  content: ModuleContent;
-  order_index: number;
-}
-
 export type ModuleType = 
   | "hero"
   | "featured-children"
@@ -56,3 +46,13 @@ export type ModuleType =
   | "newsletter"
   | "donation-goals"
   | "community";
+
+export interface Module {
+  id: string;
+  name: string;
+  module_type: ModuleType;
+  is_active: boolean;
+  settings: ModuleSettings;
+  content: ModuleContent;
+  order_index: number;
+}
