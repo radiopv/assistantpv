@@ -251,6 +251,24 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          category_name: string
+          description: string | null
+          id: string
+        }
+        Insert: {
+          category_name: string
+          description?: string | null
+          id?: string
+        }
+        Update: {
+          category_name?: string
+          description?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       child_assignment_requests: {
         Row: {
           child_id: string | null
@@ -259,6 +277,7 @@ export type Database = {
           notes: string | null
           sponsor_id: string | null
           status: string | null
+          type: string | null
           updated_at: string | null
         }
         Insert: {
@@ -268,6 +287,7 @@ export type Database = {
           notes?: string | null
           sponsor_id?: string | null
           status?: string | null
+          type?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -277,6 +297,7 @@ export type Database = {
           notes?: string | null
           sponsor_id?: string | null
           status?: string | null
+          type?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -401,20 +422,6 @@ export type Database = {
           performed_by?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "children_audit_logs_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "children"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "children_audit_logs_child_id_fkey"
-            columns: ["child_id"]
-            isOneToOne: false
-            referencedRelation: "sponsored_children_view"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "children_audit_logs_performed_by_fkey"
             columns: ["performed_by"]
@@ -1331,6 +1338,33 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_logs: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          metric_name: string
+          updated_at: string | null
+          value: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          updated_at?: string | null
+          value: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          updated_at?: string | null
+          value?: number
+        }
+        Relationships: []
+      }
       planned_visits: {
         Row: {
           created_at: string | null
@@ -1388,19 +1422,19 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          role: string
+          role: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           id: string
-          role: string
+          role?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          role?: string
+          role?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -2742,6 +2776,17 @@ export type Database = {
         Returns: {
           valid: boolean
           sponsor_id: string
+        }[]
+      }
+      validate_sponsor_login: {
+        Args: {
+          p_email: string
+          p_password: string
+        }
+        Returns: {
+          valid: boolean
+          sponsor_id: string
+          sponsor_role: string
         }[]
       }
     }
