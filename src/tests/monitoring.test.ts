@@ -1,81 +1,68 @@
-import { logError, trackPerformance, monitorApiCall } from '../utils/monitoring';
+import { logError, logPerformance } from '@/utils/monitoring';
 import { supabase } from '@/integrations/supabase/client';
 
 // Mock Supabase client
 jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: jest.fn(() => ({
-      insert: jest.fn().mockResolvedValue({ data: null, error: null })
-    }))
-  }
+      insert: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
 }));
 
-describe('Monitoring Utilities', () => {
+describe('Monitoring Utils', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('logError logs errors correctly', async () => {
+  test('logError should insert error into performance_logs', async () => {
     const error = new Error('Test error');
-    const context = { test: 'context' };
-    const userId = 'test-user';
+    const context = { userId: '123', action: 'test' };
 
-    await logError(error, context, userId);
+    await logError(error, context);
 
-    expect(supabase.from).toHaveBeenCalledWith('activity_logs');
-    expect(supabase.from('activity_logs').insert).toHaveBeenCalledWith([
-      expect.objectContaining({
-        action: 'error_log',
-        user_id: userId,
-        details: expect.objectContaining({
-          message: error.message,
-          context
-        })
-      })
-    ]);
+    expect(supabase.from).toHaveBeenCalledWith('performance_logs');
+    expect(supabase.from('performance_logs').insert).toHaveBeenCalledWith({
+      metric_name: 'error',
+      value: 1,
+      metadata: {
+        error: error.message,
+        stack: error.stack,
+        ...context,
+      },
+    });
   });
 
-  test('trackPerformance logs metrics correctly', async () => {
-    const metricName = 'test-metric';
-    const value = 100;
-    const metadata = { test: 'metadata' };
-    const userId = 'test-user';
+  test('logPerformance should insert performance metric', async () => {
+    const metric = {
+      name: 'page_load',
+      value: 1500,
+      metadata: { page: 'home' },
+    };
 
-    await trackPerformance(metricName, value, metadata, userId);
+    await logPerformance(metric);
 
-    expect(supabase.from).toHaveBeenCalledWith('activity_logs');
-    expect(supabase.from('activity_logs').insert).toHaveBeenCalledWith([
-      expect.objectContaining({
-        action: 'performance_metric',
-        user_id: userId,
-        details: {
-          metric_name: metricName,
-          value,
-          metadata
-        }
-      })
-    ]);
+    expect(supabase.from).toHaveBeenCalledWith('performance_logs');
+    expect(supabase.from('performance_logs').insert).toHaveBeenCalledWith({
+      metric_name: metric.name,
+      value: metric.value,
+      metadata: metric.metadata,
+    });
   });
 
-  test('monitorApiCall logs API calls correctly', async () => {
-    const endpoint = '/api/test';
-    const duration = 100;
-    const status = 200;
-    const userId = 'test-user';
+  test('logError should handle missing context', async () => {
+    const error = new Error('Test error');
 
-    await monitorApiCall(endpoint, duration, status, userId);
+    await logError(error);
 
-    expect(supabase.from).toHaveBeenCalledWith('activity_logs');
-    expect(supabase.from('activity_logs').insert).toHaveBeenCalledWith([
-      expect.objectContaining({
-        action: 'api_call',
-        user_id: userId,
-        details: {
-          endpoint,
-          duration,
-          status
-        }
-      })
-    ]);
+    expect(supabase.from).toHaveBeenCalledWith('performance_logs');
+    expect(supabase.from('performance_logs').insert).toHaveBeenCalledWith({
+      metric_name: 'error',
+      value: 1,
+      metadata: {
+        error: error.message,
+        stack: error.stack,
+      },
+    });
   });
 });

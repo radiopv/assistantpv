@@ -1,62 +1,23 @@
-import { Json } from "@/integrations/supabase/types/json";
+import { Json } from "@/integrations/supabase/types";
 
-export type ModuleType = 
-  | "hero"
-  | "featured-children"
-  | "how-it-works"
-  | "testimonials"
-  | "featured-album"
-  | "impact-stats"
-  | "impact"
-  | "journey"
-  | "events"
-  | "needs"
-  | "newsletter"
-  | "donation-goals"
-  | "community";
+export type ModuleType = 'hero' | 'featured' | 'impact' | 'cta' | 'journey' | 'testimonials';
 
 export interface ModuleContent {
   title?: string;
   subtitle?: string;
+  [key: string]: any;
 }
 
 export interface ModuleSettings {
   title?: string;
-  subtitle?: string;
-  buttonText?: string;
-  buttonLink?: string;
-  backgroundImage?: string;
-  displayCount?: number;
-  autoplay?: boolean;
-  showRatings?: boolean;
-  layout?: string;
-  photosCount?: number;
-  showCaptions?: boolean;
-  autoSlide?: boolean;
-  showLocation?: boolean;
-  showDateTime?: boolean;
-  enableRegistration?: boolean;
-  categoriesCount?: number;
-  showUrgentFirst?: boolean;
-  enableDonationButton?: boolean;
-  showSocialLinks?: boolean;
-  backgroundColor?: string;
-  showProgressBar?: boolean;
-  showProgressBars?: boolean;
-  showTargetAmount?: boolean;
-  categories?: string[];
-  showMemberCount?: boolean;
-  displayTestimonials?: boolean;
-  enableJoinButton?: boolean;
   showTotalSponsors?: boolean;
   showTotalChildren?: boolean;
   showTotalDonations?: boolean;
   animateNumbers?: boolean;
   backgroundStyle?: string;
-  steps?: {
-    title: string;
-    description: string;
-  }[];
+  steps?: { title: string; description: string; }[];
+  showProgressBar?: boolean;
+  [key: string]: any;
 }
 
 export interface Module {
@@ -64,16 +25,9 @@ export interface Module {
   name: string;
   module_type: ModuleType;
   is_active: boolean;
-  settings: ModuleSettings;
   content: ModuleContent;
+  settings: ModuleSettings;
   order_index: number;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface ModulesListProps {
-  modules: Module[];
-  onAddModule: (moduleData: Partial<Module>) => Promise<void>;
-  onToggle: (moduleId: string) => Promise<void>;
-  onDeleteClick: (moduleId: string) => Promise<void>;
+  created_at: string;
+  updated_at: string;
 }
