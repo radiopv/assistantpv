@@ -108,6 +108,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
     }
 
     try {
+      // Vérifier si l'enfant est déjà parrainé
       const { data: childData, error: childError } = await supabase
         .from('children')
         .select('is_sponsored, name')
@@ -116,26 +117,27 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
 
       if (childError) {
         console.error('Erreur lors de la vérification du statut de l\'enfant:', childError);
-        toast("Une erreur est survenue lors de la vérification du statut de l'enfant", {
-          description: "Veuillez réessayer plus tard"
+        toast("Une erreur est survenue", {
+          description: "Impossible de vérifier le statut de l'enfant"
         });
         return;
       }
 
       if (!childData) {
-        toast("Impossible de trouver les informations de l'enfant", {
-          description: "L'enfant n'existe plus dans la base de données"
+        toast("Enfant introuvable", {
+          description: "Les informations de l'enfant ne sont plus disponibles"
         });
         return;
       }
 
       if (childData.is_sponsored) {
-        toast("Cet enfant est déjà parrainé", {
-          description: "Veuillez choisir un autre enfant"
+        toast("Enfant déjà parrainé", {
+          description: "Cet enfant a déjà un parrain"
         });
         return;
       }
 
+      // Vérifier les demandes existantes
       const { data: existingRequests, error: requestError } = await supabase
         .from('sponsorship_requests')
         .select('status')
@@ -143,29 +145,30 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
         .eq('sponsor_id', user.id);
 
       if (requestError) {
-        console.error('Erreur lors de la vérification des demandes existantes:', requestError);
-        toast("Une erreur est survenue lors de la vérification des demandes existantes", {
-          description: "Veuillez réessayer plus tard"
+        console.error('Erreur lors de la vérification des demandes:', requestError);
+        toast("Une erreur est survenue", {
+          description: "Impossible de vérifier les demandes existantes"
         });
         return;
       }
 
       const pendingRequest = existingRequests?.find(req => req.status === 'pending');
       if (pendingRequest) {
-        toast("Vous avez déjà une demande de parrainage en cours pour cet enfant", {
-          description: "Veuillez attendre la réponse à votre demande"
+        toast("Demande en cours", {
+          description: "Vous avez déjà une demande de parrainage en cours pour cet enfant"
         });
         return;
       }
 
       const approvedRequest = existingRequests?.find(req => req.status === 'approved');
       if (approvedRequest) {
-        toast("Vous avez déjà parrainé cet enfant", {
-          description: "Vous ne pouvez pas parrainer le même enfant deux fois"
+        toast("Parrainage existant", {
+          description: "Vous parrainez déjà cet enfant"
         });
         return;
       }
 
+      // Créer la demande de parrainage
       const { error: createError } = await supabase
         .from('sponsorship_requests')
         .insert({
@@ -181,19 +184,19 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
 
       if (createError) {
         console.error('Erreur lors de la création de la demande:', createError);
-        toast("Une erreur est survenue lors de la demande de parrainage", {
-          description: "Veuillez réessayer plus tard"
+        toast("Une erreur est survenue", {
+          description: "Impossible de créer la demande de parrainage"
         });
         return;
       }
 
-      toast("Votre demande de parrainage a été envoyée avec succès", {
-        description: "Nous vous contacterons dès que possible"
+      toast("Demande envoyée", {
+        description: "Votre demande de parrainage a été envoyée avec succès"
       });
       
     } catch (error) {
       console.error('Erreur lors de la demande de parrainage:', error);
-      toast("Une erreur est survenue lors de la demande de parrainage", {
+      toast("Une erreur est survenue", {
         description: "Une erreur inattendue s'est produite"
       });
     }
