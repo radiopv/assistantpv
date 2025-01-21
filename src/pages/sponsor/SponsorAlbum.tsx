@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { PhotoGrid } from "@/components/Sponsors/Dashboard/PhotoAlbum/PhotoGrid";
 import { UploadSection } from "@/components/Sponsors/Dashboard/PhotoAlbum/UploadSection";
 import { PhotoViewerDialog } from "@/components/Sponsors/Dashboard/PhotoAlbum/PhotoViewerDialog";
+import { toast } from "sonner";
 
 const SponsorAlbum = () => {
   const { user } = useAuth();
@@ -96,7 +97,7 @@ const SponsorAlbum = () => {
           children (
             name
           ),
-          sponsors!album_media_new_sponsor_id_fkey (
+          sponsors (
             name,
             role,
             is_anonymous
