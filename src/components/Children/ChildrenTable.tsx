@@ -51,7 +51,7 @@ export const ChildrenTable = ({ children, onViewProfile, onSponsorClick }: Child
                   <Button
                     size="sm"
                     onClick={() => onSponsorClick(child)}
-                    className="bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 text-white font-semibold shadow-md transition-all duration-200"
+                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-md transition-all duration-200"
                   >
                     Parrainer
                   </Button>
