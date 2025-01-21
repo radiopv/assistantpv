@@ -25,25 +25,30 @@ export const FeaturedChildren = () => {
 
   useEffect(() => {
     const fetchAvailableChildren = async () => {
-      const { data, error } = await supabase
-        .from("children")
-        .select("*")
-        .eq("is_sponsored", false)
-        .order('created_at', { ascending: false })
-        .limit(6);
+      try {
+        const { data, error } = await supabase
+          .from("children")
+          .select("*")
+          .eq("is_sponsored", false)
+          .order('created_at', { ascending: false })
+          .limit(6);
 
-      if (error) {
-        console.error("Erreur lors de la récupération des enfants:", error);
-        return;
+        if (error) {
+          console.error("Erreur lors de la récupération des enfants:", error);
+          toast.error("Erreur lors du chargement des enfants");
+          return;
+        }
+
+        const childrenWithParsedNeeds = data.map(child => ({
+          ...child,
+          needs: convertJsonToNeeds(child.needs)
+        }));
+
+        setChildren(childrenWithParsedNeeds);
+      } catch (error) {
+        console.error("Erreur inattendue:", error);
+        toast.error("Une erreur est survenue");
       }
-
-      // Convert the needs from JSON to array
-      const childrenWithParsedNeeds = data.map(child => ({
-        ...child,
-        needs: convertJsonToNeeds(child.needs)
-      }));
-
-      setChildren(childrenWithParsedNeeds);
     };
 
     fetchAvailableChildren();
@@ -63,7 +68,7 @@ export const FeaturedChildren = () => {
 
   return (
     <section className="py-8 bg-white">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">
           Enfants en attente de parrainage
         </h2>
