@@ -80,32 +80,6 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  // Fetch photos count for each child
-  const { data: photosCount } = useQuery({
-    queryKey: ["photos-count", sponsoredChildren?.map(s => s.child_id)],
-    queryFn: async () => {
-      if (!sponsoredChildren?.length) return {};
-      
-      const { data, error } = await supabase
-        .from('album_media')
-        .select('child_id, id')
-        .in('child_id', sponsoredChildren.map(s => s.child_id));
-
-      if (error) throw error;
-
-      // Group photos by child_id and count them
-      const counts: Record<string, number> = {};
-      data?.forEach(photo => {
-        if (photo.child_id) {
-          counts[photo.child_id] = (counts[photo.child_id] || 0) + 1;
-        }
-      });
-
-      return counts;
-    },
-    enabled: !!sponsoredChildren?.length
-  });
-
   const handleAddPhoto = (childId: string) => {
     setSelectedChild(childId);
   };
@@ -152,8 +126,6 @@ const SponsorDashboard = () => {
             const child = sponsorship.children;
             if (!child) return null;
 
-            const photoCount = photosCount?.[child.id] || 0;
-
             return (
               <div key={child.id} className="space-y-6">
                 <SponsoredChildCard
@@ -161,7 +133,6 @@ const SponsorDashboard = () => {
                   sponsorshipId={sponsorship.id}
                   onAddPhoto={() => handleAddPhoto(child.id)}
                   onAddTestimonial={() => {}}
-                  photoCount={photoCount}
                 />
 
                 {selectedChild === child.id && (
