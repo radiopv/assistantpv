@@ -20,10 +20,55 @@ interface AvailableChildrenGridProps {
   onSponsorClick: (childId: string) => void;
 }
 
+const formatAge = (birthDate: string) => {
+  const today = new Date();
+  const birth = parseISO(birthDate);
+  const years = differenceInYears(today, birth);
+  
+  if (years === 0) {
+    const months = differenceInMonths(today, birth);
+    return `${months} mois`;
+  }
+  
+  return `${years} ans`;
+};
+
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch album photos for all children
+  const { data: albumPhotos } = useQuery({
+    queryKey: ['album-photos', children.map(child => child.id)],
+    queryFn: async () => {
+      if (!children.length) return [];
+      
+      const { data, error } = await supabase
+        .from('album_media')
+        .select('*')
+        .in('child_id', children.map(child => child.id))
+        .eq('type', 'image')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching album photos:', error);
+        return [];
+      }
+
+      return data || [];
+    },
+    enabled: children.length > 0
+  });
+
+  // Group photos by child
+  const photosByChild = albumPhotos?.reduce((acc, photo) => {
+    if (!acc[photo.child_id]) {
+      acc[photo.child_id] = [];
+    }
+    acc[photo.child_id].push(photo);
+    return acc;
+  }, {} as Record<string, any[]>) || {};
 
   // Sort children by needs urgency and waiting time
   const sortedChildren = [...children].sort((a, b) => {
