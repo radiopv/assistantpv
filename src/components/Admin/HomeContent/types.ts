@@ -4,7 +4,7 @@ export interface ModuleContent {
 }
 
 export interface ModuleSettings {
-  title: string;
+  title?: string;
   subtitle?: string;
   buttonText?: string;
   buttonLink?: string;
@@ -58,4 +58,11 @@ export interface Module {
   order_index: number;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface ModulesListProps {
+  modules: Module[];
+  onAddModule: (moduleData: Partial<Module>) => Promise<void>;
+  onToggle: (moduleId: string) => Promise<void>;
+  onDeleteClick: (moduleId: string) => Promise<void>;
 }

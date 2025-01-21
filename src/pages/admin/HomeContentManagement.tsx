@@ -21,11 +21,16 @@ export default function HomeContentManagement() {
 
       if (error) throw error;
 
-      const typedModules = data.map(module => ({
-        ...module,
+      const typedModules: Module[] = data.map(module => ({
+        id: module.id,
+        name: module.name,
         module_type: module.module_type as ModuleType,
-        content: module.content || {},
-        settings: module.settings || {}
+        is_active: module.is_active,
+        content: module.content as ModuleContent || {},
+        settings: module.settings as ModuleSettings || {},
+        order_index: module.order_index,
+        created_at: module.created_at,
+        updated_at: module.updated_at
       }));
 
       setModules(typedModules);
@@ -58,7 +63,19 @@ export default function HomeContentManagement() {
 
       if (error) throw error;
 
-      setModules(prev => [...prev, data as Module]);
+      const newModule: Module = {
+        id: data.id,
+        name: data.name,
+        module_type: data.module_type as ModuleType,
+        is_active: data.is_active,
+        content: data.content as ModuleContent,
+        settings: data.settings as ModuleSettings,
+        order_index: data.order_index,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
+
+      setModules(prev => [...prev, newModule]);
       toast.success("Module ajouté avec succès");
     } catch (error) {
       console.error('Error adding module:', error);
