@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { convertJsonToNeeds } from "@/types/needs";
-import { Camera, FileEdit, Clock } from "lucide-react";
+import { Camera, FileEdit } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -41,7 +41,7 @@ export const SponsoredChildCard = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch album photos
-  const { data: albumPhotos } = useQuery({
+  const { data: albumPhotos = [] } = useQuery({
     queryKey: ['album-photos', child.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -87,7 +87,6 @@ export const SponsoredChildCard = ({
 
   return (
     <Card className="overflow-hidden">
-      {/* Photo principale avec taille réduite */}
       <div className="aspect-[4/3] relative rounded-lg overflow-hidden">
         <img
           src={child.photo_url || "/placeholder.svg"}
@@ -96,24 +95,22 @@ export const SponsoredChildCard = ({
         />
       </div>
 
-      {/* Album photos */}
       <div className="p-4 border-t">
         <h4 className="text-sm font-medium mb-2">Album photos ({photoCount})</h4>
-          <div className="grid grid-cols-4 gap-2">
-            {albumPhotos.map((photo) => (
-              <div 
-                key={photo.id} 
-                className="aspect-square rounded-lg overflow-hidden"
-                onClick={() => window.open(photo.url, '_blank')}
-              >
-                <img
-                  src={photo.url}
-                  alt={`Photo de ${child.name}`}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
-                />
-              </div>
-            ))}
-          </div>
+        <div className="grid grid-cols-4 gap-2">
+          {albumPhotos.map((photo) => (
+            <div 
+              key={photo.id} 
+              className="aspect-square rounded-lg overflow-hidden"
+              onClick={() => window.open(photo.url, '_blank')}
+            >
+              <img
+                src={photo.url}
+                alt={`Photo de ${child.name}`}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+              />
+            </div>
+          ))}
         </div>
       </div>
 
