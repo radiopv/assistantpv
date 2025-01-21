@@ -1,8 +1,8 @@
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { convertJsonToNeeds } from "@/types/needs";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface ChildCardProps {
   child: any;
@@ -11,57 +11,60 @@ interface ChildCardProps {
 }
 
 export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
-  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleSponsorClick = () => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${child.id}`);
+      return;
+    }
+    onSponsorClick(child);
+  };
 
   return (
-    <Card className="overflow-hidden h-full flex flex-col">
-      <div className="relative pb-[75%] bg-gray-100">
-        <img
-          src={child.photo_url || "/placeholder.svg"}
-          alt={child.name}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      </div>
-      <div className="p-3 flex flex-col flex-grow">
-        <div className="flex-grow space-y-2">
-          <h3 className="text-lg font-semibold line-clamp-1">{child.name}</h3>
-          <div className="space-y-1">
-            <p className="text-sm text-gray-600 line-clamp-1">{child.age} ans</p>
-            <p className="text-sm text-gray-600 line-clamp-1">{child.city}</p>
-          </div>
-          {child.needs && (
-            <div className="flex flex-wrap gap-1.5">
-              {convertJsonToNeeds(child.needs).map((need: any, index: number) => (
-                <Badge
-                  key={`${need.category}-${index}`}
-                  variant={need.is_urgent ? "destructive" : "secondary"}
-                  className={`text-xs truncate max-w-[150px] ${need.is_urgent ? 'bg-red-500 hover:bg-red-600' : ''}`}
-                >
-                  {need.category}
-                  {need.is_urgent && " (!)"} 
-                </Badge>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="space-y-2 mt-3">
-          <Button
-            onClick={() => onViewProfile(child.id)}
-            className="w-full"
-            variant="secondary"
+    <Card className="overflow-hidden">
+      <div className="relative pb-[75%]">
+        {child.photo_url && (
+          <img
+            src={child.photo_url}
+            alt={child.name}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
+        {child.needs?.some((need: any) => need.is_urgent) && (
+          <Badge 
+            variant="destructive" 
+            className="absolute top-2 right-2"
           >
-            {t("viewProfile")}
-          </Button>
-          {!child.is_sponsored && (
-            <Button
-              onClick={() => onSponsorClick(child)}
-              className="w-full"
-            >
-              {t("sponsor")}
-            </Button>
-          )}
-        </div>
+            BESOIN URGENT
+          </Badge>
+        )}
       </div>
+
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-lg font-semibold">{child.name}</h3>
+            <p className="text-sm text-gray-500">
+              {child.age} ans {child.birth_date && "• "}{child.city}
+            </p>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="text-sm">
+        <p className="line-clamp-2">{child.description}</p>
+      </CardContent>
+
+      <CardFooter className="flex flex-col gap-2">
+        <Button 
+          onClick={handleSponsorClick}
+          className="w-full bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 text-white"
+        >
+          Parrainer cet enfant
+        </Button>
+      </CardFooter>
     </Card>
   );
 };

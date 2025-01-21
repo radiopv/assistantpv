@@ -16,6 +16,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AssignSponsorDialog } from "../AssistantSponsorship/AssignSponsorDialog";
 import { toast } from "sonner";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 interface ChildrenListProps {
   children: any[];
@@ -27,57 +29,92 @@ type ViewMode = "grid" | "table";
 
 export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenListProps) => {
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? "grid" : "table");
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
 
-  const uniqueChildren = children.reduce((acc, current) => {
-    const x = acc.find(item => item.id === current.id);
-    if (!x) {
-      return acc.concat([current]);
-    } else {
-      return acc;
+  const handleSponsorClick = async (child: any) => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${child.id}`);
+      return;
     }
-  }, []);
 
-  const { data: sponsors } = useQuery({
-    queryKey: ['sponsors'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('sponsors')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data;
-    }
-  });
-
-  const handleAssignSponsor = (childId: string) => {
-    setSelectedSponsorId(childId);
-    setShowAssignDialog(true);
-  };
-
-  const handleRemoveSponsor = async (childId: string) => {
     try {
-      const { error } = await supabase
+      // Vérifier si l'enfant est déjà parrainé
+      const { data: childData, error: childError } = await supabase
         .from('children')
-        .update({ 
-          is_sponsored: false,
-          sponsor_id: null,
-          sponsor_name: null 
-        })
-        .eq('id', childId);
+        .select('is_sponsored, name')
+        .eq('id', child.id)
+        .maybeSingle();
 
-      if (error) throw error;
+      if (childError) {
+        console.error('Erreur lors de la vérification du statut de l\'enfant:', childError);
+        toast.error("Une erreur est survenue lors de la vérification du statut de l'enfant");
+        return;
+      }
 
-      toast.success(t("sponsorRemoved"));
-      // Refresh data if needed
+      if (!childData) {
+        toast.error("Impossible de trouver les informations de l'enfant");
+        return;
+      }
+
+      if (childData.is_sponsored) {
+        toast.error("Cet enfant est déjà parrainé");
+        return;
+      }
+
+      // Vérifier si une demande existe déjà
+      const { data: existingRequest, error: requestError } = await supabase
+        .from('sponsorship_requests')
+        .select('status')
+        .eq('child_id', child.id)
+        .eq('sponsor_id', user.id)
+        .maybeSingle();
+
+      if (requestError) {
+        console.error('Erreur lors de la vérification des demandes existantes:', requestError);
+        toast.error("Une erreur est survenue lors de la vérification des demandes existantes");
+        return;
+      }
+
+      if (existingRequest) {
+        if (existingRequest.status === 'pending') {
+          toast.error("Vous avez déjà une demande de parrainage en cours pour cet enfant");
+        } else {
+          toast.error("Vous avez déjà parrainé cet enfant");
+        }
+        return;
+      }
+
+      // Créer la demande de parrainage
+      const { error: createError } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: child.id,
+          sponsor_id: user.id,
+          status: 'pending',
+          is_long_term: true,
+          terms_accepted: true,
+          full_name: user.name,
+          email: user.email,
+          city: user.city
+        });
+
+      if (createError) {
+        console.error('Erreur lors de la création de la demande:', createError);
+        toast.error("Une erreur est survenue lors de la demande de parrainage");
+        return;
+      }
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+      
     } catch (error) {
-      console.error('Error removing sponsor:', error);
-      toast.error(t("errorRemovingSponsor"));
+      console.error('Erreur lors de la demande de parrainage:', error);
+      toast.error("Une erreur est survenue lors de la demande de parrainage");
     }
   };
 
@@ -186,50 +223,31 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
 
       {(viewMode === "grid" || isMobile) ? (
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {uniqueChildren.map((child) => (
+          {children.map((child) => (
             <div key={child.id} className="space-y-2">
               <ChildCard
                 child={child}
                 onViewProfile={onViewProfile}
-                onSponsorClick={setSelectedChild}
+                onSponsorClick={handleSponsorClick}
               />
-              {window.location.search.includes('status=incomplete') && (
-                <div className="p-3 bg-gray-50">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Informations manquantes :</p>
-                  <ul className="list-disc list-inside text-sm text-gray-600">
-                    {getMissingFields(child).map((field) => (
-                      <li key={field}>{field}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           ))}
         </div>
       ) : (
         <ChildrenTable
-          children={uniqueChildren}
+          children={children}
           onViewProfile={onViewProfile}
-          onSponsorClick={setSelectedChild}
-          onAssignSponsor={handleAssignSponsor}
-          onRemoveSponsor={handleRemoveSponsor}
+          onSponsorClick={handleSponsorClick}
         />
       )}
 
-      {selectedChild && sponsors && (
+      {selectedChild && (
         <SponsorDialog
           child={selectedChild}
-          sponsors={sponsors}
           isOpen={!!selectedChild}
           onClose={() => setSelectedChild(null)}
         />
       )}
-
-      <AssignSponsorDialog
-        isOpen={showAssignDialog}
-        onClose={() => setShowAssignDialog(false)}
-        sponsorId={selectedSponsorId || ""}
-      />
     </div>
   );
 };
