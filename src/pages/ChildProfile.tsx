@@ -52,16 +52,6 @@ const ChildProfile = () => {
     }
 
     try {
-      // Get sponsor information
-      const { data: sponsorData, error: sponsorError } = await supabase
-        .from("sponsors")
-        .select("email, name")
-        .eq("id", user.id)
-        .single();
-
-      if (sponsorError) throw sponsorError;
-
-      // Create sponsorship request
       const { error: requestError } = await supabase
         .from("sponsorship_requests")
         .insert({
@@ -69,8 +59,8 @@ const ChildProfile = () => {
           sponsor_id: user.id,
           status: "pending",
           terms_accepted: true,
-          email: sponsorData.email,
-          full_name: sponsorData.name
+          email: user.email,
+          full_name: user.name
         });
 
       if (requestError) throw requestError;
