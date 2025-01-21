@@ -32,16 +32,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (storedUser) {
           const parsedUser = JSON.parse(storedUser);
           
+          // Verify user exists in sponsors table
           const { data: sponsor, error } = await supabase
             .from('sponsors')
             .select('*')
             .eq('id', parsedUser.id)
             .maybeSingle();
 
-          if (error || !sponsor) {
-            console.error('User not found in sponsors table:', error);
+          if (error) {
+            console.error('Error fetching sponsor:', error);
             localStorage.removeItem('user');
             setUser(null);
+            navigate("/login");
+            return;
+          }
+
+          if (!sponsor) {
+            console.error('Sponsor not found');
+            localStorage.removeItem('user');
+            setUser(null);
+            navigate("/login");
+            return;
+          }
+
+          // Verify user has correct role
+          if (!sponsor.role || !['admin', 'assistant', 'sponsor'].includes(sponsor.role)) {
+            console.error('Invalid user role:', sponsor.role);
+            localStorage.removeItem('user');
+            setUser(null);
+            toast({
+              title: "Accès non autorisé",
+              description: "Vous n'avez pas les permissions nécessaires",
+              variant: "destructive",
+            });
             navigate("/login");
             return;
           }
@@ -49,11 +72,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(sponsor);
           setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
           
+          // Redirect based on role and current path
           if (window.location.pathname === '/login') {
             if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
               navigate('/dashboard');
             } else {
-              navigate('/');
+              navigate('/sponsor-dashboard');
             }
           }
         } else {
