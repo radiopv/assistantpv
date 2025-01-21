@@ -31,6 +31,15 @@ export interface ModuleSettings {
   showMemberCount?: boolean;
   displayTestimonials?: boolean;
   enableJoinButton?: boolean;
+  showTotalSponsors?: boolean;
+  showTotalChildren?: boolean;
+  showTotalDonations?: boolean;
+  animateNumbers?: boolean;
+  backgroundStyle?: string;
+  steps?: {
+    title: string;
+    description: string;
+  }[];
 }
 
 export type ModuleType = 

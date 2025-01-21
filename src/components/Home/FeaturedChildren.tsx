@@ -1,32 +1,27 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { differenceInYears, parseISO } from "date-fns";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Info, Heart } from "lucide-react";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { convertJsonToNeeds } from "@/types/needs";
 
-type Child = {
+interface Child {
   id: string;
   name: string;
   photo_url: string | null;
   birth_date: string;
   city: string;
   needs: any[];
-};
+  age: number;
+  is_sponsored: boolean;
+}
 
 export const FeaturedChildren = () => {
   const [children, setChildren] = useState<Child[]>([]);
-  const { t } = useLanguage();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchAvailableChildren = async () => {
@@ -42,7 +37,13 @@ export const FeaturedChildren = () => {
         return;
       }
 
-      setChildren(data || []);
+      // Convert the needs from JSON to array
+      const childrenWithParsedNeeds = data.map(child => ({
+        ...child,
+        needs: convertJsonToNeeds(child.needs)
+      }));
+
+      setChildren(childrenWithParsedNeeds);
     };
 
     fetchAvailableChildren();
@@ -67,63 +68,61 @@ export const FeaturedChildren = () => {
           Enfants en attente de parrainage
         </h2>
         
-        <Carousel className="w-full max-w-5xl mx-auto">
-          <CarouselContent>
-            {children.map((child) => (
-              <CarouselItem key={child.id} className="md:basis-1/2 lg:basis-1/3 p-2">
-                <Card className="overflow-hidden h-full">
-                  <div className="aspect-square relative">
-                    <img
-                      src={child.photo_url || "/placeholder.svg"}
-                      alt={child.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-                      <h3 className="font-semibold text-lg">{child.name}</h3>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <p>{differenceInYears(new Date(), parseISO(child.birth_date))} ans</p>
-                        <p>{child.city}</p>
-                      </div>
-                    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {children.map((child) => (
+            <Card key={child.id} className="overflow-hidden h-full flex flex-col">
+              <div className="relative pb-[75%] bg-gray-100">
+                <img
+                  src={child.photo_url || "/placeholder.svg"}
+                  alt={child.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-3 flex flex-col flex-grow">
+                <div className="flex-grow space-y-2">
+                  <h3 className="text-lg font-semibold line-clamp-1">{child.name}</h3>
+                  <div className="space-y-1">
+                    <p className="text-sm text-gray-600 line-clamp-1">{child.age} ans</p>
+                    <p className="text-sm text-gray-600 line-clamp-1">{child.city}</p>
                   </div>
-                  <div className="p-4 space-y-3">
-                    {Array.isArray(child.needs) && child.needs.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {child.needs.slice(0, 2).map((need: any, index: number) => (
-                          <span
-                            key={index}
-                            className="inline-block px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full"
-                          >
-                            {need.category}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <Button 
-                        onClick={() => handleSponsor(child.id)}
-                        className="flex-1 bg-primary hover:bg-primary/90"
-                        variant="default"
-                      >
-                        <Heart className="w-4 h-4 mr-2" />
-                        Parrainer
-                      </Button>
-                      <Button 
-                        onClick={() => handleLearnMore(child.id)}
-                        variant="outline"
-                      >
-                        <Info className="w-4 h-4" />
-                      </Button>
+                  {child.needs && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {child.needs.map((need: any, index: number) => (
+                        <span
+                          key={`${need.category}-${index}`}
+                          className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                            need.is_urgent 
+                              ? 'bg-red-100 text-red-800' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {need.category}
+                          {need.is_urgent && " (!)"} 
+                        </span>
+                      ))}
                     </div>
-                  </div>
-                </Card>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
+                  )}
+                </div>
+                <div className="space-y-2 mt-3">
+                  <Button 
+                    onClick={() => handleSponsor(child.id)}
+                    className="w-full bg-primary hover:bg-primary/90"
+                    variant="default"
+                  >
+                    Parrainer
+                  </Button>
+                  <Button 
+                    onClick={() => handleLearnMore(child.id)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    En savoir plus
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
   );
