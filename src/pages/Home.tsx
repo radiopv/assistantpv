@@ -9,15 +9,14 @@ import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
 import { CallToAction } from "@/components/Home/CallToAction";
 import { JourneySection } from "@/components/Home/JourneySection";
 import { toast } from "sonner";
+import { Module } from "@/components/Admin/HomeContent/types";
 
 interface JourneyStep {
   title: string;
   description: string;
 }
 
-interface HomepageModule {
-  id: string;
-  module_type: string;
+interface HomepageModule extends Module {
   content: {
     title?: string;
     subtitle?: string;
@@ -32,8 +31,6 @@ interface HomepageModule {
     steps?: JourneyStep[];
     showProgressBar?: boolean;
   };
-  is_active: boolean;
-  order_index: number;
 }
 
 export default function Home() {
@@ -61,39 +58,7 @@ export default function Home() {
         return [];
       }
 
-      const transformedModules = data.map(module => ({
-        id: module.id,
-        module_type: module.module_type || '',
-        content: module.content || {},
-        settings: {
-          title: "Notre Impact",
-          showTotalSponsors: true,
-          showTotalChildren: true,
-          showTotalDonations: true,
-          animateNumbers: true,
-          backgroundStyle: "gradient",
-          steps: module.module_type === 'journey' ? [
-            {
-              title: "Choisissez un enfant",
-              description: "Parcourez les profils des enfants disponibles et choisissez celui que vous souhaitez parrainer."
-            },
-            {
-              title: "Complétez votre profil",
-              description: "Remplissez les informations nécessaires pour devenir parrain ou marraine."
-            },
-            {
-              title: "Commencez votre parrainage",
-              description: "Une fois approuvé, vous pourrez suivre l'évolution de votre filleul et communiquer avec lui."
-            }
-          ] : undefined,
-          showProgressBar: module.module_type === 'journey',
-          ...(typeof module.settings === 'object' ? module.settings : {})
-        },
-        is_active: module.is_active || false,
-        order_index: module.order_index || 0
-      }));
-
-      return transformedModules;
+      return data as HomepageModule[];
     }
   });
 

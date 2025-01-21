@@ -1,11 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from './types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = 'https://pedwjkjpckjlwbxfsmth.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBlZHdqa2pwY2tqbHdieGZzbXRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY4OTQyMzAsImV4cCI6MjAyMjQ3MDIzMH0.0_KQB8FWi4XhqY4H8_5_-_k7KgLyZHZtaJpU_HA_5ZE';
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  console.error('Missing Supabase configuration. Please check your environment variables.');
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
@@ -18,9 +18,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       'x-client-info': 'passion-varadero',
     },
   },
-  db: {
-    schema: 'public',
-  },
 });
 
 // Helper function to handle Supabase responses
@@ -28,7 +25,13 @@ export async function handleSupabaseResponse<T>(
   promise: Promise<{ data: T | null; error: Error | null }>
 ): Promise<T> {
   const { data, error } = await promise;
-  if (error) throw error;
-  if (!data) throw new Error('No data returned from Supabase');
+  if (error) {
+    console.error('Supabase error:', error);
+    throw error;
+  }
+  if (!data) {
+    console.error('No data returned from Supabase');
+    throw new Error('No data returned from Supabase');
+  }
   return data;
 }

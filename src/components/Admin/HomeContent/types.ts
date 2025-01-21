@@ -5,6 +5,10 @@ export interface Module {
   is_active: boolean;
   settings: any;
   order_index: number;
+  content?: {
+    title?: string;
+    subtitle?: string;
+  };
 }
 
 export type ModuleType = 
