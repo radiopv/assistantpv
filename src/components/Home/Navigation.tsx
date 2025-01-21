@@ -15,8 +15,7 @@ import {
   BarChart,
   Menu,
   ChevronDown,
-  ChevronUp,
-  Inbox
+  ChevronUp
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -65,11 +64,6 @@ const adminLinks = [
     href: "/admin/donations-management",
     label: "Gestion Donations",
     icon: Gift,
-  },
-  {
-    href: "/admin/validation",
-    label: "Validations en attente",
-    icon: Inbox,
   },
   {
     href: "/admin/home-content",

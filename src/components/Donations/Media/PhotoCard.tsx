@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Star } from "lucide-react";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 
 interface PhotoCardProps {
   photo: {
@@ -27,12 +26,12 @@ export const PhotoCard = ({
 
   return (
     <Card 
-      className="relative group overflow-hidden aspect-[3/2] cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg"
+      className="relative group overflow-hidden aspect-square cursor-pointer hover:scale-105 transition-transform duration-200"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => onPhotoClick(photo.url)}
     >
-      <OptimizedImage
+      <img
         src={photo.url}
         alt={photo.title || "Photo de donation"}
         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"

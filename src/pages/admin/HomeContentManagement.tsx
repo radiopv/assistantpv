@@ -1,108 +1,278 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ImageUpload } from "@/components/Admin/HomeContent/ImageUpload";
+import { SectionList } from "@/components/Admin/HomeContent/SectionList";
 import { ModulesList } from "@/components/Admin/HomeContent/Modules/ModulesList";
+import { ModuleDialog } from "@/components/Admin/HomeContent/Modules/ModuleDialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { useState } from "react";
 import { Module } from "@/components/Admin/HomeContent/types";
 
-export default function HomeContentManagement() {
-  const { data: modules = [], isLoading, refetch } = useQuery({
-    queryKey: ["homepage-modules"],
+const HomeContentManagement = () => {
+  const queryClient = useQueryClient();
+  const [editingModule, setEditingModule] = useState<Module | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isNewModuleOpen, setIsNewModuleOpen] = useState(false);
+  const [newModule, setNewModule] = useState({
+    name: "",
+    module_type: "",
+    settings: {}
+  });
+
+  const { data: heroImage, isLoading: isHeroLoading } = useQuery({
+    queryKey: ['home-hero-image'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("homepage_modules")
-        .select("*")
-        .order("order_index");
+        .from('home_images')
+        .select('*')
+        .eq('position', 'hero')
+        .maybeSingle();
 
       if (error) throw error;
+      return data;
+    }
+  });
 
-      return data as Module[];
+  const { data: sections, isLoading: isSectionsLoading } = useQuery({
+    queryKey: ['homepage-sections'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('homepage_sections')
+        .select('*')
+        .order('order_index');
+
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const { data: modules, isLoading: isModulesLoading } = useQuery({
+    queryKey: ['homepage-modules'],
+    queryFn: async () => {
+      console.log("Fetching homepage modules...");
+      const { data, error } = await supabase
+        .from('homepage_modules')
+        .select('*')
+        .order('order_index');
+
+      if (error) {
+        console.error("Error fetching modules:", error);
+        throw error;
+      }
+
+      console.log("Homepage modules:", data);
+      return data;
+    }
+  });
+
+  const updateModule = useMutation({
+    mutationFn: async ({ id, updates }: { id: string, updates: any }) => {
+      console.log("Updating module:", id, updates);
+      const { error } = await supabase
+        .from('homepage_modules')
+        .update(updates)
+        .eq('id', id);
+
+      if (error) throw error;
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['homepage-modules'] });
+      toast("Module mis à jour", {
+        description: "Les modifications ont été enregistrées avec succès"
+      });
+    },
+    onError: (error) => {
+      console.error('Error updating module:', error);
+      toast("Erreur", {
+        description: "Une erreur est survenue lors de la mise à jour",
+        style: { backgroundColor: 'red', color: 'white' }
+      });
+    }
+  });
+
+  const deleteModule = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('homepage_modules')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['homepage-modules'] });
+      toast("Module supprimé", {
+        description: "Le module a été supprimé avec succès"
+      });
+    },
+    onError: (error) => {
+      console.error('Error deleting module:', error);
+      toast("Erreur", {
+        description: "Une erreur est survenue lors de la suppression",
+        style: { backgroundColor: 'red', color: 'white' }
+      });
+    }
+  });
+
+  const createModule = useMutation({
+    mutationFn: async (moduleData: Omit<Module, 'id'>) => {
+      const { error } = await supabase
+        .from('homepage_modules')
+        .insert([moduleData]);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['homepage-modules'] });
+      setIsNewModuleOpen(false);
+      setNewModule({ name: "", module_type: "", settings: {} });
+      toast("Module créé", {
+        description: "Le nouveau module a été créé avec succès"
+      });
+    },
+    onError: (error) => {
+      console.error('Error creating module:', error);
+      toast("Erreur", {
+        description: "Une erreur est survenue lors de la création",
+        style: { backgroundColor: 'red', color: 'white' }
+      });
+    }
   });
 
   const handleDragEnd = async (result: any) => {
-    const { source, destination } = result;
+    if (!result.destination || !modules) return;
 
-    if (!destination) return;
+    const items = Array.from(modules);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
 
-    const reorderedModules = Array.from(modules);
-    const [removed] = reorderedModules.splice(source.index, 1);
-    reorderedModules.splice(destination.index, 0, removed);
+    const updates = items.map((item, index) => ({
+      id: item.id,
+      updates: { order_index: index }
+    }));
 
-    await Promise.all(
-      reorderedModules.map((module, index) =>
-        supabase
-          .from("homepage_modules")
-          .update({ order_index: index })
-          .eq("id", module.id)
-      )
+    try {
+      for (const update of updates) {
+        await updateModule.mutateAsync(update);
+      }
+
+      toast("Ordre mis à jour", {
+        description: "L'ordre des modules a été mis à jour avec succès"
+      });
+    } catch (error) {
+      console.error('Error reordering modules:', error);
+      toast("Erreur", {
+        description: "Une erreur est survenue lors de la réorganisation",
+        style: { backgroundColor: 'red', color: 'white' }
+      });
+    }
+  };
+
+  const handleModuleToggle = async (moduleId: string, currentState: boolean) => {
+    try {
+      await updateModule.mutateAsync({
+        id: moduleId,
+        updates: { is_active: !currentState }
+      });
+    } catch (error) {
+      console.error('Error toggling module:', error);
+    }
+  };
+
+  const handleSettingsSave = () => {
+    if (!editingModule) return;
+    
+    updateModule.mutate({
+      id: editingModule.id,
+      updates: { settings: editingModule.settings }
+    });
+    setIsSettingsOpen(false);
+  };
+
+  const handleNewModuleSave = () => {
+    createModule.mutate({
+      ...newModule,
+      is_active: true,
+      order_index: modules?.length || 0
+    });
+  };
+
+  if (isHeroLoading || isSectionsLoading || isModulesLoading) {
+    return (
+      <div className="container mx-auto p-6 space-y-8">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-64 w-full" />
+      </div>
     );
-
-    toast.success("Modules réorganisés avec succès");
-    refetch();
-  };
-
-  const handleSettingsClick = (module: Module) => {
-    // Logic to open settings modal or navigate to settings page
-    console.log("Settings clicked for module:", module);
-  };
-
-  const handleNewModuleClick = () => {
-    // Logic to open new module creation modal
-    console.log("New module creation clicked");
-  };
-
-  const handleToggle = async (moduleId: string, currentState: boolean) => {
-    try {
-      const { error } = await supabase
-        .from("homepage_modules")
-        .update({ is_active: !currentState })
-        .eq("id", moduleId);
-
-      if (error) throw error;
-
-      toast.success("Module mis à jour avec succès");
-      refetch();
-    } catch (error) {
-      console.error("Error toggling module:", error);
-      toast.error("Erreur lors de la mise à jour du module");
-    }
-  };
-
-  const handleDelete = async (moduleId: string) => {
-    try {
-      const { error } = await supabase
-        .from("homepage_modules")
-        .delete()
-        .eq("id", moduleId);
-
-      if (error) throw error;
-
-      toast.success("Module supprimé avec succès");
-      refetch();
-    } catch (error) {
-      console.error("Error deleting module:", error);
-      toast.error("Erreur lors de la suppression du module");
-    }
-  };
-
-  if (isLoading) {
-    return <div>Chargement...</div>;
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-6 space-y-8">
       <h1 className="text-2xl font-bold mb-6">Gestion du contenu de la page d'accueil</h1>
-      <Card className="p-6">
-        <ModulesList
-          modules={modules}
-          onDragEnd={handleDragEnd}
-          onToggle={handleToggle}
-          onSettingsClick={handleSettingsClick}
-          onDeleteClick={handleDelete}
-          onNewModuleClick={handleNewModuleClick}
-        />
-      </Card>
+
+      <Tabs defaultValue="hero" className="w-full">
+        <TabsList className="mb-4">
+          <TabsTrigger value="hero">Image Principale</TabsTrigger>
+          <TabsTrigger value="content">Sections</TabsTrigger>
+          <TabsTrigger value="modules">Modules</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="hero">
+          <ImageUpload 
+            heroImage={heroImage} 
+            isLoading={isHeroLoading} 
+          />
+        </TabsContent>
+
+        <TabsContent value="content">
+          {!isSectionsLoading && sections && (
+            <SectionList sections={sections} />
+          )}
+        </TabsContent>
+
+        <TabsContent value="modules">
+          <ModulesList
+            modules={modules || []}
+            onDragEnd={handleDragEnd}
+            onToggle={handleModuleToggle}
+            onSettingsClick={(module) => {
+              setEditingModule(module);
+              setIsSettingsOpen(true);
+            }}
+            onDeleteClick={(moduleId) => {
+              if (window.confirm('Êtes-vous sûr de vouloir supprimer ce module ?')) {
+                deleteModule.mutate(moduleId);
+              }
+            }}
+            onNewModuleClick={() => setIsNewModuleOpen(true)}
+          />
+
+          <ModuleDialog
+            open={isSettingsOpen}
+            onOpenChange={setIsSettingsOpen}
+            module={editingModule}
+            onSave={handleSettingsSave}
+            onChange={(field, value) => {
+              setEditingModule(prev => prev ? { ...prev, [field]: value } : null);
+            }}
+          />
+
+          <ModuleDialog
+            open={isNewModuleOpen}
+            onOpenChange={setIsNewModuleOpen}
+            module={newModule as Module}
+            isNew
+            onSave={handleNewModuleSave}
+            onChange={(field, value) => {
+              setNewModule(prev => ({ ...prev, [field]: value }));
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
-}
+};
+
+export default HomeContentManagement;

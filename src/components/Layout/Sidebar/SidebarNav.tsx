@@ -8,7 +8,6 @@ import {
   Bell,
   Mail,
   ClipboardList,
-  UserPlus
 } from "lucide-react";
 import { SidebarLink } from "./SidebarLink";
 import { useAuth } from "@/components/Auth/AuthProvider";
@@ -18,11 +17,6 @@ const adminLinks = [
     href: "/admin/children-management",
     label: "Parrainage/Enfant",
     icon: Users,
-  },
-  {
-    href: "/admin/sponsorship-management-new",
-    label: "Gestion Parrainages",
-    icon: UserPlus,
   },
   {
     href: "/admin/donations-management",

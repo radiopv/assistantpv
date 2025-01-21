@@ -2,11 +2,10 @@
   @media (max-width: 640px) {
     html {
       font-size: 14px;
-      -webkit-text-size-adjust: 100%;
     }
 
     .container {
-      @apply px-2 max-w-[100vw] w-full mx-auto;
+      @apply px-4 max-w-[100vw] w-full mx-auto;
     }
 
     button, 
@@ -18,7 +17,7 @@
     }
 
     .mobile-spacing {
-      @apply space-y-3;
+      @apply space-y-4;
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -29,87 +28,36 @@
     input[type="email"],
     input[type="password"],
     textarea {
-      @apply w-full py-2 px-3;
+      @apply w-full py-3 px-4;
       font-size: 16px;
     }
 
     .cuba-card {
-      @apply mx-auto max-w-[calc(100vw-1rem)];
+      @apply mx-auto max-w-[calc(100vw-2rem)];
     }
 
     .cuba-header {
-      @apply px-2;
+      @apply px-4;
     }
 
     .cuba-section {
-      @apply py-6 px-2;
+      @apply py-8 px-4;
     }
 
     .cuba-title {
-      @apply text-xl;
+      @apply text-2xl;
     }
 
     .cuba-subtitle {
-      @apply text-base;
+      @apply text-lg;
     }
 
     .grid {
-      @apply gap-2;
+      @apply gap-4;
     }
 
     .touch-feedback:active {
       @apply bg-cuba-warmBeige/50 transition-colors duration-200;
-    }
-
-    .admin-tabs {
-      @apply flex-col;
-    }
-
-    .admin-tab-content {
-      @apply p-2;
-    }
-
-    .admin-card {
-      @apply rounded-none border-x-0;
-    }
-
-    .admin-table {
-      @apply text-sm;
-    }
-
-    .admin-table td,
-    .admin-table th {
-      @apply px-2 py-2;
-    }
-
-    /* Optimize image containers for small screens */
-    .image-container {
-      @apply relative overflow-hidden;
-      min-height: 150px;
-    }
-
-    /* Progressive loading styles */
-    .image-loading {
-      @apply animate-pulse bg-gray-200;
-    }
-
-    .image-loaded {
-      @apply transition-opacity duration-300;
-    }
-
-    /* Prevent layout shift */
-    .aspect-container {
-      @apply relative w-full;
-    }
-
-    .aspect-container::before {
-      content: "";
-      display: block;
-      padding-bottom: 75%;
-    }
-
-    .aspect-container > * {
-      @apply absolute inset-0 w-full h-full object-cover;
     }
   }
 }

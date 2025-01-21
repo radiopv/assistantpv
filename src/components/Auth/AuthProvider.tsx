@@ -25,89 +25,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
 
-  // Fonction pour charger les données du sponsor
-  const loadSponsorData = async (userId: string) => {
-    try {
-      const { data: sponsor, error } = await supabase
-        .from('sponsors')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const parsedUser = JSON.parse(storedUser);
+          
+          const { data: sponsor, error } = await supabase
+            .from('sponsors')
+            .select('*')
+            .eq('id', parsedUser.id)
+            .maybeSingle();
 
-      if (error) {
-        console.error('Error fetching sponsor data:', error);
-        localStorage.removeItem('user');
-        setUser(null);
-        navigate("/login");
-        return null;
-      }
+          if (error || !sponsor) {
+            console.error('User not found in sponsors table:', error);
+            localStorage.removeItem('user');
+            setUser(null);
+            navigate("/login");
+            return;
+          }
 
-      return sponsor;
-    } catch (error) {
-      console.error('Error in loadSponsorData:', error);
-      return null;
-    }
-  };
-
-  // Gestionnaire d'authentification principal
-  const handleAuthChange = async () => {
-    try {
-      setLoading(true);
-      const storedUser = localStorage.getItem('user');
-      
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        const sponsorData = await loadSponsorData(parsedUser.id);
-
-        if (!sponsorData) {
+          setUser(sponsor);
+          setIsAssistant(['assistant', 'admin'].includes(sponsor.role));
+          
+          if (window.location.pathname === '/login') {
+            if (sponsor.role === 'admin' || sponsor.role === 'assistant') {
+              navigate('/dashboard');
+            } else {
+              navigate('/');
+            }
+          }
+        } else {
           setUser(null);
-          setIsAssistant(false);
-          navigate("/login");
-          return;
-        }
-
-        setUser(sponsorData);
-        setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
-
-        // Redirection après connexion
-        if (window.location.pathname === '/login') {
-          if (sponsorData.role === 'admin' || sponsorData.role === 'assistant') {
-            navigate('/dashboard');
-          } else {
-            navigate('/sponsor-dashboard');
+          if (window.location.pathname !== '/login' && !window.location.pathname.startsWith('/')) {
+            navigate("/login");
           }
         }
-      } else {
+      } catch (error) {
+        console.error('Error checking auth:', error);
         setUser(null);
-        setIsAssistant(false);
-        if (!window.location.pathname.startsWith('/') && window.location.pathname !== '/login') {
-          navigate("/login");
-        }
+        navigate("/login");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error in handleAuthChange:', error);
-      setUser(null);
-      setIsAssistant(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Effet pour gérer les changements d'authentification
-  useEffect(() => {
-    handleAuthChange();
-
-    // Écouter les changements d'authentification
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
-      console.log('Auth state changed:', event);
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        handleAuthChange();
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
     };
+
+    checkAuth();
   }, [navigate]);
 
   const signOut = async () => {

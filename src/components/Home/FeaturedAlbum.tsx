@@ -33,9 +33,8 @@ export const FeaturedAlbum = () => {
           `)
           .eq("is_approved", true)
           .eq("type", "image")
-          .eq("is_featured", true)  // Added this filter
           .order("created_at", { ascending: false })
-          .limit(6);  // Using photosCount from settings
+          .limit(10);
 
         if (error) {
           console.error("Error fetching featured photos:", error);
@@ -56,39 +55,36 @@ export const FeaturedAlbum = () => {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-4">
-      <h2 className="text-2xl font-semibold text-center mb-6">Moments partagés</h2>
-      <Carousel
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        plugins={[
-          AutoplayPlugin({
-            delay: 3000,
-          }),
-        ]}
-        className="w-full"
-      >
-        <CarouselContent>
-          {photos.map((photo) => (
-            <CarouselItem key={photo.id} className="md:basis-1/3 lg:basis-1/4">
-              <div className="relative aspect-square overflow-hidden rounded-lg">
-                <img
-                  src={photo.url}
-                  alt={photo.title || "Photo souvenir"}
-                  className="object-cover w-full h-full hover:scale-110 transition-transform duration-300"
-                />
-                {photo.children?.name && (
-                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/50 text-white">
-                    <p className="text-xs truncate">{photo.children.name}</p>
-                  </div>
-                )}
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
-    </div>
+    <Carousel
+      opts={{
+        align: "start",
+        loop: true,
+      }}
+      plugins={[
+        AutoplayPlugin({
+          delay: 3000,
+        }),
+      ]}
+      className="w-full max-w-4xl mx-auto"
+    >
+      <CarouselContent>
+        {photos.map((photo) => (
+          <CarouselItem key={photo.id} className="md:basis-1/3 lg:basis-1/4">
+            <div className="relative aspect-square overflow-hidden rounded-lg">
+              <img
+                src={photo.url}
+                alt={photo.title || "Photo souvenir"}
+                className="object-cover w-full h-full hover:scale-110 transition-transform duration-300"
+              />
+              {photo.children?.name && (
+                <div className="absolute bottom-0 left-0 right-0 p-2 bg-black/50 text-white">
+                  <p className="text-xs truncate">{photo.children.name}</p>
+                </div>
+              )}
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
   );
 };
