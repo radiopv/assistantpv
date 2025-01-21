@@ -26,7 +26,6 @@ interface SponsoredChildCardProps {
   sponsorshipId: string;
   onAddPhoto: () => void;
   onAddTestimonial: () => void;
-  photoCount?: number;
 }
 
 export const SponsoredChildCard = ({ 
@@ -34,13 +33,13 @@ export const SponsoredChildCard = ({
   sponsorshipId, 
   onAddPhoto,
   onAddTestimonial,
-  photoCount = 0
 }: SponsoredChildCardProps) => {
   const [showTestimonialDialog, setShowTestimonialDialog] = useState(false);
   const [testimonialContent, setTestimonialContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { data: albumPhotos = [] } = useQuery({
+  // Fetch album photos and count
+  const { data: albumPhotos = [], isLoading } = useQuery({
     queryKey: ['album-photos', child.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -95,7 +94,9 @@ export const SponsoredChildCard = ({
       </div>
 
       <div className="p-4 border-t">
-        <h4 className="text-sm font-medium mb-2">Album photos ({photoCount})</h4>
+        <h4 className="text-sm font-medium mb-2">
+          Album photos ({isLoading ? "..." : albumPhotos.length})
+        </h4>
         <div className="grid grid-cols-4 gap-2">
           {albumPhotos.map((photo) => (
             <div 
