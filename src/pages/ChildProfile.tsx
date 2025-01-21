@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { AlbumMediaGrid } from "@/components/AlbumMedia/AlbumMediaGrid";
 import { convertJsonToNeeds } from "@/types/needs";
 import { Badge } from "@/components/ui/badge";
+import { SponsorshipButton } from "@/components/Children/Details/SponsorshipButton";
 
 const NEED_CATEGORIES = {
   education: "Éducation",
@@ -44,34 +46,6 @@ const ChildProfile = () => {
       };
     }
   });
-
-  const handleSponsorshipRequest = async () => {
-    if (!user) {
-      navigate(`/become-sponsor?child=${id}`);
-      return;
-    }
-
-    try {
-      const { error: requestError } = await supabase
-        .from("sponsorship_requests")
-        .insert({
-          child_id: id,
-          sponsor_id: user.id,
-          status: "pending",
-          terms_accepted: true,
-          email: user.email,
-          full_name: user.name
-        });
-
-      if (requestError) throw requestError;
-
-      toast.success("Votre demande de parrainage a été envoyée avec succès");
-      navigate("/sponsor-dashboard");
-    } catch (error) {
-      console.error("Error submitting sponsorship request:", error);
-      toast.error("Une erreur est survenue lors de la demande de parrainage");
-    }
-  };
 
   if (error) {
     return (
@@ -110,7 +84,7 @@ const ChildProfile = () => {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-8 animate-fade-in">
+    <div className="container mx-auto p-4 space-y-8">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row gap-8">
         <Card className="overflow-hidden w-full md:w-1/3">
@@ -125,17 +99,12 @@ const ChildProfile = () => {
           <h1 className="text-3xl font-bold">{child.name}</h1>
           <div className="space-y-2">
             <p className="text-lg">
-              {format(new Date(child.birth_date), "dd/MM/yyyy")} ({child.age} ans)
+              {format(new Date(child.birth_date), "dd MMMM yyyy", { locale: fr })} ({child.age} ans)
             </p>
             <p className="text-gray-600">{child.city}</p>
           </div>
           
-          <Button
-            onClick={handleSponsorshipRequest}
-            className="w-full md:w-auto"
-          >
-            Parrainer cet enfant
-          </Button>
+          <SponsorshipButton childId={child.id} userId={user?.id} />
         </div>
       </div>
 
@@ -144,14 +113,14 @@ const ChildProfile = () => {
         {child.description && (
           <div>
             <h2 className="text-xl font-semibold mb-2">Description</h2>
-            <p className="text-gray-700">{child.description}</p>
+            <p className="text-gray-700 whitespace-pre-wrap">{child.description}</p>
           </div>
         )}
 
         {child.story && (
           <div>
             <h2 className="text-xl font-semibold mb-2">Histoire</h2>
-            <p className="text-gray-700">{child.story}</p>
+            <p className="text-gray-700 whitespace-pre-wrap">{child.story}</p>
           </div>
         )}
       </Card>
@@ -182,6 +151,9 @@ const ChildProfile = () => {
               </div>
             </div>
           ))}
+          {(!child.needs || child.needs.length === 0) && (
+            <p className="text-gray-500">Aucun besoin enregistré</p>
+          )}
         </div>
       </Card>
 
