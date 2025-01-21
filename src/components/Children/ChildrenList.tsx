@@ -37,6 +37,18 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [selectedSponsorId, setSelectedSponsorId] = useState<string | null>(null);
 
+  // Add a query to fetch sponsors
+  const { data: sponsors } = useQuery({
+    queryKey: ['sponsors'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('sponsors')
+        .select('*');
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
   const handleSponsorClick = async (child: any) => {
     if (!user) {
       navigate(`/become-sponsor?child=${child.id}`);
@@ -244,6 +256,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       {selectedChild && (
         <SponsorDialog
           child={selectedChild}
+          sponsors={sponsors || []}
           isOpen={!!selectedChild}
           onClose={() => setSelectedChild(null)}
         />
