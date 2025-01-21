@@ -254,10 +254,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
                   </div>
                 )}
 
-                <SponsorshipButton 
-                  childId={child.id}
-                  userId={user?.id}
-                />
+                <SponsorshipButton childId={child.id} />
               </div>
             </Card>
           );

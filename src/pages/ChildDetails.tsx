@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { convertJsonToNeeds } from "@/types/needs";
-import { useAuth } from "@/components/Auth/AuthProvider";
 import { differenceInMonths, differenceInYears, parseISO } from "date-fns";
 import { AlertTriangle } from "lucide-react";
 import { ChildHeader } from "@/components/Children/Details/ChildHeader";
@@ -13,7 +12,6 @@ import { SponsorshipButton } from "@/components/Children/Details/SponsorshipButt
 
 const ChildDetails = () => {
   const { id } = useParams();
-  const { user } = useAuth();
 
   const { data: child, isLoading, error } = useQuery({
     queryKey: ['child', id],
@@ -98,7 +96,7 @@ const ChildDetails = () => {
       </div>
 
       <div className="flex justify-center mt-8">
-        <SponsorshipButton childId={id!} userId={user?.id} />
+        <SponsorshipButton childId={id!} />
       </div>
     </div>
   );
