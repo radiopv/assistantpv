@@ -1,66 +1,42 @@
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useSupabaseQuery } from "@/hooks/useSupabaseQuery";
 import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/components/Home/HeroSection";
-import { ImpactStats } from "@/components/Home/ImpactStats";
-import { HowItWorks } from "@/components/Home/HowItWorks";
-import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { FeaturedAlbum } from "@/components/Home/FeaturedAlbum";
-import { FeaturedTestimonials } from "@/components/Home/FeaturedTestimonials";
+import { ImpactStats } from "@/components/Home/ImpactStats";
 import { CallToAction } from "@/components/Home/CallToAction";
 import { JourneySection } from "@/components/Home/JourneySection";
 import { toast } from "sonner";
-import { Module } from "@/components/Admin/HomeContent/types";
-
-interface JourneyStep {
-  title: string;
-  description: string;
-}
+import { Module, ModuleSettings } from "@/components/Admin/HomeContent/types";
 
 interface HomepageModule extends Module {
-  content: {
-    title?: string;
-    subtitle?: string;
-  };
-  settings: {
-    title: string;
-    showTotalSponsors?: boolean;
-    showTotalChildren?: boolean;
-    showTotalDonations?: boolean;
-    animateNumbers?: boolean;
-    backgroundStyle?: string;
-    steps?: JourneyStep[];
-    showProgressBar?: boolean;
-  };
+  settings: ModuleSettings;
 }
 
 export default function Home() {
-  const { data: modules, isLoading, error } = useQuery({
-    queryKey: ['homepage-modules'],
-    queryFn: async () => {
-      console.log('Fetching homepage modules...'); 
+  const [showImageDialog, setShowImageDialog] = useState(false);
 
+  const { data: modules = [], isLoading, error } = useSupabaseQuery<HomepageModule[]>(
+    ['homepage_modules'],
+    async () => {
       const { data, error } = await supabase
         .from('homepage_modules')
         .select('*')
-        .eq('is_active', true)
         .order('order_index');
 
       if (error) {
         console.error('Error fetching modules:', error);
-        toast.error("Erreur lors du chargement de la page");
-        throw error;
-      }
-      
-      console.log('Raw data from Supabase:', data);
-
-      if (!data || data.length === 0) {
-        console.log('No active modules found');
+        toast.error('Error loading page content');
         return [];
       }
 
-      return data as HomepageModule[];
+      return data.map(module => ({
+        ...module,
+        content: module.content as HomepageModule['content'],
+        settings: module.settings as ModuleSettings
+      }));
     }
-  });
+  );
 
   if (isLoading) {
     return (

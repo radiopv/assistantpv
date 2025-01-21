@@ -1,26 +1,32 @@
+import { Json } from "@/integrations/supabase/types/json";
+
 export interface Module {
   id: string;
   name: string;
   module_type: string;
-  is_active: boolean;
-  settings: any;
-  order_index: number;
-  content?: {
+  content: {
     title?: string;
     subtitle?: string;
   };
+  settings: ModuleSettings;
+  is_active: boolean;
+  order_index: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export type ModuleType = 
-  | "hero"
-  | "featured-children"
-  | "how-it-works"
-  | "testimonials"
-  | "featured-album"
-  | "impact-stats"
-  | "journey"
-  | "events"
-  | "needs"
-  | "newsletter"
-  | "donation-goals"
-  | "community";
+export interface ModuleSettings {
+  title: string;
+  showTotalSponsors?: boolean;
+  showTotalChildren?: boolean;
+  showTotalDonations?: boolean;
+  animateNumbers?: boolean;
+  backgroundStyle?: string;
+  steps?: Array<{
+    title: string;
+    description: string;
+  }>;
+  showProgressBar?: boolean;
+}
+
+export type ModuleType = 'hero' | 'impact' | 'journey' | 'featured' | 'cta';
