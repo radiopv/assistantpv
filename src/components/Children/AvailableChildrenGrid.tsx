@@ -36,7 +36,7 @@ const formatAge = (birthDate: string) => {
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittingChildId, setSubmittingChildId] = useState<string | null>(null);
 
   // Fetch album photos for all children
   const { data: albumPhotos } = useQuery({
@@ -93,7 +93,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       return;
     }
 
-    setIsSubmitting(true);
+    setSubmittingChildId(childId);
     try {
       // Get user profile
       const { data: profile } = await supabase
@@ -129,7 +129,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
       console.error('Error creating sponsorship request:', error);
       toast.error(error.message || "Une erreur est survenue lors de la demande de parrainage");
     } finally {
-      setIsSubmitting(false);
+      setSubmittingChildId(null);
     }
   };
 
@@ -258,7 +258,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
 
                 <Button 
                   onClick={() => handleSponsorClick(child.id)}
-                  disabled={isSubmitting}
+                  disabled={submittingChildId === child.id}
                   className={`w-full ${
                     hasUrgentNeeds
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white"
@@ -266,7 +266,7 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
                   } group-hover:scale-105 transition-all duration-300`}
                 >
                   <Heart className="w-4 h-4 mr-2" />
-                  {isSubmitting ? "Envoi en cours..." : "Parrainer"}
+                  {submittingChildId === child.id ? "Envoi en cours..." : "Parrainer"}
                 </Button>
               </div>
             </Card>
