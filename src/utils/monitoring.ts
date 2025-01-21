@@ -18,21 +18,23 @@ export const logError = async (error: Error, context: Record<string, any> = {}, 
   }
 };
 
-export const trackPerformance = async (metricName: string, value: number, metadata: Record<string, any> = {}, userId?: string) => {
+export const logPerformance = async (metric: {
+  name: string;
+  value: number;
+  metadata?: Record<string, any>;
+}) => {
   try {
-    const performanceLog = {
-      action: 'performance_metric',
-      user_id: userId || 'anonymous',
-      details: {
-        metric_name: metricName,
-        value,
-        metadata
-      }
-    };
+    const { error } = await supabase
+      .from('performance_logs')
+      .insert([{
+        metric_name: metric.name,
+        value: metric.value,
+        metadata: metric.metadata || {}
+      }]);
 
-    await supabase.from('activity_logs').insert([performanceLog]);
+    if (error) throw error;
   } catch (e) {
-    console.error('Failed to track performance:', e);
+    console.error('Failed to log performance metric:', e);
   }
 };
 
