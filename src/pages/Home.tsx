@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Hero } from "@/components/Home/Hero";
 import { FeaturedChildren } from "@/components/Home/FeaturedChildren";
 import { CTA } from "@/components/Home/CTA";
-import { toast } from "sonner";
+import { handleError } from "@/utils/error-handler";
+import { ErrorAlert } from "@/components/ErrorAlert";
 
 interface HomepageModule {
   id: string;
@@ -28,28 +29,35 @@ interface HomepageModule {
 }
 
 export default function Home() {
-  const { data: modules, isLoading, error } = useQuery({
+  const { data: modules, isLoading, error, refetch } = useQuery({
     queryKey: ['homepage-modules'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('homepage_modules')
-        .select('*')
-        .eq('is_active', true)
-        .order('order_index');
+      try {
+        const { data, error } = await supabase
+          .from('homepage_modules')
+          .select('*')
+          .eq('is_active', true)
+          .order('order_index');
 
-      if (error) {
-        console.error('Error fetching homepage modules:', error);
-        toast.error("Erreur lors du chargement de la page");
+        if (error) throw error;
+
+        return data as unknown as HomepageModule[];
+      } catch (error) {
+        handleError(error, "Erreur lors du chargement de la page");
         throw error;
       }
-
-      return data as HomepageModule[];
     }
   });
 
   if (error) {
-    console.error('Error in Home component:', error);
-    return <div>Une erreur est survenue lors du chargement de la page</div>;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <ErrorAlert 
+          message="Une erreur est survenue lors du chargement de la page" 
+          retry={() => refetch()}
+        />
+      </div>
+    );
   }
 
   return (
