@@ -61,49 +61,45 @@ export default function Home() {
         return [];
       }
 
-      const transformedModules = data.map(module => {
-        console.log('Processing module:', module);
-        return {
-          id: module.id,
-          module_type: module.module_type || '',
-          content: module.content || {},
-          settings: {
-            title: "Notre Impact",
-            showTotalSponsors: true,
-            showTotalChildren: true,
-            showTotalDonations: true,
-            animateNumbers: true,
-            backgroundStyle: "gradient",
-            steps: module.module_type === 'journey' ? [
-              {
-                title: "Choisissez un enfant",
-                description: "Parcourez les profils des enfants disponibles et choisissez celui que vous souhaitez parrainer."
-              },
-              {
-                title: "Complétez votre profil",
-                description: "Remplissez les informations nécessaires pour devenir parrain ou marraine."
-              },
-              {
-                title: "Commencez votre parrainage",
-                description: "Une fois approuvé, vous pourrez suivre l'évolution de votre filleul et communiquer avec lui."
-              }
-            ] : undefined,
-            showProgressBar: module.module_type === 'journey' ? true : undefined,
-            ...(typeof module.settings === 'object' ? module.settings : {})
-          },
-          is_active: module.is_active || false,
-          order_index: module.order_index || 0
-        } as HomepageModule;
-      });
+      const transformedModules = data.map(module => ({
+        id: module.id,
+        module_type: module.module_type || '',
+        content: module.content || {},
+        settings: {
+          title: "Notre Impact",
+          showTotalSponsors: true,
+          showTotalChildren: true,
+          showTotalDonations: true,
+          animateNumbers: true,
+          backgroundStyle: "gradient",
+          steps: module.module_type === 'journey' ? [
+            {
+              title: "Choisissez un enfant",
+              description: "Parcourez les profils des enfants disponibles et choisissez celui que vous souhaitez parrainer."
+            },
+            {
+              title: "Complétez votre profil",
+              description: "Remplissez les informations nécessaires pour devenir parrain ou marraine."
+            },
+            {
+              title: "Commencez votre parrainage",
+              description: "Une fois approuvé, vous pourrez suivre l'évolution de votre filleul et communiquer avec lui."
+            }
+          ] : undefined,
+          showProgressBar: module.module_type === 'journey',
+          ...(typeof module.settings === 'object' ? module.settings : {})
+        },
+        is_active: module.is_active || false,
+        order_index: module.order_index || 0
+      }));
 
-      console.log('Transformed modules:', transformedModules);
       return transformedModules;
     }
   });
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-0 sm:px-4">
+      <div className="min-h-[50vh] flex items-center justify-center">
         <div className="text-xl text-gray-600">Chargement...</div>
       </div>
     );
@@ -112,7 +108,7 @@ export default function Home() {
   if (error) {
     console.error('Error loading modules:', error);
     return (
-      <div className="min-h-screen flex items-center justify-center px-0 sm:px-4">
+      <div className="min-h-[50vh] flex items-center justify-center">
         <div className="text-xl text-red-600">
           Une erreur est survenue lors du chargement de la page
         </div>
@@ -122,7 +118,7 @@ export default function Home() {
 
   if (!modules || modules.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-0 sm:px-4">
+      <div className="min-h-[50vh] flex items-center justify-center">
         <div className="text-xl text-gray-600">
           Aucun module actif. Veuillez configurer la page d'accueil dans l'interface d'administration.
         </div>
@@ -130,19 +126,15 @@ export default function Home() {
     );
   }
 
-  console.log('Modules to render:', modules);
-
   const renderModule = (module: HomepageModule) => {
-    console.log('Rendering module:', module);
-    
     if (!module.module_type) {
       console.warn('Module without type:', module);
       return null;
     }
 
     const moduleWrapper = (content: JSX.Element) => (
-      <div key={module.id} className="w-full py-8 sm:py-16 bg-cuba-offwhite">
-        <div className="container mx-auto px-0 sm:px-4">
+      <div key={module.id} className="w-full py-4 sm:py-8 bg-cuba-offwhite">
+        <div className="container mx-auto px-4">
           {content}
         </div>
       </div>
@@ -189,8 +181,8 @@ export default function Home() {
         );
       case 'testimonials':
         return moduleWrapper(
-          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
-            <h2 className="text-3xl font-bold text-center mb-8 sm:mb-12 text-cuba-coral font-title">
+          <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 sm:p-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-cuba-coral font-title">
               {module.settings?.title || "Témoignages de nos parrains"}
             </h2>
             <FeaturedTestimonials />
@@ -214,9 +206,11 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-white space-y-4 sm:space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-cuba-offwhite to-white space-y-2 sm:space-y-4">
       {modules.map(renderModule)}
-      <CallToAction />
+      <div className="py-4 sm:py-8">
+        <CallToAction />
+      </div>
     </div>
   );
 }
