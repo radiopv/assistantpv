@@ -51,8 +51,6 @@ export const PhotoCard = ({ photo, onPhotoClick, onToggleFeature, onDelete }: Ph
             e.stopPropagation();
             onToggleFeature(photo.id, photo.is_featured);
           }}
-          className={photo.is_featured ? "bg-yellow-100" : "bg-white/80"}
-          title={photo.is_featured ? "Retirer des favoris" : "Marquer comme favori"}
         >
           <Star className={`w-4 h-4 ${photo.is_featured ? "fill-yellow-400" : ""}`} />
         </Button>
@@ -63,7 +61,6 @@ export const PhotoCard = ({ photo, onPhotoClick, onToggleFeature, onDelete }: Ph
             e.stopPropagation();
             onDelete(photo.id);
           }}
-          title="Supprimer la photo"
         >
           <Trash2 className="w-4 h-4" />
         </Button>
