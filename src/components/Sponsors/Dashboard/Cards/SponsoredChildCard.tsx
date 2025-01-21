@@ -40,7 +40,6 @@ export const SponsoredChildCard = ({
   const [testimonialContent, setTestimonialContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch album photos
   const { data: albumPhotos = [] } = useQuery({
     queryKey: ['album-photos', child.id],
     queryFn: async () => {
