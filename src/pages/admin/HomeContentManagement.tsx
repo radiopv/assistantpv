@@ -1,81 +1,107 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Module, ModuleType } from "@/components/Admin/HomeContent/types";
+import { ModulesList } from "@/components/Admin/HomeContent/Modules/ModulesList";
+import { Module, ModuleType } from "@/types/module";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ModuleCard } from "@/components/Admin/HomeContent/Modules/ModuleCard";
 
-const HomeContentManagement = () => {
+export default function HomeContentManagement() {
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const fetchModules = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from("homepage_modules")
-        .select("*");
-
-      if (error) throw error;
-      setModules(data);
-    } catch (error) {
-      console.error("Error fetching modules:", error);
-      toast.error("Error fetching modules");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchModules();
   }, []);
 
-  const handleAddModule = async (moduleData: Omit<Module, 'id'>) => {
+  const fetchModules = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('homepage_modules')
+        .select('*')
+        .order('order_index');
+
+      if (error) throw error;
+
+      // Cast the module_type to ModuleType
+      const typedModules = data.map(module => ({
+        ...module,
+        module_type: module.module_type as ModuleType
+      }));
+
+      setModules(typedModules);
+    } catch (error) {
+      console.error('Error fetching modules:', error);
+      toast.error("Erreur lors du chargement des modules");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddModule = async (moduleData: Partial<Module>) => {
+    try {
+      const { data, error } = await supabase
+        .from('homepage_modules')
+        .insert([moduleData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setModules(prev => [...prev, data as Module]);
+      toast.success("Module ajouté avec succès");
+    } catch (error) {
+      console.error('Error adding module:', error);
+      toast.error("Erreur lors de l'ajout du module");
+    }
+  };
+
+  const handleToggleModule = async (moduleId: string) => {
+    try {
+      const moduleToToggle = modules.find(module => module.id === moduleId);
+      if (!moduleToToggle) return;
+
+      const { data, error } = await supabase
+        .from('homepage_modules')
+        .update({ is_active: !moduleToToggle.is_active })
+        .eq('id', moduleId)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setModules(prev => prev.map(module => module.id === moduleId ? { ...module, is_active: data.is_active } : module));
+      toast.success("Module mis à jour avec succès");
+    } catch (error) {
+      console.error('Error toggling module:', error);
+      toast.error("Erreur lors de la mise à jour du module");
+    }
+  };
+
+  const handleDeleteModule = async (moduleId: string) => {
     try {
       const { error } = await supabase
         .from('homepage_modules')
-        .insert({
-          name: moduleData.name,
-          module_type: moduleData.module_type,
-          is_active: moduleData.is_active,
-          content: moduleData.content,
-          settings: moduleData.settings,
-          order_index: moduleData.order_index
-        });
+        .delete()
+        .eq('id', moduleId);
 
       if (error) throw error;
-      fetchModules();
+
+      setModules(prev => prev.filter(module => module.id !== moduleId));
+      toast.success("Module supprimé avec succès");
     } catch (error) {
-      console.error('Error adding module:', error);
-      toast.error("Error adding module");
+      console.error('Error deleting module:', error);
+      toast.error("Erreur lors de la suppression du module");
     }
   };
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Gestion du contenu de la page d'accueil</h1>
-      <Button onClick={() => handleAddModule({
-        name: "Nouveau Module",
-        module_type: "hero" as ModuleType,
-        is_active: true,
-        content: { title: "Titre", subtitle: "Sous-titre" },
-        settings: { title: "Paramètres", buttonText: "Cliquez ici", buttonLink: "/", backgroundImage: "/path/to/image.jpg" },
-        order_index: modules.length
-      })}>
-        Ajouter un module
-      </Button>
-      {loading ? (
-        <p>Chargement des modules...</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {modules.map((module) => (
-            <ModuleCard key={module.id} module={module} />
-          ))}
-        </div>
-      )}
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Gestion du contenu de la page d'accueil</h1>
+      <ModulesList
+        modules={modules}
+        onAddModule={handleAddModule}
+        onToggle={handleToggleModule}
+        onDeleteClick={handleDeleteModule}
+      />
     </div>
   );
-};
-
-export default HomeContentManagement;
+}

@@ -8,9 +8,15 @@ import { toast } from "sonner";
 
 interface AvailableChildrenGridProps {
   children: any[];
+  isLoading?: boolean;
+  onSponsorClick?: (childId: string) => void;
 }
 
-export const AvailableChildrenGrid = ({ children }: AvailableChildrenGridProps) => {
+export const AvailableChildrenGrid = ({ 
+  children, 
+  isLoading = false,
+  onSponsorClick 
+}: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -19,6 +25,11 @@ export const AvailableChildrenGrid = ({ children }: AvailableChildrenGridProps) 
   }
 
   const handleSponsorClick = async (childId: string) => {
+    if (onSponsorClick) {
+      onSponsorClick(childId);
+      return;
+    }
+
     if (!user) {
       navigate(`/become-sponsor?child=${childId}`);
       return;
