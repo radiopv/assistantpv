@@ -33,7 +33,6 @@ export default function AvailableChildren() {
       } else if (selectedStatus === "urgent") {
         query = query
           .eq("is_sponsored", false)
-          .not('needs', 'is', null)
           .contains('needs', [{ is_urgent: true }]);
       }
 
