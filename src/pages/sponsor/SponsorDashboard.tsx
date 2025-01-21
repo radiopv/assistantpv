@@ -15,7 +15,8 @@ import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
-import { Plus, Minus } from "lucide-react";
+import { Plus, Camera, MessageSquare, Clock } from "lucide-react";
+import { TerminationDialog } from "@/components/Sponsors/Dashboard/TerminationDialog";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
@@ -23,6 +24,8 @@ const SponsorDashboard = () => {
   const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showTerminationDialog, setShowTerminationDialog] = useState(false);
+  const [selectedSponsorship, setSelectedSponsorship] = useState<{id: string, childName: string} | null>(null);
 
   const translations = {
     fr: {
@@ -34,7 +37,9 @@ const SponsorDashboard = () => {
       plannedVisits: "Visites Planifiées",
       noAccess: "Accès non autorisé",
       addChild: "Ajouter un enfant",
-      removeChild: "Retirer un enfant"
+      addPhoto: "Ajouter une photo",
+      addTestimonial: "Ajouter un témoignage",
+      endSponsorship: "Terminer le parrainage"
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -45,7 +50,9 @@ const SponsorDashboard = () => {
       plannedVisits: "Visitas Planificadas",
       noAccess: "Acceso no autorizado",
       addChild: "Agregar un niño",
-      removeChild: "Retirar un niño"
+      addPhoto: "Agregar una foto",
+      addTestimonial: "Agregar un testimonio",
+      endSponsorship: "Terminar el padrinazgo"
     }
   };
 
@@ -89,6 +96,15 @@ const SponsorDashboard = () => {
     setSelectedChild(childId);
   };
 
+  const handleAddTestimonial = (childId: string) => {
+    navigate(`/testimonials/new?childId=${childId}`);
+  };
+
+  const handleEndSponsorship = (sponsorshipId: string, childName: string) => {
+    setSelectedSponsorship({ id: sponsorshipId, childName });
+    setShowTerminationDialog(true);
+  };
+
   const handleUploadSuccess = async () => {
     if (selectedChild) {
       toast.success(t.uploadSuccess);
@@ -123,12 +139,52 @@ const SponsorDashboard = () => {
 
             return (
               <div key={child.id} className="space-y-6">
-                <SponsoredChildCard
-                  child={child}
-                  sponsorshipId={sponsorship.id}
-                  onAddPhoto={() => handleAddPhoto(child.id)}
-                  onAddTestimonial={() => {}}
-                />
+                <Card className="p-6">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    <div className="w-full md:w-1/3">
+                      <img
+                        src={child.photo_url || "/placeholder.svg"}
+                        alt={child.name}
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <div>
+                        <h3 className="text-xl font-semibold">{child.name}</h3>
+                        <p className="text-gray-600">{child.city}</p>
+                      </div>
+                      {child.description && (
+                        <p className="text-gray-700">{child.description}</p>
+                      )}
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => handleAddPhoto(child.id)}
+                          className="flex items-center gap-2"
+                        >
+                          <Camera className="w-4 h-4" />
+                          {t.addPhoto}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleAddTestimonial(child.id)}
+                          className="flex items-center gap-2"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                          {t.addTestimonial}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => handleEndSponsorship(sponsorship.id, child.name)}
+                          className="flex items-center gap-2 text-red-600 hover:bg-red-50"
+                        >
+                          <Clock className="w-4 h-4" />
+                          {t.endSponsorship}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
 
                 {selectedChild === child.id && (
                   <Card className="p-4">
@@ -164,6 +220,19 @@ const SponsorDashboard = () => {
         isOpen={showAddDialog}
         onClose={() => setShowAddDialog(false)}
       />
+
+      {selectedSponsorship && (
+        <TerminationDialog
+          isOpen={showTerminationDialog}
+          onClose={() => {
+            setShowTerminationDialog(false);
+            setSelectedSponsorship(null);
+          }}
+          sponsorshipId={selectedSponsorship.id}
+          childName={selectedSponsorship.childName}
+          onTerminationComplete={() => window.location.reload()}
+        />
+      )}
     </div>
   );
 };
