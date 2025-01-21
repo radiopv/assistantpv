@@ -25,9 +25,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAssistant, setIsAssistant] = useState(false);
   const navigate = useNavigate();
 
-  // Fonction pour charger les données du sponsor
   const loadSponsorData = async (userId: string) => {
     try {
+      console.log("Loading sponsor data for user:", userId);
       const { data: sponsor, error } = await supabase
         .from('sponsors')
         .select('*')
@@ -36,12 +36,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) {
         console.error('Error fetching sponsor data:', error);
-        localStorage.removeItem('user');
-        setUser(null);
-        navigate("/login");
         return null;
       }
 
+      console.log("Loaded sponsor data:", sponsor);
       return sponsor;
     } catch (error) {
       console.error('Error in loadSponsorData:', error);
@@ -49,23 +47,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Gestionnaire d'authentification principal
   const handleAuthChange = async () => {
     try {
       setLoading(true);
       const storedUser = localStorage.getItem('user');
       
       if (storedUser) {
+        console.log("Found stored user:", storedUser);
         const parsedUser = JSON.parse(storedUser);
         const sponsorData = await loadSponsorData(parsedUser.id);
 
         if (!sponsorData) {
+          console.log("No sponsor data found, logging out");
           setUser(null);
           setIsAssistant(false);
+          localStorage.removeItem('user');
           navigate("/login");
           return;
         }
 
+        console.log("Setting user with role:", sponsorData.role);
         setUser(sponsorData);
         setIsAssistant(['assistant', 'admin'].includes(sponsorData.role));
 
@@ -78,6 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         }
       } else {
+        console.log("No stored user found");
         setUser(null);
         setIsAssistant(false);
         if (!window.location.pathname.startsWith('/') && window.location.pathname !== '/login') {
@@ -88,16 +90,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error('Error in handleAuthChange:', error);
       setUser(null);
       setIsAssistant(false);
+      localStorage.removeItem('user');
+      navigate("/login");
     } finally {
       setLoading(false);
     }
   };
 
-  // Effet pour gérer les changements d'authentification
   useEffect(() => {
     handleAuthChange();
 
-    // Écouter les changements d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event) => {
       console.log('Auth state changed:', event);
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
