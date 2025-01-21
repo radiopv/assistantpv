@@ -50,14 +50,14 @@ export default function HomeContentManagement() {
 
       const { data, error } = await supabase
         .from('homepage_modules')
-        .insert([{
+        .insert({
           name: moduleData.name,
           module_type: moduleData.module_type,
           is_active: moduleData.is_active ?? true,
           content: moduleData.content || {},
           settings: moduleData.settings || {},
           order_index: moduleData.order_index
-        }])
+        })
         .select()
         .single();
 

@@ -1,42 +1,81 @@
-import { describe, it, expect, vi } from 'vitest';
 import { logError, trackPerformance, monitorApiCall } from '../utils/monitoring';
 import { supabase } from '@/integrations/supabase/client';
 
-vi.mock('@/integrations/supabase/client', () => ({
+// Mock Supabase client
+jest.mock('@/integrations/supabase/client', () => ({
   supabase: {
-    auth: {
-      getUser: vi.fn().mockResolvedValue({ data: { user: { id: 'test-user-id' } } })
-    },
-    from: vi.fn(() => ({
-      insert: vi.fn().mockResolvedValue({ data: null, error: null })
+    from: jest.fn(() => ({
+      insert: jest.fn().mockResolvedValue({ data: null, error: null })
     }))
   }
 }));
 
-describe('Monitoring Utils', () => {
-  it('logs errors correctly', async () => {
+describe('Monitoring Utilities', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('logError logs errors correctly', async () => {
     const error = new Error('Test error');
-    await logError(error, 'test-context');
-    
+    const context = { test: 'context' };
+    const userId = 'test-user';
+
+    await logError(error, context, userId);
+
     expect(supabase.from).toHaveBeenCalledWith('activity_logs');
+    expect(supabase.from('activity_logs').insert).toHaveBeenCalledWith([
+      expect.objectContaining({
+        action: 'error_log',
+        user_id: userId,
+        details: expect.objectContaining({
+          message: error.message,
+          context
+        })
+      })
+    ]);
   });
 
-  it('tracks performance metrics', async () => {
-    await trackPerformance('test-action', 100);
-    
-    expect(supabase.from).toHaveBeenCalledWith('performance_logs');
+  test('trackPerformance logs metrics correctly', async () => {
+    const metricName = 'test-metric';
+    const value = 100;
+    const metadata = { test: 'metadata' };
+    const userId = 'test-user';
+
+    await trackPerformance(metricName, value, metadata, userId);
+
+    expect(supabase.from).toHaveBeenCalledWith('activity_logs');
+    expect(supabase.from('activity_logs').insert).toHaveBeenCalledWith([
+      expect.objectContaining({
+        action: 'performance_metric',
+        user_id: userId,
+        details: {
+          metric_name: metricName,
+          value,
+          metadata
+        }
+      })
+    ]);
   });
 
-  it('monitors API calls', async () => {
-    const mockApi = vi.fn().mockResolvedValue({ data: 'test' });
-    const result = await monitorApiCall(mockApi, 'test-api');
-    
-    expect(result).toEqual({ data: 'test' });
-  });
+  test('monitorApiCall logs API calls correctly', async () => {
+    const endpoint = '/api/test';
+    const duration = 100;
+    const status = 200;
+    const userId = 'test-user';
 
-  it('handles errors in API calls', async () => {
-    const mockApi = vi.fn().mockRejectedValue(new Error('API Error'));
-    
-    await expect(monitorApiCall(mockApi, 'test-api')).rejects.toThrow('API Error');
+    await monitorApiCall(endpoint, duration, status, userId);
+
+    expect(supabase.from).toHaveBeenCalledWith('activity_logs');
+    expect(supabase.from('activity_logs').insert).toHaveBeenCalledWith([
+      expect.objectContaining({
+        action: 'api_call',
+        user_id: userId,
+        details: {
+          endpoint,
+          duration,
+          status
+        }
+      })
+    ]);
   });
 });

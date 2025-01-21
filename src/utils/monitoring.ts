@@ -1,58 +1,55 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export const logError = async (error: Error, context?: Record<string, any>) => {
+export const logError = async (error: Error, context: Record<string, any> = {}, userId?: string) => {
   try {
-    const { error: dbError } = await supabase
-      .from('activity_logs')
-      .insert([{
-        action: 'error',
-        details: {
-          message: error.message,
-          stack: error.stack,
-          context
-        }
-      }]);
+    const errorLog = {
+      action: 'error_log',
+      user_id: userId || 'anonymous',
+      details: {
+        message: error.message,
+        stack: error.stack,
+        context
+      }
+    };
 
-    if (dbError) throw dbError;
+    await supabase.from('activity_logs').insert([errorLog]);
   } catch (e) {
-    console.error('Error logging to database:', e);
+    console.error('Failed to log error:', e);
   }
 };
 
-export const trackPerformance = async (metricName: string, value: number, metadata?: Record<string, any>) => {
+export const trackPerformance = async (metricName: string, value: number, metadata: Record<string, any> = {}, userId?: string) => {
   try {
-    const { error } = await supabase
-      .from('activity_logs')
-      .insert([{
-        action: 'performance_metric',
-        details: {
-          metric_name: metricName,
-          value,
-          metadata
-        }
-      }]);
+    const performanceLog = {
+      action: 'performance_metric',
+      user_id: userId || 'anonymous',
+      details: {
+        metric_name: metricName,
+        value,
+        metadata
+      }
+    };
 
-    if (error) throw error;
+    await supabase.from('activity_logs').insert([performanceLog]);
   } catch (e) {
-    console.error('Error logging performance metric:', e);
+    console.error('Failed to track performance:', e);
   }
 };
 
-export const monitorApiCall = async (endpoint: string, duration: number, status: number) => {
+export const monitorApiCall = async (endpoint: string, duration: number, status: number, userId?: string) => {
   try {
-    const { error } = await supabase
-      .from('activity_logs')
-      .insert([{
-        action: 'api_call',
-        details: {
-          endpoint,
-          duration,
-          status
-        }
-      }]);
+    const apiLog = {
+      action: 'api_call',
+      user_id: userId || 'anonymous',
+      details: {
+        endpoint,
+        duration,
+        status
+      }
+    };
 
-    if (error) throw error;
+    await supabase.from('activity_logs').insert([apiLog]);
   } catch (e) {
-    console.error('Error logging API call:', e);
+    console.error('Failed to monitor API call:', e);
   }
 };

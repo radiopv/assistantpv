@@ -1338,6 +1338,33 @@ export type Database = {
         }
         Relationships: []
       }
+      performance_logs: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          metric_name: string
+          updated_at: string | null
+          value: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          updated_at?: string | null
+          value: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          updated_at?: string | null
+          value?: number
+        }
+        Relationships: []
+      }
       planned_visits: {
         Row: {
           created_at: string | null
