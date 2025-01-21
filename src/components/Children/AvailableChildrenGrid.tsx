@@ -101,30 +101,6 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
     }
   };
 
-  const formatAge = (birthDate: string) => {
-    if (!birthDate) return "Âge non disponible";
-    
-    try {
-      const today = new Date();
-      const birth = parseISO(birthDate);
-      const years = differenceInYears(today, birth);
-      const months = differenceInMonths(today, birth) % 12;
-      
-      if (years === 0) {
-        return `${months} mois`;
-      }
-      
-      if (months === 0) {
-        return `${years} ans`;
-      }
-      
-      return `${years} ans ${months} mois`;
-    } catch (error) {
-      console.error('Error calculating age:', error);
-      return "Âge non disponible";
-    }
-  };
-
   const handleSponsorClick = async (childId: string) => {
     if (!user) {
       navigate(`/become-sponsor?child=${childId}`);
@@ -271,7 +247,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
               key={child.id} 
               className="group overflow-hidden hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-cuba-warmBeige/20 backdrop-blur-sm border border-cuba-warmBeige"
             >
-              <div className="aspect-video relative">
+              <div className="aspect-square relative">
                 <img
                   src={child.photo_url || "/placeholder.svg"}
                   alt={child.name}
@@ -289,7 +265,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
                   <h3 className="text-lg font-title font-bold text-white truncate">{child.name}</h3>
                   <div className="flex items-center gap-1 text-sm text-white/90">
                     <Calendar className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{formatAge(child.birth_date)}</span>
+                    <span className="truncate">{child.age} ans</span>
                     <MapPin className="w-4 h-4 flex-shrink-0 ml-1" />
                     <span className="truncate">{child.city}</span>
                   </div>
