@@ -60,7 +60,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
       <CardFooter className="flex flex-col gap-2">
         <Button 
           onClick={handleSponsorClick}
-          className="w-full bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 text-white font-semibold py-3 text-base shadow-md transition-all duration-200"
+          className="w-full bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 text-white font-semibold py-4 text-lg shadow-md transition-all duration-200"
         >
           Parrainer cet enfant
         </Button>
