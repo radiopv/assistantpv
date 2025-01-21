@@ -18,7 +18,7 @@ export default function ChildrenManagement() {
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige to-white">
       <div className="w-full">
         <Card className="bg-white/80 backdrop-blur-sm rounded-none sm:rounded-xl shadow-lg border border-orange-200">
-          <h1 className="text-2xl font-bold p-4 sm:p-6">{t("childrenAndSponsorship")}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold p-4 sm:p-6">{t("childrenAndSponsorship")}</h1>
           
           <Tabs defaultValue="children" className="w-full">
             <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2 p-4">
@@ -27,37 +27,40 @@ export default function ChildrenManagement() {
                 className="flex items-center gap-2 min-h-[44px] w-full justify-center"
               >
                 <Users className="w-4 h-4" />
-                {t("children")}
+                <span className="hidden sm:inline">{t("children")}</span>
+                <span className="sm:hidden">Enfants</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="photos" 
                 className="flex items-center gap-2 min-h-[44px] w-full justify-center"
               >
                 <Image className="w-4 h-4" />
-                {t("photos")}
+                <span className="hidden sm:inline">{t("photos")}</span>
+                <span className="sm:hidden">Photos</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="sponsorship" 
                 className="flex items-center gap-2 min-h-[44px] w-full justify-center"
               >
                 <Users className="w-4 h-4" />
-                {t("sponsorshipManagement")}
+                <span className="hidden sm:inline">{t("sponsorshipManagement")}</span>
+                <span className="sm:hidden">Parrainages</span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="children" className="mt-2">
+            <TabsContent value="children" className="mt-2 px-4">
               <div className="w-full overflow-x-auto">
                 <Children />
               </div>
             </TabsContent>
 
-            <TabsContent value="photos" className="mt-2">
+            <TabsContent value="photos" className="mt-2 px-4">
               <div className="w-full overflow-x-auto">
                 <AssistantPhotos />
               </div>
             </TabsContent>
 
-            <TabsContent value="sponsorship" className="mt-2">
+            <TabsContent value="sponsorship" className="mt-2 px-4">
               <div className="w-full overflow-x-auto">
                 <SponsorshipManagement />
               </div>

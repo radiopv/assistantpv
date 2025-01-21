@@ -37,12 +37,10 @@ const ValidationPage = () => {
   const { data: photoCount } = useQuery({
     queryKey: ['pending-photo-count'],
     queryFn: async () => {
-      console.log("Fetching photo count");
       const { count } = await supabase
         .from('album_media')
         .select('*', { count: 'exact', head: true })
         .eq('is_approved', false) as { count: number };
-      console.log("Photo count:", count);
       return count || 0;
     }
   });
@@ -50,84 +48,102 @@ const ValidationPage = () => {
   const { data: testimonialCount } = useQuery({
     queryKey: ['pending-testimonial-count'],
     queryFn: async () => {
-      console.log("Fetching testimonial count");
       const { count } = await supabase
         .from('temoignage')
         .select('*', { count: 'exact', head: true })
         .eq('is_approved', false) as { count: number };
-      console.log("Testimonial count:", count);
       return count || 0;
     }
   });
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-6">{t("validationPage")}</h1>
+    <div className="container mx-auto py-4 px-2 md:py-8 md:px-4">
+      <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">{t("validationPage")}</h1>
       
       <Tabs defaultValue="sponsorship" className="w-full">
-        <TabsList className="relative">
-          <div className="flex items-center">
-            <TabsTrigger value="sponsorship" className="relative">
+        <TabsList className="flex flex-col sm:flex-row w-full gap-2 bg-transparent h-auto p-0">
+          <TabsTrigger 
+            value="sponsorship" 
+            className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-3 py-2 rounded-md text-sm md:text-base"
+          >
+            <span className="flex items-center gap-2">
               {t("sponsorshipRequests")}
               {sponsorshipCount > 0 && (
-                <Badge variant="destructive" className="absolute -top-3 -right-3 min-w-[20px] h-5 flex items-center justify-center">
+                <Badge variant="destructive" className="h-5 min-w-[20px] flex items-center justify-center">
                   {sponsorshipCount}
                 </Badge>
               )}
-            </TabsTrigger>
-            
-            <TabsTrigger value="children" className="relative">
+            </span>
+          </TabsTrigger>
+          
+          <TabsTrigger 
+            value="children" 
+            className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-3 py-2 rounded-md text-sm md:text-base"
+          >
+            <span className="flex items-center gap-2">
               {t("childRequests")}
               {childRequestCount > 0 && (
-                <Badge variant="destructive" className="absolute -top-3 -right-3 min-w-[20px] h-5 flex items-center justify-center">
+                <Badge variant="destructive" className="h-5 min-w-[20px] flex items-center justify-center">
                   {childRequestCount}
                 </Badge>
               )}
-            </TabsTrigger>
-            
-            <TabsTrigger value="photos" className="relative">
+            </span>
+          </TabsTrigger>
+          
+          <TabsTrigger 
+            value="photos" 
+            className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-3 py-2 rounded-md text-sm md:text-base"
+          >
+            <span className="flex items-center gap-2">
               {t("photoValidation")}
               {photoCount > 0 && (
-                <Badge variant="destructive" className="absolute -top-3 -right-3 min-w-[20px] h-5 flex items-center justify-center">
+                <Badge variant="destructive" className="h-5 min-w-[20px] flex items-center justify-center">
                   {photoCount}
                 </Badge>
               )}
-            </TabsTrigger>
-            
-            <TabsTrigger value="testimonials" className="relative">
+            </span>
+          </TabsTrigger>
+          
+          <TabsTrigger 
+            value="testimonials" 
+            className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-3 py-2 rounded-md text-sm md:text-base"
+          >
+            <span className="flex items-center gap-2">
               {t("testimonialValidation")}
               {testimonialCount > 0 && (
-                <Badge variant="destructive" className="absolute -top-3 -right-3 min-w-[20px] h-5 flex items-center justify-center">
+                <Badge variant="destructive" className="h-5 min-w-[20px] flex items-center justify-center">
                   {testimonialCount}
                 </Badge>
               )}
-            </TabsTrigger>
-          </div>
+            </span>
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="sponsorship">
-          <Card className="p-4">
-            <SponsorshipValidation />
-          </Card>
-        </TabsContent>
+        <div className="mt-4">
+          <TabsContent value="sponsorship">
+            <Card className="p-2 md:p-4">
+              <SponsorshipValidation />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="children">
-          <Card className="p-4">
-            <ChildAssignmentValidation />
-          </Card>
-        </TabsContent>
+          <TabsContent value="children">
+            <Card className="p-2 md:p-4">
+              <ChildAssignmentValidation />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="photos">
-          <Card className="p-4">
-            <PhotoValidation />
-          </Card>
-        </TabsContent>
+          <TabsContent value="photos">
+            <Card className="p-2 md:p-4">
+              <PhotoValidation />
+            </Card>
+          </TabsContent>
 
-        <TabsContent value="testimonials">
-          <Card className="p-4">
-            <TestimonialValidation />
-          </Card>
-        </TabsContent>
+          <TabsContent value="testimonials">
+            <Card className="p-2 md:p-4">
+              <TestimonialValidation />
+            </Card>
+          </TabsContent>
+        </div>
       </Tabs>
     </div>
   );
