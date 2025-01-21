@@ -2,10 +2,11 @@
   @media (max-width: 640px) {
     html {
       font-size: 14px;
+      -webkit-text-size-adjust: 100%;
     }
 
     .container {
-      @apply px-4 max-w-[100vw] w-full mx-auto;
+      @apply px-2 max-w-[100vw] w-full mx-auto;
     }
 
     button, 
@@ -17,7 +18,7 @@
     }
 
     .mobile-spacing {
-      @apply space-y-4;
+      @apply space-y-3;
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -28,39 +29,38 @@
     input[type="email"],
     input[type="password"],
     textarea {
-      @apply w-full py-3 px-4;
+      @apply w-full py-2 px-3;
       font-size: 16px;
     }
 
     .cuba-card {
-      @apply mx-auto max-w-[calc(100vw-2rem)];
+      @apply mx-auto max-w-[calc(100vw-1rem)];
     }
 
     .cuba-header {
-      @apply px-4;
+      @apply px-2;
     }
 
     .cuba-section {
-      @apply py-8 px-4;
+      @apply py-6 px-2;
     }
 
     .cuba-title {
-      @apply text-2xl;
+      @apply text-xl;
     }
 
     .cuba-subtitle {
-      @apply text-lg;
+      @apply text-base;
     }
 
     .grid {
-      @apply gap-4;
+      @apply gap-2;
     }
 
     .touch-feedback:active {
       @apply bg-cuba-warmBeige/50 transition-colors duration-200;
     }
 
-    /* Admin dashboard specific mobile styles */
     .admin-tabs {
       @apply flex-col;
     }
@@ -79,7 +79,37 @@
 
     .admin-table td,
     .admin-table th {
-      @apply px-2 py-3;
+      @apply px-2 py-2;
+    }
+
+    /* Optimize image containers for small screens */
+    .image-container {
+      @apply relative overflow-hidden;
+      min-height: 150px;
+    }
+
+    /* Progressive loading styles */
+    .image-loading {
+      @apply animate-pulse bg-gray-200;
+    }
+
+    .image-loaded {
+      @apply transition-opacity duration-300;
+    }
+
+    /* Prevent layout shift */
+    .aspect-container {
+      @apply relative w-full;
+    }
+
+    .aspect-container::before {
+      content: "";
+      display: block;
+      padding-bottom: 75%;
+    }
+
+    .aspect-container > * {
+      @apply absolute inset-0 w-full h-full object-cover;
     }
   }
 }
