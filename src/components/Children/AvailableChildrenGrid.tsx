@@ -2,6 +2,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/components/Auth/AuthProvider";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -9,10 +12,40 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   if (!children.length) {
     return <p>Aucun enfant disponible pour le moment.</p>;
   }
+
+  const handleSponsorClick = async (childId: string) => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${childId}`);
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          sponsor_id: user.id,
+          status: 'pending',
+          is_long_term: true,
+          terms_accepted: true,
+          email: user.email,
+          full_name: user.name
+        });
+
+      if (error) throw error;
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+      navigate('/sponsor-dashboard');
+    } catch (error) {
+      console.error('Error creating sponsorship request:', error);
+      toast.error("Une erreur est survenue lors de la demande de parrainage");
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -45,9 +78,9 @@ export const AvailableChildrenGrid = ({ children }: AvailableChildrenGridProps) 
             </div>
             <Button 
               className="w-full mt-4" 
-              onClick={() => navigate(`/children/${child.id}`)}
+              onClick={() => handleSponsorClick(child.id)}
             >
-              Voir le profil
+              Parrainer
             </Button>
           </div>
         </Card>
