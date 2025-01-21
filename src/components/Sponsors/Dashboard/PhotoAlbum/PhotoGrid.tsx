@@ -1,7 +1,4 @@
 import { PhotoCard } from "./PhotoCard";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 interface PhotoGridProps {
   photos: any[];
@@ -32,10 +29,6 @@ export const PhotoGrid = ({
   const handleToggleFeature = (id: string, currentStatus: boolean) => {
     if (onToggleFeature) onToggleFeature(id, currentStatus);
     if (onToggleFavorite) onToggleFavorite(id, currentStatus);
-    
-    if (!currentStatus) {
-      toast.info("La photo doit être approuvée par un administrateur avant d'apparaître sur la page principale");
-    }
   };
 
   return (

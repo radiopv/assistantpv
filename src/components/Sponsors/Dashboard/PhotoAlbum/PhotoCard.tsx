@@ -4,7 +4,6 @@ import { Star, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PhotoCardProps {
   photo: {
@@ -45,26 +44,16 @@ export const PhotoCard = ({ photo, onPhotoClick, onToggleFeature, onDelete }: Ph
       </div>
       
       <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="secondary"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleFeature(photo.id, photo.is_featured);
-              }}
-            >
-              <Star className={`w-4 h-4 ${photo.is_featured ? "fill-yellow-400" : ""}`} />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            {photo.is_featured 
-              ? "Retirer des photos en vedette" 
-              : "Marquer comme photo en vedette (nécessite approbation)"}
-          </TooltipContent>
-        </Tooltip>
-
+        <Button
+          variant="secondary"
+          size="icon"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFeature(photo.id, photo.is_featured);
+          }}
+        >
+          <Star className={`w-4 h-4 ${photo.is_featured ? "fill-yellow-400" : ""}`} />
+        </Button>
         <Button
           variant="destructive"
           size="icon"
