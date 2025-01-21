@@ -24,6 +24,7 @@ describe('Monitoring Utils', () => {
     expect(supabase.from).toHaveBeenCalledWith('activity_logs');
     expect(supabase.from().insert).toHaveBeenCalledWith([{
       action: 'error',
+      user_id: '123',
       details: expect.objectContaining({
         error_message: 'Test error',
         error_stack: expect.any(String),

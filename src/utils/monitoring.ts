@@ -13,6 +13,7 @@ export const logError = async (error: Error, context: Record<string, any> = {}) 
       .from('activity_logs')
       .insert([{
         action: 'error',
+        user_id: context.userId || 'anonymous',
         details: errorLog
       }]);
 
