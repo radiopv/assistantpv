@@ -26,19 +26,15 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
-  // Sort children by needs urgency and waiting time
   const sortedChildren = useMemo(() => {
     return [...children].sort((a, b) => {
-      // Count urgent needs
       const aUrgentNeeds = convertJsonToNeeds(a.needs).filter(need => need.is_urgent).length;
       const bUrgentNeeds = convertJsonToNeeds(b.needs).filter(need => need.is_urgent).length;
       
-      // Compare urgent needs first
       if (aUrgentNeeds !== bUrgentNeeds) {
         return bUrgentNeeds - aUrgentNeeds;
       }
       
-      // If urgent needs are equal, compare waiting time
       const aCreatedAt = parseISO(a.created_at);
       const bCreatedAt = parseISO(b.created_at);
       return aCreatedAt.getTime() - bCreatedAt.getTime();
@@ -67,7 +63,6 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
     enabled: children.length > 0
   });
 
-  // Group photos by child
   const photosByChild = albumPhotos?.reduce((acc, photo) => {
     if (!acc[photo.child_id]) {
       acc[photo.child_id] = [];
@@ -85,7 +80,7 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
       .catch(error => {
         console.error('Failed to load face detection models:', error);
         toast("Impossible de charger les modèles de détection faciale", {
-          type: "error"
+          description: "Une erreur s'est produite lors du chargement"
         });
       });
   }, []);
@@ -137,7 +132,6 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
     }
 
     try {
-      // Vérifier si l'enfant est déjà parrainé
       const { data: childData, error: childError } = await supabase
         .from('children')
         .select('is_sponsored, name')
@@ -166,7 +160,6 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
         return;
       }
 
-      // Vérifier si une demande existe déjà
       const { data: existingRequests, error: requestError } = await supabase
         .from('sponsorship_requests')
         .select('status')
@@ -197,7 +190,6 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
         return;
       }
 
-      // Créer la demande de parrainage
       const { error: createError } = await supabase
         .from('sponsorship_requests')
         .insert({
@@ -255,7 +247,6 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
 
   return (
     <div className="space-y-6">
-      {/* Information Card */}
       <Card className="p-4 bg-orange-50 border-orange-200">
         <div className="flex gap-3">
           <AlertTriangle className="h-5 w-5 text-orange-500 flex-shrink-0 mt-1" />
@@ -306,7 +297,6 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
               </div>
 
               <div className="p-2 space-y-2">
-                {/* Album Photos Grid */}
                 {photosByChild[child.id]?.length > 0 && (
                   <div className="bg-white/80 rounded-lg p-2">
                     <h4 className="font-medium text-sm mb-2 text-cuba-warmGray">Album photos</h4>
