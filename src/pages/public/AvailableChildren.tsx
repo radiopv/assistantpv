@@ -116,7 +116,6 @@ export default function AvailableChildren() {
             <AvailableChildrenGrid 
               children={filteredChildren}
               isLoading={isLoading}
-              onSponsorClick={(childId) => navigate(`/become-sponsor/${childId}`)}
             />
           </div>
         )}
