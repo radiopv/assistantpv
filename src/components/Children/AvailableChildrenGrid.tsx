@@ -13,7 +13,6 @@ import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { SponsorshipButton } from "./Details/SponsorshipButton";
 import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface AvailableChildrenGridProps {
@@ -23,6 +22,7 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildrenGridProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
@@ -129,6 +129,87 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
     } catch (error) {
       console.error('Error calculating age:', error);
       return "Âge non disponible";
+    }
+  };
+
+  const handleSponsorClick = async (childId: string) => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${childId}`);
+      return;
+    }
+
+    try {
+      // Vérifier si l'enfant est déjà parrainé
+      const { data: childData, error: childError } = await supabase
+        .from('children')
+        .select('is_sponsored, name')
+        .eq('id', childId)
+        .maybeSingle();
+
+      if (childError) {
+        console.error('Erreur lors de la vérification du statut de l\'enfant:', childError);
+        toast.error("Une erreur est survenue lors de la vérification du statut de l'enfant");
+        return;
+      }
+
+      if (!childData) {
+        toast.error("Impossible de trouver les informations de l'enfant");
+        return;
+      }
+
+      if (childData.is_sponsored) {
+        toast.error("Cet enfant est déjà parrainé");
+        return;
+      }
+
+      // Vérifier si une demande existe déjà
+      const { data: existingRequest, error: requestError } = await supabase
+        .from('sponsorship_requests')
+        .select('status')
+        .eq('child_id', childId)
+        .eq('sponsor_id', user.id)
+        .maybeSingle();
+
+      if (requestError) {
+        console.error('Erreur lors de la vérification des demandes existantes:', requestError);
+        toast.error("Une erreur est survenue lors de la vérification des demandes existantes");
+        return;
+      }
+
+      if (existingRequest) {
+        if (existingRequest.status === 'pending') {
+          toast.error("Vous avez déjà une demande de parrainage en cours pour cet enfant");
+        } else {
+          toast.error("Vous avez déjà parrainé cet enfant");
+        }
+        return;
+      }
+
+      // Créer la demande de parrainage
+      const { error: createError } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          sponsor_id: user.id,
+          status: 'pending',
+          is_long_term: true,
+          terms_accepted: true,
+          full_name: user.name,
+          email: user.email,
+          city: user.city
+        });
+
+      if (createError) {
+        console.error('Erreur lors de la création de la demande:', createError);
+        toast.error("Une erreur est survenue lors de la demande de parrainage");
+        return;
+      }
+
+      toast.success("Votre demande de parrainage a été envoyée avec succès");
+      
+    } catch (error) {
+      console.error('Erreur lors de la demande de parrainage:', error);
+      toast.error("Une erreur est survenue lors de la demande de parrainage");
     }
   };
 
@@ -254,7 +335,12 @@ export const AvailableChildrenGrid = ({ children, isLoading }: AvailableChildren
                   </div>
                 )}
 
-                <SponsorshipButton childId={child.id} />
+                <Button 
+                  onClick={() => handleSponsorClick(child.id)}
+                  className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg shadow-md transition-all duration-200"
+                >
+                  Parrainer cet enfant
+                </Button>
               </div>
             </Card>
           );
