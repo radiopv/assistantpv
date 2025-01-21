@@ -1,10 +1,16 @@
 export const formatDate = (date: string | Date): string => {
-  if (!date) return '';
+  return new Date(date).toLocaleDateString();
+};
+
+export const formatAge = (birthDate: string | Date): string => {
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
   
-  const d = new Date(date);
-  return new Intl.DateTimeFormat('fr-FR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(d);
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  
+  return `${age} ans`;
 };

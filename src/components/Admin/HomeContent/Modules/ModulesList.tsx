@@ -30,6 +30,10 @@ const moduleExamples: Module[] = [
       buttonLink: "/become-sponsor",
       backgroundImage: "/path/to/image.jpg"
     },
+    content: {
+      title: "Parrainez un enfant cubain",
+      subtitle: "Aidez-nous à changer des vies"
+    },
     order_index: 0
   },
   {
@@ -44,6 +48,10 @@ const moduleExamples: Module[] = [
       showRatings: true,
       layout: "grid"
     },
+    content: {
+      title: "Ce que disent nos parrains",
+      subtitle: ""
+    },
     order_index: 1
   },
   {
@@ -57,6 +65,10 @@ const moduleExamples: Module[] = [
       showCaptions: true,
       autoSlide: true,
       layout: "carousel"
+    },
+    content: {
+      title: "Moments partagés",
+      subtitle: ""
     },
     order_index: 2
   },
@@ -73,6 +85,10 @@ const moduleExamples: Module[] = [
       enableRegistration: true,
       layout: "cards"
     },
+    content: {
+      title: "Nos Prochains Événements",
+      subtitle: ""
+    },
     order_index: 4
   },
   {
@@ -86,6 +102,10 @@ const moduleExamples: Module[] = [
       showUrgentFirst: true,
       enableDonationButton: true,
       layout: "cards"
+    },
+    content: {
+      title: "Besoins Actuels",
+      subtitle: ""
     },
     order_index: 5
   },
@@ -101,6 +121,10 @@ const moduleExamples: Module[] = [
       showSocialLinks: true,
       backgroundColor: "light"
     },
+    content: {
+      title: "Restez Informé",
+      subtitle: "Recevez nos actualités"
+    },
     order_index: 6
   },
   {
@@ -115,6 +139,10 @@ const moduleExamples: Module[] = [
       showTargetAmount: true,
       categories: ["Éducation", "Santé", "Alimentation"]
     },
+    content: {
+      title: "Nos Objectifs",
+      subtitle: ""
+    },
     order_index: 7
   },
   {
@@ -128,6 +156,10 @@ const moduleExamples: Module[] = [
       displayTestimonials: true,
       enableJoinButton: true,
       layout: "modern"
+    },
+    content: {
+      title: "Notre Communauté",
+      subtitle: ""
     },
     order_index: 8
   }
