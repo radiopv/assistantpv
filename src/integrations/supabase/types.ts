@@ -251,6 +251,24 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          category_name: string
+          description: string | null
+          id: string
+        }
+        Insert: {
+          category_name: string
+          description?: string | null
+          id?: string
+        }
+        Update: {
+          category_name?: string
+          description?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       child_assignment_requests: {
         Row: {
           child_id: string | null
@@ -1317,6 +1335,33 @@ export type Database = {
           id?: string
           name?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      performance_logs: {
+        Row: {
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          metric_name: string
+          updated_at: string | null
+          value: number
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name: string
+          updated_at?: string | null
+          value: number
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          metric_name?: string
+          updated_at?: string | null
+          value?: number
         }
         Relationships: []
       }
