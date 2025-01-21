@@ -97,7 +97,7 @@ export const SponsorshipButton = ({ childId }: SponsorshipButtonProps) => {
     <Button 
       onClick={handleSponsorshipRequest}
       size="lg"
-      className="w-full md:w-auto"
+      className="w-full md:w-auto bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 text-white"
     >
       Parrainer cet enfant
     </Button>
