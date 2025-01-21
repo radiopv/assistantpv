@@ -1,6 +1,24 @@
+import { Json } from "@/integrations/supabase/types";
+
+export type ModuleType = 
+  | "hero"
+  | "featured-children"
+  | "how-it-works"
+  | "testimonials"
+  | "featured-album"
+  | "impact-stats"
+  | "impact"
+  | "journey"
+  | "events"
+  | "needs"
+  | "newsletter"
+  | "donation-goals"
+  | "community";
+
 export interface ModuleContent {
   title?: string;
   subtitle?: string;
+  [key: string]: Json | undefined;
 }
 
 export interface ModuleSettings {
@@ -40,22 +58,8 @@ export interface ModuleSettings {
     title: string;
     description: string;
   }[];
+  [key: string]: Json | undefined;
 }
-
-export type ModuleType = 
-  | "hero"
-  | "featured-children"
-  | "how-it-works"
-  | "testimonials"
-  | "featured-album"
-  | "impact-stats"
-  | "impact"
-  | "journey"
-  | "events"
-  | "needs"
-  | "newsletter"
-  | "donation-goals"
-  | "community";
 
 export interface Module {
   id: string;
@@ -71,7 +75,9 @@ export interface Module {
 
 export interface ModulesListProps {
   modules: Module[];
-  onAddModule: (moduleData: Partial<Module>) => Promise<void>;
-  onToggle: (moduleId: string) => Promise<void>;
-  onDeleteClick: (moduleId: string) => Promise<void>;
+  onDragEnd: (result: any) => void;
+  onToggle: (moduleId: string, currentState: boolean) => void;
+  onSettingsClick: (module: Module) => void;
+  onDeleteClick: (moduleId: string) => void;
+  onNewModuleClick: () => void;
 }

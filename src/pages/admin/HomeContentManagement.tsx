@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { ModulesList } from "@/components/Admin/HomeContent/Modules/ModulesList";
 import { toast } from "sonner";
-import { Module, ModuleContent, ModuleSettings } from "@/types/module";
+import { Module } from "@/components/Admin/HomeContent/types";
 
 export default function HomeContentManagement() {
   const { data: modules = [], isLoading, refetch } = useQuery({
@@ -20,30 +20,43 @@ export default function HomeContentManagement() {
     },
   });
 
-  const handleAddModule = async (moduleData: Partial<Module>) => {
-    try {
-      const { error } = await supabase
-        .from("homepage_modules")
-        .insert([moduleData]);
+  const handleDragEnd = async (result: any) => {
+    const { source, destination } = result;
 
-      if (error) throw error;
+    if (!destination) return;
 
-      toast.success("Module ajouté avec succès");
-      refetch();
-    } catch (error) {
-      console.error("Error adding module:", error);
-      toast.error("Erreur lors de l'ajout du module");
-    }
+    const reorderedModules = Array.from(modules);
+    const [removed] = reorderedModules.splice(source.index, 1);
+    reorderedModules.splice(destination.index, 0, removed);
+
+    await Promise.all(
+      reorderedModules.map((module, index) =>
+        supabase
+          .from("homepage_modules")
+          .update({ order_index: index })
+          .eq("id", module.id)
+      )
+    );
+
+    toast.success("Modules réorganisés avec succès");
+    refetch();
   };
 
-  const handleToggle = async (moduleId: string) => {
-    try {
-      const moduleToUpdate = modules.find((m) => m.id === moduleId);
-      if (!moduleToUpdate) return;
+  const handleSettingsClick = (module: Module) => {
+    // Logic to open settings modal or navigate to settings page
+    console.log("Settings clicked for module:", module);
+  };
 
+  const handleNewModuleClick = () => {
+    // Logic to open new module creation modal
+    console.log("New module creation clicked");
+  };
+
+  const handleToggle = async (moduleId: string, currentState: boolean) => {
+    try {
       const { error } = await supabase
         .from("homepage_modules")
-        .update({ is_active: !moduleToUpdate.is_active })
+        .update({ is_active: !currentState })
         .eq("id", moduleId);
 
       if (error) throw error;
@@ -83,9 +96,11 @@ export default function HomeContentManagement() {
       <Card className="p-6">
         <ModulesList
           modules={modules}
+          onDragEnd={handleDragEnd}
           onToggle={handleToggle}
-          onDelete={handleDelete}
-          onAddModule={handleAddModule}
+          onSettingsClick={handleSettingsClick}
+          onDeleteClick={handleDelete}
+          onNewModuleClick={handleNewModuleClick}
         />
       </Card>
     </div>
