@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ChildrenList } from "@/components/Children/ChildrenList";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ErrorAlert } from "@/components/ErrorAlert";
 
 const Children = () => {
   const navigate = useNavigate();
@@ -21,7 +20,7 @@ const Children = () => {
   const [selectedAge, setSelectedAge] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
 
-  const { data: children, isLoading, error, refetch } = useQuery({
+  const { data: children, isLoading } = useQuery({
     queryKey: ['children', searchTerm, selectedCity, selectedGender, selectedAge, selectedStatus],
     queryFn: async () => {
       console.log("Fetching with filters:", { selectedGender, selectedAge, selectedCity, selectedStatus });
@@ -59,13 +58,13 @@ const Children = () => {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching children:", error);
+        toast.error(t("errorLoadingChildren"));
         throw error;
       }
 
-      return data?.filter(child => 
+      return data.filter(child => 
         child.name.toLowerCase().includes(searchTerm.toLowerCase())
-      ) || [];
+      );
     }
   });
 
@@ -79,17 +78,9 @@ const Children = () => {
   const ages = useMemo(() => {
     if (!children) return [];
     const uniqueAges = [...new Set(children.map(child => child.age))];
+    // Convert numbers to strings before returning
     return uniqueAges.filter(Boolean).sort((a, b) => a - b).map(age => age.toString());
   }, [children]);
-
-  if (error) {
-    return (
-      <ErrorAlert 
-        message={t("errorLoadingChildren")} 
-        retry={refetch}
-      />
-    );
-  }
 
   if (isLoading) {
     return (

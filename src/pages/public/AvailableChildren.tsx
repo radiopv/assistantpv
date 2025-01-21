@@ -20,47 +20,40 @@ export default function AvailableChildren() {
     queryFn: async () => {
       console.log("Recherche d'enfants avec les filtres:", { searchTerm, selectedGender, selectedAge, selectedCity, selectedStatus });
       
-      try {
-        let query = supabase
-          .from("children")
-          .select("*");
+      let query = supabase
+        .from("children")
+        .select("*");
 
-        if (searchTerm) {
-          query = query.ilike('name', `%${searchTerm}%`);
-        }
+      if (searchTerm) {
+        query = query.ilike('name', `%${searchTerm}%`);
+      }
 
-        if (selectedStatus === "available") {
-          query = query.eq("is_sponsored", false);
-        } else if (selectedStatus === "urgent") {
-          const urgentNeedsFilter = JSON.stringify([{ "is_urgent": true }]);
-          query = query
-            .eq("is_sponsored", false)
-            .not('needs', 'is', null)
-            .contains('needs', urgentNeedsFilter);
-        }
+      if (selectedStatus === "available") {
+        query = query.eq("is_sponsored", false);
+      } else if (selectedStatus === "urgent") {
+        query = query
+          .eq("is_sponsored", false)
+          .not('needs', 'is', null)
+          .contains('needs', [{ is_urgent: true }]);
+      }
 
-        if (selectedCity !== "all") {
-          query = query.eq("city", selectedCity);
-        }
+      if (selectedCity !== "all") {
+        query = query.eq("city", selectedCity);
+      }
 
-        if (selectedGender !== "all") {
-          query = query.eq("gender", selectedGender);
-        }
+      if (selectedGender !== "all") {
+        query = query.eq("gender", selectedGender);
+      }
 
-        const { data, error } = await query;
+      const { data, error } = await query;
 
-        if (error) {
-          console.error("Erreur lors de la récupération des enfants:", error);
-          toast.error("Erreur lors de la récupération des enfants");
-          throw error;
-        }
-
-        return data || [];
-      } catch (error) {
+      if (error) {
         console.error("Erreur lors de la récupération des enfants:", error);
-        toast.error("Une erreur est survenue lors de la récupération des enfants");
+        toast.error("Erreur lors de la récupération des enfants");
         throw error;
       }
+
+      return data || [];
     }
   });
 
@@ -116,6 +109,7 @@ export default function AvailableChildren() {
             <AvailableChildrenGrid 
               children={filteredChildren}
               isLoading={isLoading}
+              onSponsorClick={(childId) => navigate(`/become-sponsor/${childId}`)}
             />
           </div>
         )}
