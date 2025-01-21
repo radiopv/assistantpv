@@ -13,7 +13,7 @@ export const supabase = createClient<Database>(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      storage: localStorage // Use localStorage for session persistence
+      storage: localStorage
     },
     global: {
       headers: {
@@ -21,9 +21,23 @@ export const supabase = createClient<Database>(
         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
       }
     },
-    // Add error handling
     db: {
       schema: 'public'
+    },
+    // Add retry configuration
+    fetch: (url, options = {}) => {
+      return fetch(url, {
+        ...options,
+        // Add retry logic
+        signal: options.signal,
+        keepalive: true,
+        credentials: 'include'
+      }).catch(error => {
+        console.error('Fetch error:', error);
+        // Retry the request once after a short delay
+        return new Promise(resolve => setTimeout(resolve, 1000))
+          .then(() => fetch(url, options));
+      });
     }
   }
 );
@@ -40,7 +54,7 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 });
 
-// Add error logging
+// Add error logging with retry logic
 const originalFrom = supabase.from.bind(supabase);
 supabase.from = function(table: string) {
   const result = originalFrom(table);
@@ -54,6 +68,13 @@ supabase.from = function(table: string) {
       return originalThen((response: any) => {
         if (response.error) {
           console.error(`Supabase query error for table ${table}:`, response.error);
+          // Retry once on server errors
+          if (response.error.code === '500' || response.error.code === '503') {
+            return new Promise(resolve => setTimeout(resolve, 1000))
+              .then(() => originalSelect(...args))
+              .then(resolve)
+              .catch(reject);
+          }
         }
         return resolve(response);
       }, reject);

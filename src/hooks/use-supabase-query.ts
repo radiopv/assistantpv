@@ -11,7 +11,11 @@ export function useSupabaseQuery<T = any>(
     queryKey: key,
     queryFn: async () => {
       try {
-        return await queryFn();
+        const result = await queryFn();
+        if (!result) {
+          throw new Error('No data returned from query');
+        }
+        return result;
       } catch (error) {
         handleSupabaseError(error, `Query ${key.join('/')}`);
         throw error;
@@ -22,8 +26,13 @@ export function useSupabaseQuery<T = any>(
       if (error?.message?.includes('Invalid API key')) {
         return false;
       }
-      return failureCount < 3;
+      // Retry up to 3 times on server errors
+      if (error?.message?.includes('Failed to fetch')) {
+        return failureCount < 3;
+      }
+      return false;
     },
+    retryDelay: attemptIndex => Math.min(1000 * (2 ** attemptIndex), 30000),
     ...options
   });
 }
