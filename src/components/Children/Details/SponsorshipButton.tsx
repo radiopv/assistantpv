@@ -49,9 +49,9 @@ export const SponsorshipButton = ({ childId }: SponsorshipButtonProps) => {
 
       if (existingRequest) {
         if (existingRequest.status === 'pending') {
-          toast.info("Vous avez déjà une demande de parrainage en cours pour cet enfant");
+          toast.error("Vous avez déjà une demande de parrainage en cours pour cet enfant");
         } else {
-          toast.info("Vous avez déjà parrainé cet enfant");
+          toast.error("Vous avez déjà parrainé cet enfant");
         }
         return;
       }
