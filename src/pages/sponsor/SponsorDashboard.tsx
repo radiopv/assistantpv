@@ -1,34 +1,36 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PhotoUploader } from "@/components/AssistantPhotos/PhotoUploader";
 import { ContributionStats } from "@/components/Sponsors/Dashboard/ContributionStats";
-import { SponsorshipTimeline } from "@/components/Sponsors/Dashboard/SponsorshipTimeline";
-import { VisitsSection } from "@/components/Sponsors/Dashboard/VisitsSection";
 import { DetailedNotification } from "@/components/Sponsors/Dashboard/DetailedNotification";
 import { PlannedVisitForm } from "@/components/Sponsors/Dashboard/PlannedVisitForm";
+import { Camera, FileText, Clock, UserPlus, Calendar } from "lucide-react";
 
 const SponsorDashboard = () => {
   const { user } = useAuth();
   const { language } = useLanguage();
-  const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
 
   const translations = {
     fr: {
-      welcomeMessage: "Bienvenue",
+      dashboard: "Mon Espace Parrain",
+      addPhoto: "Ajouter des photos",
+      addTestimonial: "Ajouter un témoignage",
+      endSponsorship: "Mettre fin au parrainage",
+      addChild: "Ajouter un enfant",
+      planVisit: "Planifier une visite",
       loading: "Chargement...",
-      sponsorDashboard: "Mon Espace Parrain",
       uploadSuccess: "Photo ajoutée avec succès",
       uploadError: "Erreur lors de l'ajout de la photo",
-      plannedVisits: "Visites Planifiées"
+      children: "Mes enfants parrainés",
+      actions: "Actions",
+      visits: "Visites",
     },
     es: {
       welcomeMessage: "Bienvenido",
@@ -72,20 +74,6 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  const { data: plannedVisits = [], refetch: refetchVisits } = useQuery({
-    queryKey: ['planned-visits', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('planned_visits')
-        .select('*')
-        .eq('sponsor_id', user?.id)
-        .order('start_date', { ascending: true });
-
-      if (error) throw error;
-      return data;
-    }
-  });
-
   const { data: notifications = [] } = useQuery({
     queryKey: ['sponsor-notifications', user?.id],
     queryFn: async () => {
@@ -100,17 +88,6 @@ const SponsorDashboard = () => {
     }
   });
 
-  const handleAddPhoto = (childId: string) => {
-    setSelectedChild(childId);
-  };
-
-  const handleUploadSuccess = async () => {
-    if (selectedChild) {
-      toast.success(t.uploadSuccess);
-      setSelectedChild(null);
-    }
-  };
-
   if (childrenLoading) {
     return <div className="text-center p-4">{t.loading}</div>;
   }
@@ -118,60 +95,87 @@ const SponsorDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cuba-warmBeige/20 to-cuba-offwhite p-4">
       <div className="container mx-auto space-y-6">
-        <h2 className="text-2xl font-medium text-gray-800">{t.sponsorDashboard}</h2>
+        <h2 className="text-2xl font-medium text-gray-800">{t.dashboard}</h2>
 
-        <div className="grid gap-6">
-          {/* Contribution Stats */}
-          <ContributionStats sponsorId={user?.id || ''} />
+        <ContributionStats sponsorId={user?.id || ''} />
 
-          {/* Sponsored Children Cards */}
+        <Tabs defaultValue="children" className="w-full">
+          <TabsList className="grid grid-cols-2 lg:grid-cols-5 gap-2 bg-transparent h-auto p-0">
+            <TabsTrigger 
+              value="children" 
+              className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-4 py-2 rounded-md"
+            >
+              {t.children}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="actions" 
+              className="w-full data-[state=active]:bg-cuba-coral data-[state=active]:text-white px-4 py-2 rounded-md"
+            >
+              {t.actions}
+            </TabsTrigger>
+          </TabsList>
 
-{sponsoredChildren?.map((sponsorship) => {
-  const child = sponsorship.children;
-  if (!child) return null;
+          <TabsContent value="children" className="mt-6">
+            <div className="grid gap-6">
+              {sponsoredChildren?.map((sponsorship) => {
+                const child = sponsorship.children;
+                if (!child) return null;
 
-  return (
-    <div key={child.id} className="space-y-6">
-      <SponsoredChildCard
-        child={child}
-        sponsorshipId={sponsorship.id}
-        onAddPhoto={() => handleAddPhoto(child.id)}
-      />
-
-      {selectedChild === child.id && (
-        <Card className="p-4">
-          <PhotoUploader
-            childId={selectedChild}
-            onUploadSuccess={handleUploadSuccess}
-          />
-        </Card>
-      )}
-    </div>
-  );
-})}
-
-          {/* Planned Visits */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              {t.plannedVisits}
-            </h3>
-            <div className="space-y-6">
-              <PlannedVisitForm 
-                sponsorId={user?.id || ''} 
-                onVisitPlanned={() => refetchVisits()} 
-              />
-              <VisitsSection visits={plannedVisits || []} onVisitDeleted={() => refetchVisits()} />
+                return (
+                  <SponsoredChildCard
+                    key={child.id}
+                    child={child}
+                    sponsorshipId={sponsorship.id}
+                    onAddPhoto={() => setSelectedChild(child.id)}
+                  />
+                );
+              })}
             </div>
-          </Card>
+          </TabsContent>
 
-          {/* Timeline */}
-          <SponsorshipTimeline events={[]} />
+          <TabsContent value="actions" className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <Card className="p-6 flex flex-col items-center space-y-4 hover:shadow-lg transition-shadow">
+                <Camera className="h-8 w-8 text-cuba-turquoise" />
+                <h3 className="font-semibold">{t.addPhoto}</h3>
+                {selectedChild && (
+                  <PhotoUploader
+                    childId={selectedChild}
+                    onUploadSuccess={() => setSelectedChild(null)}
+                  />
+                )}
+              </Card>
 
-          {/* Notifications */}
-          {notifications?.map((notification) => (
-            <DetailedNotification key={notification.id} notification={notification} />
-          ))}
-        </div>
+              <Card className="p-6 flex flex-col items-center space-y-4 hover:shadow-lg transition-shadow">
+                <FileText className="h-8 w-8 text-cuba-turquoise" />
+                <h3 className="font-semibold">{t.addTestimonial}</h3>
+              </Card>
+
+              <Card className="p-6 flex flex-col items-center space-y-4 hover:shadow-lg transition-shadow">
+                <Clock className="h-8 w-8 text-cuba-turquoise" />
+                <h3 className="font-semibold">{t.endSponsorship}</h3>
+              </Card>
+
+              <Card className="p-6 flex flex-col items-center space-y-4 hover:shadow-lg transition-shadow">
+                <UserPlus className="h-8 w-8 text-cuba-turquoise" />
+                <h3 className="font-semibold">{t.addChild}</h3>
+              </Card>
+
+              <Card className="p-6 flex flex-col items-center space-y-4 hover:shadow-lg transition-shadow">
+                <Calendar className="h-8 w-8 text-cuba-turquoise" />
+                <h3 className="font-semibold">{t.planVisit}</h3>
+                <PlannedVisitForm 
+                  sponsorId={user?.id || ''} 
+                  onVisitPlanned={() => {}} 
+                />
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+
+        {notifications?.map((notification) => (
+          <DetailedNotification key={notification.id} notification={notification} />
+        ))}
       </div>
     </div>
   );
