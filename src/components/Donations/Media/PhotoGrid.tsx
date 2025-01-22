@@ -36,15 +36,14 @@ export const PhotoGrid = ({
 
   return (
     <>
-      <div className={`grid gap-2 ${className}`}>
+      <div className={`grid gap-4 ${className}`}>
         {photos.map((photo) => (
           <PhotoCard
             key={photo.id}
             photo={photo}
             onPhotoClick={handlePhotoClick}
             onDelete={handleDelete}
-            onToggleFavorite={onToggleFavorite}
-            isReadOnly={!onPhotoDelete && !onToggleFavorite}
+            onToggleFeature={onToggleFavorite}
           />
         ))}
       </div>
