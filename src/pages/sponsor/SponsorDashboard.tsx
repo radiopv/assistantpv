@@ -38,7 +38,16 @@ const SponsorDashboard = () => {
       sponsorDashboard: "Mi Panel de Padrino",
       uploadSuccess: "Foto agregada con éxito",
       uploadError: "Error al agregar la foto",
-      plannedVisits: "Visitas Planificadas"
+      plannedVisits: "Visitas Planificadas",
+      dashboard: "Mi Panel de Padrino",
+      addPhoto: "Agregar fotos",
+      addTestimonial: "Agregar testimonio",
+      endSponsorship: "Finalizar el apadrinamiento",
+      addChild: "Agregar un niño",
+      planVisit: "Planificar una visita",
+      children: "Mis niños apadrinados",
+      actions: "Acciones",
+      visits: "Visitas"
     }
   };
 
