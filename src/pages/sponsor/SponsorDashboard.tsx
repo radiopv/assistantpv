@@ -80,20 +80,6 @@ const SponsorDashboard = () => {
     enabled: !!user?.id
   });
 
-  const { data: notifications = [] } = useQuery({
-    queryKey: ['sponsor-notifications', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select('*')
-        .eq('recipient_id', user?.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    }
-  });
-
   if (childrenLoading) {
     return <div className="text-center p-4">{t.loading}</div>;
   }
@@ -178,10 +164,6 @@ const SponsorDashboard = () => {
             </div>
           </TabsContent>
         </Tabs>
-
-        {notifications?.map((notification) => (
-          <DetailedNotification key={notification.id} notification={notification} />
-        ))}
       </div>
     </div>
   );
