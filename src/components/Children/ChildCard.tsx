@@ -32,14 +32,28 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
           {child.needs && (
             <div className="flex flex-wrap gap-1.5">
               {convertJsonToNeeds(child.needs).map((need: any, index: number) => (
-                <Badge
-                  key={`${need.category}-${index}`}
-                  variant={need.is_urgent ? "destructive" : "secondary"}
-                  className={`text-xs truncate max-w-[150px] ${need.is_urgent ? 'bg-red-500 hover:bg-red-600' : ''}`}
-                >
-                  {need.category}
-                  {need.is_urgent && " (!)"} 
-                </Badge>
+                <div key={`${need.category}-${index}`} className="w-full">
+                  <Badge
+                    variant={need.is_urgent ? "destructive" : "secondary"}
+                    className={`text-xs truncate max-w-full ${
+                      need.is_urgent 
+                        ? 'bg-red-500 hover:bg-red-600 text-white' 
+                        : ''
+                    }`}
+                  >
+                    {need.category}
+                    {need.is_urgent && " (!)"} 
+                  </Badge>
+                  {need.description && (
+                    <p className={`text-xs mt-1 ${
+                      need.is_urgent 
+                        ? 'text-red-600 font-medium' 
+                        : 'text-gray-500'
+                    }`}>
+                      {need.description}
+                    </p>
+                  )}
+                </div>
               ))}
             </div>
           )}

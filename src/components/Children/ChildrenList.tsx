@@ -16,6 +16,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AssignSponsorDialog } from "../AssistantSponsorship/AssignSponsorDialog";
 import { toast } from "sonner";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface ChildrenListProps {
   children: any[];
@@ -33,14 +34,18 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [selectedChildForAssignment, setSelectedChildForAssignment] = useState<string | null>(null);
 
-  const uniqueChildren = children.reduce((acc, current) => {
-    const x = acc.find(item => item.id === current.id);
-    if (!x) {
-      return acc.concat([current]);
-    } else {
-      return acc;
-    }
-  }, []);
+  // Sort children by urgent needs and waiting time
+  const sortedChildren = [...children].sort((a, b) => {
+    // First, check for urgent needs
+    const aHasUrgentNeeds = convertJsonToNeeds(a.needs).some((need: any) => need.is_urgent);
+    const bHasUrgentNeeds = convertJsonToNeeds(b.needs).some((need: any) => need.is_urgent);
+    
+    if (aHasUrgentNeeds && !bHasUrgentNeeds) return -1;
+    if (!aHasUrgentNeeds && bHasUrgentNeeds) return 1;
+    
+    // If both have or don't have urgent needs, sort by creation date (waiting time)
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  });
 
   const { data: sponsors } = useQuery({
     queryKey: ['sponsors'],
@@ -74,7 +79,6 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       if (error) throw error;
 
       toast.success(t("sponsorRemoved"));
-      // Refresh data if needed
     } catch (error) {
       console.error('Error removing sponsor:', error);
       toast.error(t("errorRemovingSponsor"));
@@ -84,20 +88,6 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const handleAssignComplete = () => {
     setShowAssignDialog(false);
     setSelectedChildForAssignment(null);
-    // Optionally refresh data here
-  };
-
-  const getMissingFields = (child: any) => {
-    const missingFields = [];
-    if (!child.gender) missingFields.push('Genre');
-    if (!child.birth_date) missingFields.push('Date de naissance');
-    if (!child.name) missingFields.push('Nom');
-    if (!child.photo_url) missingFields.push('Photo');
-    if (!child.city) missingFields.push('Ville');
-    if (!child.story) missingFields.push('Histoire');
-    if (!child.comments) missingFields.push('Commentaires');
-    if (!child.description) missingFields.push('Description');
-    return missingFields;
   };
 
   if (isLoading) {
@@ -122,93 +112,64 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        {!isMobile && (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="icon" className="min-h-[44px] min-w-[44px]">
-                  <HelpCircle className="h-5 w-5" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[300px] sm:w-[450px] p-4 text-sm space-y-4">
-                <h3 className="font-semibold text-base mb-2">Guide d'utilisation</h3>
-                <div className="space-y-3">
-                  <p>Cette page affiche la liste des enfants enregistrés dans le système.</p>
-                  <ul className="list-disc pl-4 space-y-2">
-                    <li>Consultez les profils des enfants</li>
-                    <li>Gérez les besoins urgents</li>
-                    <li>Ajoutez des commentaires</li>
-                    <li>Assignez des parrains</li>
-                  </ul>
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-              <Button
-                variant={viewMode === "grid" ? "secondary" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className="gap-2 min-h-[44px] w-full sm:w-auto"
-              >
-                <Grid className="h-4 w-4" />
-                {t("gridView")}
+      {!isMobile && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon" className="min-h-[44px] min-w-[44px]">
+                <HelpCircle className="h-5 w-5" />
               </Button>
-              <Button
-                variant={viewMode === "table" ? "secondary" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("table")}
-                className="gap-2 min-h-[44px] w-full sm:w-auto"
-              >
-                <List className="h-4 w-4" />
-                {t("tableView")}
-              </Button>
-            </div>
-          </div>
-        )}
-      </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-[300px] sm:w-[450px] p-4 text-sm space-y-4">
+              <h3 className="font-semibold text-base mb-2">Guide d'utilisation</h3>
+              <div className="space-y-3">
+                <p>Cette page affiche la liste des enfants enregistrés dans le système.</p>
+                <ul className="list-disc pl-4 space-y-2">
+                  <li>Les enfants avec des besoins urgents apparaissent en premier</li>
+                  <li>Suivis des enfants qui attendent un parrain depuis le plus longtemps</li>
+                  <li>Les besoins urgents sont marqués en rouge</li>
+                </ul>
+              </div>
+            </PopoverContent>
+          </Popover>
 
-      {window.location.search.includes('status=incomplete') && (
-        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-3">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <AlertTriangle className="h-5 w-5 text-yellow-400" />
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-yellow-700">
-                Ces profils sont incomplets. Cliquez sur un profil pour compléter les informations manquantes.
-              </p>
-            </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+            <Button
+              variant={viewMode === "grid" ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("grid")}
+              className="gap-2 min-h-[44px] w-full sm:w-auto"
+            >
+              <Grid className="h-4 w-4" />
+              {t("gridView")}
+            </Button>
+            <Button
+              variant={viewMode === "table" ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setViewMode("table")}
+              className="gap-2 min-h-[44px] w-full sm:w-auto"
+            >
+              <List className="h-4 w-4" />
+              {t("tableView")}
+            </Button>
           </div>
         </div>
       )}
 
       {(viewMode === "grid" || isMobile) ? (
         <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {uniqueChildren.map((child) => (
-            <div key={child.id} className="space-y-2">
-              <ChildCard
-                child={child}
-                onViewProfile={onViewProfile}
-                onSponsorClick={setSelectedChild}
-              />
-              {window.location.search.includes('status=incomplete') && (
-                <div className="p-3 bg-gray-50">
-                  <p className="text-sm font-medium text-gray-700 mb-2">Informations manquantes :</p>
-                  <ul className="list-disc list-inside text-sm text-gray-600">
-                    {getMissingFields(child).map((field) => (
-                      <li key={field}>{field}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+          {sortedChildren.map((child) => (
+            <ChildCard
+              key={child.id}
+              child={child}
+              onViewProfile={onViewProfile}
+              onSponsorClick={setSelectedChild}
+            />
           ))}
         </div>
       ) : (
         <ChildrenTable
-          children={uniqueChildren}
+          children={sortedChildren}
           onViewProfile={onViewProfile}
           onSponsorClick={setSelectedChild}
           onAssignSponsor={handleAssignSponsor}
