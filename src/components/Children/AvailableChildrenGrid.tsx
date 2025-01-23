@@ -76,16 +76,31 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
   const handleImageLoad = async (event: React.SyntheticEvent<HTMLImageElement>, photoUrl: string) => {
     const imgElement = event.target as HTMLImageElement;
     
-    if (processedImages.current.has(photoUrl) || !modelsLoaded) return;
+    // Skip if this image URL has already been processed or models aren't loaded
+    if (processedImages.current.has(photoUrl) || !modelsLoaded) {
+      // If we have a cached position, apply it immediately
+      const cachedPosition = localStorage.getItem(`face-position-${photoUrl}`);
+      if (cachedPosition) {
+        imgElement.style.objectPosition = cachedPosition;
+      }
+      return;
+    }
     
     try {
+      // Add small delay to ensure image is fully loaded
       await new Promise(resolve => setTimeout(resolve, 100));
       const objectPosition = await detectFace(imgElement);
+      
+      // Cache the result in localStorage
+      localStorage.setItem(`face-position-${photoUrl}`, objectPosition);
+      
       imgElement.style.objectPosition = objectPosition;
       processedImages.current.add(photoUrl);
     } catch (error) {
       console.error('Error processing image:', error);
       imgElement.style.objectPosition = '50% 20%';
+      // Cache the default position too
+      localStorage.setItem(`face-position-${photoUrl}`, '50% 20%');
     }
   };
 
