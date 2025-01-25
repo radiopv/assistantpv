@@ -77,15 +77,25 @@ const BecomeSponsor = () => {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(formData.password, salt);
 
+      // Create request data without confirmPassword
+      const requestData = {
+        full_name: formData.full_name,
+        city: formData.city,
+        phone: formData.phone,
+        email: formData.email,
+        motivation: formData.motivation,
+        facebook_url: formData.facebook_url,
+        is_long_term: formData.is_long_term,
+        is_one_time: formData.is_one_time,
+        password_hash: hashedPassword,
+        status: 'pending',
+        is_account_created: false,
+        is_account_approved: false
+      };
+
       const { error } = await supabase
         .from('sponsorship_requests')
-        .insert({
-          ...formData,
-          password_hash: hashedPassword,
-          status: 'pending',
-          is_account_created: false,
-          is_account_approved: false
-        });
+        .insert(requestData);
 
       if (error) throw error;
 
