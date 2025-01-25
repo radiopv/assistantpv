@@ -1928,7 +1928,7 @@ export type Database = {
       }
       sponsorships: {
         Row: {
-          child_id: string
+          child_id: string | null
           created_at: string | null
           end_date: string | null
           end_planned_date: string | null
@@ -1943,7 +1943,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          child_id: string
+          child_id?: string | null
           created_at?: string | null
           end_date?: string | null
           end_planned_date?: string | null
@@ -1958,7 +1958,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          child_id?: string
+          child_id?: string | null
           created_at?: string | null
           end_date?: string | null
           end_planned_date?: string | null

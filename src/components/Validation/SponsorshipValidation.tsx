@@ -1,10 +1,10 @@
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { toast } from "sonner";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import {
   AlertDialog,
@@ -67,9 +67,10 @@ export const SponsorshipValidation = () => {
       }
 
       // Récupérer d'abord la demande pour vérifier le child_id
+      console.log("Fetching request details...");
       const { data: request, error: requestError } = await supabase
         .from('sponsorship_requests')
-        .select('*')
+        .select('*, children(*)')
         .eq('id', requestId)
         .single();
 
@@ -78,12 +79,17 @@ export const SponsorshipValidation = () => {
         throw new Error('Could not fetch request details');
       }
 
+      console.log("Full request details:", request);
+
       if (!request.child_id) {
         console.error('No child_id found in request');
         throw new Error('No child_id associated with this request');
       }
 
-      console.log("Request details:", request);
+      console.log("Calling approve_sponsorship_request with:", {
+        request_id: requestId,
+        admin_id: user.id
+      });
 
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: requestId,
@@ -94,6 +100,8 @@ export const SponsorshipValidation = () => {
         console.error('Error in RPC call:', error);
         throw error;
       }
+
+      console.log("Sponsorship request approved successfully");
 
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
 
