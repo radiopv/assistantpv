@@ -1849,6 +1849,7 @@ export type Database = {
         Row: {
           child_id: string | null
           city: string | null
+          confirmpassword: string | null
           created_at: string | null
           email: string
           facebook_url: string | null
@@ -1869,6 +1870,7 @@ export type Database = {
         Insert: {
           child_id?: string | null
           city?: string | null
+          confirmpassword?: string | null
           created_at?: string | null
           email: string
           facebook_url?: string | null
@@ -1889,6 +1891,7 @@ export type Database = {
         Update: {
           child_id?: string | null
           city?: string | null
+          confirmpassword?: string | null
           created_at?: string | null
           email?: string
           facebook_url?: string | null
