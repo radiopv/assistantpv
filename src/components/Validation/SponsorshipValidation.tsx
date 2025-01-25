@@ -33,7 +33,6 @@ export const SponsorshipValidation = () => {
         .from('sponsorship_requests')
         .select(`
           *,
-          child_id,
           children (
             id,
             name,
@@ -62,7 +61,6 @@ export const SponsorshipValidation = () => {
         .from('sponsorship_requests')
         .select(`
           *,
-          child_id,
           children (
             id,
             name
