@@ -66,6 +66,25 @@ export const SponsorshipValidation = () => {
         throw new Error('No admin ID found');
       }
 
+      // Récupérer d'abord la demande pour vérifier le child_id
+      const { data: request, error: requestError } = await supabase
+        .from('sponsorship_requests')
+        .select('*')
+        .eq('id', requestId)
+        .single();
+
+      if (requestError || !request) {
+        console.error('Error fetching request:', requestError);
+        throw new Error('Could not fetch request details');
+      }
+
+      if (!request.child_id) {
+        console.error('No child_id found in request');
+        throw new Error('No child_id associated with this request');
+      }
+
+      console.log("Request details:", request);
+
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: requestId,
         admin_id: user.id
@@ -159,8 +178,6 @@ export const SponsorshipValidation = () => {
   if (isLoading) {
     return <div className="text-center">{t("loading")}</div>;
   }
-
-  // ... keep existing code (JSX for rendering the requests list and confirmation dialog)
 
   return (
     <div className="space-y-4">
