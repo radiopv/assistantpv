@@ -1,11 +1,9 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
-import { useAuth } from "@/components/Auth/AuthProvider";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,18 +15,17 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { Check, X } from "lucide-react";
 
 export const SponsorshipValidation = () => {
   const { t } = useLanguage();
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     type: 'approve' | 'reject';
     requestId: string | null;
   }>({ isOpen: false, type: 'approve', requestId: null });
 
-  const { data: requests, isLoading } = useQuery({
+  const { data: requests, isLoading, refetch } = useQuery({
     queryKey: ['sponsorship-requests'],
     queryFn: async () => {
       console.log("Fetching sponsorship requests...");
@@ -36,17 +33,15 @@ export const SponsorshipValidation = () => {
         .from('sponsorship_requests')
         .select(`
           *,
+          child_id,
           children (
             id,
             name,
             photo_url,
-            age,
-            city,
-            needs
+            city
           )
         `)
-        .eq('status', 'pending')
-        .order('created_at', { ascending: false });
+        .eq('status', 'pending');
 
       if (error) {
         console.error('Error fetching requests:', error);
@@ -61,17 +56,13 @@ export const SponsorshipValidation = () => {
   const handleApprove = async (requestId: string) => {
     try {
       console.log("Starting approval process for request:", requestId);
-      if (!user?.id) {
-        console.error("No admin ID found in auth context");
-        throw new Error('No admin ID found');
-      }
-
-      // Récupérer d'abord la demande pour vérifier le child_id
-      console.log("Fetching request details...");
+      
+      // Get the request details first
       const { data: request, error: requestError } = await supabase
         .from('sponsorship_requests')
         .select(`
           *,
+          child_id,
           children (
             id,
             name
@@ -81,40 +72,37 @@ export const SponsorshipValidation = () => {
         .single();
 
       if (requestError || !request) {
-        console.error('Error fetching request:', requestError);
-        throw new Error('Could not fetch request details');
+        console.error('Error fetching request details:', requestError);
+        toast.error("Erreur lors de la récupération des détails de la demande");
+        return;
       }
 
-      console.log("Full request details:", request);
+      console.log("Request details:", request);
 
       if (!request.child_id) {
         console.error('No child_id found in request');
-        throw new Error('No child_id associated with this request');
+        toast.error("Erreur: Aucun enfant associé à cette demande");
+        return;
       }
 
-      console.log("Calling approve_sponsorship_request with:", {
-        request_id: requestId,
-        admin_id: user.id
-      });
-
+      // Call the RPC function to approve the request
       const { error } = await supabase.rpc('approve_sponsorship_request', {
         request_id: requestId,
-        admin_id: user.id
+        admin_id: (await supabase.auth.getUser()).data.user?.id
       });
 
       if (error) {
-        console.error('Error in RPC call:', error);
-        throw error;
+        console.error('Error in approve_sponsorship_request:', error);
+        toast.error("Erreur lors de l'approbation de la demande");
+        return;
       }
 
       console.log("Sponsorship request approved successfully");
-
-      await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
-
-      toast.success(t("sponsorshipRequestApproved"));
-    } catch (error: any) {
+      toast.success("Demande approuvée avec succès");
+      refetch();
+    } catch (error) {
       console.error('Error in handleApprove:', error);
-      toast.error(t("errorApprovingRequest"));
+      toast.error("Une erreur est survenue lors de l'approbation");
     }
     setConfirmDialog({ isOpen: false, type: 'approve', requestId: null });
   };
@@ -122,34 +110,31 @@ export const SponsorshipValidation = () => {
   const handleReject = async (requestId: string) => {
     try {
       console.log("Starting rejection process for request:", requestId);
-      if (!user?.id) {
-        console.error("No admin ID found in auth context");
-        throw new Error('No admin ID found');
-      }
-
+      
       const { error } = await supabase.rpc('reject_sponsorship_request', {
         request_id: requestId,
-        admin_id: user.id,
+        admin_id: (await supabase.auth.getUser()).data.user?.id,
         rejection_reason: "Rejected by admin"
       });
 
       if (error) {
-        console.error('RPC Error:', error);
-        throw error;
+        console.error('Error in reject_sponsorship_request:', error);
+        toast.error("Erreur lors du rejet de la demande");
+        return;
       }
 
-      await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
-
-      toast.success(t("sponsorshipRequestRejected"));
-    } catch (error: any) {
+      console.log("Sponsorship request rejected successfully");
+      toast.success("Demande rejetée avec succès");
+      refetch();
+    } catch (error) {
       console.error('Error in handleReject:', error);
-      toast.error(t("errorRejectingRequest"));
+      toast.error("Une erreur est survenue lors du rejet");
     }
     setConfirmDialog({ isOpen: false, type: 'reject', requestId: null });
   };
 
   if (isLoading) {
-    return <div className="text-center">{t("loading")}</div>;
+    return <div className="text-center">Chargement...</div>;
   }
 
   return (
@@ -162,27 +147,27 @@ export const SponsorshipValidation = () => {
               <p className="text-sm text-gray-500">{request.email}</p>
               <p className="text-sm text-gray-500">{request.city}</p>
               <p className="text-sm text-gray-500">
-                {t("requestDate")}: {new Date(request.created_at).toLocaleDateString()}
+                Date de la demande: {new Date(request.created_at).toLocaleDateString()}
               </p>
               {request.children && (
                 <div className="mt-2">
-                  <p className="font-medium">{t("childInfo")}:</p>
-                  <p className="text-sm">{request.children.name}, {request.children.age} {t("years")}</p>
+                  <p className="font-medium">Information sur l'enfant:</p>
+                  <p className="text-sm">{request.children.name}</p>
                   <p className="text-sm">{request.children.city}</p>
                 </div>
               )}
               {request.motivation && (
                 <div className="mt-2">
-                  <p className="font-medium">{t("motivation")}:</p>
+                  <p className="font-medium">Motivation:</p>
                   <p className="text-sm">{request.motivation}</p>
                 </div>
               )}
               <div className="mt-2">
                 <p className="text-sm">
-                  {t("accountStatus")}: {request.is_account_created ? t("created") : t("pending")}
+                  Compte créé: {request.is_account_created ? "Oui" : "Non"}
                 </p>
                 <p className="text-sm">
-                  {t("approvalStatus")}: {request.is_account_approved ? t("approved") : t("pending")}
+                  Compte approuvé: {request.is_account_approved ? "Oui" : "Non"}
                 </p>
               </div>
             </div>
@@ -218,7 +203,7 @@ export const SponsorshipValidation = () => {
         </Card>
       ))}
       {!requests?.length && (
-        <p className="text-center text-gray-500">{t("noRequestsPending")}</p>
+        <p className="text-center text-gray-500">Aucune demande en attente</p>
       )}
 
       <AlertDialog 
