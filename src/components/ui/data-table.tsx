@@ -11,7 +11,7 @@ import {
 interface DataTableProps<T> {
   columns: {
     accessorKey?: string;
-    header: string | (() => React.ReactNode);
+    header: string;
     cell?: (props: { row: { original: T } }) => React.ReactNode;
   }[];
   data: T[];
@@ -24,9 +24,7 @@ export function DataTable<T>({ columns, data }: DataTableProps<T>) {
         <TableHeader>
           <TableRow>
             {columns.map((column, index) => (
-              <TableHead key={index}>
-                {typeof column.header === 'function' ? column.header() : column.header}
-              </TableHead>
+              <TableHead key={index}>{column.header}</TableHead>
             ))}
           </TableRow>
         </TableHeader>

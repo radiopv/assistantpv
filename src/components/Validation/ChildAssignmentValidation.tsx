@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, X } from "lucide-react";
+import { sendEmail } from "@/api/email";
 import { ChildAssignmentRequest } from "@/integrations/supabase/types/child-assignment-requests";
 
 export const ChildAssignmentValidation = () => {
@@ -24,15 +25,15 @@ export const ChildAssignmentValidation = () => {
       approve: "Approuver",
       reject: "Rejeter",
       noChildRequestsPending: "Aucune demande en attente",
+      childRequestApprovedSubject: "Votre demande a été approuvée",
+      childRequestApprovedContent: "Votre demande pour {name} a été approuvée",
+      childRequestRejectedSubject: "Votre demande a été rejetée",
+      childRequestRejectedContent: "Votre demande pour {name} a été rejetée",
       requestDate: "Date de la demande",
       childName: "Enfant",
       sponsorName: "Parrain potentiel",
       sponsorEmail: "Email",
-      city: "Ville",
-      requestType: "Type de demande",
-      addRequest: "Ajout d'enfant",
-      removeRequest: "Retrait d'enfant",
-      reason: "Raison"
+      city: "Ville"
     },
     es: {
       loading: "Cargando...",
@@ -45,15 +46,15 @@ export const ChildAssignmentValidation = () => {
       approve: "Aprobar",
       reject: "Rechazar",
       noChildRequestsPending: "No hay solicitudes pendientes",
+      childRequestApprovedSubject: "Su solicitud ha sido aprobada",
+      childRequestApprovedContent: "Su solicitud para {name} ha sido aprobada",
+      childRequestRejectedSubject: "Su solicitud ha sido rechazada",
+      childRequestRejectedContent: "Su solicitud para {name} ha sido rechazada",
       requestDate: "Fecha de solicitud",
       childName: "Niño",
       sponsorName: "Padrino potencial",
       sponsorEmail: "Correo electrónico",
-      city: "Ciudad",
-      requestType: "Tipo de solicitud",
-      addRequest: "Agregar niño",
-      removeRequest: "Retirar niño",
-      reason: "Razón"
+      city: "Ciudad"
     }
   };
 
@@ -62,15 +63,14 @@ export const ChildAssignmentValidation = () => {
   const { data: requests, isLoading } = useQuery({
     queryKey: ['child-assignment-requests'],
     queryFn: async () => {
-      console.log("Fetching requests...");
       const { data, error } = await supabase
         .from('child_assignment_requests')
         .select(`
           *,
-          children (
+          children:child_id (
             name
           ),
-          sponsors (
+          sponsors:sponsor_id (
             name,
             email,
             city
@@ -83,7 +83,6 @@ export const ChildAssignmentValidation = () => {
         throw error;
       }
       
-      console.log("Fetched requests:", data);
       return data;
     }
   });
@@ -96,6 +95,12 @@ export const ChildAssignmentValidation = () => {
         .eq('id', request.id);
 
       if (updateError) throw updateError;
+
+      await sendEmail({
+        to: [request.sponsors.email],
+        subject: t.childRequestApprovedSubject,
+        html: t.childRequestApprovedContent.replace('{name}', request.children.name)
+      });
 
       toast({
         title: t.success,
@@ -123,6 +128,12 @@ export const ChildAssignmentValidation = () => {
         .eq('id', request.id);
 
       if (updateError) throw updateError;
+
+      await sendEmail({
+        to: [request.sponsors.email],
+        subject: t.childRequestRejectedSubject,
+        html: t.childRequestRejectedContent.replace('{name}', request.children.name)
+      });
 
       toast({
         title: t.success,
@@ -152,18 +163,10 @@ export const ChildAssignmentValidation = () => {
         <Card key={request.id} className="p-4">
           <div className="flex justify-between items-start">
             <div className="space-y-2">
-              <h3 className="font-semibold">
-                {request.type === 'add' ? t.addRequest : t.removeRequest}
-              </h3>
-              <p className="text-sm text-gray-500">{t.childName}: {request.children?.name}</p>
+              <h3 className="font-semibold">{t.childName}: {request.children?.name}</h3>
               <p className="text-sm text-gray-500">{t.sponsorName}: {request.sponsors?.name}</p>
               <p className="text-sm text-gray-500">{t.sponsorEmail}: {request.sponsors?.email}</p>
               <p className="text-sm text-gray-500">{t.city}: {request.sponsors?.city}</p>
-              {request.notes && (
-                <p className="text-sm text-gray-500">
-                  {t.reason}: {request.notes}
-                </p>
-              )}
               <p className="text-sm text-gray-500">
                 {t.requestDate}: {new Date(request.created_at || '').toLocaleDateString()}
               </p>

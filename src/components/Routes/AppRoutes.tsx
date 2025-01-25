@@ -35,7 +35,6 @@ import Messages from "@/pages/Messages";
 import HomeContentManagement from "@/pages/admin/HomeContentManagement";
 import AuditLogs from "@/pages/admin/AuditLogs";
 import AllChildren from "@/pages/public/AllChildren";
-import SponsorshipManagementNew from "@/pages/admin/SponsorshipManagementNew";
 
 export const AppRoutes = () => {
   return (
@@ -78,7 +77,6 @@ export const AppRoutes = () => {
         <Route path="/admin/faq" element={<AdminFAQ />} />
         <Route path="/admin/home-content" element={<HomeContentManagement />} />
         <Route path="/admin/sponsorship-management" element={<SponsorshipManagement />} />
-        <Route path="/admin/sponsorship-management-new" element={<SponsorshipManagementNew />} />
         <Route path="/admin/cities-management" element={<CitiesManagement />} />
         <Route path="/admin/link-checker" element={<LinkChecker />} />
         <Route path="/admin/audit-logs" element={<AuditLogs />} />

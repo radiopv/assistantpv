@@ -1,10 +1,8 @@
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/components/Auth/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { convertJsonToNeeds } from "@/types/needs";
 
 interface ChildCardProps {
   child: any;
@@ -13,133 +11,57 @@ interface ChildCardProps {
 }
 
 export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-
-  const handleSponsorClick = async () => {
-    if (!user) {
-      navigate(`/become-sponsor?child=${child.id}`);
-      return;
-    }
-
-    try {
-      // Vérifier si l'enfant est déjà parrainé
-      const { data: childData, error: childError } = await supabase
-        .from('children')
-        .select('is_sponsored, name')
-        .eq('id', child.id)
-        .maybeSingle();
-
-      if (childError) {
-        console.error('Erreur lors de la vérification du statut de l\'enfant:', childError);
-        toast.error("Une erreur est survenue lors de la vérification du statut de l'enfant");
-        return;
-      }
-
-      if (!childData) {
-        toast.error("Impossible de trouver les informations de l'enfant");
-        return;
-      }
-
-      if (childData.is_sponsored) {
-        toast.error("Cet enfant est déjà parrainé");
-        return;
-      }
-
-      // Vérifier si une demande existe déjà
-      const { data: existingRequest, error: requestError } = await supabase
-        .from('sponsorship_requests')
-        .select('status')
-        .eq('child_id', child.id)
-        .eq('sponsor_id', user.id)
-        .maybeSingle();
-
-      if (requestError) {
-        console.error('Erreur lors de la vérification des demandes existantes:', requestError);
-        toast.error("Une erreur est survenue lors de la vérification des demandes existantes");
-        return;
-      }
-
-      if (existingRequest) {
-        if (existingRequest.status === 'pending') {
-          toast.error("Vous avez déjà une demande de parrainage en cours pour cet enfant");
-        } else {
-          toast.error("Vous avez déjà parrainé cet enfant");
-        }
-        return;
-      }
-
-      // Créer la demande de parrainage
-      const { error: createError } = await supabase
-        .from('sponsorship_requests')
-        .insert({
-          child_id: child.id,
-          sponsor_id: user.id,
-          status: 'pending',
-          is_long_term: true,
-          terms_accepted: true,
-          full_name: user.name,
-          email: user.email,
-          city: user.city
-        });
-
-      if (createError) {
-        console.error('Erreur lors de la création de la demande:', createError);
-        toast.error("Une erreur est survenue lors de la demande de parrainage");
-        return;
-      }
-
-      toast.success("Votre demande de parrainage a été envoyée avec succès");
-      
-    } catch (error) {
-      console.error('Erreur lors de la demande de parrainage:', error);
-      toast.error("Une erreur est survenue lors de la demande de parrainage");
-    }
-  };
+  const { t } = useLanguage();
 
   return (
-    <Card className="overflow-hidden">
-      <div className="relative pb-[75%]">
-        {child.photo_url && (
-          <img
-            src={child.photo_url}
-            alt={child.name}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        )}
-        {child.needs?.some((need: any) => need.is_urgent) && (
-          <Badge 
-            variant="destructive" 
-            className="absolute top-2 right-2"
-          >
-            BESOIN URGENT
-          </Badge>
-        )}
+    <Card className="overflow-hidden h-full flex flex-col">
+      <div className="relative pb-[75%] bg-gray-100">
+        <img
+          src={child.photo_url || "/placeholder.svg"}
+          alt={child.name}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
       </div>
-
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="text-lg font-semibold">{child.name}</h3>
-            <p className="text-sm text-gray-500">
-              {child.age} ans {child.birth_date && "• "}{child.city}
-            </p>
+      <div className="p-3 flex flex-col flex-grow">
+        <div className="flex-grow space-y-2">
+          <h3 className="text-lg font-semibold line-clamp-1">{child.name}</h3>
+          <div className="space-y-1">
+            <p className="text-sm text-gray-600 line-clamp-1">{child.age} ans</p>
+            <p className="text-sm text-gray-600 line-clamp-1">{child.city}</p>
           </div>
+          {child.needs && (
+            <div className="flex flex-wrap gap-1.5">
+              {convertJsonToNeeds(child.needs).map((need: any, index: number) => (
+                <Badge
+                  key={`${need.category}-${index}`}
+                  variant={need.is_urgent ? "destructive" : "secondary"}
+                  className={`text-xs truncate max-w-[150px] ${need.is_urgent ? 'bg-red-500 hover:bg-red-600' : ''}`}
+                >
+                  {need.category}
+                  {need.is_urgent && " (!)"} 
+                </Badge>
+              ))}
+            </div>
+          )}
         </div>
-      </CardHeader>
-
-      <CardContent className="text-sm">
-        <p className="line-clamp-2">{child.description}</p>
-      </CardContent>
-
-      <CardFooter className="flex flex-col gap-2">
-        <Button 
-          onClick={handleSponsorClick}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg shadow-md transition-all duration-200"
-        >
-          Parrainer cet enfant
-        </Button>
-      </CardFooter>
+        <div className="space-y-2 mt-3">
+          <Button
+            onClick={() => onViewProfile(child.id)}
+            className="w-full"
+            variant="secondary"
+          >
+            {t("viewProfile")}
+          </Button>
+          {!child.is_sponsored && (
+            <Button
+              onClick={() => onSponsorClick(child)}
+              className="w-full"
+            >
+              {t("sponsor")}
+            </Button>
+          )}
+        </div>
+      </div>
     </Card>
   );
 };
