@@ -34,7 +34,7 @@ const Login = () => {
         throw new Error("Email ou mot de passe incorrect");
       }
 
-      if (!['admin', 'assistant'].includes(sponsor.role)) {
+      if (!['admin', 'assistant', 'sponsor'].includes(sponsor.role)) {
         throw new Error("Accès non autorisé");
       }
 
@@ -42,10 +42,17 @@ const Login = () => {
 
       toast({
         title: "Connexion réussie",
-        description: "Bienvenue dans l'espace administration",
+        description: sponsor.role === 'sponsor' ? 
+          "Bienvenue dans votre espace parrain" : 
+          "Bienvenue dans l'espace administration",
       });
       
-      navigate("/dashboard");
+      // Redirect based on role
+      if (['admin', 'assistant'].includes(sponsor.role)) {
+        navigate("/dashboard");
+      } else {
+        navigate("/sponsor-dashboard");
+      }
     } catch (error: any) {
       toast({
         title: "Erreur de connexion",

@@ -25,6 +25,25 @@ const handler = async (req: Request): Promise<Response> => {
     const emailRequest: EmailRequest = await req.json();
     console.log("Sending email with request:", emailRequest);
 
+    // For now, we'll log the email but not send it
+    console.log("Email would be sent:", {
+      to: emailRequest.to,
+      subject: emailRequest.subject,
+      html: emailRequest.html
+    });
+
+    // Return success response without actually sending
+    return new Response(
+      JSON.stringify({ 
+        message: "Email logged (sending disabled until domain verification)", 
+        request: emailRequest 
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+
+    /* Commented out until domain verification is complete
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -32,7 +51,7 @@ const handler = async (req: Request): Promise<Response> => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: emailRequest.from || "Passion Varadero <notifications@passionvaradero.org>",
+        from: emailRequest.from || "Passion Varadero <onboarding@resend.dev>", // Using Resend's default verified sender
         to: emailRequest.to,
         subject: emailRequest.subject,
         html: emailRequest.html,
@@ -54,6 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    */
   } catch (error: any) {
     console.error("Error in send-email function:", error);
     return new Response(JSON.stringify({ error: error.message }), {

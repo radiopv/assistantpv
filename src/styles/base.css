@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .bg-cuba-gradient {
+    @apply bg-gradient-to-r from-cuba-turquoise to-cuba-softOrange;
+  }
+}
+
 @layer base {
   :root {
     --background: 24 33% 97%;
@@ -34,7 +40,7 @@
   }
 
   body {
-    @apply bg-cuba-offwhite text-foreground antialiased;
+    @apply bg-[#FFF9F5] text-foreground antialiased;
     font-family: 'Montserrat', sans-serif;
   }
 

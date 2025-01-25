@@ -1,33 +1,29 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/components/Auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
-interface ChildCardProps {
-  child: any;
-  onViewProfile: (id: string) => void;
-  onSponsorClick: (child: any) => void;
+interface SponsorshipButtonProps {
+  childId: string;
 }
 
-export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardProps) => {
+export const SponsorshipButton = ({ childId }: SponsorshipButtonProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handleSponsorClick = async () => {
-    if (!user) {
-      navigate(`/become-sponsor?child=${child.id}`);
+  const handleSponsorshipRequest = async () => {
+    if (!user?.id) {
+      navigate(`/become-sponsor?child=${childId}`);
       return;
     }
 
     try {
       // Vérifier si l'enfant est déjà parrainé
-      const { data: childData, error: childError } = await supabase
+      const { data: child, error: childError } = await supabase
         .from('children')
         .select('is_sponsored, name')
-        .eq('id', child.id)
+        .eq('id', childId)
         .maybeSingle();
 
       if (childError) {
@@ -36,12 +32,12 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
         return;
       }
 
-      if (!childData) {
+      if (!child) {
         toast.error("Impossible de trouver les informations de l'enfant");
         return;
       }
 
-      if (childData.is_sponsored) {
+      if (child.is_sponsored) {
         toast.error("Cet enfant est déjà parrainé");
         return;
       }
@@ -50,7 +46,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
       const { data: existingRequest, error: requestError } = await supabase
         .from('sponsorship_requests')
         .select('status')
-        .eq('child_id', child.id)
+        .eq('child_id', childId)
         .eq('sponsor_id', user.id)
         .maybeSingle();
 
@@ -73,7 +69,7 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
       const { error: createError } = await supabase
         .from('sponsorship_requests')
         .insert({
-          child_id: child.id,
+          child_id: childId,
           sponsor_id: user.id,
           status: 'pending',
           is_long_term: true,
@@ -98,48 +94,12 @@ export const ChildCard = ({ child, onViewProfile, onSponsorClick }: ChildCardPro
   };
 
   return (
-    <Card className="overflow-hidden">
-      <div className="relative pb-[75%]">
-        {child.photo_url && (
-          <img
-            src={child.photo_url}
-            alt={child.name}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        )}
-        {child.needs?.some((need: any) => need.is_urgent) && (
-          <Badge 
-            variant="destructive" 
-            className="absolute top-2 right-2"
-          >
-            BESOIN URGENT
-          </Badge>
-        )}
-      </div>
-
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="text-lg font-semibold">{child.name}</h3>
-            <p className="text-sm text-gray-500">
-              {child.age} ans {child.birth_date && "• "}{child.city}
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="text-sm">
-        <p className="line-clamp-2">{child.description}</p>
-      </CardContent>
-
-      <CardFooter className="flex flex-col gap-2">
-        <Button 
-          onClick={handleSponsorClick}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 text-lg shadow-md transition-all duration-200"
-        >
-          Parrainer cet enfant
-        </Button>
-      </CardFooter>
-    </Card>
+    <Button 
+      onClick={handleSponsorshipRequest}
+      size="lg"
+      className="w-full md:w-auto bg-cuba-warmBeige hover:bg-cuba-warmBeige/90 text-white"
+    >
+      Parrainer cet enfant
+    </Button>
   );
 };

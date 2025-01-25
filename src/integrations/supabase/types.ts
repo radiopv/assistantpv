@@ -1849,7 +1849,6 @@ export type Database = {
         Row: {
           child_id: string | null
           city: string | null
-          confirmpassword: string | null
           created_at: string | null
           email: string
           facebook_url: string | null
@@ -1870,7 +1869,6 @@ export type Database = {
         Insert: {
           child_id?: string | null
           city?: string | null
-          confirmpassword?: string | null
           created_at?: string | null
           email: string
           facebook_url?: string | null
@@ -1891,7 +1889,6 @@ export type Database = {
         Update: {
           child_id?: string | null
           city?: string | null
-          confirmpassword?: string | null
           created_at?: string | null
           email?: string
           facebook_url?: string | null
@@ -1928,7 +1925,7 @@ export type Database = {
       }
       sponsorships: {
         Row: {
-          child_id: string | null
+          child_id: string
           created_at: string | null
           end_date: string | null
           end_planned_date: string | null
@@ -1943,7 +1940,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          child_id?: string | null
+          child_id: string
           created_at?: string | null
           end_date?: string | null
           end_planned_date?: string | null
@@ -1958,7 +1955,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          child_id?: string | null
+          child_id?: string
           created_at?: string | null
           end_date?: string | null
           end_planned_date?: string | null
