@@ -19,7 +19,6 @@ import {
 import { useState } from "react";
 
 export const SponsorshipValidation = () => {
-  const { toast } = useToast();
   const { t } = useLanguage();
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -38,6 +37,7 @@ export const SponsorshipValidation = () => {
         .select(`
           *,
           children (
+            id,
             name,
             photo_url,
             age,
@@ -70,7 +70,13 @@ export const SponsorshipValidation = () => {
       console.log("Fetching request details...");
       const { data: request, error: requestError } = await supabase
         .from('sponsorship_requests')
-        .select('*, children(*)')
+        .select(`
+          *,
+          children (
+            id,
+            name
+          )
+        `)
         .eq('id', requestId)
         .single();
 
@@ -105,17 +111,10 @@ export const SponsorshipValidation = () => {
 
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
 
-      toast({
-        title: t("success"),
-        description: t("sponsorshipRequestApproved"),
-      });
+      toast.success(t("sponsorshipRequestApproved"));
     } catch (error: any) {
       console.error('Error in handleApprove:', error);
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: t("errorApprovingRequest"),
-      });
+      toast.error(t("errorApprovingRequest"));
     }
     setConfirmDialog({ isOpen: false, type: 'approve', requestId: null });
   };
@@ -128,57 +127,23 @@ export const SponsorshipValidation = () => {
         throw new Error('No admin ID found');
       }
 
-      // Get the sponsor_id from the request before rejecting it
-      const { data: request } = await supabase
-        .from('sponsorship_requests')
-        .select('sponsor_id')
-        .eq('id', requestId)
-        .single();
-
-      if (!request?.sponsor_id) {
-        throw new Error('No sponsor found for this request');
-      }
-
-      const { error: rejectionError } = await supabase.rpc('reject_sponsorship_request', {
+      const { error } = await supabase.rpc('reject_sponsorship_request', {
         request_id: requestId,
         admin_id: user.id,
         rejection_reason: "Rejected by admin"
       });
 
-      if (rejectionError) {
-        console.error('RPC Error:', rejectionError);
-        throw rejectionError;
-      }
-
-      // Create notification for the sponsor
-      const { error: notificationError } = await supabase
-        .from('notifications')
-        .insert({
-          recipient_id: request.sponsor_id,
-          type: 'sponsorship_rejected',
-          title: 'Demande de parrainage refusée',
-          content: 'Votre demande de parrainage a été refusée.',
-          created_at: new Date().toISOString()
-        });
-
-      if (notificationError) {
-        console.error('Notification Error:', notificationError);
-        throw notificationError;
+      if (error) {
+        console.error('RPC Error:', error);
+        throw error;
       }
 
       await queryClient.invalidateQueries({ queryKey: ['sponsorship-requests'] });
 
-      toast({
-        title: t("success"),
-        description: t("sponsorshipRequestRejected"),
-      });
+      toast.success(t("sponsorshipRequestRejected"));
     } catch (error: any) {
       console.error('Error in handleReject:', error);
-      toast({
-        variant: "destructive",
-        title: t("error"),
-        description: t("errorRejectingRequest"),
-      });
+      toast.error(t("errorRejectingRequest"));
     }
     setConfirmDialog({ isOpen: false, type: 'reject', requestId: null });
   };
