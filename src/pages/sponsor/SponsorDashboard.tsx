@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { SponsoredChildCard } from "@/components/Sponsors/Dashboard/Cards/SponsoredChildCard";
 import { useAuth } from "@/components/Auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -44,7 +43,6 @@ const SponsorDashboard = () => {
 
   const t = translations[language as keyof typeof translations];
 
-  // Vérifier si l'utilisateur est connecté
   if (!user?.id) {
     return <div className="text-center p-4">{t.noAccess}</div>;
   }
@@ -52,6 +50,7 @@ const SponsorDashboard = () => {
   const { data: sponsoredChildren, isLoading: childrenLoading } = useQuery({
     queryKey: ["sponsored-children", user.id],
     queryFn: async () => {
+      console.log("Fetching sponsored children for user:", user.id);
       const { data: sponsorships, error } = await supabase
         .from('sponsorships')
         .select(`
@@ -73,7 +72,11 @@ const SponsorDashboard = () => {
         .eq('sponsor_id', user.id)
         .eq('status', 'active');
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching sponsorships:", error);
+        throw error;
+      }
+      console.log("Fetched sponsorships:", sponsorships);
       return sponsorships || [];
     },
     enabled: !!user.id
@@ -82,13 +85,18 @@ const SponsorDashboard = () => {
   const { data: plannedVisits = [], refetch: refetchVisits } = useQuery({
     queryKey: ['planned-visits', user.id],
     queryFn: async () => {
+      console.log("Fetching planned visits for user:", user.id);
       const { data, error } = await supabase
         .from('planned_visits')
         .select('*')
         .eq('sponsor_id', user.id)
         .order('start_date', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching planned visits:", error);
+        throw error;
+      }
+      console.log("Fetched planned visits:", data);
       return data;
     },
     enabled: !!user.id
@@ -97,13 +105,18 @@ const SponsorDashboard = () => {
   const { data: notifications = [] } = useQuery({
     queryKey: ['sponsor-notifications', user.id],
     queryFn: async () => {
+      console.log("Fetching notifications for user:", user.id);
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
         .eq('recipient_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error fetching notifications:", error);
+        throw error;
+      }
+      console.log("Fetched notifications:", data);
       return data;
     },
     enabled: !!user.id
@@ -113,7 +126,7 @@ const SponsorDashboard = () => {
     setSelectedChild(childId);
   };
 
-  const handleUploadSuccess = async () => {
+  const handleUploadSuccess = () => {
     if (selectedChild) {
       toast.success(t.uploadSuccess);
       setSelectedChild(null);
