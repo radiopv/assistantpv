@@ -17,6 +17,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { AssignSponsorDialog } from "../AssistantSponsorship/AssignSponsorDialog";
 import { toast } from "sonner";
 import { useAuth } from "@/components/Auth/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 interface ChildrenListProps {
   children: any[];
@@ -30,6 +31,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? "grid" : "table");
   const [showAssignDialog, setShowAssignDialog] = useState(false);
