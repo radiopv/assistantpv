@@ -16,6 +16,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AssignSponsorDialog } from "../AssistantSponsorship/AssignSponsorDialog";
 import { toast } from "sonner";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface ChildrenListProps {
   children: any[];
@@ -28,6 +29,7 @@ type ViewMode = "grid" | "table";
 export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenListProps) => {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+  const { user } = useAuth();
   const [selectedChild, setSelectedChild] = useState<any>(null);
   const [viewMode, setViewMode] = useState<ViewMode>(isMobile ? "grid" : "table");
   const [showAssignDialog, setShowAssignDialog] = useState(false);
@@ -55,6 +57,50 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
     }
   });
 
+  const handleSponsorshipRequest = async (childId: string) => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${childId}`);
+      return;
+    }
+
+    try {
+      // Check if there's already a pending request
+      const { data: existingRequests, error: checkError } = await supabase
+        .from('sponsorship_requests')
+        .select('*')
+        .eq('child_id', childId)
+        .eq('email', user.email)
+        .eq('status', 'pending');
+
+      if (checkError) throw checkError;
+
+      if (existingRequests && existingRequests.length > 0) {
+        toast.error(t("requestAlreadyExists"));
+        return;
+      }
+
+      // Create new request
+      const { error: insertError } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          full_name: user.name,
+          email: user.email,
+          status: 'pending',
+          sponsor_id: user.id,
+          is_long_term: true,
+          terms_accepted: true
+        });
+
+      if (insertError) throw insertError;
+
+      toast.success(t("sponsorshipRequestCreated"));
+    } catch (error) {
+      console.error('Error creating sponsorship request:', error);
+      toast.error(t("errorCreatingRequest"));
+    }
+  };
+
   const handleAssignSponsor = (childId: string) => {
     setSelectedChildForAssignment(childId);
     setShowAssignDialog(true);
@@ -74,7 +120,6 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
       if (error) throw error;
 
       toast.success(t("sponsorRemoved"));
-      // Refresh data if needed
     } catch (error) {
       console.error('Error removing sponsor:', error);
       toast.error(t("errorRemovingSponsor"));
@@ -84,7 +129,6 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
   const handleAssignComplete = () => {
     setShowAssignDialog(false);
     setSelectedChildForAssignment(null);
-    // Optionally refresh data here
   };
 
   const getMissingFields = (child: any) => {
@@ -191,7 +235,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
               <ChildCard
                 child={child}
                 onViewProfile={onViewProfile}
-                onSponsorClick={setSelectedChild}
+                onSponsorClick={handleSponsorshipRequest}
               />
               {window.location.search.includes('status=incomplete') && (
                 <div className="p-3 bg-gray-50">
@@ -210,7 +254,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
         <ChildrenTable
           children={uniqueChildren}
           onViewProfile={onViewProfile}
-          onSponsorClick={setSelectedChild}
+          onSponsorClick={handleSponsorshipRequest}
           onAssignSponsor={handleAssignSponsor}
           onRemoveSponsor={handleRemoveSponsor}
         />
