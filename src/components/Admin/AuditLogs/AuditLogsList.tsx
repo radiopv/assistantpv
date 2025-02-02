@@ -17,17 +17,43 @@ export const AuditLogsList = () => {
   const { data: logs, isLoading } = useQuery({
     queryKey: ["audit-logs"],
     queryFn: async () => {
+      // Simplified query without joins since the relationships aren't set up
       const { data, error } = await supabase
         .from("children_audit_logs")
-        .select(`
-          *,
-          children(name),
-          sponsors(name)
-        `)
+        .select("*")
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data;
+
+      // Fetch child names and sponsor names separately
+      const childIds = data?.map(log => log.child_id).filter(Boolean) || [];
+      const sponsorIds = data?.map(log => log.performed_by).filter(Boolean) || [];
+
+      const [childrenResponse, sponsorsResponse] = await Promise.all([
+        supabase
+          .from("children")
+          .select("id, name")
+          .in("id", childIds),
+        supabase
+          .from("sponsors")
+          .select("id, name")
+          .in("id", sponsorIds)
+      ]);
+
+      // Create lookup maps
+      const childrenMap = new Map(
+        childrenResponse.data?.map(child => [child.id, child.name]) || []
+      );
+      const sponsorsMap = new Map(
+        sponsorsResponse.data?.map(sponsor => [sponsor.id, sponsor.name]) || []
+      );
+
+      // Enrich the logs with names
+      return data?.map(log => ({
+        ...log,
+        children: { name: childrenMap.get(log.child_id) || "N/A" },
+        sponsors: { name: sponsorsMap.get(log.performed_by) || "Système" }
+      }));
     },
   });
 
