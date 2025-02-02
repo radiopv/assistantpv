@@ -56,6 +56,11 @@ const publicLinks = [
 
 const adminLinks = [
   {
+    href: "/dashboard",
+    label: "Tableau de bord",
+    icon: Home,
+  },
+  {
     href: "/admin/children-management",
     label: "Gestion Enfants",
     icon: Users,

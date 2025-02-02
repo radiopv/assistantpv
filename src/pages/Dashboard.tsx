@@ -148,14 +148,14 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="container mx-auto p-4 md:p-6 space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto p-4 space-y-6 animate-fade-in">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-gray-900">{t.dashboard}</h1>
         <NotificationBar />
       </div>
       
       {/* Messages récents */}
-      <Card className="p-6">
+      <Card className="p-4 sm:p-6">
         <div className="space-y-4">
           <h2 className="text-xl font-semibold text-gray-800">{t.recentMessages}</h2>
           <p className="text-gray-600">
@@ -168,15 +168,15 @@ const Dashboard = () => {
       {isAssistant && (
         <div className="grid gap-6">
           <Tabs defaultValue="validation" className="w-full">
-            <TabsList>
+            <TabsList className="w-full flex flex-wrap gap-2">
               <TabsTrigger value="validation">{t.validation}</TabsTrigger>
               <TabsTrigger value="history">{t.history}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="validation">
-              <Card className="p-6">
+              <Card className="p-4 sm:p-6">
                 <Tabs defaultValue="sponsorships">
-                  <TabsList>
+                  <TabsList className="w-full flex flex-wrap gap-2 mb-4">
                     <TabsTrigger value="sponsorships">
                       {t.sponsorships}
                     </TabsTrigger>
@@ -211,7 +211,7 @@ const Dashboard = () => {
             </TabsContent>
 
             <TabsContent value="history">
-              <Card className="p-6">
+              <Card className="p-4 sm:p-6">
                 <AuditLogsList />
               </Card>
             </TabsContent>
@@ -220,7 +220,7 @@ const Dashboard = () => {
       )}
 
       {upcomingBirthdays && upcomingBirthdays.length > 0 && (
-        <Card className="p-6">
+        <Card className="p-4 sm:p-6">
           <div className="space-y-4">
             <h2 className="text-xl font-semibold text-gray-800">{t.upcomingBirthdays}</h2>
             <div className="divide-y">
