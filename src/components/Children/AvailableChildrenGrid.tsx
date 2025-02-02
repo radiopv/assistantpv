@@ -13,6 +13,7 @@ import { toast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/components/Auth/AuthProvider";
 
 interface AvailableChildrenGridProps {
   children: any[];
@@ -22,6 +23,7 @@ interface AvailableChildrenGridProps {
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const processedImages = useRef<Set<string>>(new Set());
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
@@ -153,9 +155,59 @@ export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: A
     );
   }
 
-  const handleSponsorClick = (childId: string) => {
-    // Rediriger vers le formulaire de parrainage avec l'ID de l'enfant
-    navigate(`/become-sponsor?child=${childId}`);
+  const handleSponsorClick = async (childId: string) => {
+    if (!user) {
+      navigate(`/become-sponsor?child=${childId}`);
+      return;
+    }
+
+    try {
+      // Check if there's already a pending request
+      const { data: existingRequests, error: checkError } = await supabase
+        .from('sponsorship_requests')
+        .select('*')
+        .eq('child_id', childId)
+        .eq('email', user.email)
+        .eq('status', 'pending');
+
+      if (checkError) throw checkError;
+
+      if (existingRequests && existingRequests.length > 0) {
+        toast({
+          title: "Demande déjà existante",
+          description: "Vous avez déjà une demande de parrainage en attente pour cet enfant",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Create new request
+      const { error: insertError } = await supabase
+        .from('sponsorship_requests')
+        .insert({
+          child_id: childId,
+          full_name: user.name,
+          email: user.email,
+          status: 'pending',
+          sponsor_id: user.id,
+          is_long_term: true,
+          terms_accepted: true
+        });
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Demande envoyée",
+        description: "Votre demande de parrainage a été envoyée avec succès",
+      });
+    } catch (error) {
+      console.error('Error creating sponsorship request:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'envoi de la demande",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
