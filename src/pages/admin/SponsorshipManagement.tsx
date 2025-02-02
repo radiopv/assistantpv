@@ -15,11 +15,19 @@ import { fr } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
 
 export default function SponsorshipManagement() {
   const [sponsors, setSponsors] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingSponsorId, setEditingSponsorId] = useState<string | null>(null);
+  const [isAddingSponsor, setIsAddingSponsor] = useState(false);
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
+  const [newSponsorForm, setNewSponsorForm] = useState({
+    name: "",
+    email: "",
+  });
   const [editForm, setEditForm] = useState({
     name: "",
     email: "",
@@ -76,6 +84,39 @@ export default function SponsorshipManagement() {
     }
   };
 
+  const handleAddSponsor = async () => {
+    try {
+      // Create new sponsor
+      const { data: sponsorData, error: sponsorError } = await supabase
+        .from("sponsors")
+        .insert({
+          name: newSponsorForm.name,
+          email: newSponsorForm.email,
+          password_hash: "Touspourcuba1", // Default password
+          role: "sponsor",
+          is_active: true
+        })
+        .select()
+        .single();
+
+      if (sponsorError) throw sponsorError;
+
+      toast.success("Parrain créé avec succès");
+      setIsAddingSponsor(false);
+      setNewSponsorForm({ name: "", email: "" });
+      
+      // If a child was selected, open the assignment dialog
+      if (sponsorData) {
+        setSelectedChildId(sponsorData.id);
+      }
+
+      fetchSponsors();
+    } catch (error) {
+      console.error("Error creating sponsor:", error);
+      toast.error("Erreur lors de la création du parrain");
+    }
+  };
+
   const filterBySearch = (data: any[]) => {
     return data.filter(
       (item) =>
@@ -94,7 +135,12 @@ export default function SponsorshipManagement() {
 
   return (
     <Card className="w-full p-2 md:p-4 space-y-4 rounded-none sm:rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Gestion des Parrains</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold mb-4">Gestion des Parrains</h1>
+        <Button onClick={() => setIsAddingSponsor(true)}>
+          Ajouter un parrain
+        </Button>
+      </div>
       
       <div className="relative mb-6">
         <Input
@@ -200,6 +246,45 @@ export default function SponsorshipManagement() {
           </Table>
         </div>
       </ScrollArea>
+
+      <Dialog open={isAddingSponsor} onOpenChange={setIsAddingSponsor}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ajouter un parrain</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              placeholder="Nom du parrain"
+              value={newSponsorForm.name}
+              onChange={(e) => setNewSponsorForm({ ...newSponsorForm, name: e.target.value })}
+            />
+            <Input
+              type="email"
+              placeholder="Email du parrain"
+              value={newSponsorForm.email}
+              onChange={(e) => setNewSponsorForm({ ...newSponsorForm, email: e.target.value })}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsAddingSponsor(false)}>
+                Annuler
+              </Button>
+              <Button onClick={handleAddSponsor}>
+                Ajouter
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <AssignSponsorDialog
+        isOpen={!!selectedChildId}
+        onClose={() => setSelectedChildId(null)}
+        childId={selectedChildId || ""}
+        onAssignComplete={() => {
+          setSelectedChildId(null);
+          fetchSponsors();
+        }}
+      />
     </Card>
   );
 }
