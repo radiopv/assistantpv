@@ -135,14 +135,17 @@ export default function SponsorshipManagement() {
 
   return (
     <Card className="w-full p-2 md:p-4 space-y-4 rounded-none sm:rounded-lg">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold mb-4">Gestion des Parrains</h1>
-        <Button onClick={() => setIsAddingSponsor(true)}>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold">Gestion des Parrains</h1>
+        <Button 
+          onClick={() => setIsAddingSponsor(true)}
+          className="w-full sm:w-auto"
+        >
           Ajouter un parrain
         </Button>
       </div>
       
-      <div className="relative mb-6">
+      <div className="mb-6">
         <Input
           type="search"
           placeholder="Rechercher un parrain..."
@@ -197,29 +200,32 @@ export default function SponsorshipManagement() {
                     <TableRow>
                       <TableCell colSpan={5}>
                         <div className="p-4 space-y-4 bg-muted/50">
-                          <Input
-                            type="text"
-                            name="name"
-                            placeholder="Nom"
-                            value={editForm.name}
-                            onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
-                          />
-                          <Input
-                            type="email"
-                            name="email"
-                            placeholder="Email"
-                            value={editForm.email}
-                            onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
-                          />
-                          <Input
-                            type="password"
-                            name="password_hash"
-                            placeholder="Mot de passe"
-                            value={editForm.password_hash}
-                            onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
-                          />
+                          <div className="grid gap-4 sm:grid-cols-2">
+                            <Input
+                              type="text"
+                              name="name"
+                              placeholder="Nom"
+                              value={editForm.name}
+                              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+                            />
+                            <Input
+                              type="email"
+                              name="email"
+                              placeholder="Email"
+                              value={editForm.email}
+                              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+                            />
+                            <Input
+                              type="password"
+                              name="password_hash"
+                              placeholder="Mot de passe"
+                              value={editForm.password_hash}
+                              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+                              className="sm:col-span-2"
+                            />
+                          </div>
 
-                          <div className="flex flex-col sm:flex-row justify-end gap-2">
+                          <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
                             <Button
                               variant="outline"
                               size="sm"
@@ -248,11 +254,11 @@ export default function SponsorshipManagement() {
       </ScrollArea>
 
       <Dialog open={isAddingSponsor} onOpenChange={setIsAddingSponsor}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Ajouter un parrain</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 mt-4">
             <Input
               placeholder="Nom du parrain"
               value={newSponsorForm.name}
@@ -264,11 +270,18 @@ export default function SponsorshipManagement() {
               value={newSponsorForm.email}
               onChange={(e) => setNewSponsorForm({ ...newSponsorForm, email: e.target.value })}
             />
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsAddingSponsor(false)}>
+            <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setIsAddingSponsor(false)}
+                className="w-full sm:w-auto"
+              >
                 Annuler
               </Button>
-              <Button onClick={handleAddSponsor}>
+              <Button 
+                onClick={handleAddSponsor}
+                className="w-full sm:w-auto"
+              >
                 Ajouter
               </Button>
             </div>
