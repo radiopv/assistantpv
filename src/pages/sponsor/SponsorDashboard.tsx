@@ -146,6 +146,20 @@ const SponsorDashboard = () => {
           {/* Contribution Stats */}
           {user?.id && <ContributionStats sponsorId={user.id} />}
 
+          {/* Planned Visits */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">
+              {t.plannedVisits}
+            </h3>
+            <div className="space-y-6">
+              <PlannedVisitForm 
+                sponsorId={user.id} 
+                onVisitPlanned={() => refetchVisits()} 
+              />
+              <VisitsSection visits={plannedVisits || []} onVisitDeleted={() => refetchVisits()} />
+            </div>
+          </Card>
+
           {/* Sponsored Children Cards */}
           {sponsoredChildren?.map((sponsorship) => {
             const child = sponsorship.children;
@@ -170,20 +184,6 @@ const SponsorDashboard = () => {
               </div>
             );
           })}
-
-          {/* Planned Visits */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              {t.plannedVisits}
-            </h3>
-            <div className="space-y-6">
-              <PlannedVisitForm 
-                sponsorId={user.id} 
-                onVisitPlanned={() => refetchVisits()} 
-              />
-              <VisitsSection visits={plannedVisits || []} onVisitDeleted={() => refetchVisits()} />
-            </div>
-          </Card>
 
           {/* Timeline */}
           <SponsorshipTimeline events={[]} />
