@@ -3,10 +3,11 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { PhotoGrid } from "@/components/Sponsors/Dashboard/PhotoAlbum/PhotoGrid";
 import { UploadSection } from "@/components/Sponsors/Dashboard/PhotoAlbum/UploadSection";
 import { PhotoViewerDialog } from "@/components/Sponsors/Dashboard/PhotoAlbum/PhotoViewerDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const SponsorAlbum = () => {
   const { user } = useAuth();
@@ -14,6 +15,7 @@ const SponsorAlbum = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [selectedChildId, setSelectedChildId] = useState<string>("");
+  const [showFeatureInfo, setShowFeatureInfo] = useState(false);
   const { language } = useLanguage();
 
   const translations = {
@@ -28,7 +30,9 @@ const SponsorAlbum = () => {
       deleteSuccess: "Photo supprimée avec succès",
       deleteError: "Erreur lors de la suppression",
       toggleFavoriteSuccess: "Statut favori mis à jour",
-      toggleFavoriteError: "Erreur lors de la mise à jour du statut favori"
+      toggleFavoriteError: "Erreur lors de la mise à jour du statut favori",
+      featureInfoTitle: "Photos en vedette",
+      featureInfoDesc: "L'icône étoile permet de mettre une photo en vedette sur la page d'accueil. Une étoile jaune indique que la photo est actuellement en vedette. Important : Les photos doivent être approuvées par un administrateur avant d'apparaître sur la page d'accueil."
     },
     es: {
       addPhoto: "Agregar una foto",
@@ -41,7 +45,9 @@ const SponsorAlbum = () => {
       deleteSuccess: "Foto eliminada con éxito",
       deleteError: "Error al eliminar la foto",
       toggleFavoriteSuccess: "Estado favorito actualizado",
-      toggleFavoriteError: "Error al actualizar el estado favorito"
+      toggleFavoriteError: "Error al actualizar el estado favorito",
+      featureInfoTitle: "Fotos destacadas",
+      featureInfoDesc: "El ícono de estrella te permite destacar una foto en la página de inicio. Una estrella amarilla indica que la foto está actualmente destacada. Importante: Las fotos deben ser aprobadas por un administrador antes de aparecer en la página de inicio."
     }
   };
 
@@ -96,7 +102,7 @@ const SponsorAlbum = () => {
           children (
             name
           ),
-          sponsors!album_media_new_sponsor_id_fkey (
+          sponsors (
             name,
             role,
             is_anonymous
@@ -215,6 +221,7 @@ const SponsorAlbum = () => {
         description: t.toggleFavoriteSuccess
       });
       refetch();
+      setShowFeatureInfo(true);
     } catch (error) {
       console.error('Error toggling favorite:', error);
       toast({
@@ -249,6 +256,15 @@ const SponsorAlbum = () => {
         onToggleFavorite={handleToggleFavorite}
         onDelete={handleDeletePhoto}
       />
+
+      <Dialog open={showFeatureInfo} onOpenChange={setShowFeatureInfo}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.featureInfoTitle}</DialogTitle>
+            <DialogDescription>{t.featureInfoDesc}</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
       <PhotoViewerDialog
         imageUrl={selectedImage}
