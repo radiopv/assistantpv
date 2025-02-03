@@ -85,6 +85,14 @@ export const ChildrenTable = ({
     onViewProfile(childId);
   };
 
+  const handleAssignSponsor = (e: React.MouseEvent, childId: string) => {
+    e.stopPropagation();
+    if (onAssignSponsor) {
+      console.log('Assigning sponsor to child:', childId);
+      onAssignSponsor(childId);
+    }
+  };
+
   return (
     <div className="w-full">
       <Table>
