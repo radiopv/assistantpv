@@ -59,5 +59,30 @@
     .touch-feedback:active {
       @apply bg-cuba-warmBeige/50 transition-colors duration-200;
     }
+
+    /* Admin section specific mobile styles */
+    .admin-table-wrapper {
+      @apply w-full overflow-x-auto -mx-4 px-4;
+    }
+
+    .admin-card {
+      @apply rounded-none sm:rounded-lg;
+    }
+
+    .admin-content {
+      @apply p-2 sm:p-4;
+    }
+
+    .admin-header {
+      @apply flex-col sm:flex-row gap-2 sm:gap-4;
+    }
+
+    .admin-button {
+      @apply w-full sm:w-auto;
+    }
+
+    .admin-form-group {
+      @apply flex-col sm:flex-row;
+    }
   }
 }

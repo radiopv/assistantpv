@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AssignSponsorDialog } from "@/components/AssistantSponsorship/AssignSponsorDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function SponsorshipManagement() {
   const [sponsors, setSponsors] = useState<any[]>([]);
@@ -133,6 +134,87 @@ export default function SponsorshipManagement() {
     });
   };
 
+  const isMobile = useIsMobile();
+
+  const renderMobileCard = (sponsor: any) => (
+    <Card key={sponsor.id} className="p-4 mb-4">
+      <div className="space-y-2">
+        <div>
+          <span className="font-medium">Nom:</span>
+          <span className="ml-2 break-words">{sponsor.name}</span>
+        </div>
+        <div>
+          <span className="font-medium">Email:</span>
+          <span className="ml-2 break-all">{sponsor.email}</span>
+        </div>
+        <div>
+          <span className="font-medium">Mot de passe:</span>
+          <span className="ml-2 break-words">{sponsor.password_hash || "Non défini"}</span>
+        </div>
+        <div>
+          <span className="font-medium">Dernière connexion:</span>
+          <span className="ml-2 break-words">
+            {sponsor.last_login 
+              ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
+              : "Jamais connecté"}
+          </span>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => handleEdit(sponsor)}
+          className="w-full mt-2"
+        >
+          Modifier
+        </Button>
+      </div>
+      {editingSponsorId === sponsor.id && (
+        <div className="mt-4 p-4 space-y-4 bg-muted/50">
+          <div className="grid gap-4">
+            <Input
+              type="text"
+              name="name"
+              placeholder="Nom"
+              value={editForm.name}
+              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+            />
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={editForm.email}
+              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+            />
+            <Input
+              type="password"
+              name="password_hash"
+              placeholder="Mot de passe"
+              value={editForm.password_hash}
+              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditingSponsorId(null)}
+              className="w-full"
+            >
+              Annuler
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleUpdate}
+              className="w-full"
+            >
+              Sauvegarder
+            </Button>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+
   return (
     <Card className="w-full p-2 md:p-4 space-y-4 rounded-none sm:rounded-lg">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -155,103 +237,109 @@ export default function SponsorshipManagement() {
         />
       </div>
 
-      <ScrollArea className="w-full overflow-auto">
-        <div className="rounded-md border min-w-[800px]">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="min-w-[200px]">Nom</TableHead>
-                <TableHead className="min-w-[200px]">Email</TableHead>
-                <TableHead className="min-w-[200px]">Mot de passe</TableHead>
-                <TableHead className="min-w-[200px]">Dernière connexion</TableHead>
-                <TableHead className="min-w-[150px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortData(filterBySearch(sponsors || [])).map((sponsor) => (
-                <React.Fragment key={sponsor.id}>
-                  <TableRow>
-                    <TableCell className="font-medium break-words">
-                      {sponsor.name}
-                    </TableCell>
-                    <TableCell className="break-all">
-                      {sponsor.email}
-                    </TableCell>
-                    <TableCell className="break-words">
-                      {sponsor.password_hash || "Non défini"}
-                    </TableCell>
-                    <TableCell className="break-words">
-                      {sponsor.last_login 
-                        ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
-                        : "Jamais connecté"}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEdit(sponsor)}
-                        className="w-full whitespace-nowrap"
-                      >
-                        Modifier
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                  {editingSponsorId === sponsor.id && (
+      {isMobile ? (
+        <div className="space-y-4">
+          {sortData(filterBySearch(sponsors || [])).map(renderMobileCard)}
+        </div>
+      ) : (
+        <ScrollArea className="w-full overflow-auto">
+          <div className="rounded-md border min-w-[800px]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="min-w-[200px]">Nom</TableHead>
+                  <TableHead className="min-w-[200px]">Email</TableHead>
+                  <TableHead className="min-w-[200px]">Mot de passe</TableHead>
+                  <TableHead className="min-w-[200px]">Dernière connexion</TableHead>
+                  <TableHead className="min-w-[150px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {sortData(filterBySearch(sponsors || [])).map((sponsor) => (
+                  <React.Fragment key={sponsor.id}>
                     <TableRow>
-                      <TableCell colSpan={5}>
-                        <div className="p-4 space-y-4 bg-muted/50">
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <Input
-                              type="text"
-                              name="name"
-                              placeholder="Nom"
-                              value={editForm.name}
-                              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
-                            />
-                            <Input
-                              type="email"
-                              name="email"
-                              placeholder="Email"
-                              value={editForm.email}
-                              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
-                            />
-                            <Input
-                              type="password"
-                              name="password_hash"
-                              placeholder="Mot de passe"
-                              value={editForm.password_hash}
-                              onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
-                              className="sm:col-span-2"
-                            />
-                          </div>
-
-                          <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setEditingSponsorId(null)}
-                              className="w-full sm:w-auto"
-                            >
-                              Annuler
-                            </Button>
-                            <Button
-                              size="sm"
-                              onClick={handleUpdate}
-                              className="w-full sm:w-auto"
-                            >
-                              Sauvegarder
-                            </Button>
-                          </div>
-                        </div>
+                      <TableCell className="font-medium break-words">
+                        {sponsor.name}
+                      </TableCell>
+                      <TableCell className="break-all">
+                        {sponsor.email}
+                      </TableCell>
+                      <TableCell className="break-words">
+                        {sponsor.password_hash || "Non défini"}
+                      </TableCell>
+                      <TableCell className="break-words">
+                        {sponsor.last_login 
+                          ? format(new Date(sponsor.last_login), "dd MMMM yyyy à HH:mm", { locale: fr })
+                          : "Jamais connecté"}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleEdit(sponsor)}
+                          className="w-full whitespace-nowrap"
+                        >
+                          Modifier
+                        </Button>
                       </TableCell>
                     </TableRow>
-                  )}
-                </React.Fragment>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </ScrollArea>
+                    {editingSponsorId === sponsor.id && (
+                      <TableRow>
+                        <TableCell colSpan={5}>
+                          <div className="p-4 space-y-4 bg-muted/50">
+                            <div className="grid gap-4 sm:grid-cols-2">
+                              <Input
+                                type="text"
+                                name="name"
+                                placeholder="Nom"
+                                value={editForm.name}
+                                onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+                              />
+                              <Input
+                                type="email"
+                                name="email"
+                                placeholder="Email"
+                                value={editForm.email}
+                                onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+                              />
+                              <Input
+                                type="password"
+                                name="password_hash"
+                                placeholder="Mot de passe"
+                                value={editForm.password_hash}
+                                onChange={(e) => setEditForm({ ...editForm, [e.target.name]: e.target.value })}
+                                className="sm:col-span-2"
+                              />
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row justify-end gap-2 mt-4">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setEditingSponsorId(null)}
+                                className="w-full sm:w-auto"
+                              >
+                                Annuler
+                              </Button>
+                              <Button
+                                size="sm"
+                                onClick={handleUpdate}
+                                className="w-full sm:w-auto"
+                              >
+                                Sauvegarder
+                              </Button>
+                            </div>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </ScrollArea>
+      )}
 
       <Dialog open={isAddingSponsor} onOpenChange={setIsAddingSponsor}>
         <DialogContent className="sm:max-w-[425px]">
