@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PhotoCard } from "./PhotoCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Star } from "lucide-react";
 
 interface PhotoGridProps {
   photos: any[];
