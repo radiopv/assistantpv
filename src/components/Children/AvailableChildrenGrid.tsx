@@ -18,7 +18,7 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 interface AvailableChildrenGridProps {
   children: any[];
   isLoading: boolean;
-  onSponsorClick: (childId: string) => void;
+  onSponsorClick?: (childId: string) => void;
 }
 
 export const AvailableChildrenGrid = ({ children, isLoading, onSponsorClick }: AvailableChildrenGridProps) => {
