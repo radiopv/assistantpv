@@ -66,6 +66,8 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
     }
 
     try {
+      console.log('Checking existing requests for child:', childId, 'and email:', user.email);
+      
       // Check if there's already a pending request
       const { data: existingRequests, error: checkError } = await supabase
         .from('sponsorship_requests')
@@ -237,7 +239,7 @@ export const ChildrenList = ({ children, isLoading, onViewProfile }: ChildrenLis
               <ChildCard
                 child={child}
                 onViewProfile={onViewProfile}
-                onSponsorClick={handleSponsorshipRequest}
+                onSponsorClick={() => handleSponsorshipRequest(child.id)}
               />
               {window.location.search.includes('status=incomplete') && (
                 <div className="p-3 bg-gray-50">
