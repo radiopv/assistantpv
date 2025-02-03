@@ -87,13 +87,12 @@ export default function SponsorshipManagement() {
 
   const handleAddSponsor = async () => {
     try {
-      // Create new sponsor
       const { data: sponsorData, error: sponsorError } = await supabase
         .from("sponsors")
         .insert({
           name: newSponsorForm.name,
           email: newSponsorForm.email,
-          password_hash: "Touspourcuba1", // Default password
+          password_hash: "Touspourcuba1",
           role: "sponsor",
           is_active: true
         })
@@ -106,7 +105,6 @@ export default function SponsorshipManagement() {
       setIsAddingSponsor(false);
       setNewSponsorForm({ name: "", email: "" });
       
-      // If a child was selected, open the assignment dialog
       if (sponsorData) {
         setSelectedChildId(sponsorData.id);
       }
@@ -169,7 +167,7 @@ export default function SponsorshipManagement() {
         </Button>
       </div>
       {editingSponsorId === sponsor.id && (
-        <div className="mt-4 p-4 space-y-4 bg-muted/50">
+        <div className="mt-4 p-4 space-y-4 bg-muted/50 rounded-lg">
           <div className="grid gap-4">
             <Input
               type="text"
