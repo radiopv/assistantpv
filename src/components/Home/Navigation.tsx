@@ -66,6 +66,11 @@ const adminLinks = [
     icon: Users,
   },
   {
+    href: "/admin/sponsorship-management",
+    label: "Gestion Parrainages",
+    icon: Users,
+  },
+  {
     href: "/admin/donations-management",
     label: "Gestion Donations",
     icon: Gift,

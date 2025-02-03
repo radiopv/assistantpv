@@ -14,13 +14,23 @@ import { useAuth } from "@/components/Auth/AuthProvider";
 
 const adminLinks = [
   {
+    href: "/dashboard",
+    label: "Tableau de bord",
+    icon: Home,
+  },
+  {
     href: "/admin/children-management",
-    label: "Parrainage/Enfant",
+    label: "Gestion Enfants",
+    icon: Users,
+  },
+  {
+    href: "/admin/sponsorship-management",
+    label: "Gestion Parrainages",
     icon: Users,
   },
   {
     href: "/admin/donations-management",
-    label: "Donations",
+    label: "Gestion Donations",
     icon: Gift,
   },
   {
@@ -35,7 +45,7 @@ const adminLinks = [
   },
   {
     href: "/admin/faq",
-    label: "FAQ",
+    label: "FAQ Admin",
     icon: FileText,
   },
   {
