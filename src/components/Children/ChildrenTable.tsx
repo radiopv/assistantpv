@@ -8,7 +8,7 @@ import { useState } from "react";
 interface ChildrenTableProps {
   children: any[];
   onViewProfile: (id: string) => void;
-  onSponsorClick: (child: any) => void;
+  onSponsorClick: (childId: string) => void;
   onAssignSponsor?: (childId: string) => void;
   onRemoveSponsor?: (childId: string) => void;
 }
@@ -21,7 +21,7 @@ export const ChildrenTable = ({
   onRemoveSponsor 
 }: ChildrenTableProps) => {
   const { t } = useLanguage();
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' }); // Default sort by name
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' }>({ key: 'name', direction: 'asc' });
 
   const formatAge = (birthDate: string) => {
     if (!birthDate) return t("ageNotAvailable");
@@ -85,14 +85,6 @@ export const ChildrenTable = ({
     onViewProfile(childId);
   };
 
-  const handleAssignSponsor = (e: React.MouseEvent, childId: string) => {
-    e.stopPropagation();
-    if (onAssignSponsor) {
-      console.log('Assigning sponsor to child:', childId);
-      onAssignSponsor(childId);
-    }
-  };
-
   return (
     <div className="w-full">
       <Table>
@@ -141,7 +133,7 @@ export const ChildrenTable = ({
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onSponsorClick(child);
+                        onSponsorClick(child.id);
                       }}
                       className="flex items-center gap-1"
                     >
